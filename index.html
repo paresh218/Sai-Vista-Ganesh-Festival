@@ -15,7 +15,10 @@
 
 <header class="navbar">
   <a class="brand" href="#home">🪔 <span>Sai Vista</span></a>
-  <nav>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="siteNav">
     <a href="#home">Home</a>
     <a href="#schedule">Schedule</a>
     <a href="#registration">Registration</a>
@@ -44,6 +47,10 @@
         <span>14 September – 19 September 2026</span>
         <span>•</span>
         <span>Sai Vista, Rahatani</span>
+      </div>
+      <div class="hero-countdown" aria-label="Festival countdown">
+        <span class="countdown-label">Festival begins in</span>
+        <strong id="festivalCountdown">Loading countdown…</strong>
       </div>
     </div>
   </section>
@@ -81,48 +88,54 @@
       <p>Event dates and activities are based on the latest schedule shared by the Sai Vista Cultural Committee.</p>
     </div>
 
+    <div class="schedule-toolbar" aria-label="Schedule filters">
+      <button class="schedule-filter active" type="button" data-filter="all">All days</button>
+      <button class="schedule-filter" type="button" data-filter="featured">Highlights</button>
+      <button class="schedule-filter" type="button" data-filter="puja">Puja & Aarti</button>
+      <button class="schedule-filter" type="button" data-filter="activity">Activities</button>
+    </div>
     <div class="schedule-list">
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>14</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">OPENING DAY • MONDAY</div><h3>Miravnuk • Lezim (TBD) • Ganesh Sthapana</h3><p>Miravnuk with music is planned between 3–7 PM. Residents are requested to plan decorations/work arrangements accordingly.</p></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>15</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">TUESDAY</div><h3>Housie</h3><p>Community housie evening for Sai Vista residents.</p></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>16</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><h3>Games</h3><p>Games and activities for residents.</p><a href="#registration" class="text-link">Register →</a></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>17</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">THURSDAY</div><h3>Games</h3><p>Games and activities for residents.</p><a href="#registration" class="text-link">Register →</a></div>
       </article>
 
-      <article class="schedule-card featured">
+      <article class="schedule-card featured activity-card">
         <div class="date-chip"><b>18</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">SPECIAL EVENT • FRIDAY</div><h3>Bollywood Night 🎬</h3><p>Music, dance, performances and entertainment.</p><a href="#registration" class="text-link">Register →</a></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>19</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">SATURDAY</div><h3>Drawing Competition • Talent Show 1</h3><p>Talent Show sessions are planned across the festival as announced by the committee.</p></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>20</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">SUNDAY</div><h3>Blood Donation • Treasure Hunt • Thali & Rangoli Competition • Fun N Fun Fair</h3><p>A full community activity day with multiple participation events.</p><a href="#registration" class="text-link">View registrations →</a></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>21</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">MONDAY</div><h3>Talent Show 2</h3><p>Second Talent Show session.</p></div>
       </article>
 
-      <article class="schedule-card">
+      <article class="schedule-card activity-card">
         <div class="date-chip"><b>22</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">TUESDAY</div><h3>Fancy Dress</h3><p>Fancy Dress is planned as a separate event.</p><a href="#registration" class="text-link">View registrations →</a></div>
       </article>
@@ -132,12 +145,12 @@
         <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><h3>No activity currently planned</h3><p>The programme will be updated if an activity is finalised.</p></div>
       </article>
 
-      <article class="schedule-card puja-event">
+      <article class="schedule-card puja-event puja-card">
         <div class="date-chip"><b>24</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">PUJA • THURSDAY</div><h3>Satyanarayan Puja & Mahaprasad</h3><p>Dedicated Satyanarayan Puja and Mahaprasad programme.</p><a href="#registration" class="text-link">Open Puja registration →</a></div>
       </article>
 
-      <article class="schedule-card immersion-event">
+      <article class="schedule-card immersion-event featured activity-card">
         <div class="date-chip"><b>25</b><small>SEP</small></div>
         <div class="schedule-body"><div class="event-kicker">VISARJAN • FRIDAY</div><h3>Visarjan • Lezim (TBD) • DJ</h3><p>Visarjan programme with evening DJ as noted in the latest festival schedule.</p></div>
       </article>

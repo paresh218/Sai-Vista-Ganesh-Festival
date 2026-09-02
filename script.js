@@ -1,6 +1,48 @@
 
 // Ganpati T-shirt nomination
 document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.querySelector(".menu-toggle");
+  const siteNav = document.getElementById("siteNav");
+  menuToggle?.addEventListener("click", () => {
+    const expanded = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute("aria-expanded", String(!expanded));
+    menuToggle.setAttribute("aria-label", expanded ? "Open menu" : "Close menu");
+    siteNav.classList.toggle("open", !expanded);
+  });
+  siteNav?.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+    siteNav.classList.remove("open");
+    menuToggle?.setAttribute("aria-expanded", "false");
+    menuToggle?.setAttribute("aria-label", "Open menu");
+  }));
+
+  const festivalStart = new Date("2026-09-14T09:00:00+05:30");
+  const countdown = document.getElementById("festivalCountdown");
+  const updateCountdown = () => {
+    const remaining = festivalStart - new Date();
+    if (remaining <= 0) {
+      countdown.textContent = "Ganpati Bappa Morya!";
+      return;
+    }
+    const days = Math.floor(remaining / 86400000);
+    const hours = Math.floor(remaining / 3600000) % 24;
+    countdown.textContent = `${days}d ${hours}h to go`;
+  };
+  if (countdown) { updateCountdown(); setInterval(updateCountdown, 60000); }
+
+  const scheduleFilters = document.querySelectorAll(".schedule-filter");
+  const scheduleCards = document.querySelectorAll(".schedule-card");
+  scheduleFilters.forEach(button => button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
+    scheduleFilters.forEach(item => item.classList.toggle("active", item === button));
+    scheduleCards.forEach(card => {
+      const show = filter === "all" ||
+        (filter === "featured" && card.classList.contains("featured")) ||
+        (filter === "puja" && card.classList.contains("puja-card")) ||
+        (filter === "activity" && card.classList.contains("activity-card"));
+      card.classList.toggle("hidden", !show);
+    });
+  }));
+
   const deadline = new Date("2026-09-08T23:59:59+05:30");
   const status = document.getElementById("tshirtDeadlineStatus");
   const form = document.getElementById("tshirtForm");
