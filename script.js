@@ -9,6 +9,127 @@ document.addEventListener("DOMContentLoaded", () => {
     menuToggle.setAttribute("aria-label", expanded ? "Open menu" : "Close menu");
     siteNav.classList.toggle("open", !expanded);
   });
+
+// Rotating registration notice messages
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById('noticeMessage');
+  if (!el) return;
+  const messages = [
+    'Event registrations will start soon — stay connected for updates!',
+    'Kurta registration is open now — find it under Registration.',
+    'Follow Sai Vista announcements for the latest schedule and forms.'
+  ];
+  let idx = 0;
+  function show() {
+    el.classList.remove('fade');
+    // force reflow to restart transition
+    void el.offsetWidth;
+    el.textContent = messages[idx];
+    el.classList.add('fade');
+    idx = (idx + 1) % messages.length;
+  }
+  show();
+  setInterval(show, 4000);
+});
+
+// Daily important notice (day-specific event)
+document.addEventListener('DOMContentLoaded', () => {
+  const dateEl = document.getElementById('dailyDate');
+  const msgEl = document.getElementById('dailyMessage');
+  if (!dateEl || !msgEl) return;
+
+  const today = new Date();
+  // Use local month/day; festival dates are in September 2026
+  const month = today.getMonth() + 1; // 1-12
+  const day = today.getDate();
+
+  // Map of month-day -> message
+  const map = {
+    '9-14': '14 Sep — Opening Day: Miravnuk, Lezim and Ganesh Sthapana (3–7 PM).',
+    '9-15': '15 Sep — Housie evening for residents.',
+    '9-16': '16 Sep — Games and activities. Register for events.',
+    '9-17': '17 Sep — Games and community activities.',
+    '9-18': '18 Sep — Bollywood Night (special event).',
+    '9-19': '19 Sep — Drawing Competition & Talent Show (session 1).',
+    '9-20': '20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.',
+    '9-21': '21 Sep — Talent Show (session 2).',
+    '9-22': '22 Sep — Fancy Dress event.',
+    '9-23': '23 Sep — No activity planned (schedule may be updated).',
+    '9-24': '24 Sep — Satyanarayan Puja & Mahaprasad.',
+    '9-25': '25 Sep — Visarjan, Lezim and evening DJ.'
+  };
+
+  const key = `${month}-${day}`;
+  const text = map[key] || 'No special event scheduled for today — check the full schedule.';
+
+  dateEl.textContent = today.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  // Build event display with possible countdown and label
+  const countdownElId = 'dailyCountdown';
+  const countdownWrapperId = 'dailyCountdownWrapper';
+  const eventHtml = `
+    <span class="daily-event-text">${text}</span>
+    <span id="${countdownWrapperId}" class="daily-countdown-wrapper" style="display:inline-block;margin-left:10px">
+      <span class="daily-countdown-label">Starts in</span>
+      <span id="${countdownElId}" class="daily-countdown" aria-hidden="true"></span>
+    </span>`;
+  msgEl.innerHTML = eventHtml;
+
+  // Try to parse a start time from the text (e.g., '3–7 PM', '8 AM', '7:30 PM')
+  function parseTimeFromText(t) {
+    // normalize hyphen characters
+    const s = t.replace(/[–—]/g, '-');
+    // regex to find patterns like '7:30 PM' or '8 AM' or '3-7 PM' (we pick first hour)
+    const rx = /(\d{1,2}(?::\d{2})?)(?:\s*[\-–]\s*\d{1,2}(?::\d{2})?)?\s*(AM|PM|am|pm)/;
+    const m = s.match(rx);
+    if (m) {
+      let hourPart = m[1];
+      const ampm = m[2].toUpperCase();
+      // if hourPart has minutes
+      const parts = hourPart.split(':');
+      let hh = parseInt(parts[0], 10);
+      let mm = parts[1] ? parseInt(parts[1], 10) : 0;
+      if (ampm === 'PM' && hh < 12) hh += 12;
+      if (ampm === 'AM' && hh === 12) hh = 0;
+      return { hh, mm };
+    }
+    // try range like '3-7 PM' where PM appears after range
+    const rx2 = /(\d{1,2})\s*[\-–]\s*\d{1,2}\s*(AM|PM|am|pm)/;
+    const m2 = s.match(rx2);
+    if (m2) {
+      let hh = parseInt(m2[1], 10);
+      const ampm = m2[2].toUpperCase();
+      if (ampm === 'PM' && hh < 12) hh += 12;
+      if (ampm === 'AM' && hh === 12) hh = 0;
+      return { hh, mm: 0 };
+    }
+    return null;
+  }
+
+  const parsed = parseTimeFromText(text);
+  if (parsed) {
+    // create a Date in local timezone for today with parsed hh:mm
+    const target = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parsed.hh, parsed.mm, 0);
+    const countdownEl = document.getElementById(countdownElId);
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now;
+      if (diff <= 0) {
+        countdownEl.textContent = 'Happening now!';
+        return;
+      }
+      const hrs = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      countdownEl.textContent = `${hrs}h ${mins}m ${secs}s`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    } else {
+    // No parsable time — remove countdown wrapper element
+    const wrapper = document.getElementById(countdownWrapperId);
+    if (wrapper) wrapper.remove();
+  }
+});
   siteNav?.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
     siteNav.classList.remove("open");
     menuToggle?.setAttribute("aria-expanded", "false");
@@ -81,6 +202,42 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Splash logo modal shown once per session (use assets/sai-vista-logo.png)
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    const splashShown = sessionStorage.getItem("saiVistaSplashShown");
+    if (splashShown) return;
+    const splash = document.createElement("div");
+    splash.id = "splashModal";
+    splash.className = "modal";
+    splash.innerHTML = `
+      <div class="modal-box" style="max-width:520px;text-align:center;">
+        <div style="padding:28px;">
+          <img src="assets/sai-vista-logo.png" alt="Sai Vista" style="max-width:100%;height:auto;margin-bottom:16px;" />
+          <p style="color:#6b4f43">Welcome to Sai Vista Ganesh Festival 2026</p>
+          <button id="closeSplash" class="btn btn-dark" style="margin-top:12px">Open site</button>
+        </div>
+      </div>`;
+    document.body.appendChild(splash);
+    document.body.style.overflow = "hidden";
+    document.getElementById("closeSplash").addEventListener("click", () => {
+      splash.remove();
+      document.body.style.overflow = "";
+      sessionStorage.setItem("saiVistaSplashShown", "1");
+    });
+    // auto-close after 3 seconds
+    setTimeout(() => {
+      if (document.getElementById("splashModal")) {
+        document.getElementById("splashModal").remove();
+        document.body.style.overflow = "";
+        sessionStorage.setItem("saiVistaSplashShown", "1");
+      }
+    }, 3000);
+  } catch (e) {
+    // ignore
+  }
+});
+
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK78libRqIDFcEY2j0TCTpQkmyphHPbnadD6_2BfdGk-_Sixo9Au-ieZw2HyfrxFOO/exec";
 const AARTI_MAX_CAPACITY = 10;
 
@@ -125,7 +282,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.querySelectorAll(".form-open-btn").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (e) => {
+      // Ignore disabled buttons (keeps visual but prevents action)
+      if (button.disabled || button.getAttribute('aria-disabled') === 'true') return;
       const url = button.dataset.formUrl;
       modalTitle.textContent = titles[url] || "Sai Vista Registration Form";
       external.href = url;

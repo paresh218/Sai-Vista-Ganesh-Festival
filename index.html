@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Ganesh Festival 2026 — events, registration, Aarti nomination and transparent festival accounts.">
   <meta name="theme-color" content="#7d281b">
+  <link rel="icon" href="assets/sai-vista-logo.png" />
   <title>Sai Vista Ganesh Festival 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +15,10 @@
 <body>
 
 <header class="navbar">
-  <a class="brand" href="#home">🪔 <span>Sai Vista</span></a>
+  <a class="brand" href="#home">
+    <img src="assets/sai-vista-logo.png" alt="Sai Vista logo" class="brand-logo" />
+    <span>Sai Vista</span>
+  </a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
@@ -27,6 +31,22 @@
   </nav>
   <a href="#registration" class="nav-cta">Register</a>
 </header>
+
+<!-- Registration notice (rotating messages) -->
+<div id="noticeBar" class="notice-bar" role="note" aria-live="polite">
+  <div class="notice-inner">
+    <span id="noticeMessage" class="notice-message"></span>
+  </div>
+</div>
+
+<!-- Daily important notice (shows day-specific event) -->
+<div id="dailyNotice" class="daily-notice" aria-live="polite">
+  <div class="daily-inner">
+    <strong id="dailyDate" class="daily-date"></strong>
+    <div id="dailyMessage" class="daily-message">Loading today's event…</div>
+    <a href="#schedule" class="btn btn-outline daily-link">View today's schedule</a>
+  </div>
+</div>
 
 <main>
   <section id="home" class="hero">
@@ -44,7 +64,7 @@
         <a href="#registration" class="btn btn-dark">Register for Events</a>
       </div>
       <div class="hero-meta">
-        <span>14 September – 19 September 2026</span>
+        <span>14 September – 25 September 2026</span>
         <span>•</span>
         <span>Sai Vista, Rahatani</span>
       </div>
@@ -53,6 +73,22 @@
         <strong id="festivalCountdown">Loading countdown…</strong>
       </div>
     </div>
+
+<!-- Schedule image modal -->
+<div id="scheduleModal" class="modal hidden" aria-hidden="true">
+  <div class="schedule-modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="panel-kicker">SAI VISTA</div>
+        <h3 id="scheduleModalTitle">Full Festival Schedule</h3>
+      </div>
+      <button id="closeScheduleModal" class="icon-btn" aria-label="Close">×</button>
+    </div>
+    <div class="schedule-modal-body">
+      <img id="scheduleModalImage" src="assets/ganpati-2026-event-schedule.png" alt="Sai Vista Ganpati 2026 Event Schedule">
+    </div>
+  </div>
+</div>
   </section>
   <section id="tshirt" class="tshirt-section">
     <div class="section tshirt-inner">
@@ -143,6 +179,7 @@
 
 
 
+
   <section class="schedule-spotlight">
     <div class="spotlight-inner">
       <div class="spotlight-copy">
@@ -167,6 +204,7 @@
     <a href="#aarti" class="quick-card"><div>🪔</div><strong>Aarti Nomination</strong><small>Choose your slot</small></a>
     <a href="#accounts" class="quick-card"><div>💰</div><strong>Festival Accounts</strong><small>Transparent expenses</small></a>
     <a href="#tshirt" class="quick-card tshirt-quick"><div>👕</div><strong>Ganpati Kurta</strong><small>₹300 • Register by 8 Sep</small></a>
+    <a href="#contact" class="quick-card contact-quick"><div>☎️</div><strong>Contact Us</strong><small>Coordinators & website</small></a>
   </section>
 
   <section id="schedule" class="section">
@@ -247,7 +285,7 @@
     <div class="notes-panel">
       <div class="notes-title">📌 Important Notes</div>
       <ol>
-        <li>14 Sep: Miravnuk is planned between 3–7 PM with music. Residents should plan work arrangements accordingly.</li>
+        <li>14 Sep: Miravnuk is planned between 2–6 PM with music. Residents should plan work arrangements accordingly.</li>
         <li>25 Sep: Visarjan will include DJ in the evening.</li>
         <li>Talent Show: Open for children of all ages; singing, dancing, drama, etc. are included. Sessions are across 19, 21 Sep.</li>
         <li>Performance day allotment will be done purely by draw; no changes will be allowed after allotment.</li>
@@ -274,7 +312,8 @@
         <div class="form-tag">MAIN REGISTRATION</div>
         <h3>All Event Registration</h3>
         <p>Use the common Sai Vista event registration form for festival activities.</p>
-        <button class="btn btn-dark form-open-btn" data-form-url="https://forms.gle/LZDdZCUgNTp34tar5">Open Registration</button>
+        <!-- Disabled by request: kept visible but not clickable -->
+        <button class="btn btn-dark form-open-btn" data-form-url="https://forms.gle/LZDdZCUgNTp34tar5" disabled aria-disabled="true" title="Registration currently disabled">Open Registration</button>
       </article>
 
       <article class="form-card">
@@ -282,7 +321,7 @@
         <div class="form-tag">PUJA</div>
         <h3>Satyanarayan Pooja</h3>
         <p>Register for the Satyanarayan Pooja using the dedicated form.</p>
-        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/xkEiQqAmXVQ75Keb8">Open Form</button>
+        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/xkEiQqAmXVQ75Keb8" disabled aria-disabled="true" title="Registration currently disabled">Open Form</button>
       </article>
 
       <article class="form-card">
@@ -290,7 +329,7 @@
         <div class="form-tag">SPECIAL EVENT</div>
         <h3>Bollywood Night</h3>
         <p>Participation and entry registration for Bollywood Night.</p>
-        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/28994c4UexrtNWbXA">Open Form</button>
+        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/28994c4UexrtNWbXA" disabled aria-disabled="true" title="Registration currently disabled">Open Form</button>
       </article>
 
       <article class="form-card">
@@ -298,7 +337,7 @@
         <div class="form-tag">PRASAD</div>
         <h3>Satyanarayan Prasad Availability</h3>
         <p>Confirm availability / requirement for Satyanarayan Prasad.</p>
-        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/KC1wqmx4xjHbMRtz7">Open Form</button>
+        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/KC1wqmx4xjHbMRtz7" disabled aria-disabled="true" title="Registration currently disabled">Open Form</button>
       </article>
 
       <article class="form-card">
@@ -306,7 +345,17 @@
         <div class="form-tag">FUN FAIR</div>
         <h3>Fun Fair Stall Entry</h3>
         <p>Submit your Fun Fair stall event entry through the dedicated form.</p>
-        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/2YapGuBbkc962JuZ6">Open Form</button>
+        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/2YapGuBbkc962JuZ6" disabled aria-disabled="true" title="Registration currently disabled">Open Form</button>
+      </article>
+
+      <!-- Kurta registration: opens inside modal dialog on the same page -->
+      <article class="form-card">
+        <div class="form-icon">👕</div>
+        <div class="form-tag">KURTA</div>
+        <h3>Kurta / Traditional Wear Registration</h3>
+        <p>Register for kurta orders / collection. This form opens in a dialog on the same page.</p>
+        <!-- Replace the URL below with the actual Google Form link for Kurta -->
+        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/YOUR-KURTA-FORM">Open Kurta Form</button>
       </article>
     </div>
   </section>
@@ -437,11 +486,44 @@
       <p class="mantra">गणपती बाप्पा मोरया! 🙏</p>
     </div>
   </section>
+
+  <section id="contact" class="contact-section section">
+    <div class="section-heading">
+      <span>GET IN TOUCH</span>
+      <h2>Contact & Coordinators</h2>
+      <p>If you have questions or need help with registrations, please reach out to the coordinators below. For website issues, contact the site maintainer.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <h3>Priyank Sharma</h3>
+        <a href="tel:+917621940889">76219 40889</a>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-role">Co-ordinator</div>
+        <h3>Deepak Karade</h3>
+        <a href="tel:+919049986381">90499 86381</a>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-role">Website / Query</div>
+        <h3>Paresh Kale</h3>
+        <a href="tel:+918149525915">81495 25915</a>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <strong>🪔 Sai Vista Ganesh Festival 2026</strong>
-  <span>© 2026 Sai Vista Cultural Committee</span>
+  <div class="footer-left">
+    <strong>🪔 Sai Vista Ganesh Festival 2026</strong>
+    <span>© 2026 Sai Vista Cultural Committee</span>
+  </div>
+  <div class="footer-right">
+    <a href="#contact">Contact Us</a>
+  </div>
 </footer>
 
 <!-- Generic Google Form modal -->
