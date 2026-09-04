@@ -538,6 +538,19 @@
         </div>
     </footer>
 
+<!-- Photo screensaver (hidden by default). Configure by setting data-api-key and data-album-id on the element below.
+     By default this section remains hidden until you provide Google Photos configuration or enable the sample mode.
+     For testing set data-use-sample="true" and the screensaver will load sample images from assets/photos-sample.json.
+-->
+<section id="photoScreensaver" class="photo-screensaver hidden" data-api-key="" data-album-id="" data-use-sample="false">
+  <div class="screensaver-inner">
+    <div class="screensaver-stage">
+      <img class="screensaver-img" alt="Festival photo" src="" />
+    </div>
+    <div class="screensaver-caption hidden" aria-hidden="true"></div>
+  </div>
+</section>
+
     <!-- Generic Google Form modal -->
     <div id="formModal" class="modal hidden" aria-hidden="true">
         <div class="modal-box">

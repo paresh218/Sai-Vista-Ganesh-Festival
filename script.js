@@ -540,3 +540,82 @@ function renderPaymentDashboard(dashboard, payments) {
 }
 
 document.addEventListener("DOMContentLoaded", initPaymentDashboard);
+
+// Photo screensaver initialization (disabled by default)
+function initPhotoScreensaver() {
+  const section = document.getElementById('photoScreensaver');
+  if (!section) return;
+  const apiKey = section.getAttribute('data-api-key') || '';
+  const albumId = section.getAttribute('data-album-id') || '';
+  const useSample = section.getAttribute('data-use-sample') === 'true';
+  // Keep hidden unless configured or sample mode enabled
+  if (!useSample && (!apiKey || !albumId)) return;
+
+  // Unhide section
+  section.classList.remove('hidden');
+  const imgEl = section.querySelector('.screensaver-img');
+  const caption = section.querySelector('.screensaver-caption');
+  let images = [];
+  let idx = 0;
+  let timerId = null;
+
+  async function loadSample() {
+    try {
+      const resp = await fetch('assets/photos-sample.json', { cache: 'no-store' });
+      if (!resp.ok) throw new Error('sample not found');
+      images = await resp.json();
+    } catch (e) {
+      images = [];
+    }
+  }
+
+  // NOTE: Google Photos API requires OAuth and is not usable with only an API key.
+  // A production integration typically uses a server-side proxy or OAuth client flow
+  // to obtain an access token and then calls mediaItems.search or album endpoints.
+  // This function is a placeholder showing where to implement that logic later.
+  async function loadFromGooglePhotos() {
+    // Placeholder - return empty for now.
+    return [];
+  }
+
+  async function start() {
+    if (useSample) await loadSample(); else images = await loadFromGooglePhotos();
+    if (!images || !images.length) {
+      // no images — keep section hidden
+      section.classList.add('hidden');
+      return;
+    }
+    // pre-load first image
+    idx = 0;
+    showImage(idx);
+    timerId = setInterval(() => {
+      idx = (idx + 1) % images.length;
+      showImage(idx);
+    }, 4500);
+  }
+
+  function showImage(i) {
+    const url = images[i];
+    const next = new Image();
+    next.onload = () => {
+      imgEl.classList.remove('visible');
+      // small delay to allow fade
+      setTimeout(() => {
+        imgEl.src = url;
+        imgEl.alt = `Festival photo ${i + 1}`;
+        caption.textContent = '';
+        imgEl.classList.add('visible');
+      }, 120);
+    };
+    next.onerror = () => { /* ignore and move on next tick */ };
+    next.src = url;
+  }
+
+  // pause on hover/touch
+  section.addEventListener('mouseenter', () => { if (timerId) clearInterval(timerId); });
+  section.addEventListener('mouseleave', () => { if (!timerId) timerId = setInterval(() => { idx = (idx + 1) % images.length; showImage(idx); }, 4500); });
+
+  start().catch(() => { section.classList.add('hidden'); });
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPhotoScreensaver); else initPhotoScreensaver();
