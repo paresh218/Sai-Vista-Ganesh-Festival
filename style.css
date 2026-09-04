@@ -65,7 +65,7 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 /* Registration notice styles */
 .notice-bar{background:linear-gradient(90deg,#fffaf0,#fff3e8);border-top:1px solid #f0d8c6;border-bottom:1px solid #f0d0b0;padding:8px 12px;text-align:center}
 .notice-inner{max-width:1120px;margin:0 auto}
-.notice-message{display:inline-block;font-weight:700;color:#7d281b;font-size:14px;opacity:0;transition:opacity .45s ease,transform .45s ease}
+.notice-message{display:inline-block;font-weight:700;color:#7d281b;font-size:14px;opacity:0;transform:translateY(6px);transition:opacity .45s ease,transform .45s ease}
 .notice-message.fade{opacity:1;transform:translateY(0)}
 @media(max-width:520px){.notice-message{font-size:13px}}
 

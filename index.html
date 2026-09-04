@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Ganesh Festival 2026 — events, registration, Aarti nomination and transparent festival accounts.">
   <meta name="theme-color" content="#7d281b">
-  <link rel="icon" href="assets/sai-vista-logo.png" />
+  <link rel="icon" href="assets/sai-vista-logo.jpg" />
   <title>Sai Vista Ganesh Festival 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,15 @@
 
 <header class="navbar">
   <a class="brand" href="#home">
-    <img src="assets/sai-vista-logo.png" alt="Sai Vista logo" class="brand-logo" onerror="this.style.display='none';document.getElementById('brandLogoFallback').style.display='inline-block'" />
+    <img id="brandLogoImg" src="assets/sai-vista-logo.jpg" alt="Sai Vista logo" class="brand-logo" />
+    <!-- Inline SVG fallback logo shown when image fails to load -->
+    <svg id="brandSvgLogo" class="brand-svg" viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sai Vista logo" style="display:none">
+      <rect width="100%" height="100%" fill="none" />
+      <g transform="translate(10,20)">
+        <path d="M20 40 L40 60 L80 20" fill="none" stroke="#ff7a00" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+        <text x="110" y="60" font-family="Poppins, Arial, sans-serif" font-weight="700" font-size="56" fill="#0b0b0b">SAI VISTA</text>
+      </g>
+    </svg>
     <span id="brandLogoFallback" class="brand-text" style="display:none">SAI VISTA</span>
     <span>Sai Vista</span>
   </a>

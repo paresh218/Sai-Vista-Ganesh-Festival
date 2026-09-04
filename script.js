@@ -50,6 +50,7 @@ function initDailyNotice() {
 
   // Map of month-day -> message
   const map = {
+    '9-5': '5 Sep — Janmashtami at Sai Vista Ground Floor Lawn (6:00 PM – 10:00 PM IST). Please join us for the celebration!',
     '9-14': '14 Sep — Opening Day: Miravnuk, Lezim and Ganesh Sthapana (3–7 PM).',
     '9-15': '15 Sep — Housie evening for residents.',
     '9-16': '16 Sep — Games and activities. Register for events.',
@@ -150,6 +151,31 @@ if (document.readyState === 'loading') {
 } else {
   initDailyNotice();
 }
+
+// Logo fallback: if image fails to load, show inline SVG or text fallback
+function initLogoFallback() {
+  const img = document.getElementById('brandLogoImg');
+  const svg = document.getElementById('brandSvgLogo');
+  const text = document.getElementById('brandLogoFallback');
+  if (!img) return;
+  function showSvg() {
+    if (svg) svg.style.display = 'inline-block';
+    if (text) text.style.display = 'none';
+    img.style.display = 'none';
+  }
+  function showImg() {
+    img.style.display = 'inline-block';
+    if (svg) svg.style.display = 'none';
+    if (text) text.style.display = 'none';
+  }
+  if (img.complete) {
+    if (img.naturalWidth === 0) showSvg(); else showImg();
+  } else {
+    img.addEventListener('load', showImg);
+    img.addEventListener('error', showSvg);
+  }
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLogoFallback); else initLogoFallback();
   // Ensure menu toggle links close the mobile nav
   const _menuToggle = document.querySelector(".menu-toggle");
   const _siteNav = document.getElementById("siteNav");
