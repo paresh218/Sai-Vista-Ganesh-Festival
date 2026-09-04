@@ -16,7 +16,8 @@
 
 <header class="navbar">
   <a class="brand" href="#home">
-    <img src="assets/sai-vista-logo.png" alt="Sai Vista logo" class="brand-logo" />
+    <img src="assets/sai-vista-logo.png" alt="Sai Vista logo" class="brand-logo" onerror="this.style.display='none';document.getElementById('brandLogoFallback').style.display='inline-block'" />
+    <span id="brandLogoFallback" class="brand-text" style="display:none">SAI VISTA</span>
     <span>Sai Vista</span>
   </a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">

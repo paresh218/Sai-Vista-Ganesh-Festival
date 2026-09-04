@@ -21,19 +21,24 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
   let idx = 0;
   function show() {
+    // fade out
     el.classList.remove('fade');
-    // force reflow to restart transition
-    void el.offsetWidth;
-    el.textContent = messages[idx];
-    el.classList.add('fade');
-    idx = (idx + 1) % messages.length;
+    // after fade-out, change text and fade in
+    setTimeout(() => {
+      el.textContent = messages[idx];
+      el.classList.add('fade');
+      idx = (idx + 1) % messages.length;
+    }, 220);
   }
-  show();
+  // initial display
+  el.textContent = messages[0];
+  setTimeout(() => el.classList.add('fade'), 50);
+  idx = 1;
   setInterval(show, 4000);
 });
 
 // Daily important notice (day-specific event)
-document.addEventListener('DOMContentLoaded', () => {
+function initDailyNotice() {
   const dateEl = document.getElementById('dailyDate');
   const msgEl = document.getElementById('dailyMessage');
   if (!dateEl || !msgEl) return;
@@ -107,8 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const parsed = parseTimeFromText(text);
   if (parsed) {
-    // create a Date in local timezone for today with parsed hh:mm
-    const target = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parsed.hh, parsed.mm, 0);
+    // create a Date for the event time interpreted in IST (UTC+5:30)
+    // We compute the UTC instant that corresponds to the given IST time, then
+    // create a Date from that timestamp so the countdown is correct for all visitors.
+    const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000; // 5h30m in ms
+    const year = today.getFullYear();
+    const monthIndex = today.getMonth(); // 0-based
+    const dayOfMonth = today.getDate();
+    // Date.UTC(year, monthIndex, day, hh, mm) is the UTC epoch for that UTC time;
+    // subtract IST offset to get the UTC epoch that corresponds to hh:mm IST.
+    const targetUtcMs = Date.UTC(year, monthIndex, dayOfMonth, parsed.hh, parsed.mm) - IST_OFFSET_MS;
+    const target = new Date(targetUtcMs);
     const countdownEl = document.getElementById(countdownElId);
     function updateCountdown() {
       const now = new Date();
@@ -124,16 +138,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateCountdown();
     setInterval(updateCountdown, 1000);
-    } else {
+  } else {
     // No parsable time — remove countdown wrapper element
     const wrapper = document.getElementById(countdownWrapperId);
     if (wrapper) wrapper.remove();
   }
-});
-  siteNav?.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
-    siteNav.classList.remove("open");
-    menuToggle?.setAttribute("aria-expanded", "false");
-    menuToggle?.setAttribute("aria-label", "Open menu");
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDailyNotice);
+} else {
+  initDailyNotice();
+}
+  // Ensure menu toggle links close the mobile nav
+  const _menuToggle = document.querySelector(".menu-toggle");
+  const _siteNav = document.getElementById("siteNav");
+  _siteNav?.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+    _siteNav.classList.remove("open");
+    _menuToggle?.setAttribute("aria-expanded", "false");
+    _menuToggle?.setAttribute("aria-label", "Open menu");
   }));
 
   const festivalStart = new Date("2026-09-14T09:00:00+05:30");
@@ -202,41 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Splash logo modal shown once per session (use assets/sai-vista-logo.png)
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    const splashShown = sessionStorage.getItem("saiVistaSplashShown");
-    if (splashShown) return;
-    const splash = document.createElement("div");
-    splash.id = "splashModal";
-    splash.className = "modal";
-    splash.innerHTML = `
-      <div class="modal-box" style="max-width:520px;text-align:center;">
-        <div style="padding:28px;">
-          <img src="assets/sai-vista-logo.png" alt="Sai Vista" style="max-width:100%;height:auto;margin-bottom:16px;" />
-          <p style="color:#6b4f43">Welcome to Sai Vista Ganesh Festival 2026</p>
-          <button id="closeSplash" class="btn btn-dark" style="margin-top:12px">Open site</button>
-        </div>
-      </div>`;
-    document.body.appendChild(splash);
-    document.body.style.overflow = "hidden";
-    document.getElementById("closeSplash").addEventListener("click", () => {
-      splash.remove();
-      document.body.style.overflow = "";
-      sessionStorage.setItem("saiVistaSplashShown", "1");
-    });
-    // auto-close after 3 seconds
-    setTimeout(() => {
-      if (document.getElementById("splashModal")) {
-        document.getElementById("splashModal").remove();
-        document.body.style.overflow = "";
-        sessionStorage.setItem("saiVistaSplashShown", "1");
-      }
-    }, 3000);
-  } catch (e) {
-    // ignore
-  }
-});
+// (splash modal removed – no initial popup on page load)
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK78libRqIDFcEY2j0TCTpQkmyphHPbnadD6_2BfdGk-_Sixo9Au-ieZw2HyfrxFOO/exec";
 const AARTI_MAX_CAPACITY = 10;
