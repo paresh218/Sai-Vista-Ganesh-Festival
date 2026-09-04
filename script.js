@@ -10,32 +10,41 @@ document.addEventListener("DOMContentLoaded", () => {
     siteNav.classList.toggle("open", !expanded);
   });
 
-// Rotating registration notice messages
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById('noticeMessage');
-  if (!el) return;
-  const messages = [
-    'Event registrations will start soon — stay connected for updates!',
-    'Kurta registration is open now — find it under Registration.',
-    'Follow Sai Vista announcements for the latest schedule and forms.'
-  ];
-  let idx = 0;
-  function show() {
-    // fade out
-    el.classList.remove('fade');
-    // after fade-out, change text and fade in
-    setTimeout(() => {
-      el.textContent = messages[idx];
-      el.classList.add('fade');
-      idx = (idx + 1) % messages.length;
-    }, 220);
-  }
-  // initial display
-  el.textContent = messages[0];
-  setTimeout(() => el.classList.add('fade'), 50);
-  idx = 1;
-  setInterval(show, 4000);
-});
+    // Rotating registration notice messages
+    document.addEventListener("DOMContentLoaded", () => {
+        const el = document.getElementById("noticeMessage");
+        if (!el) return;
+
+        const messages = [
+            "Event registrations will start soon — stay connected for updates!",
+            "Kurta registration is open now — find it under Registration.",
+            "Follow Sai Vista announcements for the latest schedule and forms."
+        ];
+
+        let idx = 0;
+
+        function showMessage() {
+            // Fade out
+            el.classList.remove("fade");
+
+            setTimeout(() => {
+                // Change message
+                el.textContent = messages[idx];
+
+                // Fade in
+                el.classList.add("fade");
+
+                // Move to next message
+                idx = (idx + 1) % messages.length;
+            }, 250);
+        }
+
+        // Show first message immediately
+        showMessage();
+
+        // Rotate every 4 seconds
+        setInterval(showMessage, 4000);
+    });
 
 // Daily important notice (day-specific event)
 function initDailyNotice() {
@@ -158,6 +167,7 @@ function initLogoFallback() {
   const svg = document.getElementById('brandSvgLogo');
   const text = document.getElementById('brandLogoFallback');
   if (!img) return;
+
   function showSvg() {
     if (svg) svg.style.display = 'inline-block';
     if (text) text.style.display = 'none';
@@ -168,11 +178,57 @@ function initLogoFallback() {
     if (svg) svg.style.display = 'none';
     if (text) text.style.display = 'none';
   }
-  if (img.complete) {
-    if (img.naturalWidth === 0) showSvg(); else showImg();
+
+  // Try current src first; if it loads, done. Otherwise try a few common candidate filenames.
+  const candidates = [
+    img.getAttribute('src'),
+    'assets/sai-vista-logo.png',
+    'assets/sai-vista-logo.jpg',
+    'assets/sai-vista-logo.jpeg',
+    'assets/sai-vista-logo.svg',
+    'assets/logo.png',
+    'assets/logo.svg'
+  ].filter(Boolean);
+
+  let tried = 0;
+  function tryNext() {
+    if (tried >= candidates.length) {
+      showSvg();
+      return;
+    }
+    const url = candidates[tried++];
+    const tester = new Image();
+    tester.onload = () => {
+      // success: set img.src and show
+      img.src = url;
+      showImg();
+    };
+    tester.onerror = () => {
+      // try next candidate
+      tryNext();
+    };
+    // Add a small timeout to avoid indefinite waits on file:// in some browsers
+    const loadTimeout = setTimeout(() => {
+      tester.onerror();
+    }, 2000);
+    tester.onload = () => { clearTimeout(loadTimeout); img.src = url; showImg(); };
+    tester.onerror = () => { clearTimeout(loadTimeout); tryNext(); };
+    // start loading
+    try { tester.src = url; } catch (e) { tryNext(); }
+  }
+
+  // If the initial image is already loaded, prefer it
+  if (img.complete && img.naturalWidth > 0) {
+    showImg();
   } else {
-    img.addEventListener('load', showImg);
-    img.addEventListener('error', showSvg);
+    // listen for initial load/error, but fall back to trying candidates
+    let handled = false;
+    function onLoad() { if (handled) return; handled = true; showImg(); }
+    function onError() { if (handled) return; handled = true; tryNext(); }
+    img.addEventListener('load', onLoad, { once: true });
+    img.addEventListener('error', onError, { once: true });
+    // Also start trying candidates after a short delay in case load doesn't fire on file://
+    setTimeout(() => { if (!handled) tryNext(); }, 800);
   }
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLogoFallback); else initLogoFallback();

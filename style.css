@@ -62,12 +62,6 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 .brand-text{font-weight:800;color:#42261b;font-size:18px;display:inline-block;margin-left:8px}
 /* Slightly smaller logo on very small screens */
 @media(max-width:520px){.brand-logo{height:34px;margin-right:8px}}
-/* Registration notice styles */
-.notice-bar{background:linear-gradient(90deg,#fffaf0,#fff3e8);border-top:1px solid #f0d8c6;border-bottom:1px solid #f0d0b0;padding:8px 12px;text-align:center}
-.notice-inner{max-width:1120px;margin:0 auto}
-.notice-message{display:inline-block;font-weight:700;color:#7d281b;font-size:14px;opacity:0;transform:translateY(6px);transition:opacity .45s ease,transform .45s ease}
-.notice-message.fade{opacity:1;transform:translateY(0)}
-@media(max-width:520px){.notice-message{font-size:13px}}
 
 /* Contact section */
 .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1120px;margin:18px auto}
@@ -96,3 +90,22 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 .daily-event-text{font-weight:700}
 .daily-countdown-label{display:inline-block;margin-right:8px;color:#7d281b;font-weight:700}
 .daily-countdown-wrapper{vertical-align:middle}
+.notice-bar {
+    background: #fff7ea;
+    border-bottom: 1px solid #ead5b8;
+    padding: 10px 20px;
+}
+
+/*Notice bar*/
+.notice-inner {max-width: 1120px;margin: 0 auto;text-align: center;}
+.notice-message {display: inline-block;color: #7d281b;font-size: 13px;font-weight: 600;opacity: 0;transform: translateY(4px);transition: opacity 0.25s ease, transform 0.25s ease;}
+.notice-message.fade {opacity: 1;transform: translateY(0);}
+@media (max-width: 600px) {.notice-bar {padding: 9px 14px;}
+.notice-message {font-size: 11px;line-height: 1.5;}}
+
+/* Registration notice styles */
+.notice-bar{background:linear-gradient(90deg,#fffaf0,#fff3e8);border-top:1px solid #f0d8c6;border-bottom:1px solid #f0d0b0;padding:8px 12px;text-align:center}
+.notice-inner{max-width:1120px;margin:0 auto}
+.notice-message{display:inline-block;font-weight:700;color:#7d281b;font-size:14px;opacity:0;transform:translateY(6px);transition:opacity .45s ease,transform .45s ease}
+.notice-message.fade{opacity:1;transform:translateY(0)}
+@media(max-width:520px){.notice-message{font-size:13px}}
