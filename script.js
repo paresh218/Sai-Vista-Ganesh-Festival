@@ -23,7 +23,7 @@ function initDailyNotice() {
 
   // Map of month-day -> message
   const map = {
-    '9-5': '5 Sep — Janmashtami at Sai Vista Ground Floor Lawn (6:00 PM – 10:00 PM IST). Please join us for the celebration!',
+    '9-5': '5 Sep — Janmashtami Celebration at Sai Vista Ground Floor Lawn (6:00 PM – 10:00 PM IST). Please join us for the celebration!',
     '9-14': '14 Sep — Opening Day: Miravnuk, Lezim and Ganesh Sthapana (3–7 PM).',
     '9-15': '15 Sep — Housie evening for residents.',
     '9-16': '16 Sep — Games and activities. Register for events.',
@@ -296,6 +296,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("date").addEventListener("change", () => {
     const date = document.getElementById("date").value;
     const slot = document.getElementById("slot").value;
+    const AARTI_MIN = '2026-09-15';
+    const AARTI_MAX = '2026-09-24';
+    if (date && (date < AARTI_MIN || date > AARTI_MAX)) {
+      document.getElementById("chartContainer").innerHTML = `<p>Please select an Aarti date between ${AARTI_MIN} and ${AARTI_MAX}.</p>`;
+      return;
+    }
     if (!slot) {
       document.getElementById("chartContainer").innerHTML = "<p>Now choose Morning or Evening to check availability.</p>";
       return;
@@ -416,6 +422,13 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
 
   if (!data.name || !data.flatNo || !data.wing || !/^\d{10}$/.test(data.whatsapp) || !data.date || !data.slot) {
     alert("Please fill all required fields correctly and select an Aarti slot.");
+    return;
+  }
+  // Enforce Aarti date range (inclusive)
+  const AARTI_MIN = '2026-09-15';
+  const AARTI_MAX = '2026-09-24';
+  if (data.date && (data.date < AARTI_MIN || data.date > AARTI_MAX)) {
+    alert(`Please select an Aarti date between ${AARTI_MIN} and ${AARTI_MAX}.`);
     return;
   }
 
