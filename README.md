@@ -39,3 +39,7 @@ Added a Ganpati 2026 T-shirt nomination section:
 - Deadline-aware UI that automatically closes after the deadline
 
 The T-shirt UI is currently frontend-only because no Google Form or Apps Script endpoint for T-shirt nominations has been supplied. It is ready for a Google Sheets/Apps Script connection later.
+
+## Live collection dashboard
+
+The Festival Accounts section now reads the public contribution sheet directly and shows payment status by wing, a paid/pending chart, received and pending totals, plus an interactive flat list. Keep the sheet shared as **Anyone with the link — Viewer** for the dashboard to load on GitHub Pages.

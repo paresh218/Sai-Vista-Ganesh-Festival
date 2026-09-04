@@ -273,7 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // (splash modal removed – no initial popup on page load)
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK78libRqIDFcEY2j0TCTpQkmyphHPbnadD6_2BfdGk-_Sixo9Au-ieZw2HyfrxFOO/exec";
+const AARTI_GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK78libRqIDFcEY2j0TCTpQkmyphHPbnadD6_2BfdGk-_Sixo9Au-ieZw2HyfrxFOO/exec";
+const PAYMENT_DASHBOARD_URL = "https://script.google.com/macros/s/AKfycbyYbNoSxhBIT2sSVfMSFY06YXAWGN99E_HunGAA2UMLA8vlJMn-_qdGCiQ1a8s6PsW3/exec";
 const AARTI_MAX_CAPACITY = 10;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -360,9 +361,11 @@ window.selectSlot = async function(slotType) {
 };
 
 async function fetchSlotData() {
-  const response = await fetch(GOOGLE_SCRIPT_URL + "?action=slots", { cache: "no-store" });
+  const response = await fetch(AARTI_GOOGLE_SCRIPT_URL + "?action=slots", { cache: "no-store" });
   if (!response.ok) throw new Error("Availability request failed.");
-  return response.json();
+  const payload = await response.json();
+  if (payload.status && payload.status !== "success") throw new Error(payload.message || "Availability request failed.");
+  return payload.slots || payload;
 }
 
 async function updateChart(date, slot) {
@@ -421,11 +424,14 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
   text.textContent = "Submitting...";
 
   try {
-    await fetch(GOOGLE_SCRIPT_URL, {
+    const response = await fetch(AARTI_GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams(data).toString()
     });
+    if (!response.ok) throw new Error("Nomination request failed.");
+    const result = await response.json();
+    if (result.status !== "success") throw new Error(result.message || "The selected slot is no longer available.");
 
     const slotLabel = data.slot === "morning" ? "Morning (8 AM)" : "Evening (7:30 PM)";
     const waText = `Hi Admin, I just registered for Ganesh Aarti on ${data.date} (${data.slot}). My details: ${data.name}, ${data.flatNo} ${data.wing}`;
@@ -438,7 +444,7 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
     document.getElementById("successMessage").classList.remove("hidden");
   } catch (err) {
     console.error(err);
-    alert("There was a problem submitting the nomination. Please try again.");
+    alert(err.message || "There was a problem submitting the nomination. Please try again.");
     submitButton.disabled = false;
   } finally {
     spinner.classList.add("hidden");
@@ -451,3 +457,73 @@ function escapeHtml(value) {
     .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
     .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
+
+function parsePaymentCsv(text) {
+  const rows = [], row = []; let value = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i], next = text[i + 1];
+    if (char === '"' && quoted && next === '"') { value += '"'; i++; }
+    else if (char === '"') quoted = !quoted;
+    else if (char === ',' && !quoted) { row.push(value.trim()); value = ""; }
+    else if ((char === "\n" || char === "\r") && !quoted) { if (char === "\r" && next === "\n") i++; row.push(value.trim()); if (row.some(Boolean)) rows.push(row.splice(0)); value = ""; }
+    else value += char;
+  }
+  if (value || row.length) { row.push(value.trim()); rows.push(row); }
+  const headers = rows.shift().map(header => header.toLowerCase().replace(/[^a-z]/g, ""));
+  return rows.map(record => Object.fromEntries(headers.map((header, i) => [header, record[i] || ""])));
+}
+
+function paymentRupees(value) {
+  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+}
+
+async function initPaymentDashboard() {
+  const dashboard = document.getElementById("paymentDashboard");
+  if (!dashboard) return;
+  try {
+    // The Apps Script proxy keeps the Google Sheet URL and ID off the public website.
+    const response = await fetch(PAYMENT_DASHBOARD_URL + "?action=payments", { cache: "no-store" });
+    if (!response.ok) throw new Error("Could not load payment data");
+    const payload = await response.json();
+    if (payload.status !== "success" || !Array.isArray(payload.payments)) throw new Error(payload.message || "Payment data is unavailable");
+    const payments = payload.payments.map(row => ({
+      wing: String(row.wing || "").trim().toUpperCase(), flat: String(row.flat || "").trim(),
+      paid: String(row.paid || "").trim().toLowerCase() === "yes",
+      amount: Number(String(row.amount || "").replace(/[^0-9.-]/g, "")) || 0
+    })).filter(row => row.wing && row.flat);
+    if (!payments.length) throw new Error("No usable payment rows");
+    renderPaymentDashboard(dashboard, payments);
+  } catch (error) {
+    dashboard.innerHTML = '<p class="dashboard-error">Collection data could not be loaded right now. Please refresh in a moment.</p>';
+    console.error("Payment dashboard:", error);
+  }
+}
+
+
+function renderPaymentDashboard(dashboard, payments) {
+  const wings = [...new Set(payments.map(row => row.wing))].sort();
+  let selectedWing = "All", statusFilter = "all", sortBy = "flat";
+  const render = () => {
+    const visible = payments.filter(row => (selectedWing === "All" || row.wing === selectedWing) && (statusFilter === "all" || String(row.paid) === statusFilter));
+    const paid = payments.filter(row => row.paid), unpaid = payments.filter(row => !row.paid);
+    const received = paid.reduce((sum, row) => sum + row.amount, 0), pending = unpaid.reduce((sum, row) => sum + row.amount, 0);
+    const rows = [...visible].sort((a, b) => sortBy === "amount" ? b.amount - a.amount : sortBy === "status" ? Number(b.paid) - Number(a.paid) : a.flat.localeCompare(b.flat, undefined, { numeric: true }));
+    const paidPercent = payments.length ? paid.length / payments.length * 100 : 0;
+    const wingBars = wings.map(wing => {
+      const wingRows = payments.filter(row => row.wing === wing), wingPaid = wingRows.filter(row => row.paid).length, percent = wingRows.length ? wingPaid / wingRows.length * 100 : 0;
+      return `<div class="wing-row ${selectedWing === wing ? "active" : ""}"><button type="button" data-wing="${wing}">Wing ${wing}</button><div class="wing-bar" data-wing="${wing}" role="button" tabindex="0" aria-label="Show Wing ${wing} flats"><span class="wing-paid" style="width:${percent}%"></span><span class="wing-unpaid" style="width:${100 - percent}%"></span></div><span class="wing-count">${wingPaid} paid / ${wingRows.length}</span></div>`;
+    }).join("");
+    dashboard.innerHTML = `<div class="collection-summary"><article><small>Total flats</small><strong>${payments.length}</strong></article><article class="received"><small>Amount received</small><strong>${paymentRupees(received)}</strong></article><article class="pending"><small>Amount pending</small><strong>${paymentRupees(pending)}</strong></article><article><small>Collection rate</small><strong>${paidPercent.toFixed(1)}%</strong></article></div><div class="payment-viz"><article class="payment-card"><h3>Payments by Wing</h3><p>Green is paid; orange is pending. Click a wing to drill down.</p><div class="wing-chart">${wingBars}</div></article><article class="payment-card"><h3>Overall payment status</h3><p>Only “Yes” payments count toward money received.</p><div class="donut-layout"><div class="donut" style="--paid:${paidPercent}%"><div class="donut-label"><strong>${paid.length}</strong>paid</div></div><div class="legend"><span><i class="yes"></i>Paid: ${paid.length}</span><span><i class="no"></i>Pending: ${unpaid.length}</span></div></div></article></div><article class="payment-card"><div class="payment-toolbar"><h3>${selectedWing === "All" ? "All flats" : `Wing ${selectedWing} flats`} <small>(${visible.length})</small></h3><div class="payment-controls"><button type="button" id="showAllWings">All wings</button><select id="paymentStatus" aria-label="Filter payment status"><option value="all">All statuses</option><option value="true">Paid only</option><option value="false">Pending only</option></select><select id="paymentSort" aria-label="Sort flats"><option value="flat">Sort: Flat number</option><option value="status">Sort: Payment status</option><option value="amount">Sort: Amount</option></select></div></div><div class="payment-table-wrap">${rows.length ? `<table class="payment-table"><thead><tr><th>Wing</th><th>Flat</th><th>Status</th><th>Amount</th></tr></thead><tbody>${rows.map(row => `<tr><td>${escapeHtml(row.wing)}</td><td>${escapeHtml(row.flat)}</td><td><span class="status-pill ${row.paid ? "status-yes" : "status-no"}">${row.paid ? "Paid" : "Not paid"}</span></td><td>${paymentRupees(row.amount)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty-state">No flats match this filter.</p>'}</div><p class="dashboard-note">Source: live Sai Vista contribution sheet · refreshed when the page loads</p></article>`;
+    dashboard.querySelectorAll("[data-wing]").forEach(element => {
+      const chooseWing = () => { selectedWing = element.dataset.wing; render(); };
+      element.addEventListener("click", chooseWing);
+      element.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); chooseWing(); } });
+    });
+    dashboard.querySelector("#showAllWings").addEventListener("click", () => { selectedWing = "All"; render(); });
+    const status = dashboard.querySelector("#paymentStatus"); status.value = statusFilter; status.addEventListener("change", event => { statusFilter = event.target.value; render(); });
+    const sort = dashboard.querySelector("#paymentSort"); sort.value = sortBy; sort.addEventListener("change", event => { sortBy = event.target.value; render(); });
+  };
+  render();
+}
+
+document.addEventListener("DOMContentLoaded", initPaymentDashboard);
