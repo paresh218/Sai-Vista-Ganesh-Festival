@@ -10,42 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     siteNav.classList.toggle("open", !expanded);
   });
 
-    // Rotating registration notice messages
-    document.addEventListener("DOMContentLoaded", () => {
-        const el = document.getElementById("noticeMessage");
-        if (!el) return;
-
-        const messages = [
-            "Event registrations will start soon — stay connected for updates!",
-            "Kurta registration is open now — find it under Registration.",
-            "Follow Sai Vista announcements for the latest schedule and forms."
-        ];
-
-        let idx = 0;
-
-        function showMessage() {
-            // Fade out
-            el.classList.remove("fade");
-
-            setTimeout(() => {
-                // Change message
-                el.textContent = messages[idx];
-
-                // Fade in
-                el.classList.add("fade");
-
-                // Move to next message
-                idx = (idx + 1) % messages.length;
-            }, 250);
-        }
-
-        // Show first message immediately
-        showMessage();
-
-        // Rotate every 4 seconds
-        setInterval(showMessage, 4000);
-    });
-
 // Daily important notice (day-specific event)
 function initDailyNotice() {
   const dateEl = document.getElementById('dailyDate');
