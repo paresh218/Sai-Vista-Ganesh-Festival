@@ -660,24 +660,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // PWA installation is available only from a secure hosted site (HTTPS or localhost).
 let deferredInstallPrompt;
 document.addEventListener("DOMContentLoaded", () => {
-  const installButton = document.getElementById("installAppButton");
-  if (!installButton) return;
+  const installButtons = [...document.querySelectorAll(".install-app-trigger")];
+  if (!installButtons.length) return;
+  const setInstallButtonVisibility = (visible) => installButtons.forEach((button) => button.classList.toggle("hidden", !visible));
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    installButton.classList.remove("hidden");
+    setInstallButtonVisibility(true);
   });
 
-  installButton.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) return;
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = undefined;
-    installButton.classList.add("hidden");
-  });
+  installButtons.forEach((installButton) => installButton.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = undefined;
+      setInstallButtonVisibility(false);
+    }));
 
-  window.addEventListener("appinstalled", () => installButton.classList.add("hidden"));
+  window.addEventListener("appinstalled", () => setInstallButtonVisibility(false));
 
   if ("serviceWorker" in navigator && (window.isSecureContext || location.hostname === "localhost")) {
     navigator.serviceWorker.register("service-worker.js").catch((error) => console.warn("PWA setup could not start:", error));
