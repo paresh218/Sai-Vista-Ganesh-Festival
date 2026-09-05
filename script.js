@@ -540,3 +540,119 @@ function renderPaymentDashboard(dashboard, payments) {
 }
 
 document.addEventListener("DOMContentLoaded", initPaymentDashboard);
+
+// Client-side notification centre. Read status is kept per browser so the badge
+// remains until a resident opens an update or chooses to mark it as read.
+document.addEventListener("DOMContentLoaded", () => {
+  const bell = document.getElementById("notificationBell");
+  const panel = document.getElementById("notificationPanel");
+  const count = document.getElementById("notificationCount");
+  const list = document.getElementById("notificationList");
+  const markAll = document.getElementById("markAllNotificationsRead");
+  const enableAlerts = document.getElementById("enableBrowserNotifications");
+  const alertStatus = document.getElementById("browserNotificationStatus");
+  if (!bell || !panel || !count || !list || !markAll || !enableAlerts || !alertStatus) return;
+
+  const storageKey = "saiVistaReadNotifications";
+  const notifications = [
+    {
+      id: "aarti-nominations-2026",
+      title: "Aarti nominations are open",
+      body: "Choose your preferred morning or evening Aarti slot for 15–24 September.",
+      href: "#aarti",
+      action: "View Aarti slots"
+    },
+    {
+      id: "aarti-registration-reminder-2026",
+      title: "Plan your Aarti in advance",
+      body: "Slots have limited capacity. Submit your nomination early to reserve your preference.",
+      href: "#aarti",
+      action: "Nominate for Aarti"
+    }
+  ];
+
+  const getReadIds = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      return new Set(Array.isArray(saved) ? saved : []);
+    } catch (_) {
+      return new Set();
+    }
+  };
+  const saveReadIds = (readIds) => localStorage.setItem(storageKey, JSON.stringify([...readIds]));
+
+  const renderNotifications = () => {
+    const readIds = getReadIds();
+    const unread = notifications.filter((notification) => !readIds.has(notification.id));
+    count.hidden = unread.length === 0;
+    count.textContent = String(unread.length);
+    bell.setAttribute("aria-label", unread.length ? `Open notifications, ${unread.length} unread` : "Open notifications");
+    list.innerHTML = notifications.map((notification) => {
+      const isUnread = !readIds.has(notification.id);
+      return `<article class="notification-item ${isUnread ? "unread" : ""}">
+        <i class="notification-dot" aria-hidden="true"></i>
+        <div class="notification-copy">
+          <h3>${notification.title}</h3>
+          <p>${notification.body}</p>
+          <a href="${notification.href}" data-notification-id="${notification.id}">${notification.action} →</a>
+        </div>
+      </article>`;
+    }).join("");
+    list.querySelectorAll("[data-notification-id]").forEach((link) => {
+      link.addEventListener("click", () => {
+        const latestReadIds = getReadIds();
+        latestReadIds.add(link.dataset.notificationId);
+        saveReadIds(latestReadIds);
+        renderNotifications();
+        panel.classList.add("hidden");
+        bell.setAttribute("aria-expanded", "false");
+      });
+    });
+  };
+
+  const updateBrowserAlertStatus = () => {
+    if (!("Notification" in window)) {
+      enableAlerts.hidden = true;
+      alertStatus.textContent = "Browser alerts are not supported on this device.";
+      return;
+    }
+    if (Notification.permission === "granted") {
+      enableAlerts.hidden = true;
+      alertStatus.textContent = "Browser alerts are enabled while this page is open.";
+    } else if (Notification.permission === "denied") {
+      enableAlerts.hidden = true;
+      alertStatus.textContent = "Browser alerts are blocked in your browser settings.";
+    }
+  };
+
+  bell.addEventListener("click", () => {
+    const opening = panel.classList.contains("hidden");
+    panel.classList.toggle("hidden", !opening);
+    bell.setAttribute("aria-expanded", String(opening));
+  });
+  markAll.addEventListener("click", () => {
+    saveReadIds(new Set(notifications.map((notification) => notification.id)));
+    renderNotifications();
+  });
+  enableAlerts.addEventListener("click", async () => {
+    if (!("Notification" in window)) return;
+    const permission = await Notification.requestPermission();
+    updateBrowserAlertStatus();
+    if (permission === "granted") new Notification("Sai Vista Aarti updates", { body: "Aarti notifications are enabled while this page is open." });
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      panel.classList.add("hidden");
+      bell.setAttribute("aria-expanded", "false");
+    }
+  });
+  document.addEventListener("click", (event) => {
+    if (!panel.classList.contains("hidden") && !panel.contains(event.target) && !bell.contains(event.target)) {
+      panel.classList.add("hidden");
+      bell.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  renderNotifications();
+  updateBrowserAlertStatus();
+});

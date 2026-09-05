@@ -38,8 +38,24 @@
             <a href="#aarti">Aarti</a>
             <a href="#accounts">Accounts</a>
         </nav>
+        <button id="notificationBell" class="notification-bell" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notificationPanel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            <span id="notificationCount" class="notification-count" hidden>0</span>
+        </button>
         <a href="#registration" class="nav-cta">Register</a>
     </header>
+
+    <aside id="notificationPanel" class="notification-panel hidden" aria-label="Festival notifications">
+        <div class="notification-panel-header">
+            <div><span>SAI VISTA</span><h2>Notifications</h2></div>
+            <button id="markAllNotificationsRead" type="button">Mark all read</button>
+        </div>
+        <div id="notificationList" class="notification-list"></div>
+        <div class="notification-panel-footer">
+            <button id="enableBrowserNotifications" type="button">Turn on browser alerts</button>
+            <small id="browserNotificationStatus">Alerts appear while this site is open.</small>
+        </div>
+    </aside>
 
     <!-- Registration notice (rotating messages) -->
     <div id="noticeBar" class="notice-bar" role="note">
