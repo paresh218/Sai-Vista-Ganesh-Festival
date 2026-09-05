@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Ganesh Festival 2026 — events, registration, Aarti nomination and transparent festival accounts.">
   <meta name="theme-color" content="#7d281b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sai Vista Ganpati">
   <link rel="icon" href="assets/sai-vista-logo.png" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/sai-vista-pwa-icon.png">
   <title>Sai Vista Ganesh Festival 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,6 +42,7 @@
             <a href="#registration">Registration</a>
             <a href="#aarti">Aarti</a>
             <a href="#accounts">Accounts</a>
+            <a href="#suggestions">Suggestions</a>
         </nav>
         <button id="notificationBell" class="notification-bell" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notificationPanel">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
@@ -95,6 +101,7 @@
                 <div class="hero-actions">
                     <a href="#schedule" class="btn btn-light">Explore Festival</a>
                     <a href="#registration" class="btn btn-dark">Register for Events</a>
+                    <button id="installAppButton" class="btn btn-outline install-app-button hidden" type="button">Install Festival App</button>
                 </div>
                 <div class="hero-meta">
                     <span>14 September – 25 September 2026</span>
@@ -160,7 +167,7 @@
                             </div>
                             <div>
                                 <span>👕</span>
-                                <strong>S – XXXL</strong>
+                                <strong>S – XL</strong>
                                 <small>Available sizes</small>
                             </div>
                         </div>
@@ -177,7 +184,7 @@
                             <h3>Interested in getting a Kurta?</h3>
                             <p>
                                 Select your interest and size in the official registration form.
-                                Available sizes are S, M, L, XL, XXL and XXXL.
+                                Available sizes are S, M, L and XL.
                             </p>
 
                             <div class="size-list">
@@ -185,8 +192,6 @@
                                 <span>M</span>
                                 <span>L</span>
                                 <span>XL</span>
-                                <span>XXL</span>
-                                <span>XXXL</span>
                             </div>
 
                             <div class="tshirt-note">
@@ -233,6 +238,7 @@
             <a href="#aarti" class="quick-card"><div>🪔</div><strong>Aarti Nomination</strong><small>Choose your slot</small></a>
             <a href="#accounts" class="quick-card"><div>💰</div><strong>Festival Accounts</strong><small>Transparent expenses</small></a>
             <a href="#tshirt" class="quick-card tshirt-quick"><div>👕</div><strong>Ganpati Kurta</strong><small>₹300 • Register by 8 Sep</small></a>
+            <a href="#suggestions" class="quick-card suggestion-quick"><div>💡</div><strong>Share a Suggestion</strong><small>Help us make the festival better</small></a>
             <a href="#contact" class="quick-card contact-quick"><div>☎️</div><strong>Contact Us</strong><small>Coordinators & website</small></a>
         </section>
 
@@ -241,6 +247,10 @@
                 <span>14 SEPTEMBER – 25 SEPTEMBER</span>
                 <h2>Ganpati 2026 Festival Schedule</h2>
                 <p>Event dates and activities are based on the latest schedule shared by the Sai Vista Cultural Committee.</p>
+                <div class="schedule-actions">
+                    <button id="downloadFestivalCalendar" class="btn btn-outline" type="button">Add festival schedule to calendar</button>
+                    <small>Downloads an .ics calendar file. Events are added as all-day reminders.</small>
+                </div>
             </div>
 
             <div class="schedule-toolbar" aria-label="Schedule filters">
@@ -519,11 +529,32 @@
             </div>
         </section>
 
+        <section id="suggestions" class="suggestions-section section">
+            <div class="section-heading">
+                <span>YOUR VOICE MATTERS</span>
+                <h2>Suggestions & Feedback</h2>
+                <p>Have an idea to make the Sai Vista Ganpati festival better? Share it directly with the committee.</p>
+            </div>
+            <div class="suggestion-card">
+                <div class="suggestion-copy">
+                    <div class="suggestion-icon">💡</div>
+                    <h3>Help shape the celebration</h3>
+                    <p>Your message opens in WhatsApp to Priyank so you can review it before sending. Please do not include payment details or other sensitive personal information.</p>
+                </div>
+                <form id="suggestionForm" class="suggestion-form">
+                    <label for="suggestionMessage">Your suggestion</label>
+                    <textarea id="suggestionMessage" rows="5" maxlength="1000" required placeholder="Tell us what you would like to improve…"></textarea>
+                    <button type="submit" class="btn btn-dark">Continue in WhatsApp ↗</button>
+                    <small>Your suggestion is not stored on this website.</small>
+                </form>
+            </div>
+        </section>
+
         <section id="contact" class="contact-section section">
             <div class="section-heading">
                 <span>GET IN TOUCH</span>
                 <h2>Contact & Coordinators</h2>
-                <p>If you have questions or need help with registrations, please reach out to the coordinators below. For website issues, contact the site maintainer.</p>
+                <p>If you have questions or need help with registrations, please reach out to the coordinators below.</p>
             </div>
 
             <div class="contact-grid">
@@ -539,11 +570,6 @@
                     <a href="tel:+919049986381">90499 86381</a>
                 </div>
 
-                <div class="contact-card">
-                    <div class="contact-role">Website / Query</div>
-                    <h3>Paresh Kale</h3>
-                    <a href="tel:+918149525915">81495 25915</a>
-                </div>
             </div>
         </section>
     </main>
@@ -555,6 +581,7 @@
         </div>
         <div class="footer-right">
             <a href="#contact">Contact Us</a>
+            <span>Website managed by Paresh Kale · <a href="tel:+918149525915">81495 25915</a></span>
         </div>
     </footer>
 

@@ -452,7 +452,7 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
     document.getElementById("successDetails").innerHTML = `
       <p><strong>${escapeHtml(data.date)}</strong> — ${slotLabel}</p>
       <p class="success-gap">Your nomination has been successfully registered.</p>
-      <p><a href="https://wa.me/918149525915?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Open WhatsApp to message the admin →</a></p>`;
+      <p><a href="https://wa.me/917621940889text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Open WhatsApp to message the admin →</a></p>`;
     form.classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
   } catch (err) {
@@ -655,4 +655,103 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderNotifications();
   updateBrowserAlertStatus();
+});
+
+// PWA installation is available only from a secure hosted site (HTTPS or localhost).
+let deferredInstallPrompt;
+document.addEventListener("DOMContentLoaded", () => {
+  const installButton = document.getElementById("installAppButton");
+  if (!installButton) return;
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.classList.remove("hidden");
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = undefined;
+    installButton.classList.add("hidden");
+  });
+
+  window.addEventListener("appinstalled", () => installButton.classList.add("hidden"));
+
+  if ("serviceWorker" in navigator && (window.isSecureContext || location.hostname === "localhost")) {
+    navigator.serviceWorker.register("service-worker.js").catch((error) => console.warn("PWA setup could not start:", error));
+  }
+});
+
+// Downloads a portable calendar file without sending resident information anywhere.
+document.addEventListener("DOMContentLoaded", () => {
+  const calendarButton = document.getElementById("downloadFestivalCalendar");
+  if (!calendarButton) return;
+
+  const events = [
+    ["20260914", "Ganesh Sthapana, Miravnuk & Lezim", "Opening-day programme at Sai Vista. Miravnuk and Lezim are planned from 3–7 PM."],
+    ["20260915", "Housie", "Community Housie evening for Sai Vista residents."],
+    ["20260916", "Games & Activities", "Games and activities for residents."],
+    ["20260917", "Games & Community Activities", "Games and community activities for residents."],
+    ["20260918", "Bollywood Night", "Music, dance, performances and entertainment."],
+    ["20260919", "Drawing Competition & Talent Show 1", "Community competition and talent-show session."],
+    ["20260920", "Community Activity Day", "Blood donation, treasure hunt, Thali and Rangoli competition, and Fun N Fun Fair."],
+    ["20260921", "Talent Show 2", "Second talent-show session."],
+    ["20260922", "Fancy Dress", "Fancy Dress event."],
+    ["20260924", "Satyanarayan Puja & Mahaprasad", "Dedicated Puja and Mahaprasad programme."],
+    ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ."]
+  ];
+  const toNextDay = (date) => {
+    const year = Number(date.slice(0, 4)), month = Number(date.slice(4, 6)) - 1, day = Number(date.slice(6, 8));
+    const next = new Date(Date.UTC(year, month, day + 1));
+    return `${next.getUTCFullYear()}${String(next.getUTCMonth() + 1).padStart(2, "0")}${String(next.getUTCDate()).padStart(2, "0")}`;
+  };
+  const escapeIcs = (value) => String(value).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+
+  calendarButton.addEventListener("click", () => {
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Sai Vista//Ganpati Festival 2026//EN",
+      "CALSCALE:GREGORIAN",
+      ...events.flatMap(([date, title, description], index) => [
+        "BEGIN:VEVENT",
+        `UID:sai-vista-ganpati-2026-${index + 1}@saivista`,
+        `DTSTAMP:${stamp}`,
+        `DTSTART;VALUE=DATE:${date}`,
+        `DTEND;VALUE=DATE:${toNextDay(date)}`,
+        `SUMMARY:${escapeIcs(title)}`,
+        `DESCRIPTION:${escapeIcs(description)}`,
+        "LOCATION:Sai Vista, Rahatani",
+        "END:VEVENT"
+      ]),
+      "END:VCALENDAR"
+    ].join("\r\n");
+    const calendarFile = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(calendarFile);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "sai-vista-ganpati-2026.ics";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+});
+
+// Suggestions remain on the visitor's device until they choose to review and send them in WhatsApp.
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("suggestionForm");
+  const message = document.getElementById("suggestionMessage");
+  if (!form || !message) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const suggestion = message.value.trim();
+    if (!suggestion) return;
+    const text = `Hi Sai Vista Cultural Committee, I have a suggestion for Ganpati 2026:\n\n${suggestion}`;
+    window.open(`https://wa.me/917621940889?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+  });
 });
