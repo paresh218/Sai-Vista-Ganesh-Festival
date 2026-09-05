@@ -275,6 +275,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const AARTI_GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK78libRqIDFcEY2j0TCTpQkmyphHPbnadD6_2BfdGk-_Sixo9Au-ieZw2HyfrxFOO/exec";
 const PAYMENT_DASHBOARD_URL = "https://script.google.com/macros/s/AKfycbyYbNoSxhBIT2sSVfMSFY06YXAWGN99E_HunGAA2UMLA8vlJMn-_qdGCiQ1a8s6PsW3/exec";
+// Paste the separately deployed visitor-counter Apps Script /exec URL here.
+// This endpoint stores a single aggregate page-view number, not visitor identities.
+const VISITOR_COUNTER_URL = "https://script.google.com/macros/s/AKfycbzGowm9XvdFIlsTFp7HgQZ0S2gCweAismk5mHcvKtGr8MUtwDr9jmmznsrNmIHltV_6/exec";
 const AARTI_MAX_CAPACITY = 10;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -452,7 +455,7 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
     document.getElementById("successDetails").innerHTML = `
       <p><strong>${escapeHtml(data.date)}</strong> — ${slotLabel}</p>
       <p class="success-gap">Your nomination has been successfully registered.</p>
-      <p><a href="https://wa.me/917621940889text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Open WhatsApp to message the admin →</a></p>`;
+      <p><a href="https://wa.me/917621940889?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Open WhatsApp to message the admin →</a></p>`;
     form.classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
   } catch (err) {
@@ -755,4 +758,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const text = `Hi Sai Vista Cultural Committee, I have a suggestion for Ganpati 2026:\n\n${suggestion}`;
     window.open(`https://wa.me/917621940889?text=${encodeURIComponent(text)}`, "_blank", "noopener");
   });
+});
+
+// Privacy-preserving shared counter: one increment per browser tab session and no personal data.
+document.addEventListener("DOMContentLoaded", async () => {
+  const counter = document.getElementById("siteViewCounter");
+  if (!counter || !VISITOR_COUNTER_URL) return;
+  const separator = VISITOR_COUNTER_URL.includes("?") ? "&" : "?";
+  const url = `${VISITOR_COUNTER_URL}${separator}action=`;
+  try {
+    const countedThisSession = sessionStorage.getItem("saiVistaPageViewCounted") === "true";
+    const response = await fetch(`${url}${countedThisSession ? "count" : "visit"}&_=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error("Counter request failed");
+    const data = await response.json();
+    if (!countedThisSession) sessionStorage.setItem("saiVistaPageViewCounted", "true");
+    const value = Number(data.count);
+    if (!Number.isFinite(value)) throw new Error("Counter response was invalid");
+    counter.textContent = `Page views: ${new Intl.NumberFormat("en-IN").format(value)}`;
+    counter.hidden = false;
+  } catch (error) {
+    console.warn("Visitor counter unavailable:", error);
+  }
 });
