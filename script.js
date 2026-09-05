@@ -8,6 +8,11 @@ const t = (key, values = {}) => {
 const currentLocale = () => window.SaiVistaI18n?.locale || "en-IN";
 const publicContent = () => window.SaiVistaContent || { festivalEvents: {}, updates: [], finance: {} };
 const getFestivalEvent = (date = new Date()) => publicContent().festivalEvents?.[`${date.getMonth() + 1}-${date.getDate()}`] || null;
+const festivalDateKey = (date = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+const showAdultsNotice = (date = new Date()) => {
+  const key = festivalDateKey(date);
+  return key >= "2026-09-06" && key <= "2026-09-13";
+};
 
 // Ganpati T-shirt nomination
 document.addEventListener("DOMContentLoaded", () => {
@@ -125,6 +130,18 @@ function initTodayCard() {
 
   const today = new Date();
   const event = getFestivalEvent(today);
+  const important = showAdultsNotice(today);
+  document.getElementById("todayCardTitle").textContent = t(important ? "Adults’ activity on 23 September?" : "Today at Sai Vista");
+  document.querySelector(".today-modal-box > span").textContent = t(important ? "IMPORTANT MESSAGE" : "HAPPENING TODAY");
+  document.querySelector(".today-modal-icon").textContent = important ? "📣" : "📍";
+  document.getElementById("adultInterestContacts").hidden = !important;
+  action.hidden = important;
+  if (important) {
+    dateEl.textContent = t("No events are scheduled from 6–13 September.");
+    eventEl.textContent = t("Nothing is planned for 23 September yet. We are considering an activity for adults, but no entries were received last year.");
+    metaEl.textContent = t("We will schedule it only if we receive more than 10 entries (at least 11). Interested? Please connect with coordinators Deepak Karade or Priyank Sharma so they can plan accordingly.");
+    return;
+  }
   dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: "long", day: "numeric", month: "long" });
   eventEl.textContent = event ? t(event.message) : t("No special event scheduled for today — check the full schedule.");
   metaEl.textContent = event
@@ -139,9 +156,9 @@ function initTodayPopup() {
   const closeButton = document.getElementById("closeTodayModal");
   const dialog = modal?.querySelector(".today-modal-box");
   const event = getFestivalEvent();
-  if (!modal || !closeButton || !dialog || !event) return;
+  if (!modal || !closeButton || !dialog || (!event && !showAdultsNotice())) return;
 
-  const todayKey = `saiVistaTodayPopup:${new Date().toISOString().slice(0, 10)}`;
+  const todayKey = `saiVistaTodayPopup:${festivalDateKey()}`;
   try {
     if (sessionStorage.getItem(todayKey) === "shown") return;
     sessionStorage.setItem(todayKey, "shown");
@@ -651,6 +668,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const storageKey = "saiVistaReadNotifications";
   const notifications = [
     {
+      id: "parent-supervision-reminder-2026",
+      title: "Parents, please stay with your children",
+      body: "A humble request to all parents and guardians: please accompany your children and supervise them throughout the events. Children may not always follow instructions, and committee members may be unable to give them individual attention while managing activities. Please help them follow safety instructions and remain with them at all times. The committee will not be responsible for any mishap involving unattended children. Thank you for your understanding and cooperation.",
+      href: "#contact",
+      action: "Contact coordinators"
+    },
+    {
       id: "aarti-nominations-2026",
       title: "Aarti nominations are open",
       body: "Choose your preferred morning or evening Aarti slot for 15–24 September.",
@@ -931,4 +955,44 @@ document.addEventListener("DOMContentLoaded", () => {
       help.textContent = t("Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.");
     }
   });
+});
+
+// Show the invitation once per tab session; the launcher stays available.
+document.addEventListener("DOMContentLoaded", () => {
+  const panel = document.getElementById("promotionChat");
+  const launcher = document.getElementById("promotionLauncher");
+  const close = document.getElementById("promotionClose");
+  if (!panel || !launcher || !close) return;
+  let interacted = false;
+  const setOpen = (open, returnFocus = false) => {
+    panel.hidden = !open;
+    launcher.setAttribute("aria-expanded", String(open));
+    if (returnFocus) launcher.focus();
+  };
+  const remember = () => {
+    interacted = true;
+    try { sessionStorage.setItem("saiVistaPromotionSeen", "1"); } catch (_) {}
+  };
+  launcher.addEventListener("click", () => { remember(); setOpen(panel.hidden); });
+  close.addEventListener("click", () => { remember(); setOpen(false, true); });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !panel.hidden) {
+      remember();
+      setOpen(false, panel.contains(document.activeElement));
+    }
+  });
+  let seen = false;
+  try { seen = sessionStorage.getItem("saiVistaPromotionSeen") === "1"; } catch (_) {}
+  if (!seen) {
+    const showWhenReady = () => {
+      if (interacted) return;
+      if (document.hidden || document.querySelector('[aria-modal="true"]:not(.hidden):not([hidden])')) {
+        window.setTimeout(showWhenReady, 2000);
+        return;
+      }
+      remember();
+      setOpen(true);
+    };
+    window.setTimeout(showWhenReady, 4500);
+  }
 });

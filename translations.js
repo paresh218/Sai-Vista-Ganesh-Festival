@@ -1,6 +1,9 @@
 (() => {
   const translations = {
     hi: {
+      "Let’s grow your business together": "आइए, मिलकर आपका व्यवसाय बढ़ाएँ",
+      "Want to display your brand ad or promote something with us? We have more ideas to explore. Connect with Priyank and let’s make it happen!": "अपने ब्रांड का विज्ञापन देना चाहते हैं या हमारे साथ प्रचार करना चाहते हैं? हमारे पास और भी कई विचार हैं। प्रियंक से जुड़ें और मिलकर इन्हें साकार करें!",
+      "Connect with Priyank ↗": "प्रियंक से जुड़ें ↗",
       "Home": "होम", "Schedule": "कार्यक्रम", "Registration": "पंजीकरण", "Aarti": "आरती", "Accounts": "हिसाब", "Suggestions": "सुझाव", "Register": "पंजीकरण करें",
       "Notifications": "सूचनाएँ", "Mark all read": "सभी को पढ़ा हुआ चिह्नित करें", "Turn on browser alerts": "ब्राउज़र अलर्ट चालू करें", "Alerts appear while this site is open.": "यह साइट खुली होने पर अलर्ट दिखाई देंगे।",
       "Kurta registration started!": "कुर्ता पंजीकरण शुरू हो गया है!", "Event Registration will start soon!": "कार्यक्रम पंजीकरण जल्द शुरू होगा!", "Stay tuned for more updates!": "अधिक अपडेट के लिए जुड़े रहें!", "Loading today's event…": "आज का कार्यक्रम लोड हो रहा है…", "View today's schedule": "आज का कार्यक्रम देखें",
@@ -18,6 +21,9 @@
       "No special event scheduled for today — check the full schedule.": "आज कोई विशेष कार्यक्रम निर्धारित नहीं है — पूरा कार्यक्रम देखें।", "Starts in": "शुरू होने में", "Happening now!": "अभी चल रहा है!", "Page views: {count}": "पेज व्यू: {count}", "UPI ID copied. Open any UPI app and paste it to pay ₹300.": "UPI आईडी कॉपी हो गई। ₹300 भुगतान करने के लिए किसी भी UPI ऐप में पेस्ट करें।", "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.": "इस ब्राउज़र में कॉपी उपलब्ध नहीं है। अपने UPI ऐप में karade.deepak1@ibl का उपयोग करें।"
     },
     mr: {
+      "Let’s grow your business together": "चला, एकत्र तुमचा व्यवसाय वाढवूया",
+      "Want to display your brand ad or promote something with us? We have more ideas to explore. Connect with Priyank and let’s make it happen!": "तुमच्या ब्रँडची जाहिरात करायची आहे किंवा आमच्यासोबत प्रचार करायचा आहे? आमच्याकडे आणखीही अनेक कल्पना आहेत. प्रियंकशी संपर्क साधा आणि त्या एकत्र साकार करूया!",
+      "Connect with Priyank ↗": "प्रियंकशी संपर्क साधा ↗",
       "Home": "मुखपृष्ठ", "Schedule": "कार्यक्रम", "Registration": "नोंदणी", "Aarti": "आरती", "Accounts": "हिशेब", "Suggestions": "सूचना", "Register": "नोंदणी करा",
       "Notifications": "सूचना", "Mark all read": "सर्व वाचले म्हणून चिन्हांकित करा", "Turn on browser alerts": "ब्राउझर सूचना सुरू करा", "Alerts appear while this site is open.": "साइट सुरू असताना सूचना दिसतील।",
       "Kurta registration started!": "कुर्ता नोंदणी सुरू झाली आहे!", "Event Registration will start soon!": "कार्यक्रम नोंदणी लवकरच सुरू होईल!", "Stay tuned for more updates!": "अधिक अपडेटसाठी संपर्कात राहा!", "Loading today's event…": "आजचा कार्यक्रम लोड होत आहे…", "View today's schedule": "आजचा कार्यक्रम पहा",
