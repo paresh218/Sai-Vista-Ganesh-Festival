@@ -8,6 +8,7 @@
 - Live Aarti slot availability
 - WhatsApp follow-up link
 - Festival accounts placeholder, ready for Google Sheets / Apps Script
+- Committee updates and a Today card managed from one local content file
 - No server required for GitHub Pages
 
 ## Forms
@@ -40,6 +41,8 @@ Added a Ganpati 2026 T-shirt nomination section:
 
 The T-shirt UI is currently frontend-only because no Google Form or Apps Script endpoint for T-shirt nominations has been supplied. It is ready for a Google Sheets/Apps Script connection later.
 
-## Live collection dashboard
+## Committee-managed content
 
-The Festival Accounts section now reads the public contribution sheet directly and shows payment status by wing, a paid/pending chart, received and pending totals, plus an interactive flat list. Keep the sheet shared as **Anyone with the link — Viewer** for the dashboard to load on GitHub Pages.
+Use `site-data.js` to update the Today card and public committee updates. Do not add resident names, flat numbers, phone numbers or private details to that file.
+
+`ADMIN_CHECKLIST.md` is a safe publishing template. Keep any real credentials and private committee records outside this website folder.

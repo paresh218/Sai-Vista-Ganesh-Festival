@@ -1,4 +1,14 @@
 
+const t = (key, values = {}) => {
+  const translator = window.SaiVistaI18n;
+  if (translator) return translator.t(key, values);
+  return String(key).replace(/\{(\w+)\}/g, (_match, name) => values[name] ?? `{${name}}`);
+};
+
+const currentLocale = () => window.SaiVistaI18n?.locale || "en-IN";
+const publicContent = () => window.SaiVistaContent || { festivalEvents: {}, updates: [], finance: {} };
+const getFestivalEvent = (date = new Date()) => publicContent().festivalEvents?.[`${date.getMonth() + 1}-${date.getDate()}`] || null;
+
 // Ganpati T-shirt nomination
 document.addEventListener("DOMContentLoaded", () => {
   const menuToggle = document.querySelector(".menu-toggle");
@@ -11,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 // Daily important notice (day-specific event)
+let dailyCountdownTimer;
 function initDailyNotice() {
   const dateEl = document.getElementById('dailyDate');
   const msgEl = document.getElementById('dailyMessage');
@@ -21,34 +32,17 @@ function initDailyNotice() {
   const month = today.getMonth() + 1; // 1-12
   const day = today.getDate();
 
-  // Map of month-day -> message
-  const map = {
-    '9-5': '5 Sep — Janmashtami Celebration at Sai Vista Ground Floor Lawn (6:00 PM – 10:00 PM IST). Please join us for the celebration!',
-    '9-14': '14 Sep — Opening Day: Miravnuk, Lezim and Ganesh Sthapana (3–7 PM).',
-    '9-15': '15 Sep — Housie evening for residents.',
-    '9-16': '16 Sep — Games and activities. Register for events.',
-    '9-17': '17 Sep — Games and community activities.',
-    '9-18': '18 Sep — Bollywood Night (special event).',
-    '9-19': '19 Sep — Drawing Competition & Talent Show (session 1).',
-    '9-20': '20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.',
-    '9-21': '21 Sep — Talent Show (session 2).',
-    '9-22': '22 Sep — Fancy Dress event.',
-    '9-23': '23 Sep — No activity planned (schedule may be updated).',
-    '9-24': '24 Sep — Satyanarayan Puja & Mahaprasad.',
-    '9-25': '25 Sep — Visarjan, Lezim and evening DJ.'
-  };
+  const event = getFestivalEvent(today);
+  const text = event ? t(event.message) : t('No special event scheduled for today — check the full schedule.');
 
-  const key = `${month}-${day}`;
-  const text = map[key] || 'No special event scheduled for today — check the full schedule.';
-
-  dateEl.textContent = today.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: 'long', month: 'short', day: 'numeric' });
   // Build event display with possible countdown and label
   const countdownElId = 'dailyCountdown';
   const countdownWrapperId = 'dailyCountdownWrapper';
   const eventHtml = `
     <span class="daily-event-text">${text}</span>
     <span id="${countdownWrapperId}" class="daily-countdown-wrapper" style="display:inline-block;margin-left:10px">
-      <span class="daily-countdown-label">Starts in</span>
+      <span class="daily-countdown-label">${t('Starts in')}</span>
       <span id="${countdownElId}" class="daily-countdown" aria-hidden="true"></span>
     </span>`;
   msgEl.innerHTML = eventHtml;
@@ -102,7 +96,7 @@ function initDailyNotice() {
       const now = new Date();
       const diff = target - now;
       if (diff <= 0) {
-        countdownEl.textContent = 'Happening now!';
+        countdownEl.textContent = t('Happening now!');
         return;
       }
       const hrs = Math.floor(diff / (1000 * 60 * 60));
@@ -111,7 +105,8 @@ function initDailyNotice() {
       countdownEl.textContent = `${hrs}h ${mins}m ${secs}s`;
     }
     updateCountdown();
-    setInterval(updateCountdown, 1000);
+    clearInterval(dailyCountdownTimer);
+    dailyCountdownTimer = setInterval(updateCountdown, 1000);
   } else {
     // No parsable time — remove countdown wrapper element
     const wrapper = document.getElementById(countdownWrapperId);
@@ -119,10 +114,62 @@ function initDailyNotice() {
   }
 }
 
+document.addEventListener('sai-vista-language-change', initDailyNotice);
+
+function initTodayCard() {
+  const dateEl = document.getElementById("todayCardDate");
+  const eventEl = document.getElementById("todayCardEvent");
+  const metaEl = document.getElementById("todayCardMeta");
+  const action = document.getElementById("todayCardAction");
+  if (!dateEl || !eventEl || !metaEl || !action) return;
+
+  const today = new Date();
+  const event = getFestivalEvent(today);
+  dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: "long", day: "numeric", month: "long" });
+  eventEl.textContent = event ? t(event.message) : t("No special event scheduled for today — check the full schedule.");
+  metaEl.textContent = event
+    ? t("Time: {time} · Location: {place}", { time: event.time, place: t(event.place) })
+    : t("Please check the full schedule for upcoming activities.");
+  action.textContent = t("View today's schedule");
+  action.href = "#schedule";
+}
+
+function initTodayPopup() {
+  const modal = document.getElementById("todayModal");
+  const closeButton = document.getElementById("closeTodayModal");
+  const dialog = modal?.querySelector(".today-modal-box");
+  const event = getFestivalEvent();
+  if (!modal || !closeButton || !dialog || !event) return;
+
+  const todayKey = `saiVistaTodayPopup:${new Date().toISOString().slice(0, 10)}`;
+  try {
+    if (sessionStorage.getItem(todayKey) === "shown") return;
+    sessionStorage.setItem(todayKey, "shown");
+  } catch (_) { /* The popup still works when browser storage is unavailable. */ }
+
+  const close = () => {
+    modal.classList.add("hidden");
+    document.body.style.overflow = "";
+  };
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  closeButton.addEventListener("click", close);
+  modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !modal.classList.contains("hidden")) close(); });
+  document.getElementById("todayCardAction")?.addEventListener("click", close);
+  window.setTimeout(() => dialog.focus(), 0);
+}
+
+document.addEventListener("sai-vista-language-change", initTodayCard);
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDailyNotice);
+  document.addEventListener('DOMContentLoaded', initTodayCard);
+  document.addEventListener('DOMContentLoaded', initTodayPopup);
 } else {
   initDailyNotice();
+  initTodayCard();
+  initTodayPopup();
 }
 
 // Logo fallback: if image fails to load, show inline SVG or text fallback
@@ -302,11 +349,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const AARTI_MIN = '2026-09-15';
     const AARTI_MAX = '2026-09-24';
     if (date && (date < AARTI_MIN || date > AARTI_MAX)) {
-      document.getElementById("chartContainer").innerHTML = `<p>Please select an Aarti date between ${AARTI_MIN} and ${AARTI_MAX}.</p>`;
+      document.getElementById("chartContainer").innerHTML = `<p>${t("Please select an Aarti date between {min} and {max}.", { min: AARTI_MIN, max: AARTI_MAX })}</p>`;
       return;
     }
     if (!slot) {
-      document.getElementById("chartContainer").innerHTML = "<p>Now choose Morning or Evening to check availability.</p>";
+      document.getElementById("chartContainer").innerHTML = `<p>${t("Now choose Morning or Evening to check availability.")}</p>`;
       return;
     }
     updateChart(date, slot);
@@ -331,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Ignore disabled buttons (keeps visual but prevents action)
       if (button.disabled || button.getAttribute('aria-disabled') === 'true') return;
       const url = button.dataset.formUrl;
-      modalTitle.textContent = titles[url] || "Sai Vista Registration Form";
+      modalTitle.textContent = t(titles[url] || "Sai Vista Registration Form");
       external.href = url;
       // forms.gle can redirect inside the iframe; use Google's embedded endpoint format
       frame.src = url;
@@ -363,7 +410,7 @@ window.selectSlot = async function(slotType) {
 
   const selectedDate = document.getElementById("date").value;
   if (!selectedDate) {
-    document.getElementById("chartContainer").innerHTML = "<p>Please select an Aarti date first.</p>";
+    document.getElementById("chartContainer").innerHTML = `<p>${t("Please select an Aarti date first.")}</p>`;
     return;
   }
   await updateChart(selectedDate, slotType);
@@ -380,7 +427,7 @@ async function fetchSlotData() {
 async function updateChart(date, slot) {
   const container = document.getElementById("chartContainer");
   const submit = document.getElementById("submitButton");
-  container.innerHTML = "<p>⏳ Checking current registrations...</p>";
+  container.innerHTML = `<p>${t("⏳ Checking current registrations...")}</p>`;
 
   try {
     const registrations = await fetchSlotData();
@@ -391,14 +438,14 @@ async function updateChart(date, slot) {
 
     container.innerHTML = `
       <div class="progress-wrap">
-        <strong>${count} / ${AARTI_MAX_CAPACITY} registered</strong>
+        <strong>${t("{count} / {capacity} registered", { count, capacity: AARTI_MAX_CAPACITY })}</strong>
         <div class="progress-track"><div class="progress-fill" style="width:${percentage}%"></div></div>
-        <span>${remaining ? `${remaining} slot${remaining === 1 ? "" : "s"} available` : "This slot is currently full."}</span>
+        <span>${remaining ? t(remaining === 1 ? "{count} slot available" : "{count} slots available", { count: remaining }) : t("This slot is currently full.")}</span>
       </div>`;
     submit.disabled = remaining === 0;
     submit.style.opacity = remaining === 0 ? ".55" : "1";
   } catch {
-    container.innerHTML = "<p>Availability could not be loaded right now. Please submit and the committee can verify the slot.</p>";
+    container.innerHTML = `<p>${t("Availability could not be loaded right now. Please submit and the committee can verify the slot.")}</p>`;
     submit.disabled = false;
     submit.style.opacity = "1";
   }
@@ -424,20 +471,20 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
   };
 
   if (!data.name || !data.flatNo || !data.wing || !/^\d{10}$/.test(data.whatsapp) || !data.date || !data.slot) {
-    alert("Please fill all required fields correctly and select an Aarti slot.");
+    alert(t("Please fill all required fields correctly and select an Aarti slot."));
     return;
   }
   // Enforce Aarti date range (inclusive)
   const AARTI_MIN = '2026-09-15';
   const AARTI_MAX = '2026-09-24';
   if (data.date && (data.date < AARTI_MIN || data.date > AARTI_MAX)) {
-    alert(`Please select an Aarti date between ${AARTI_MIN} and ${AARTI_MAX}.`);
+    alert(t("Please select an Aarti date between {min} and {max}.", { min: AARTI_MIN, max: AARTI_MAX }));
     return;
   }
 
   submitButton.disabled = true;
   spinner.classList.remove("hidden");
-  text.textContent = "Submitting...";
+  text.textContent = t("Submitting...");
 
   try {
     const response = await fetch(AARTI_GOOGLE_SCRIPT_URL, {
@@ -449,22 +496,22 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
     const result = await response.json();
     if (result.status !== "success") throw new Error(result.message || "The selected slot is no longer available.");
 
-    const slotLabel = data.slot === "morning" ? "Morning (8 AM)" : "Evening (7:30 PM)";
+    const slotLabel = data.slot === "morning" ? t("Morning (8 AM)") : t("Evening (7:30 PM)");
     const waText = `Hi Admin, I just registered for Ganesh Aarti on ${data.date} (${data.slot}). My details: ${data.name}, ${data.flatNo} ${data.wing}`;
 
     document.getElementById("successDetails").innerHTML = `
       <p><strong>${escapeHtml(data.date)}</strong> — ${slotLabel}</p>
-      <p class="success-gap">Your nomination has been successfully registered.</p>
-      <p><a href="https://wa.me/917621940889?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">Open WhatsApp to message the admin →</a></p>`;
+      <p class="success-gap">${t("Your nomination has been successfully registered.")}</p>
+      <p><a href="https://wa.me/917621940889?text=${encodeURIComponent(waText)}" target="_blank" rel="noopener">${t("Open WhatsApp to message the admin →")}</a></p>`;
     form.classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
   } catch (err) {
     console.error(err);
-    alert(err.message || "There was a problem submitting the nomination. Please try again.");
+    alert(err.message || t("There was a problem submitting the nomination. Please try again."));
     submitButton.disabled = false;
   } finally {
     spinner.classList.add("hidden");
-    text.textContent = "Submit Aarti Nomination";
+    text.textContent = t("Submit Aarti Nomination");
   }
 });
 
@@ -490,29 +537,68 @@ function parsePaymentCsv(text) {
 }
 
 function paymentRupees(value) {
-  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat(currentLocale(), { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
 }
 
-async function initPaymentDashboard() {
+function initPaymentDashboard() {
   const dashboard = document.getElementById("paymentDashboard");
   if (!dashboard) return;
-  try {
-    // The Apps Script proxy keeps the Google Sheet URL and ID off the public website.
-    const response = await fetch(PAYMENT_DASHBOARD_URL + "?action=payments", { cache: "no-store" });
-    if (!response.ok) throw new Error("Could not load payment data");
-    const payload = await response.json();
-    if (payload.status !== "success" || !Array.isArray(payload.payments)) throw new Error(payload.message || "Payment data is unavailable");
-    const payments = payload.payments.map(row => ({
-      wing: String(row.wing || "").trim().toUpperCase(), flat: String(row.flat || "").trim(),
-      paid: String(row.paid || "").trim().toLowerCase() === "yes",
-      amount: Number(String(row.amount || "").replace(/[^0-9.-]/g, "")) || 0
-    })).filter(row => row.wing && row.flat);
-    if (!payments.length) throw new Error("No usable payment rows");
-    renderPaymentDashboard(dashboard, payments);
-  } catch (error) {
-    dashboard.innerHTML = '<p class="dashboard-error">Collection data could not be loaded right now. Please refresh in a moment.</p>';
-    console.error("Payment dashboard:", error);
+  fetch(PAYMENT_DASHBOARD_URL + "?action=payments", { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) throw new Error("Could not load payment data");
+      return response.json();
+    })
+    .then((payload) => {
+      if (payload.status !== "success" || !Array.isArray(payload.payments)) throw new Error(payload.message || "Payment data is unavailable");
+      const payments = payload.payments.map((row) => ({
+        wing: String(row.wing || "").trim().toUpperCase(), flat: String(row.flat || "").trim(),
+        paid: String(row.paid || "").trim().toLowerCase() === "yes",
+        amount: Number(String(row.amount || "").replace(/[^0-9.-]/g, "")) || 0
+      })).filter((row) => row.wing && row.flat);
+      if (!payments.length) throw new Error("No usable payment rows");
+      renderPaymentDashboard(dashboard, payments);
+    })
+    .catch((error) => {
+      dashboard.innerHTML = `<p class="dashboard-error">${t("Collection data could not be loaded right now. Please refresh in a moment.")}</p>`;
+      console.error("Payment dashboard:", error);
+    });
+}
+
+function financeRupees(value) {
+  return new Intl.NumberFormat(currentLocale(), { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+}
+
+function initFinanceDashboard() {
+  const dashboard = document.getElementById("financeDashboard");
+  if (!dashboard) return;
+  const finance = publicContent().finance || {};
+  const safeAmount = (value) => value === null || value === "" || value === undefined || !Number.isFinite(Number(value)) ? null : Number(value);
+  const collection = safeAmount(finance.collectionTotal);
+  const expenses = safeAmount(finance.expenseTotal);
+  const balance = collection !== null && expenses !== null ? collection - expenses : null;
+  const categories = Array.isArray(finance.categories) ? finance.categories.filter((item) => item && item.name && Number.isFinite(Number(item.amount))) : [];
+  const receipts = Array.isArray(finance.receipts) ? finance.receipts.filter((item) => item && item.label && /^https:\/\//.test(item.href || "")) : [];
+  const displayedValue = (value) => value === null ? t("Not published") : financeRupees(value);
+  const updated = finance.lastUpdated
+    ? new Date(`${finance.lastUpdated}T00:00:00`).toLocaleDateString(currentLocale(), { day: "numeric", month: "long", year: "numeric" })
+    : t("Pending committee verification");
+
+  dashboard.innerHTML = `<div class="finance-summary"><article><small>${t("Total Collection")}</small><strong>${displayedValue(collection)}</strong></article><article><small>${t("Total Expenses")}</small><strong>${displayedValue(expenses)}</strong></article><article><small>${t("Balance")}</small><strong>${displayedValue(balance)}</strong></article></div><div class="finance-disclosure"><div class="panel-kicker">${t("LAST UPDATED")}</div><p>${t("Verified on: {date}", { date: updated })}</p><h3>${t("Expenses by category")}</h3>${categories.length ? `<ul class="expense-category-list">${categories.map((item) => `<li><span>${escapeHtml(t(item.name))}</span><strong>${financeRupees(Number(item.amount))}</strong></li>`).join("")}</ul>` : `<p class="finance-empty">${t("Verified category totals will be published here after committee approval.")}</p>`}${receipts.length ? `<h3>${t("Published bills and receipts")}</h3><ul class="receipt-list">${receipts.map((item) => `<li><a href="${escapeHtml(item.href)}" target="_blank" rel="noopener">${escapeHtml(t(item.label))}</a></li>`).join("")}</ul>` : ""}</div>`;
+}
+
+function initCommitteeUpdates() {
+  const list = document.getElementById("updatesList");
+  if (!list) return;
+  const updates = Array.isArray(publicContent().updates) ? publicContent().updates : [];
+  if (!updates.length) {
+    list.innerHTML = `<p class="empty-state">${t("No committee updates have been published yet.")}</p>`;
+    return;
   }
+  list.innerHTML = updates.map((update) => {
+    const date = update.date ? new Date(`${update.date}T00:00:00`).toLocaleDateString(currentLocale(), { day: "numeric", month: "short", year: "numeric" }) : "";
+    const href = String(update.href || "#schedule").startsWith("#") ? update.href : "#schedule";
+    return `<article class="update-card"><div class="update-meta"><span class="update-tag">${escapeHtml(t(update.category || "Update"))}</span><time datetime="${escapeHtml(update.date || "")}">${escapeHtml(date)}</time></div><h3>${escapeHtml(t(update.title || ""))}</h3><p>${escapeHtml(t(update.body || ""))}</p><a href="${escapeHtml(href)}">${escapeHtml(t(update.action || "View update"))} →</a></article>`;
+  }).join("");
 }
 
 
@@ -527,9 +613,10 @@ function renderPaymentDashboard(dashboard, payments) {
     const paidPercent = payments.length ? paid.length / payments.length * 100 : 0;
     const wingBars = wings.map(wing => {
       const wingRows = payments.filter(row => row.wing === wing), wingPaid = wingRows.filter(row => row.paid).length, percent = wingRows.length ? wingPaid / wingRows.length * 100 : 0;
-      return `<div class="wing-row ${selectedWing === wing ? "active" : ""}"><button type="button" data-wing="${wing}">Wing ${wing}</button><div class="wing-bar" data-wing="${wing}" role="button" tabindex="0" aria-label="Show Wing ${wing} flats"><span class="wing-paid" style="width:${percent}%"></span><span class="wing-unpaid" style="width:${100 - percent}%"></span></div><span class="wing-count">${wingPaid} paid / ${wingRows.length}</span></div>`;
+      return `<div class="wing-row ${selectedWing === wing ? "active" : ""}"><button type="button" data-wing="${wing}">${t("Wing {wing}", { wing })}</button><div class="wing-bar" data-wing="${wing}" role="button" tabindex="0" aria-label="${t("Show Wing {wing} flats", { wing })}"><span class="wing-paid" style="width:${percent}%"></span><span class="wing-unpaid" style="width:${100 - percent}%"></span></div><span class="wing-count">${t("{paid} paid / {total}", { paid: wingPaid, total: wingRows.length })}</span></div>`;
     }).join("");
-    dashboard.innerHTML = `<div class="collection-summary"><article><small>Total flats</small><strong>${payments.length}</strong></article><article class="received"><small>Amount received</small><strong>${paymentRupees(received)}</strong></article><article class="pending"><small>Amount pending</small><strong>${paymentRupees(pending)}</strong></article><article><small>Collection rate</small><strong>${paidPercent.toFixed(1)}%</strong></article></div><div class="payment-viz"><article class="payment-card"><h3>Payments by Wing</h3><p>Green is paid; orange is pending. Click a wing to drill down.</p><div class="wing-chart">${wingBars}</div></article><article class="payment-card"><h3>Overall payment status</h3><p>Only “Yes” payments count toward money received.</p><div class="donut-layout"><div class="donut" style="--paid:${paidPercent}%"><div class="donut-label"><strong>${paid.length}</strong>paid</div></div><div class="legend"><span><i class="yes"></i>Paid: ${paid.length}</span><span><i class="no"></i>Pending: ${unpaid.length}</span></div></div></article></div><article class="payment-card"><div class="payment-toolbar"><h3>${selectedWing === "All" ? "All flats" : `Wing ${selectedWing} flats`} <small>(${visible.length})</small></h3><div class="payment-controls"><button type="button" id="showAllWings">All wings</button><select id="paymentStatus" aria-label="Filter payment status"><option value="all">All statuses</option><option value="true">Paid only</option><option value="false">Pending only</option></select><select id="paymentSort" aria-label="Sort flats"><option value="flat">Sort: Flat number</option><option value="status">Sort: Payment status</option><option value="amount">Sort: Amount</option></select></div></div><div class="payment-table-wrap">${rows.length ? `<table class="payment-table"><thead><tr><th>Wing</th><th>Flat</th><th>Status</th><th>Amount</th></tr></thead><tbody>${rows.map(row => `<tr><td>${escapeHtml(row.wing)}</td><td>${escapeHtml(row.flat)}</td><td><span class="status-pill ${row.paid ? "status-yes" : "status-no"}">${row.paid ? "Paid" : "Not paid"}</span></td><td>${paymentRupees(row.amount)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty-state">No flats match this filter.</p>'}</div><p class="dashboard-note">Source: live Sai Vista contribution sheet · refreshed when the page loads</p></article>`;
+    dashboard.innerHTML = `<div class="collection-summary"><article><small>Total flats</small><strong>${payments.length}</strong></article><article class="received"><small>Amount received</small><strong>${paymentRupees(received)}</strong></article><article class="pending"><small>Amount pending</small><strong>${paymentRupees(pending)}</strong></article><article><small>Collection rate</small><strong>${paidPercent.toFixed(1)}%</strong></article></div><div class="payment-viz"><article class="payment-card"><h3>Payments by Wing</h3><p>Green is paid; orange is pending. Click a wing to drill down.</p><div class="wing-chart">${wingBars}</div></article><article class="payment-card"><h3>Overall payment status</h3><p>Only “Yes” payments count toward money received.</p><div class="donut-layout"><div class="donut" style="--paid:${paidPercent}%"><div class="donut-label"><strong>${paid.length}</strong>paid</div></div><div class="legend"><span><i class="yes"></i>Paid: ${paid.length}</span><span><i class="no"></i>Pending: ${unpaid.length}</span></div></div></article></div><article class="payment-card"><div class="payment-toolbar"><h3>${selectedWing === "All" ? t("All flats") : t("Wing {wing} flats", { wing: selectedWing })} <small>(${visible.length})</small></h3><div class="payment-controls"><button type="button" id="showAllWings">All wings</button><select id="paymentStatus" aria-label="Filter payment status"><option value="all">All statuses</option><option value="true">Paid only</option><option value="false">Pending only</option></select><select id="paymentSort" aria-label="Sort flats"><option value="flat">Sort: Flat number</option><option value="status">Sort: Payment status</option><option value="amount">Sort: Amount</option></select></div></div><div class="payment-table-wrap">${rows.length ? `<table class="payment-table"><thead><tr><th>Wing</th><th>Flat</th><th>Status</th><th>Amount</th></tr></thead><tbody>${rows.map(row => `<tr><td>${escapeHtml(row.wing)}</td><td>${escapeHtml(row.flat)}</td><td><span class="status-pill ${row.paid ? "status-yes" : "status-no"}">${row.paid ? t("Paid") : t("Not paid")}</span></td><td>${paymentRupees(row.amount)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty-state">No flats match this filter.</p>'}</div><p class="dashboard-note">Source: live Sai Vista contribution sheet · refreshed when the page loads</p></article>`;
+    window.SaiVistaI18n?.refresh();
     dashboard.querySelectorAll("[data-wing]").forEach(element => {
       const chooseWing = () => { selectedWing = element.dataset.wing; render(); };
       element.addEventListener("click", chooseWing);
@@ -539,10 +626,15 @@ function renderPaymentDashboard(dashboard, payments) {
     const status = dashboard.querySelector("#paymentStatus"); status.value = statusFilter; status.addEventListener("change", event => { statusFilter = event.target.value; render(); });
     const sort = dashboard.querySelector("#paymentSort"); sort.value = sortBy; sort.addEventListener("change", event => { sortBy = event.target.value; render(); });
   };
+  document.addEventListener("sai-vista-language-change", render);
   render();
 }
 
 document.addEventListener("DOMContentLoaded", initPaymentDashboard);
+document.addEventListener("DOMContentLoaded", initCommitteeUpdates);
+document.addEventListener("sai-vista-language-change", () => {
+  initCommitteeUpdates();
+});
 
 // Client-side notification centre. Read status is kept per browser so the badge
 // remains until a resident opens an update or chooses to mark it as read.
@@ -589,15 +681,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const unread = notifications.filter((notification) => !readIds.has(notification.id));
     count.hidden = unread.length === 0;
     count.textContent = String(unread.length);
-    bell.setAttribute("aria-label", unread.length ? `Open notifications, ${unread.length} unread` : "Open notifications");
+    bell.setAttribute("aria-label", unread.length ? t("Open notifications, {count} unread", { count: unread.length }) : t("Open notifications"));
     list.innerHTML = notifications.map((notification) => {
       const isUnread = !readIds.has(notification.id);
       return `<article class="notification-item ${isUnread ? "unread" : ""}">
         <i class="notification-dot" aria-hidden="true"></i>
         <div class="notification-copy">
-          <h3>${notification.title}</h3>
-          <p>${notification.body}</p>
-          <a href="${notification.href}" data-notification-id="${notification.id}">${notification.action} →</a>
+          <h3>${t(notification.title)}</h3>
+          <p>${t(notification.body)}</p>
+          <a href="${notification.href}" data-notification-id="${notification.id}">${t(notification.action)} →</a>
         </div>
       </article>`;
     }).join("");
@@ -616,15 +708,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateBrowserAlertStatus = () => {
     if (!("Notification" in window)) {
       enableAlerts.hidden = true;
-      alertStatus.textContent = "Browser alerts are not supported on this device.";
+      alertStatus.textContent = t("Browser alerts are not supported on this device.");
       return;
     }
     if (Notification.permission === "granted") {
       enableAlerts.hidden = true;
-      alertStatus.textContent = "Browser alerts are enabled while this page is open.";
+      alertStatus.textContent = t("Browser alerts are enabled while this page is open.");
     } else if (Notification.permission === "denied") {
       enableAlerts.hidden = true;
-      alertStatus.textContent = "Browser alerts are blocked in your browser settings.";
+      alertStatus.textContent = t("Browser alerts are blocked in your browser settings.");
     }
   };
 
@@ -641,7 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!("Notification" in window)) return;
     const permission = await Notification.requestPermission();
     updateBrowserAlertStatus();
-    if (permission === "granted") new Notification("Sai Vista Aarti updates", { body: "Aarti notifications are enabled while this page is open." });
+    if (permission === "granted") new Notification(t("Sai Vista Aarti updates"), { body: t("Aarti notifications are enabled while this page is open.") });
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -658,6 +750,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderNotifications();
   updateBrowserAlertStatus();
+  document.addEventListener("sai-vista-language-change", () => {
+    renderNotifications();
+    updateBrowserAlertStatus();
+  });
 });
 
 // PWA installation is available only from a secure hosted site (HTTPS or localhost).
@@ -774,7 +870,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!countedThisSession) sessionStorage.setItem("saiVistaPageViewCounted", "true");
     const value = Number(data.count);
     if (!Number.isFinite(value)) throw new Error("Counter response was invalid");
-    counter.textContent = `Page views: ${new Intl.NumberFormat("en-IN").format(value)}`;
+    counter.textContent = t("Page views: {count}", { count: new Intl.NumberFormat(currentLocale()).format(value) });
     counter.hidden = false;
   } catch (error) {
     console.warn("Visitor counter unavailable:", error);
@@ -830,9 +926,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.execCommand("copy");
         temporaryInput.remove();
       }
-      help.textContent = "UPI ID copied. Open any UPI app and paste it to pay ₹300.";
+      help.textContent = t("UPI ID copied. Open any UPI app and paste it to pay ₹300.");
     } catch (_) {
-      help.textContent = "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.";
+      help.textContent = t("Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.");
     }
   });
 });
