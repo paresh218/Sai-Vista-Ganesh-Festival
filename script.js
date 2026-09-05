@@ -780,3 +780,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.warn("Visitor counter unavailable:", error);
   }
 });
+
+// The website asks the operating system for a compatible UPI app; it never handles payment credentials.
+document.addEventListener("DOMContentLoaded", () => {
+  const openPayment = document.getElementById("openKurtaPayment");
+  const paymentModal = document.getElementById("upiPaymentModal");
+  const closePayment = document.getElementById("closeUpiPayment");
+  const launchApps = document.getElementById("launchUpiApps");
+  const copyUpiId = document.getElementById("copyUpiId");
+  const help = document.getElementById("upiPaymentHelp");
+  if (!openPayment || !paymentModal || !closePayment || !launchApps || !copyUpiId || !help) return;
+
+  const closeModal = () => {
+    paymentModal.classList.add("hidden");
+    paymentModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+  openPayment.addEventListener("click", () => {
+    paymentModal.classList.remove("hidden");
+    paymentModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  });
+  closePayment.addEventListener("click", closeModal);
+  paymentModal.addEventListener("click", (event) => {
+    if (event.target === paymentModal) closeModal();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !paymentModal.classList.contains("hidden")) closeModal();
+  });
+
+  launchApps.addEventListener("click", (event) => {
+    // Android's intent URL asks the system to resolve a compatible UPI app.
+    // Other platforms use the standard UPI intent in the href as a fallback.
+    if (/Android/i.test(navigator.userAgent) && launchApps.dataset.androidIntent) {
+      event.preventDefault();
+      window.location.href = launchApps.dataset.androidIntent;
+    }
+  });
+
+  copyUpiId.addEventListener("click", async () => {
+    const upiId = "karade.deepak1@ibl";
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(upiId);
+      else {
+        const temporaryInput = document.createElement("textarea");
+        temporaryInput.value = upiId;
+        document.body.appendChild(temporaryInput);
+        temporaryInput.select();
+        document.execCommand("copy");
+        temporaryInput.remove();
+      }
+      help.textContent = "UPI ID copied. Open any UPI app and paste it to pay ₹300.";
+    } catch (_) {
+      help.textContent = "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.";
+    }
+  });
+});

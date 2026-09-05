@@ -205,8 +205,8 @@
                             </div>
                             <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/sCJJgR3pCdx2Gg896">Register for Kurta ↗</button>
 
-                            <a class="btn btn-dark kurta-upi-link" href="upi://pay?pa=karade.deepak1%40ibl&amp;pn=Deepak%20Karade&amp;am=300.00&amp;cu=INR&amp;tn=Sai%20Vista%20Ganpati%202026%20Kurta">Pay ₹300 with any UPI app ↗</a>
-                            <small class="upi-pay-note">Choose your installed UPI app to continue. ₹300 is prefilled—please verify the recipient and amount before approving payment.</small>
+                            <button id="openKurtaPayment" class="btn btn-dark kurta-upi-link" type="button">Pay ₹300 with UPI ↗</button>
+                            <small class="upi-pay-note">Choose your preferred UPI app next. ₹300 is prefilled—please verify the recipient and amount before approving payment.</small>
 
                             <small class="form-powered">
                                 Registration is managed through Google Forms.
@@ -609,6 +609,20 @@
                 <span>Having trouble loading the form?</span>
                 <a id="openExternalForm" href="#" target="_blank" rel="noopener">Open directly ↗</a>
             </div>
+        </div>
+    </div>
+
+    <div id="upiPaymentModal" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="upiPaymentTitle">
+        <div class="upi-payment-box">
+            <button id="closeUpiPayment" class="icon-btn upi-close-btn" type="button" aria-label="Close payment options">×</button>
+            <div class="tshirt-form-icon">₹</div>
+            <div class="panel-kicker">KURTA PAYMENT</div>
+            <h3 id="upiPaymentTitle">Choose your UPI app</h3>
+            <p>Pay <strong>₹300</strong> to <strong>Deepak Karade</strong> for the Sai Vista Ganpati 2026 Kurta.</p>
+            <div class="upi-recipient"><span>UPI ID</span><strong>karade.deepak1@ibl</strong></div>
+            <a id="launchUpiApps" class="btn btn-dark" href="upi://pay?pa=karade.deepak1%40ibl&amp;pn=Deepak%20Karade&amp;am=300.00&amp;cu=INR&amp;tn=Sai%20Vista%20Ganpati%202026%20Kurta" data-android-intent="intent://pay?pa=karade.deepak1%40ibl&amp;pn=Deepak%20Karade&amp;am=300.00&amp;cu=INR&amp;tn=Sai%20Vista%20Ganpati%202026%20Kurta#Intent;scheme=upi;end">Choose an installed UPI app</a>
+            <button id="copyUpiId" class="btn btn-outline" type="button">Copy UPI ID</button>
+            <small id="upiPaymentHelp">Your phone will show compatible UPI apps. Verify the recipient and amount before entering your UPI PIN.</small>
         </div>
     </div>
 
