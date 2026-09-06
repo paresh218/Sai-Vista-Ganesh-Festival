@@ -139,3 +139,79 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 @media(max-width:480px){.promotion-widget{right:16px;bottom:max(16px,env(safe-area-inset-bottom))}.promotion-chat{width:330px}.promotion-body{padding:18px}}
 @media(prefers-reduced-motion:reduce){.promotion-chat{animation:none}.promotion-launcher:hover{transform:none}}
 .adult-interest-contacts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}.adult-interest-contacts[hidden],#todayCardAction[hidden]{display:none}.today-modal-box{max-height:calc(100dvh - 40px);overflow-y:auto}
+.expense-dashboard { margin-top: 28px; }
+.expense-filters { display:flex; flex-wrap:wrap; gap:14px; align-items:end; margin:22px 0; }
+.expense-filters label { display:grid; gap:6px; font-weight:600; }
+.expense-filters select,.expense-filters input,.expense-filters button,#expenseRefresh { padding:10px 14px; border:1px solid #d7d7d7; border-radius:10px; background:white; color:#292929; min-height:44px; }
+.expense-dashboard .finance-summary strong { overflow-wrap:anywhere; }
+
+.aarti-registration-details > summary { cursor:pointer; padding:14px 18px; border:1px solid #d2ccc8; border-radius:10px; color:#7d281b; font-weight:700; background:#fff8ee; }
+.aarti-registration-details > summary:focus-visible { outline:3px solid #7d281b; outline-offset:3px; }
+.aarti-registration-details[open] > summary { margin-bottom:24px; }
+
+.dashboard-details { margin-top:20px; }
+.dashboard-details > summary { cursor:pointer; padding:14px 18px; border:1px solid #d2ccc8; border-radius:10px; color:#7d281b; font-weight:700; background:#fff8ee; }
+.dashboard-details > summary:focus-visible { outline:3px solid #7d281b; outline-offset:3px; }
+.dashboard-details[open] > summary { margin-bottom:24px; }
+
+.aarti-registration-dialog { width:min(720px,calc(100% - 24px)); max-height:90dvh; margin:auto; padding:24px; border:0; border-radius:18px; overflow-y:auto; background:#fff; color:#35271f; box-shadow:0 20px 70px #0004; }
+.aarti-registration-dialog::backdrop { background:rgba(0,0,0,.55); }
+.aarti-dialog-header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:24px; }
+.aarti-dialog-header h2 { font-size:24px; }
+.aarti-dialog-header .icon-btn { flex-shrink:0; }
+
+/* Registration invitation and account overview */
+.aarti-form-container:has(.aarti-invitation) { max-width:960px; padding:30px; border:1px solid #e9d7c4; background:linear-gradient(120deg,#fff,#fffaf2); }
+.aarti-invitation { display:flex; align-items:center; gap:24px; text-align:left; }
+.aarti-invitation-icon { display:grid; place-items:center; width:76px; height:76px; flex-shrink:0; border-radius:22px; background:#f8e8cd; font-size:38px; }
+.aarti-invitation-copy { flex:1; }
+.aarti-invitation-copy h3 { font-size:22px; line-height:1.35; margin:6px 0 10px; color:#42271c; }
+.aarti-invitation-copy p { font-size:14px; line-height:1.7; color:#736152; margin:0 0 12px; }
+.aarti-invitation-dates { font-size:12px; font-weight:600; color:#86572a; }
+#openAartiRegistration { flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:50px; box-shadow:0 6px 16px #7d281b22; }
+.expense-dashboard { border:1px solid #ece3d9; padding:28px; }
+.expense-dashboard > .payment-toolbar h3 { font-size:24px; letter-spacing:-.5px; }
+.expense-dashboard > p[role="status"] { margin:8px 0 24px; line-height:1.6; }
+.expense-dashboard .finance-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.expense-dashboard .finance-summary .expense-metric { padding:24px; border:1px solid #e5e8e3; border-radius:18px; background:#f5f8f4; box-shadow:none; }
+.expense-metric-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; }
+.expense-dashboard .expense-metric small { font-size:13px; font-weight:600; color:#46594b; }
+.expense-metric-heading > span { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#e3ecdf; color:#34573d; font-size:21px; }
+.expense-dashboard .finance-summary strong { display:block; font-size:clamp(23px,2.5vw,34px); letter-spacing:-1px; line-height:1.3; font-variant-numeric:tabular-nums; color:#243e2c; }
+.expense-metric-hint { display:block; margin-top:12px; font-size:12px; color:#5f7063; }
+.expense-dashboard .finance-summary .expense-metric-spent { background:#fff7ed; border-color:#f2e2ce; }
+.expense-metric-spent .expense-metric-heading > span { background:#f7e7d2; color:#93581c; }
+.expense-dashboard .expense-metric-spent small,.expense-dashboard .expense-metric-spent strong { color:#82511e; }
+.expense-dashboard .finance-summary .expense-metric-balance { background:#234c3c; border-color:#234c3c; }
+.expense-dashboard .expense-metric-balance small,.expense-dashboard .expense-metric-balance strong { color:#fff; }
+.expense-metric-balance .expense-metric-hint { color:#d5e6dc; }
+.expense-metric-balance .expense-metric-heading > span { color:#fff; background:#ffffff1f; }
+.dashboard-details > summary { padding:16px 20px; transition:background .15s; }
+.dashboard-details > summary:hover { background:#f5e9db; }
+#expenseRefresh { cursor:pointer; font:600 12px inherit; }
+@media(max-width:760px) {
+ .aarti-invitation { flex-direction:column; text-align:center; gap:18px; }
+ #openAartiRegistration { width:100%; }
+ .expense-dashboard { padding:20px 16px; }
+ .expense-dashboard .finance-summary { grid-template-columns:1fr; gap:12px; }
+ .expense-dashboard .finance-summary .expense-metric { padding:20px; }
+ .expense-metric-heading { margin-bottom:12px; }
+ .expense-dashboard .finance-summary strong { font-size:30px; }
+}
+
+.resident-businesses { background:#fffcf7; }
+.resident-spotlight-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:24px; }
+.community-thanks,.resident-ad-invite { padding:36px; border-radius:24px; border:1px solid #eadfce; }
+.community-thanks { background:linear-gradient(145deg,#f9ebd3,#fff8e9); color:#53371f; }
+.spotlight-tag { display:block; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#8b592a; }
+.thanks-symbol { font-size:38px; margin:22px 0 12px; }
+.resident-spotlight-grid h3 { font-size:28px; line-height:1.3; margin:18px 0; letter-spacing:-.5px; }
+.resident-spotlight-grid p { font-size:14px; line-height:1.85; margin-bottom:16px; color:#6a5848; }
+.community-thanks strong { display:block; font-size:15px; line-height:1.8; margin-top:24px; }
+.thanks-signoff { display:block; font-size:12px; margin-top:24px; color:#88633e; }
+.resident-ad-invite { background:#fff; }
+.resident-ad-invite ul { padding-left:20px; margin:20px 0 26px; color:#6a5848; font-size:14px; line-height:1.8; }
+.resident-ad-invite li { margin-bottom:10px; }
+.resident-ad-invite .resident-ad-note { font-size:12px; margin:14px 0 20px; }
+.resident-ad-empty { padding:14px 16px; border-radius:12px; background:#f5f7f2; font-size:13px; color:#506047; }
+@media(max-width:760px) { .resident-spotlight-grid { grid-template-columns:1fr; } .community-thanks,.resident-ad-invite { padding:24px; } .resident-spotlight-grid h3 { font-size:25px; } .resident-ad-invite .btn { width:100%; text-align:center; } }

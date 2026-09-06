@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -459,6 +459,13 @@
                 </div>
 
                 <div class="aarti-form-container">
+                    <div class="aarti-invitation">
+                        <span class="aarti-invitation-icon" aria-hidden="true">🪔</span>
+                        <div class="aarti-invitation-copy"><span class="panel-kicker">JOIN THE AARTI</span><h3>A moment of devotion, together</h3><p>Choose a date and a morning or evening slot for your family.</p><span class="aarti-invitation-dates">15–24 September · Morning &amp; evening</span></div>
+                        <button type="button" class="btn btn-dark" id="openAartiRegistration" aria-haspopup="dialog">Register for Aarti <span aria-hidden="true">↗</span></button>
+                    </div>
+                    <dialog id="aartiRegistrationDialog" class="aarti-registration-dialog" aria-labelledby="aartiDialogTitle">
+                        <div class="aarti-dialog-header"><h2 id="aartiDialogTitle">Aarti Registration</h2><button type="button" class="icon-btn" id="closeAartiRegistration" aria-label="Close Aarti registration">&times;</button></div>
                     <form id="nominationForm" class="aarti-form">
                         <div class="form-group">
                             <label for="name">Full Name *</label>
@@ -534,18 +541,9 @@
 
                     <div class="info-note">ℹ️ Your nomination is sent to the Sai Vista festival registration system for coordination.</div>
 
-                    <article class="form-card tshirt-registration-card">
-                        <div class="form-icon">   </div>
-                        <div class="form-tag">LIMITED REGISTRATION</div>
-                        <h3>Ganpati Kurta</h3>
-                        <p>
-                            Official Sai Vista Ganpati 2026 Kurta
-                            ₹300 per Kurta Register by 8 September 2026.
-                        </p>
-                         
-                        <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/sCJJgR3pCdx2Gg896">Register for Kurta ↗</button>
+                    </dialog>
 
-                    </article>
+
 
                 </div>
             </div>
@@ -571,15 +569,7 @@
             <div id="paymentDashboard" class="payment-dashboard" aria-live="polite">
                 <p class="dashboard-loading">Loading collection data…</p>
             </div>
-            <div class="finance-grid">
-                <div class="finance-card"><span>💰</span><small>Total Collection</small><strong>₹0</strong></div>
-                <div class="finance-card"><span>📊</span><small>Total Expenses</small><strong>₹0</strong></div>
-                <div class="finance-card"><span>💵</span><small>Balance</small><strong>₹0</strong></div>
-            </div>
-            <div class="expense-panel">
-                <div><div class="panel-kicker">NEXT PHASE</div><h3>Live Expense Dashboard</h3><p>We can connect the committee's Google Sheet here and automatically display category-wise spending, total income, total expenses and balance.</p></div>
-                <div class="panel-badge">Google Sheets Ready</div>
-            </div>
+            <div id="expenseDashboard" class="payment-card expense-dashboard" aria-live="polite"></div>
         </section>
 
         <section class="about-section">
@@ -588,6 +578,34 @@
                 <h2>Ganpati Bappa, Community & Celebration</h2>
                 <p>Our festival is a shared celebration built by residents, volunteers and the Cultural Committee.</p>
                 <p class="mantra">गणपती बाप्पा मोरया! 🙏</p>
+            </div>
+        </section>
+
+        <section id="resident-businesses" class="section resident-businesses" aria-labelledby="residentBusinessTitle">
+            <div class="section-heading">
+                <span>OUR COMMUNITY, OUR BUSINESSES</span>
+                <h2 id="residentBusinessTitle">Grow with Sai Vista</h2>
+                <p>Discover the talent next door. Let’s support the businesses, services and ideas of our fellow residents.</p>
+            </div>
+            <div class="resident-spotlight-grid">
+                <article class="community-thanks">
+                    <span class="spotlight-tag">COMMUNITY SPOTLIGHT · JANMASHTAMI</span>
+                    <div class="thanks-symbol" aria-hidden="true">🙏</div>
+                    <h3>You made Janmashtami special.</h3>
+                    <p>Thank you to every Sai Vista resident, family and attendee who joined the celebration and filled it with joy.</p>
+                    <p>A heartfelt thank-you to our hardworking members and volunteers who planned, decorated, coordinated and helped behind the scenes. Your time, care and teamwork made the celebration possible.</p>
+                    <strong>To everyone who joined in, lent a hand and made memories together — this celebration belongs to you.</strong>
+                    <span class="thanks-signoff">With gratitude, Sai Vista Cultural Committee</span>
+                </article>
+                <article class="resident-ad-invite">
+                    <span class="spotlight-tag">RESIDENT BUSINESS ADS</span>
+                    <h3>Your business. Your neighbours. New possibilities.</h3>
+                    <p>Run a business or offer a service? Introduce it to the Sai Vista community and help your neighbours discover what you do.</p>
+                    <ul><li>Share your business name and a short introduction.</li><li>Tell us about your products or services.</li><li>Include your business contact, website and an ad image, if available.</li></ul>
+                    <a class="btn btn-dark" href="https://wa.me/917621940889?text=Hi%20Priyank%2C%20I%20am%20a%20Sai%20Vista%20resident%20and%20would%20like%20to%20feature%20my%20business%20on%20the%20community%20website.%0A%0ABusiness%20name%3A%0AProducts%20or%20services%3A%0ABusiness%20contact%20or%20website%3A%0AShort%20description%3A%0A%0APlease%20let%20me%20know%20how%20to%20share%20my%20advertisement%20for%20review." target="_blank" rel="noopener noreferrer">Share your business details ↗</a>
+                    <p class="resident-ad-note">Opens WhatsApp to Priyank. Review your message before sending; the committee will review your details before featuring your ad.</p>
+                    <div class="resident-ad-empty">No resident ads yet. Yours could be the first!</div>
+                </article>
             </div>
         </section>
 
@@ -684,6 +702,8 @@
 
     <script src="site-data.js"></script>
     <script src="translations.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=16"></script>
+    <script src="expense-model.js?v=13"></script>
+    <script src="expense-dashboard.js?v=17"></script>
 </body>
 </html>

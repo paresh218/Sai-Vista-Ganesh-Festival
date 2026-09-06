@@ -623,6 +623,7 @@ function renderPaymentDashboard(dashboard, payments) {
   const wings = [...new Set(payments.map(row => row.wing))].sort();
   let selectedWing = "All", statusFilter = "all", sortBy = "flat";
   const render = () => {
+    const detailsOpen = dashboard.querySelector(".dashboard-details")?.open || false;
     const visible = payments.filter(row => (selectedWing === "All" || row.wing === selectedWing) && (statusFilter === "all" || String(row.paid) === statusFilter));
     const paid = payments.filter(row => row.paid), unpaid = payments.filter(row => !row.paid);
     const received = paid.reduce((sum, row) => sum + row.amount, 0), pending = unpaid.reduce((sum, row) => sum + row.amount, 0);
@@ -633,6 +634,15 @@ function renderPaymentDashboard(dashboard, payments) {
       return `<div class="wing-row ${selectedWing === wing ? "active" : ""}"><button type="button" data-wing="${wing}">${t("Wing {wing}", { wing })}</button><div class="wing-bar" data-wing="${wing}" role="button" tabindex="0" aria-label="${t("Show Wing {wing} flats", { wing })}"><span class="wing-paid" style="width:${percent}%"></span><span class="wing-unpaid" style="width:${100 - percent}%"></span></div><span class="wing-count">${t("{paid} paid / {total}", { paid: wingPaid, total: wingRows.length })}</span></div>`;
     }).join("");
     dashboard.innerHTML = `<div class="collection-summary"><article><small>Total flats</small><strong>${payments.length}</strong></article><article class="received"><small>Amount received</small><strong>${paymentRupees(received)}</strong></article><article class="pending"><small>Amount pending</small><strong>${paymentRupees(pending)}</strong></article><article><small>Collection rate</small><strong>${paidPercent.toFixed(1)}%</strong></article></div><div class="payment-viz"><article class="payment-card"><h3>Payments by Wing</h3><p>Green is paid; orange is pending. Click a wing to drill down.</p><div class="wing-chart">${wingBars}</div></article><article class="payment-card"><h3>Overall payment status</h3><p>Only “Yes” payments count toward money received.</p><div class="donut-layout"><div class="donut" style="--paid:${paidPercent}%"><div class="donut-label"><strong>${paid.length}</strong>paid</div></div><div class="legend"><span><i class="yes"></i>Paid: ${paid.length}</span><span><i class="no"></i>Pending: ${unpaid.length}</span></div></div></article></div><article class="payment-card"><div class="payment-toolbar"><h3>${selectedWing === "All" ? t("All flats") : t("Wing {wing} flats", { wing: selectedWing })} <small>(${visible.length})</small></h3><div class="payment-controls"><button type="button" id="showAllWings">All wings</button><select id="paymentStatus" aria-label="Filter payment status"><option value="all">All statuses</option><option value="true">Paid only</option><option value="false">Pending only</option></select><select id="paymentSort" aria-label="Sort flats"><option value="flat">Sort: Flat number</option><option value="status">Sort: Payment status</option><option value="amount">Sort: Amount</option></select></div></div><div class="payment-table-wrap">${rows.length ? `<table class="payment-table"><thead><tr><th>Wing</th><th>Flat</th><th>Status</th><th>Amount</th></tr></thead><tbody>${rows.map(row => `<tr><td>${escapeHtml(row.wing)}</td><td>${escapeHtml(row.flat)}</td><td><span class="status-pill ${row.paid ? "status-yes" : "status-no"}">${row.paid ? t("Paid") : t("Not paid")}</span></td><td>${paymentRupees(row.amount)}</td></tr>`).join("")}</tbody></table>` : '<p class="empty-state">No flats match this filter.</p>'}</div><p class="dashboard-note">Source: live Sai Vista contribution sheet · refreshed when the page loads</p></article>`;
+    const details = document.createElement("details");
+    details.className = "dashboard-details";
+    details.open = detailsOpen;
+    const summary = document.createElement("summary");
+    summary.textContent = "Click here to see more details";
+    details.append(summary);
+    const summaryCards = dashboard.querySelector(".collection-summary");
+    while (summaryCards.nextElementSibling) details.append(summaryCards.nextElementSibling);
+    dashboard.append(details);
     window.SaiVistaI18n?.refresh();
     dashboard.querySelectorAll("[data-wing]").forEach(element => {
       const chooseWing = () => { selectedWing = element.dataset.wing; render(); };
@@ -995,4 +1005,22 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     window.setTimeout(showWhenReady, 4500);
   }
+});
+
+// Native modal keeps focus inside the registration form and supports Escape.
+document.addEventListener("DOMContentLoaded", () => {
+  const dialog = document.getElementById("aartiRegistrationDialog");
+  const opener = document.getElementById("openAartiRegistration");
+  if (!dialog || !opener) return;
+  let previousOverflow = "";
+  opener.addEventListener("click", () => {
+    previousOverflow = document.body.style.overflow;
+    dialog.showModal();
+    document.body.style.overflow = "hidden";
+  });
+  document.getElementById("closeAartiRegistration").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("close", () => {
+    document.body.style.overflow = previousOverflow;
+    opener.focus();
+  });
 });
