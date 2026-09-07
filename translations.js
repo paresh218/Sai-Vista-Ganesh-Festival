@@ -108,6 +108,8 @@
     translations.hi[`${day} September 2026`] = `${day} सितंबर 2026`;
     translations.mr[`${day} September 2026`] = `${day} सप्टेंबर 2026`;
   }
+  translations.hi["Aarti registration started!"] = "आरती पंजीकरण शुरू हो गया है!";
+  translations.mr["Aarti registration started!"] = "आरती नोंदणी सुरू झाली आहे!";
   const locales = { en: "en-IN", hi: "hi-IN", mr: "mr-IN" };
   const originalText = new WeakMap();
   const originalAttributes = new WeakMap();
