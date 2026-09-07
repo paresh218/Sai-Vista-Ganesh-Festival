@@ -343,6 +343,8 @@ const PAYMENT_DASHBOARD_URL = "https://script.google.com/macros/s/AKfycbyYbNoSxh
 // This endpoint stores a single aggregate page-view number, not visitor identities.
 const VISITOR_COUNTER_URL = "https://script.google.com/macros/s/AKfycbzGowm9XvdFIlsTFp7HgQZ0S2gCweAismk5mHcvKtGr8MUtwDr9jmmznsrNmIHltV_6/exec";
 const AARTI_MAX_CAPACITY = 10;
+const AARTI_RESERVED_DATE = "2026-09-20";
+const AARTI_RESERVATION_NOTICE = "The evening Aarti on 20 September 2026 is reserved for senior citizens as a token of respect. If there are senior citizens in your family, please invite them to attend with a pooja thali. Morning Aarti registration remains open for 20 September.";
 
 document.addEventListener("DOMContentLoaded", () => {
   const flatSelect = document.getElementById("flatNo");
@@ -362,7 +364,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("date").addEventListener("change", () => {
     const date = document.getElementById("date").value;
+    const eveningButton = document.getElementById("eveningSlot");
+    eveningButton.disabled = date === AARTI_RESERVED_DATE;
+    if (eveningButton.disabled && document.getElementById("slot").value === "evening") {
+      document.getElementById("slot").value = "";
+      eveningButton.classList.remove("active");
+    }
     const slot = document.getElementById("slot").value;
+    document.getElementById("submitButton").disabled = !slot;
+    document.getElementById("submitButton").style.opacity = slot ? "1" : ".55";
     const AARTI_MIN = '2026-09-15';
     const AARTI_MAX = '2026-09-24';
     if (date && (date < AARTI_MIN || date > AARTI_MAX)) {
@@ -420,6 +430,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.selectSlot = async function(slotType) {
+  if (document.getElementById("date").value === AARTI_RESERVED_DATE && slotType === "evening") {
+    return;
+  }
   document.getElementById("slot").value = slotType;
 
   document.querySelectorAll(".slot-btn").forEach(btn => btn.classList.remove("active"));
@@ -444,6 +457,11 @@ async function fetchSlotData() {
 async function updateChart(date, slot) {
   const container = document.getElementById("chartContainer");
   const submit = document.getElementById("submitButton");
+  if (date === AARTI_RESERVED_DATE && slot === "evening") {
+    container.textContent = t(AARTI_RESERVATION_NOTICE);
+    submit.disabled = true;
+    return;
+  }
   container.innerHTML = `<p>${t("⏳ Checking current registrations...")}</p>`;
 
   try {
@@ -472,6 +490,7 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
   e.preventDefault();
 
   const form = e.currentTarget;
+  if (!form.reportValidity()) return;
   const submitButton = document.getElementById("submitButton");
   const spinner = document.getElementById("submitSpinner");
   const text = document.getElementById("submitButtonText");
@@ -489,6 +508,14 @@ document.getElementById("nominationForm").addEventListener("submit", async e => 
 
   if (!data.name || !data.flatNo || !data.wing || !/^\d{10}$/.test(data.whatsapp) || !data.date || !data.slot) {
     alert(t("Please fill all required fields correctly and select an Aarti slot."));
+    return;
+  }
+  if (data.date === AARTI_RESERVED_DATE && data.slot === "evening") {
+    alert(t(AARTI_RESERVATION_NOTICE));
+    return;
+  }
+  if (data.bringThali !== "true") {
+    alert(t("Please confirm that you will bring your own pooja thali and prasad."));
     return;
   }
   // Enforce Aarti date range (inclusive)

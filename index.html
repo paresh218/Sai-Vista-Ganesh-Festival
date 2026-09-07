@@ -467,6 +467,7 @@
                     <dialog id="aartiRegistrationDialog" class="aarti-registration-dialog" aria-labelledby="aartiDialogTitle">
                         <div class="aarti-dialog-header"><h2 id="aartiDialogTitle">Aarti Registration</h2><button type="button" class="icon-btn" id="closeAartiRegistration" aria-label="Close Aarti registration">&times;</button></div>
                     <form id="nominationForm" class="aarti-form">
+                        <p class="availability-box" id="aartiReservationNotice" role="note">The evening Aarti on 20 September 2026 is reserved for senior citizens as a token of respect. If there are senior citizens in your family, please invite them to attend with a pooja thali. Morning Aarti registration remains open for 20 September.</p>
                         <div class="form-group">
                             <label for="name">Full Name *</label>
                             <input type="text" id="name" required placeholder="Enter your full name">
@@ -503,8 +504,19 @@
 
           <div class="form-group">
             <label for="date">Select Aarti Date *</label>
-            <input type="date" id="date" required min="2026-09-15" max="2026-09-24">
-            <small>Choose a date between 15 Sep and 24 Sep 2026.</small>
+            <select id="date" required aria-describedby="aartiReservationNotice">
+              <option value="">Select date</option>
+              <option value="2026-09-15">15 September 2026</option>
+              <option value="2026-09-16">16 September 2026</option>
+              <option value="2026-09-17">17 September 2026</option>
+              <option value="2026-09-18">18 September 2026</option>
+              <option value="2026-09-19">19 September 2026</option>
+              <option value="2026-09-20">20 September 2026</option>
+              <option value="2026-09-21">21 September 2026</option>
+              <option value="2026-09-22">22 September 2026</option>
+              <option value="2026-09-23">23 September 2026</option>
+              <option value="2026-09-24">24 September 2026</option>
+            </select>
           </div>
 
                         <div class="form-group">
@@ -521,8 +533,8 @@
                         </div>
 
                         <label class="checkbox-row">
-                            <input type="checkbox" id="bringThali">
-                            <span>I will bring my own pooja thali and prasad</span>
+                            <input type="checkbox" id="bringThali" required checked>
+                            <span>I will bring my own pooja thali and prasad</span> *
                         </label>
 
                         <button type="submit" class="btn btn-dark submit-btn" id="submitButton">
@@ -702,7 +714,7 @@
 
     <script src="site-data.js"></script>
     <script src="translations.js"></script>
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=20"></script>
     <script src="expense-model.js?v=13"></script>
     <script src="expense-dashboard.js?v=17"></script>
 </body>

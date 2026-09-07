@@ -1,11 +1,11 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v18";
+const CACHE_NAME = "sai-vista-ganpati-2026-v20";
 const APP_SHELL = [
   "./",
   "index.html",
   "style.css?v=18",
   "site-data.js",
   "translations.js",
-  "script.js?v=16",
+  "script.js?v=20",
   "expense-model.js?v=13",
   "expense-dashboard.js?v=17",
   "manifest.webmanifest",

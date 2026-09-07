@@ -97,6 +97,17 @@
     "Festival Finance Overview": "उत्सव आर्थिक आढावा", "Committee-approved aggregate collection and expense totals. Individual resident or flat payment information is never displayed here.": "समितीने मंजूर केलेले एकत्रित संकलन आणि खर्च. वैयक्तिक रहिवासी किंवा फ्लॅटचे पेमेंट तपशील येथे कधीही दाखवले जात नाहीत।", "Loading financial overview…": "आर्थिक आढावा लोड होत आहे…", "For privacy, this page publishes only verified category totals and committee-approved receipt links.": "गोपनीयतेसाठी, हे पान केवळ सत्यापित श्रेणी एकूण आणि समितीने मंजूर केलेल्या रसीद लिंक प्रकाशित करते।", "Not published": "प्रकाशित नाही", "Pending committee verification": "समिती पडताळणी प्रलंबित", "LAST UPDATED": "शेवटचा अपडेट", "Verified on: {date}": "पडताळणी तारीख: {date}", "Expenses by category": "श्रेणीनुसार खर्च", "Verified category totals will be published here after committee approval.": "समितीच्या मंजुरीनंतर सत्यापित श्रेणी एकूण येथे प्रकाशित केले जातील।", "Published bills and receipts": "प्रकाशित बिले आणि रसीदा"
   });
 
+  const reservationNotice = "The evening Aarti on 20 September 2026 is reserved for senior citizens as a token of respect. If there are senior citizens in your family, please invite them to attend with a pooja thali. Morning Aarti registration remains open for 20 September.";
+  translations.hi[reservationNotice] = "सम्मान के प्रतीक के रूप में 20 सितंबर 2026 की शाम की आरती वरिष्ठ नागरिकों के लिए आरक्षित है। यदि आपके परिवार में वरिष्ठ नागरिक हैं, तो कृपया उन्हें पूजा की थाली के साथ आरती में शामिल होने के लिए आमंत्रित करें। 20 सितंबर की सुबह की आरती के लिए पंजीकरण खुला है।";
+  translations.mr[reservationNotice] = "ज्येष्ठ नागरिकांप्रती आदर व्यक्त करण्यासाठी 20 सप्टेंबर 2026 ची संध्याकाळची आरती त्यांच्यासाठी राखीव आहे. आपल्या कुटुंबात ज्येष्ठ नागरिक असल्यास, कृपया त्यांना पूजेच्या ताटासह आरतीला उपस्थित राहण्यास आमंत्रित करा. 20 सप्टेंबरच्या सकाळच्या आरतीसाठी नोंदणी खुली आहे.";
+  translations.hi["Please confirm that you will bring your own pooja thali and prasad."] = "कृपया पुष्टि करें कि आप अपनी पूजा की थाली और प्रसाद लाएँगे।";
+  translations.mr["Please confirm that you will bring your own pooja thali and prasad."] = "कृपया आपण स्वतःचे पूजेचे ताट आणि प्रसाद आणणार असल्याची खात्री द्या.";
+  translations.hi["Select date"] = "तिथि चुनें";
+  translations.mr["Select date"] = "तारीख निवडा";
+  for (const day of [15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) {
+    translations.hi[`${day} September 2026`] = `${day} सितंबर 2026`;
+    translations.mr[`${day} September 2026`] = `${day} सप्टेंबर 2026`;
+  }
   const locales = { en: "en-IN", hi: "hi-IN", mr: "mr-IN" };
   const originalText = new WeakMap();
   const originalAttributes = new WeakMap();
