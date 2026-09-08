@@ -20,16 +20,31 @@ async function request(mode='cors',cacheMode='default') {
  console.log('PASS: fresh network response, offline cache, navigation fallback, no HTML for missing scripts, uncached update probes.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 
-// Regression: the first server probe must detect an already-stale displayed page.
-async function stalePageTest(edited) {
+// Regression: stable release metadata and a cross-reload guard prevent loops.
+async function pageTest({loaded='current',server='current',edited=false,storage=new Map(),blocked=false}={}) {
   const listeners={}; let reloads=0, notices=0;
-  const doc={visibilityState:'visible',documentElement:{outerHTML:'old page'},addEventListener:(type,fn)=>listeners[type]=fn,querySelector:()=>null,body:{append(){notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
-  const ctx={document:doc,location:{protocol:'https:',href:'https://example.test/index.html',origin:'https://example.test',reload(){reloads++;}},navigator:{onLine:true},window:{addEventListener(){}},URL,Date,AbortSignal,DOMParser:class{parseFromString(html){return {documentElement:{outerHTML:html}};}},fetch:async()=>({ok:true,text:async()=> 'new page'}),setInterval(){}};
+  const doc={visibilityState:'visible',addEventListener:(type,fn)=>listeners[type]=fn,
+    querySelector:selector=>selector.startsWith('meta')?{content:loaded}:null,
+    body:{append(){notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
+  const ctx={document:doc,location:{protocol:'https:',href:'https://example.test/index.html',origin:'https://example.test',reload(){reloads++;}},
+    navigator:{onLine:true},window:{addEventListener(){}},URL,Date,AbortSignal,TextEncoder,crypto:require('node:crypto').webcrypto,
+    sessionStorage:{getItem:key=>{if(blocked)throw Error('blocked');return storage.get(key);},setItem:(key,value)=>storage.set(key,value)},
+    DOMParser:class{parseFromString(){return {querySelector:()=>({content:server}),querySelectorAll:()=>[]};}},
+    fetch:async()=>({ok:true,text:async()=> 'unchanged raw server HTML'}),setInterval(){}};
   vm.runInNewContext(fs.readFileSync('site-updates.js','utf8'),ctx);
   if(edited) listeners.input({target:{closest:()=>true}});
   listeners.DOMContentLoaded();
-  await new Promise(resolve=>setImmediate(resolve));
-  assert.equal(reloads,edited?0:1);
-  assert.equal(notices,edited?1:0);
+  await new Promise(resolve=>setTimeout(resolve,30));
+  listeners.visibilitychange();
+  await new Promise(resolve=>setTimeout(resolve,30));
+  return {reloads,notices};
 }
-(async()=>{await stalePageTest(false);await stalePageTest(true);console.log('PASS: stale first load refreshes; edited registration displays notice without losing data.');})().catch(error=>{console.error(error);process.exitCode=1;});
+(async()=>{
+  assert.deepEqual(await pageTest(),{reloads:0,notices:0});
+  const storage=new Map();
+  assert.deepEqual(await pageTest({loaded:'old',storage}),{reloads:1,notices:0});
+  assert.deepEqual(await pageTest({loaded:'old',storage}),{reloads:0,notices:1});
+  assert.deepEqual(await pageTest({loaded:'old',edited:true}),{reloads:0,notices:1});
+  assert.deepEqual(await pageTest({loaded:'old',blocked:true}),{reloads:0,notices:1});
+  console.log('PASS: unchanged release stays stable; stale release reloads once across page loads; edited forms and unavailable storage never auto-reload.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

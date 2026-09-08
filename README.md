@@ -58,3 +58,9 @@ A changed version reloads automatically unless a form was edited or a dialog/pay
 Publish `service-worker.js`, `site-updates.js`, `script.js`, and `index.html` together with the rest of the website. Existing tabs running the old code must revisit/reopen the website to obtain this mechanism; code already loaded in a tab cannot be retroactively changed. The `file://` preview does not run this mechanism: verify on HTTPS hosting or localhost. Offline visitors retain cached content until connectivity returns. No cache clearing is required once the new worker is active.
 
 Validation: `node site-updates.test.cjs` covers network freshness, offline fallback, missing-asset behavior, and uncached probes. JavaScript syntax checks also pass. Browser/device rollout remains to be verified after publishing.
+
+### Refresh-loop correction
+
+The updater does not compare the browser's live DOM to raw server HTML. First-load detection compares the stable `site-release` meta tag in `index.html`; change this marker for each release. Background checks still compare server-side HTML/JS/CSS hashes. Service-worker controller changes trigger a check, not an unconditional reload.
+
+Automatic reloads record the target content hash in sessionStorage before navigation. The same target cannot auto-reload twice in that tab, and a 60-second cooldown covers rapid deployment changes. If storage is unavailable, an update button is shown instead. Tests cover unchanged releases, repeated stale responses across page loads, active forms, and blocked storage.
