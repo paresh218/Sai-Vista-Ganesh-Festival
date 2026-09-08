@@ -97,6 +97,32 @@
     "Festival Finance Overview": "उत्सव आर्थिक आढावा", "Committee-approved aggregate collection and expense totals. Individual resident or flat payment information is never displayed here.": "समितीने मंजूर केलेले एकत्रित संकलन आणि खर्च. वैयक्तिक रहिवासी किंवा फ्लॅटचे पेमेंट तपशील येथे कधीही दाखवले जात नाहीत।", "Loading financial overview…": "आर्थिक आढावा लोड होत आहे…", "For privacy, this page publishes only verified category totals and committee-approved receipt links.": "गोपनीयतेसाठी, हे पान केवळ सत्यापित श्रेणी एकूण आणि समितीने मंजूर केलेल्या रसीद लिंक प्रकाशित करते।", "Not published": "प्रकाशित नाही", "Pending committee verification": "समिती पडताळणी प्रलंबित", "LAST UPDATED": "शेवटचा अपडेट", "Verified on: {date}": "पडताळणी तारीख: {date}", "Expenses by category": "श्रेणीनुसार खर्च", "Verified category totals will be published here after committee approval.": "समितीच्या मंजुरीनंतर सत्यापित श्रेणी एकूण येथे प्रकाशित केले जातील।", "Published bills and receipts": "प्रकाशित बिले आणि रसीदा"
   });
 
+  Object.assign(translations.hi, {
+    "No Gas Cooking Competition": "बिना गैस के खाना बनाने की प्रतियोगिता",
+    "Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners!": "सभी प्रतिभागियों के लिए उपहार और प्रथम, द्वितीय व तृतीय स्थान के विजेताओं के लिए विशेष उपहार!",
+    "More details will be shared soon.": "अधिक जानकारी जल्द साझा की जाएगी।",
+    "To be announced": "जल्द घोषित किया जाएगा",
+    "23 Sep — No Gas Cooking Competition. Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon.": "23 सितंबर — बिना गैस के खाना बनाने की प्रतियोगिता। सभी प्रतिभागियों के लिए उपहार और प्रथम, द्वितीय व तृतीय स्थान के विजेताओं के लिए विशेष उपहार! अधिक जानकारी जल्द साझा की जाएगी।",
+    "Dhol Tasha Vaadan": "ढोल ताशा वादन",
+    "4:00 PM – 6:00 PM · Ground floor, near the Pandal.": "शाम 4:00 – 6:00 बजे · भूतल पर, पंडाल के पास।",
+    "Sponsored by the Cricket team. Thank you to the Cricket team for their support!": "क्रिकेट टीम द्वारा प्रायोजित। सहयोग के लिए क्रिकेट टीम का धन्यवाद!",
+    "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM": "ढोल ताशा वादन: शाम 4:00 – 6:00 बजे",
+    "Ground floor, near the Pandal": "भूतल पर, पंडाल के पास",
+    "19 Sep — Drawing Competition & Talent Show (session 1). Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सितंबर — चित्रकला प्रतियोगिता और प्रतिभा प्रदर्शन (सत्र 1)। ढोल ताशा वादन: शाम 4–6 बजे, भूतल पर पंडाल के पास। क्रिकेट टीम द्वारा प्रायोजित — आपके सहयोग के लिए धन्यवाद!"
+  });
+  Object.assign(translations.mr, {
+    "No Gas Cooking Competition": "गॅस न वापरता पाककला स्पर्धा",
+    "Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners!": "सर्व सहभागींसाठी भेटवस्तू आणि प्रथम, द्वितीय व तृतीय क्रमांकाच्या विजेत्यांसाठी विशेष भेटवस्तू!",
+    "More details will be shared soon.": "अधिक तपशील लवकरच कळवले जातील.",
+    "To be announced": "लवकरच जाहीर केले जाईल",
+    "23 Sep — No Gas Cooking Competition. Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon.": "23 सप्टेंबर — गॅस न वापरता पाककला स्पर्धा. सर्व सहभागींसाठी भेटवस्तू आणि प्रथम, द्वितीय व तृतीय क्रमांकाच्या विजेत्यांसाठी विशेष भेटवस्तू! अधिक तपशील लवकरच कळवले जातील.",
+    "Dhol Tasha Vaadan": "ढोल ताशा वादन",
+    "4:00 PM – 6:00 PM · Ground floor, near the Pandal.": "सायंकाळी 4:00 – 6:00 · तळमजल्यावर, मंडपाजवळ.",
+    "Sponsored by the Cricket team. Thank you to the Cricket team for their support!": "क्रिकेट संघातर्फे प्रायोजित. सहकार्याबद्दल क्रिकेट संघाचे मनःपूर्वक आभार!",
+    "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM": "ढोल ताशा वादन: सायंकाळी 4:00 – 6:00",
+    "Ground floor, near the Pandal": "तळमजल्यावर, मंडपाजवळ",
+    "19 Sep — Drawing Competition & Talent Show (session 1). Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सप्टेंबर — चित्रकला स्पर्धा आणि कलागुण सादरीकरण (सत्र 1). ढोल ताशा वादन: सायंकाळी 4–6, तळमजल्यावर मंडपाजवळ. क्रिकेट संघातर्फे प्रायोजित — आपल्या सहकार्याबद्दल मनःपूर्वक आभार!"
+  });
   const reservationNotice = "The evening Aarti on 20 September 2026 is reserved for senior citizens as a token of respect. If there are senior citizens in your family, please invite them to attend with a pooja thali. Morning Aarti registration remains open for 20 September.";
   translations.hi[reservationNotice] = "सम्मान के प्रतीक के रूप में 20 सितंबर 2026 की शाम की आरती वरिष्ठ नागरिकों के लिए आरक्षित है। यदि आपके परिवार में वरिष्ठ नागरिक हैं, तो कृपया उन्हें पूजा की थाली के साथ आरती में शामिल होने के लिए आमंत्रित करें। 20 सितंबर की सुबह की आरती के लिए पंजीकरण खुला है।";
   translations.mr[reservationNotice] = "ज्येष्ठ नागरिकांप्रती आदर व्यक्त करण्यासाठी 20 सप्टेंबर 2026 ची संध्याकाळची आरती त्यांच्यासाठी राखीव आहे. आपल्या कुटुंबात ज्येष्ठ नागरिक असल्यास, कृपया त्यांना पूजेच्या ताटासह आरतीला उपस्थित राहण्यास आमंत्रित करा. 20 सप्टेंबरच्या सकाळच्या आरतीसाठी नोंदणी खुली आहे.";

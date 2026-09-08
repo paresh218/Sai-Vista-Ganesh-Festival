@@ -858,12 +858,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ["20260916", "Games & Activities", "Games and activities for residents."],
     ["20260917", "Games & Community Activities", "Games and community activities for residents."],
     ["20260918", "Bollywood Night", "Music, dance, performances and entertainment."],
-    ["20260919", "Drawing Competition & Talent Show 1", "Community competition and talent-show session."],
+    ["20260919", "Drawing Competition, Talent Show 1 & Dhol Tasha Vaadan", "Community competition and talent-show session. Dhol Tasha Vaadan: 4:00 PM–6:00 PM IST, ground floor near the Pandal. Sponsored by the Cricket team. Thank you to the Cricket team for their support!"],
     ["20260920", "Community Activity Day", "Blood donation, treasure hunt, Thali and Rangoli competition, and Fun N Fun Fair."],
     ["20260921", "Talent Show 2", "Second talent-show session."],
     ["20260922", "Fancy Dress", "Fancy Dress event."],
     ["20260924", "Satyanarayan Puja & Mahaprasad", "Dedicated Puja and Mahaprasad programme."],
-    ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ."]
+    ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ."],
+    ["20260923", "No Gas Cooking Competition", "Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon."]
   ];
   const toNextDay = (date) => {
     const year = Number(date.slice(0, 4)), month = Number(date.slice(4, 6)) - 1, day = Number(date.slice(6, 8));

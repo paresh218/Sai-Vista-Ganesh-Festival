@@ -8,11 +8,11 @@ window.SaiVistaContent = {
     "9-16": { message: "16 Sep — Games and activities. Register for events.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-17": { message: "17 Sep — Games and community activities.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-18": { message: "18 Sep — Bollywood Night (special event).", time: "Evening", place: "Sai Vista, Rahatani" },
-    "9-19": { message: "19 Sep — Drawing Competition & Talent Show (session 1).", time: "As scheduled", place: "Sai Vista, Rahatani" },
+    "9-19": { message: "19 Sep — Drawing Competition & Talent Show (session 1). Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!", time: "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM", place: "Ground floor, near the Pandal" },
     "9-20": { message: "20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-21": { message: "21 Sep — Talent Show (session 2).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-22": { message: "22 Sep — Fancy Dress event.", time: "As scheduled", place: "Sai Vista, Rahatani" },
-    "9-23": { message: "Kurta registration has started — registration deadline: 8 September 2026.", time: "—", place: "Sai Vista, Rahatani" },
+    "9-23": { message: "23 Sep — No Gas Cooking Competition. Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon.", time: "To be announced", place: "Sai Vista, Rahatani" },
     "9-24": { message: "24 Sep — Satyanarayan Puja & Mahaprasad.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-25": { message: "25 Sep — Visarjan, Lezim and evening DJ.", time: "As scheduled", place: "Sai Vista, Rahatani" }
   },
