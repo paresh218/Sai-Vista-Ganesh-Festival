@@ -287,9 +287,13 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 
   const scheduleFilters = document.querySelectorAll(".schedule-filter");
   const scheduleCards = document.querySelectorAll(".schedule-card");
+  scheduleFilters.forEach(button => button.setAttribute("aria-pressed", String(button.classList.contains("active"))));
   scheduleFilters.forEach(button => button.addEventListener("click", () => {
     const filter = button.dataset.filter;
-    scheduleFilters.forEach(item => item.classList.toggle("active", item === button));
+    scheduleFilters.forEach(item => {
+      item.classList.toggle("active", item === button);
+      item.setAttribute("aria-pressed", String(item === button));
+    });
     scheduleCards.forEach(card => {
       const show = filter === "all" ||
         (filter === "featured" && card.classList.contains("featured")) ||
@@ -853,17 +857,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!calendarButton) return;
 
   const events = [
-    ["20260914", "Ganesh Sthapana, Miravnuk & Lezim", "Opening-day programme at Sai Vista. Miravnuk and Lezim are planned from 3–7 PM."],
-    ["20260915", "Housie", "Community Housie evening for Sai Vista residents."],
+    ["20260914", "Mirvanuk with Lezim Performance & Ganesh Sthapana", "Mirvanuk with Lezim Performance: 2:30 PM–6:30 PM IST. Lezim coordinator: Monica Jadhav. Ganesh Sthapana by Sandeep Prajapati: 7:00 PM IST."],
+    ["20260915", "Housie", "Community Housie evening. Coordinators: Shilpi Jain & Priyanka Merai."],
     ["20260916", "Games & Activities", "Games and activities for residents."],
     ["20260917", "Games & Community Activities", "Games and community activities for residents."],
-    ["20260918", "Bollywood Night", "Music, dance, performances and entertainment."],
-    ["20260919", "Drawing Competition, Talent Show 1 & Dhol Tasha Vaadan", "Community competition and talent-show session. Dhol Tasha Vaadan: 4:00 PM–6:00 PM IST, ground floor near the Pandal. Sponsored by the Cricket team. Thank you to the Cricket team for their support!"],
-    ["20260920", "Community Activity Day", "Blood donation, treasure hunt, Thali and Rangoli competition, and Fun N Fun Fair."],
+    ["20260918", "Bollywood Night", "Wing competition — 1 entry per wing. Coordinator: Deepti Lakhotia."],
+    ["20260919", "Drawing Competition for Kids, Talent Show - Season 1 & Dhol Tasha Vaadan", "Drawing Competition for Kids and Talent Show - Season 1. Dhol Tasha Vaadan: 4:00 PM–6:00 PM IST, ground floor near the Pandal. Sponsored by the Cricket team. Thank you to the Cricket team for their support!"],
+    ["20260920", "Community Activity Day", "Blood Donation (coordinators: Deepak Karade & Sameer Gandhi); Treasure Hunt; Thali & Rangoli Competition; Fun n Fair (coordinator: Priyank Sharma)."],
     ["20260921", "Talent Show 2", "Second talent-show session."],
     ["20260922", "Fancy Dress", "Fancy Dress event."],
-    ["20260924", "Satyanarayan Puja & Mahaprasad", "Dedicated Puja and Mahaprasad programme."],
-    ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ."],
+    ["20260924", "Satyanarayan Puja & Mahaprasad", "Satyanarayan Puja. Mahaprasad: 7:00 PM–10:00 PM IST."],
+    ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ. Lezim coordinator: Monica Jadhav."],
     ["20260923", "No Gas Cooking Competition", "Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon."]
   ];
   const toNextDay = (date) => {

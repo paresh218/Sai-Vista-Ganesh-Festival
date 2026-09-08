@@ -49,7 +49,7 @@
     "16 Sep — Games and activities. Register for events.": "16 सितम्बर — खेल और गतिविधियाँ। कार्यक्रमों के लिए पंजीकरण करें।",
     "17 Sep — Games and community activities.": "17 सितम्बर — खेल और सामुदायिक गतिविधियाँ।",
     "18 Sep — Bollywood Night (special event).": "18 सितम्बर — बॉलीवुड नाइट (विशेष कार्यक्रम)।",
-    "19 Sep — Drawing Competition & Talent Show (session 1).": "19 सितम्बर — चित्रकला प्रतियोगिता और टैलेंट शो (सत्र 1)।",
+    "19 Sep — Drawing Competition for Kids; Talent Show - Season 1;": "19 सितम्बर — चित्रकला प्रतियोगिता और टैलेंट शो (सत्र 1)।",
     "20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.": "20 सितम्बर — रक्तदान, ट्रेज़र हंट, थाली और रंगोली प्रतियोगिता।",
     "21 Sep — Talent Show (session 2).": "21 सितम्बर — टैलेंट शो (सत्र 2)।",
     "22 Sep — Fancy Dress event.": "22 सितम्बर — फैंसी ड्रेस कार्यक्रम।",
@@ -66,7 +66,7 @@
     "16 Sep — Games and activities. Register for events.": "16 सप्टेंबर — खेळ आणि उपक्रम. कार्यक्रमांसाठी नोंदणी करा।",
     "17 Sep — Games and community activities.": "17 सप्टेंबर — खेळ आणि सामुदायिक उपक्रम।",
     "18 Sep — Bollywood Night (special event).": "18 सप्टेंबर — बॉलिवूड नाईट (विशेष कार्यक्रम)।",
-    "19 Sep — Drawing Competition & Talent Show (session 1).": "19 सप्टेंबर — चित्रकला स्पर्धा आणि टॅलेंट शो (सत्र 1)।",
+    "19 Sep — Drawing Competition for Kids; Talent Show - Season 1;": "19 सप्टेंबर — चित्रकला स्पर्धा आणि टॅलेंट शो (सत्र 1)।",
     "20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.": "20 सप्टेंबर — रक्तदान, ट्रेझर हंट, थाळी आणि रांगोळी स्पर्धा।",
     "21 Sep — Talent Show (session 2).": "21 सप्टेंबर — टॅलेंट शो (सत्र 2)।",
     "22 Sep — Fancy Dress event.": "22 सप्टेंबर — फॅन्सी ड्रेस कार्यक्रम।",
@@ -108,7 +108,7 @@
     "Sponsored by the Cricket team. Thank you to the Cricket team for their support!": "क्रिकेट टीम द्वारा प्रायोजित। सहयोग के लिए क्रिकेट टीम का धन्यवाद!",
     "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM": "ढोल ताशा वादन: शाम 4:00 – 6:00 बजे",
     "Ground floor, near the Pandal": "भूतल पर, पंडाल के पास",
-    "19 Sep — Drawing Competition & Talent Show (session 1). Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सितंबर — चित्रकला प्रतियोगिता और प्रतिभा प्रदर्शन (सत्र 1)। ढोल ताशा वादन: शाम 4–6 बजे, भूतल पर पंडाल के पास। क्रिकेट टीम द्वारा प्रायोजित — आपके सहयोग के लिए धन्यवाद!"
+    "19 Sep — Drawing Competition for Kids; Talent Show - Season 1; Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सितंबर — चित्रकला प्रतियोगिता और प्रतिभा प्रदर्शन (सत्र 1)। ढोल ताशा वादन: शाम 4–6 बजे, भूतल पर पंडाल के पास। क्रिकेट टीम द्वारा प्रायोजित — आपके सहयोग के लिए धन्यवाद!"
   });
   Object.assign(translations.mr, {
     "No Gas Cooking Competition": "गॅस न वापरता पाककला स्पर्धा",
@@ -121,8 +121,65 @@
     "Sponsored by the Cricket team. Thank you to the Cricket team for their support!": "क्रिकेट संघातर्फे प्रायोजित. सहकार्याबद्दल क्रिकेट संघाचे मनःपूर्वक आभार!",
     "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM": "ढोल ताशा वादन: सायंकाळी 4:00 – 6:00",
     "Ground floor, near the Pandal": "तळमजल्यावर, मंडपाजवळ",
-    "19 Sep — Drawing Competition & Talent Show (session 1). Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सप्टेंबर — चित्रकला स्पर्धा आणि कलागुण सादरीकरण (सत्र 1). ढोल ताशा वादन: सायंकाळी 4–6, तळमजल्यावर मंडपाजवळ. क्रिकेट संघातर्फे प्रायोजित — आपल्या सहकार्याबद्दल मनःपूर्वक आभार!"
+    "19 Sep — Drawing Competition for Kids; Talent Show - Season 1; Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!": "19 सप्टेंबर — चित्रकला स्पर्धा आणि कलागुण सादरीकरण (सत्र 1). ढोल ताशा वादन: सायंकाळी 4–6, तळमजल्यावर मंडपाजवळ. क्रिकेट संघातर्फे प्रायोजित — आपल्या सहकार्याबद्दल मनःपूर्वक आभार!"
   });
+  Object.assign(translations.hi, {
+  "Miravnuk • Lezim • Ganesh Sthapana": "मिरवणूक • लेझीम • गणेश स्थापना",
+  "Visarjan • Lezim • DJ": "विसर्जन • लेझीम • डीजे",
+  "Miravnuk: 2:30 PM – 6:30 PM. Ganesh Sthapana: 7:00 PM.": "मिरवणूक: दोपहर 2:30 – शाम 6:30 बजे। गणेश स्थापना: शाम 7:00 बजे।",
+  "14 Sep: Miravnuk: 2:30 PM – 6:30 PM. Ganesh Sthapana: 7:00 PM.": "14 सितंबर: मिरवणूक: दोपहर 2:30 – शाम 6:30 बजे। गणेश स्थापना: शाम 7:00 बजे।",
+  "Lezim coordinator: Monica Jadhav.": "लेझीम समन्वयक: मोनिका जाधव।",
+  "Coordinators: Shilpi Jain & Priyanka Merai.": "समन्वयक: शिल्पी जैन और प्रियंका मेराई।",
+  "Wing competition — 1 entry per wing.": "विंग प्रतियोगिता — प्रत्येक विंग से 1 प्रविष्टि।",
+  "Coordinator: Deepti Lakhotia.": "समन्वयक: दीप्ति लखोटिया।",
+  "Coordinators: Deepak Karade & Sameer Gandhi.": "समन्वयक: दीपक कराडे और समीर गांधी।",
+  "Coordinator: Priyank Sharma.": "समन्वयक: प्रियांक शर्मा।",
+  "Blood Donation": "रक्तदान",
+  "Treasure Hunt": "खजाने की खोज",
+  "Thali & Rangoli Competition": "थाली और रंगोली प्रतियोगिता",
+  "Fun n Fair": "फन एन फेयर",
+  "Satyanarayan Puja": "सत्यनारायण पूजा",
+  "Mahaprasad": "महाप्रसाद",
+  "7:00 PM – 10:00 PM": "शाम 7:00 – रात 10:00 बजे"
+});
+  Object.assign(translations.mr, {
+  "Miravnuk • Lezim • Ganesh Sthapana": "मिरवणूक • लेझीम • गणेश स्थापना",
+  "Visarjan • Lezim • DJ": "विसर्जन • लेझीम • डीजे",
+  "Miravnuk: 2:30 PM – 6:30 PM. Ganesh Sthapana: 7:00 PM.": "मिरवणूक: दुपारी 2:30 – सायंकाळी 6:30. गणेश स्थापना: सायंकाळी 7:00.",
+  "14 Sep: Miravnuk: 2:30 PM – 6:30 PM. Ganesh Sthapana: 7:00 PM.": "14 सप्टेंबर: मिरवणूक: दुपारी 2:30 – सायंकाळी 6:30. गणेश स्थापना: सायंकाळी 7:00.",
+  "Lezim coordinator: Monica Jadhav.": "लेझीम समन्वयक: मोनिका जाधव.",
+  "Coordinators: Shilpi Jain & Priyanka Merai.": "समन्वयक: शिल्पी जैन आणि प्रियांका मेराई.",
+  "Wing competition — 1 entry per wing.": "विंग स्पर्धा — प्रत्येक विंगमधून 1 प्रवेशिका.",
+  "Coordinator: Deepti Lakhotia.": "समन्वयक: दीप्ती लखोटिया.",
+  "Coordinators: Deepak Karade & Sameer Gandhi.": "समन्वयक: दीपक कराडे आणि समीर गांधी.",
+  "Coordinator: Priyank Sharma.": "समन्वयक: प्रियांक शर्मा.",
+  "Blood Donation": "रक्तदान",
+  "Treasure Hunt": "खजिना शोध",
+  "Thali & Rangoli Competition": "थाळी आणि रांगोळी स्पर्धा",
+  "Fun n Fair": "फन एन फेअर",
+  "Satyanarayan Puja": "सत्यनारायण पूजा",
+  "Mahaprasad": "महाप्रसाद",
+  "7:00 PM – 10:00 PM": "सायंकाळी 7:00 – रात्री 10:00"
+});
+
+  Object.assign(translations.hi, {"Drawing Competition for Kids":"बच्चों के लिए चित्रकला प्रतियोगिता", "Talent Show - Season 1":"प्रतिभा प्रदर्शन - सीज़न 1"});
+  Object.assign(translations.mr, {"Drawing Competition for Kids":"मुलांसाठी चित्रकला स्पर्धा", "Talent Show - Season 1":"कलागुण सादरीकरण - सीझन 1"});
+  Object.assign(translations.hi, {
+  "Mirvanuk with Lezim Performance": "लेझीम प्रदर्शन के साथ मिरवणूक",
+  "Ganesh Sthapana": "गणेश स्थापना",
+  "2:30 PM – 6:30 PM": "दोपहर 2:30 – शाम 6:30 बजे",
+  "7:00 PM": "शाम 7:00 बजे",
+  "Sthapana by: Sandeep Prajapati.": "स्थापना: संदीप प्रजापति द्वारा।",
+  "14 Sep: Mirvanuk with Lezim Performance: 2:30 PM – 6:30 PM. Ganesh Sthapana by Sandeep Prajapati: 7:00 PM.": "14 सितंबर: लेझीम प्रदर्शन के साथ मिरवणूक: दोपहर 2:30 – शाम 6:30 बजे। संदीप प्रजापति द्वारा गणेश स्थापना: शाम 7:00 बजे।"
+});
+  Object.assign(translations.mr, {
+  "Mirvanuk with Lezim Performance": "लेझीम सादरीकरणासह मिरवणूक",
+  "Ganesh Sthapana": "गणेश स्थापना",
+  "2:30 PM – 6:30 PM": "दुपारी 2:30 – सायंकाळी 6:30",
+  "7:00 PM": "सायंकाळी 7:00",
+  "Sthapana by: Sandeep Prajapati.": "स्थापना: संदीप प्रजापती यांच्या हस्ते.",
+  "14 Sep: Mirvanuk with Lezim Performance: 2:30 PM – 6:30 PM. Ganesh Sthapana by Sandeep Prajapati: 7:00 PM.": "14 सप्टेंबर: लेझीम सादरीकरणासह मिरवणूक: दुपारी 2:30 – सायंकाळी 6:30. संदीप प्रजापती यांच्या हस्ते गणेश स्थापना: सायंकाळी 7:00."
+});
   const reservationNotice = "The evening Aarti on 20 September 2026 is reserved for senior citizens as a token of respect. If there are senior citizens in your family, please invite them to attend with a pooja thali. Morning Aarti registration remains open for 20 September.";
   translations.hi[reservationNotice] = "सम्मान के प्रतीक के रूप में 20 सितंबर 2026 की शाम की आरती वरिष्ठ नागरिकों के लिए आरक्षित है। यदि आपके परिवार में वरिष्ठ नागरिक हैं, तो कृपया उन्हें पूजा की थाली के साथ आरती में शामिल होने के लिए आमंत्रित करें। 20 सितंबर की सुबह की आरती के लिए पंजीकरण खुला है।";
   translations.mr[reservationNotice] = "ज्येष्ठ नागरिकांप्रती आदर व्यक्त करण्यासाठी 20 सप्टेंबर 2026 ची संध्याकाळची आरती त्यांच्यासाठी राखीव आहे. आपल्या कुटुंबात ज्येष्ठ नागरिक असल्यास, कृपया त्यांना पूजेच्या ताटासह आरतीला उपस्थित राहण्यास आमंत्रित करा. 20 सप्टेंबरच्या सकाळच्या आरतीसाठी नोंदणी खुली आहे.";

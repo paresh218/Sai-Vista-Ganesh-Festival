@@ -218,3 +218,44 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 
 /* Feta registration */
 .feta-section{background:#fff4e5}.feta-payment{display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center}.feta-qr{width:100%;max-width:220px;height:auto}.feta-section figcaption{font-size:12px;text-align:center;padding:8px}.feta-section .btn{margin:16px 0}.feta-section p,#fetaSuccess p{margin:12px 0}#fetaForm[hidden],#fetaSuccess[hidden]{display:none}#fetaStatus{margin-top:14px}button:disabled{opacity:.6;cursor:not-allowed}@media(max-width:600px){.feta-payment{grid-template-columns:1fr}.feta-qr{display:block;margin:auto}}
+/* Festival agenda: one date, clearly separated events. */
+#schedule{background:radial-gradient(ellipse at top right,#ffecd0 0,transparent 48%),#fffaf4;border-radius:32px;margin-bottom:48px}
+#schedule .section-heading>span{display:inline-block;padding:7px 15px;border-radius:30px;background:#f6e5d0;color:#783b20;font-size:11px;font-weight:700;letter-spacing:2px}
+#schedule .section-heading h2{color:#64291e;line-height:1.18}
+#schedule .schedule-toolbar{gap:10px;margin-bottom:30px}
+#schedule .schedule-filter{min-height:44px;padding:10px 19px;font-size:13px;box-shadow:0 2px 5px #62321b08}
+#schedule .schedule-filter:focus-visible,#schedule a:focus-visible{outline:3px solid #b75b19;outline-offset:4px}
+#schedule .schedule-list{gap:20px}
+#schedule .schedule-card{position:relative;align-items:flex-start;padding:26px;gap:24px;border:1px solid #ebdccb;border-radius:22px;background:#fff;box-shadow:0 5px 18px #60331706}
+#schedule .schedule-card:hover{transform:translateY(-2px);box-shadow:0 10px 28px #60331710}
+#schedule .schedule-card.featured{border-color:#cf9a5f;background:linear-gradient(115deg,#fff7e9,#fff 60%)}
+#schedule .schedule-card.puja-card{background:linear-gradient(115deg,#fff1e9,#fff 60%)}
+#schedule .date-chip{flex:0 0 76px;min-width:0;border:0;border-radius:16px;background:#7d281b;color:#fff;padding:17px 8px;box-shadow:0 5px 12px #7d281b18}
+#schedule .date-chip b{font-size:36px;font-weight:700}
+#schedule .date-chip small{letter-spacing:2px;font-size:11px;margin-top:7px}
+#schedule .schedule-body{flex:1;min-width:0;padding:0}
+#schedule .event-kicker{font-size:10px;letter-spacing:2px;color:#966444;margin:2px 0 14px}
+#schedule .schedule-events{display:grid;gap:16px}
+#schedule .schedule-event+.schedule-event{border-top:1px solid #efdfcf;padding-top:16px}
+#schedule .schedule-event h3{font-size:21px;line-height:1.35;color:#522b22;margin:0 0 7px}
+#schedule .schedule-event p{line-height:1.65;margin:5px 0;color:#6d5b50}
+#schedule .schedule-event .event-time{display:table;background:#fff0d6;color:#794016;border:1px solid #f2dcba;border-radius:8px;padding:5px 10px;margin:9px 0;font-size:13px;font-weight:700}
+#schedule .schedule-event .event-coordinator{font-size:13px;color:#76523d}
+#schedule .text-link{min-height:36px;display:inline-flex;align-items:center;margin-top:4px;text-underline-offset:4px}
+#schedule .text-link:hover{text-decoration:underline}
+@media(max-width:650px){
+ #schedule{border-radius:22px;padding:36px 14px;margin:0 8px 32px}
+ #schedule .section-heading{margin-bottom:28px}
+ #schedule .section-heading h2{font-size:29px}
+ #schedule .schedule-toolbar{margin-bottom:20px;padding:3px 3px 8px}
+ #schedule .schedule-card{padding:18px 14px;gap:14px;border-radius:17px}
+ #schedule .date-chip{flex-basis:53px;padding:13px 5px;border-radius:12px}
+ #schedule .date-chip b{font-size:28px}
+ #schedule .date-chip small{font-size:9px}
+ #schedule .event-kicker{font-size:9px;letter-spacing:1px}
+ #schedule .schedule-event h3{font-size:17px}
+ #schedule .schedule-event p{font-size:13px}
+ #schedule .schedule-event .event-time{font-size:12px}
+ #schedule .schedule-card:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){#schedule .schedule-card,#schedule .schedule-filter{transition:none}#schedule .schedule-card:hover{transform:none}}
