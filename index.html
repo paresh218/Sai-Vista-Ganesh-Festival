@@ -285,8 +285,8 @@
             <div class="form-group"><label for="fetaName">Name *</label><input id="fetaName" name="name" autocomplete="name" minlength="2" maxlength="80" required></div>
             <div class="form-group"><label for="fetaPhone">WhatsApp number *</label><input id="fetaPhone" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="10-digit Indian mobile number" aria-describedby="fetaPhoneHelp" required><small id="fetaPhoneHelp">10-digit Indian number; +91 prefix is also accepted.</small></div>
             <div class="form-row"><div class="form-group"><label for="fetaFlat">Flat number *</label><select id="fetaFlat" name="flatNo" required><option value="">Select flat</option></select></div><div class="form-group"><label for="fetaWing">Wing *</label><select id="fetaWing" name="wing" required><option value="">Select wing</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select></div></div>
-            <div class="form-group"><label for="fetaPaid">Paid? *</label><select id="fetaPaid" name="paid" required><option value="">Select payment status</option><option value="Yes">Yes</option><option value="No">No</option></select><small>Payment status is self-declared and will be verified by the coordinator.</small></div>
-            <p>Your details are shared with festival coordinators for your Feta order.</p><button id="submitFeta" type="submit" class="btn btn-dark">Submit Feta Registration</button>
+            <div class="form-group"><label for="fetaPaid">Paid? *</label><select id="fetaPaid" name="paid" required><option value="">Select payment status</option><option value="Yes">Yes</option><option value="No">No</option></select><small>Pay ₹70, then select Yes to enable saving. Payment status is self-declared and will be verified by the coordinator.</small></div>
+            <p>Your details are shared with festival coordinators for your Feta order.</p><button id="submitFeta" type="submit" disabled class="btn btn-dark">Submit Feta Registration</button>
           </form>
           <p id="fetaStatus" role="status" aria-live="polite"></p>
           <div id="fetaSuccess" hidden><h3>Registration confirmed!</h3><p id="fetaConfirmation"></p><p>Please open WhatsApp and press Send to notify Kantilal Mahajan.</p><a id="fetaWhatsApp" class="btn btn-dark" target="_blank" rel="noopener">Send registration to Kantilal on WhatsApp ↗</a></div>
@@ -744,7 +744,7 @@
     <script src="site-data.js"></script>
     <script src="translations.js"></script>
     <script src="script.js?v=22"></script>
-    <script src="feta-registration.js?v=3"></script>
+    <script src="feta-registration.js?v=5"></script>
     <script src="expense-model.js?v=13"></script>
     <script src="expense-dashboard.js?v=17"></script>
 </body>

@@ -16,6 +16,7 @@ function doPost(e) {
     const flat = String(p.flatNo || '');
     const wing = String(p.wing || '');
     const paid = String(p.paid || '');
+    if (paid !== 'Yes') return fetaJson({status:'error', message:'Please pay ₹70 and select Paid: Yes before saving your registration.'});
     const id = String(p.requestId || '');
     if (!/^[\p{L}\p{M}][\p{L}\p{M} .’'-]{1,79}$/u.test(name) || !/^[6-9]\d{9}$/.test(phone) || !/^(?:[1-9]|1[0-3])0[1-4]$/.test(flat) || !/^[A-F]$/.test(wing) || !['Yes','No'].includes(paid) || !/^[a-f0-9-]{36}$/i.test(id)) return fetaJson({status:'error', message:'Please check all required fields.'});
     const sheetId = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');

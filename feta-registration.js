@@ -6,7 +6,7 @@ function validateFeta(data) {
   if (!/^[6-9]\d{9}$/.test(data.whatsapp)) return 'Enter a valid 10-digit Indian WhatsApp number.';
   if (!/^(?:[1-9]|1[0-3])0[1-4]$/.test(data.flatNo)) return 'Choose a flat from 101–104 through 1301–1304.';
   if (!/^[A-F]$/.test(data.wing)) return 'Choose wing A to F.';
-  if (!['Yes', 'No'].includes(data.paid)) return 'Select Paid: Yes or No.';
+  if (data.paid !== 'Yes') return 'Please pay ₹70 and select Paid: Yes before saving your registration.';
   return '';
 }
 async function readFetaResponse(response) {
@@ -26,12 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const status = document.getElementById('fetaStatus');
   const success = document.getElementById('fetaSuccess');
   const submit = document.getElementById('submitFeta');
+  let saving = false;
+  function updateSubmit() {
+    submit.disabled = saving || form.elements.paid.value !== 'Yes' || Date.now() >= FETA_DEADLINE;
+  }
+  form.elements.paid.addEventListener('change', () => {
+    updateSubmit();
+    if (form.elements.paid.value === 'No') alert('Please pay first.');
+  });
   let requestId = crypto.randomUUID();
   for (let floor = 1; floor <= 13; floor++) for (let unit = 1; unit <= 4; unit++) {
     const flat = String(floor * 100 + unit);
     form.elements.flatNo.add(new Option(flat, flat));
   }
   function updateDeadline() {
+    updateSubmit();
     const closed = Date.now() >= FETA_DEADLINE;
     document.querySelectorAll('[data-open-feta]').forEach(button => {
       button.disabled = closed;
@@ -46,13 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateDeadline, 30000);
   form.addEventListener('submit', async event => {
     event.preventDefault();
+    if (saving) return;
     if (Date.now() >= FETA_DEADLINE) return updateDeadline();
     const data = Object.fromEntries(new FormData(form));
     data.name = data.name.trim().replace(/\s+/g, ' ');
     data.whatsapp = data.whatsapp.replace(/[\s()-]/g, '').replace(/^(?:\+91|0091)/, '');
     const error = validateFeta(data);
     if (error) { status.textContent = error; return; }
-    submit.disabled = true;
+    saving = true;
+    updateSubmit();
     status.textContent = 'Saving your registration…';
     try {
       const response = await fetch(FETA_ENDPOINT, { method: 'POST', body: new URLSearchParams({ ...data, requestId }), signal: AbortSignal.timeout(30000) });
@@ -69,6 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         : error instanceof TypeError
           ? 'Cannot reach the registration service. Check your connection. The coordinator should verify that the latest Apps Script is deployed with access set to Anyone.'
           : error.message;
-    } finally { submit.disabled = Date.now() >= FETA_DEADLINE; }
+    } finally { saving = false; updateDeadline(); }
   });
 });
