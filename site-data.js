@@ -12,13 +12,14 @@ window.SaiVistaContent = {
     "9-20": { message: "20 Sep — Blood donation, Treasure Hunt, Thali & Rangoli competition.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-21": { message: "21 Sep — Talent Show (session 2).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-22": { message: "22 Sep — Fancy Dress event.", time: "As scheduled", place: "Sai Vista, Rahatani" },
-    "9-23": { message: "23 Sep — No activity planned (schedule may be updated).", time: "—", place: "Sai Vista, Rahatani" },
+    "9-23": { message: "Kurta registration has started — registration deadline: 8 September 2026.", time: "—", place: "Sai Vista, Rahatani" },
     "9-24": { message: "24 Sep — Satyanarayan Puja & Mahaprasad.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-25": { message: "25 Sep — Visarjan, Lezim and evening DJ.", time: "As scheduled", place: "Sai Vista, Rahatani" }
   },
 
   updates: [
-    { date: "2026-09-05", category: "Registration", title: "Kurta registration is open", body: "Sizes S through XL are available. Please register by 8 September.", href: "#tshirt", action: "View Kurta details" },
+    { date: "2026-09-08", category: "Registration", title: "Feta registration is open", body: "₹70 each. Last date: Friday, 11 September 2026, 5 PM IST. Contact Kantilal Mahajan: +91 94039 42777.", href: "#feta", action: "Register for Feta" },
+    { date: "2026-09-05", category: "Registration", title: "Kurta registration is open", body: "Sizes S through XL are available. Last-date reminder: please register by 8 September 2026.", href: "#tshirt", action: "View Kurta details" },
     { date: "2026-09-05", category: "Aarti", title: "Aarti nominations are open", body: "Choose a morning or evening Aarti slot for 15–24 September.", href: "#aarti", action: "Nominate for Aarti" },
     { date: "2026-09-05", category: "Schedule", title: "Festival schedule is available", body: "Check the written schedule for event timings, registration links and important notes.", href: "#schedule", action: "View schedule" }
   ]

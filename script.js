@@ -131,15 +131,17 @@ function initTodayCard() {
   const today = new Date();
   const event = getFestivalEvent(today);
   const important = showAdultsNotice(today);
-  document.getElementById("todayCardTitle").textContent = t(important ? "Adults’ activity on 23 September?" : "Today at Sai Vista");
+  document.getElementById("todayCardTitle").textContent = t(important ? "Kurta registration has started" : "Today at Sai Vista");
   document.querySelector(".today-modal-box > span").textContent = t(important ? "IMPORTANT MESSAGE" : "HAPPENING TODAY");
   document.querySelector(".today-modal-icon").textContent = important ? "📣" : "📍";
-  document.getElementById("adultInterestContacts").hidden = !important;
-  action.hidden = important;
+  document.getElementById("adultInterestContacts").hidden = true;
+  action.hidden = false;
   if (important) {
-    dateEl.textContent = t("No events are scheduled from 6–13 September.");
-    eventEl.textContent = t("Nothing is planned for 23 September yet. We are considering an activity for adults, but no entries were received last year.");
-    metaEl.textContent = t("We will schedule it only if we receive more than 10 entries (at least 11). Interested? Please connect with coordinators Deepak Karade or Priyank Sharma so they can plan accordingly.");
+    dateEl.textContent = t("Registration reminders");
+    eventEl.textContent = t("Kurta registration has started! Last date to register: 8 September 2026.");
+    metaEl.textContent = t("Feta registration is open at ₹70 each. Register by Friday, 11 September 2026, 5 PM IST. Queries: Kantilal Mahajan, +91 94039 42777.");
+    action.textContent = t("View Kurta details");
+    action.href = "#tshirt";
     return;
   }
   dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: "long", day: "numeric", month: "long" });
@@ -704,6 +706,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const storageKey = "saiVistaReadNotifications";
   const notifications = [
+    { id: "kurta-last-date-sep8", title: "Kurta registration has started", body: "Reminder: last date for Kurta registration is 8 September 2026. ₹300 each, sizes S–XL.", href: "#tshirt", action: "Register for Kurta" },
+    { id: "feta-registration-sep11", title: "Feta registration is open", body: "₹70 each. Register by Friday, 11 September 2026, 5 PM IST. Queries: Kantilal Mahajan, +91 94039 42777.", href: "#feta", action: "Register for Feta" },
     {
       id: "parent-supervision-reminder-2026",
       title: "Parents, please stay with your children",
@@ -840,9 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("appinstalled", () => setInstallButtonVisibility(false));
 
-  if ("serviceWorker" in navigator && (window.isSecureContext || location.hostname === "localhost")) {
-    navigator.serviceWorker.register("service-worker.js").catch((error) => console.warn("PWA setup could not start:", error));
-  }
+  // Service worker registration and update checks are handled by site-updates.js.
 });
 
 // Downloads a portable calendar file without sending resident information anywhere.
