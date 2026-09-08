@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v26";
+const CACHE_NAME = "sai-vista-ganpati-2026-v27";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -40,7 +40,13 @@ self.addEventListener("fetch", (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      const response = await fetch(event.request, { cache: "no-cache" });
+      const url = new URL(event.request.url);
+      const isCode = event.request.mode === "navigate" || /\.(?:html|js|css|json)$/.test(url.pathname);
+      // Avoid both browser and CDN copies for pages/code, even with unchanged filenames.
+      if (isCode) url.searchParams.set('__sv_fresh', Date.now().toString());
+      const response = isCode
+        ? await fetch(url.href, { cache: "no-store", credentials: "same-origin" })
+        : await fetch(event.request, { cache: "no-cache" });
       if (response.ok) {
         event.waitUntil(cache.put(event.request, response.clone()).catch(() => {}));
         return response;

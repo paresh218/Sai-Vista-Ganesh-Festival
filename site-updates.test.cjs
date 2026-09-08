@@ -19,3 +19,17 @@ async function request(mode='cors',cacheMode='default') {
  assert.equal(await request('cors','no-store'),undefined);
  console.log('PASS: fresh network response, offline cache, navigation fallback, no HTML for missing scripts, uncached update probes.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
+
+// Regression: the first server probe must detect an already-stale displayed page.
+async function stalePageTest(edited) {
+  const listeners={}; let reloads=0, notices=0;
+  const doc={visibilityState:'visible',documentElement:{outerHTML:'old page'},addEventListener:(type,fn)=>listeners[type]=fn,querySelector:()=>null,body:{append(){notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
+  const ctx={document:doc,location:{protocol:'https:',href:'https://example.test/index.html',origin:'https://example.test',reload(){reloads++;}},navigator:{onLine:true},window:{addEventListener(){}},URL,Date,AbortSignal,DOMParser:class{parseFromString(html){return {documentElement:{outerHTML:html}};}},fetch:async()=>({ok:true,text:async()=> 'new page'}),setInterval(){}};
+  vm.runInNewContext(fs.readFileSync('site-updates.js','utf8'),ctx);
+  if(edited) listeners.input({target:{closest:()=>true}});
+  listeners.DOMContentLoaded();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(reloads,edited?0:1);
+  assert.equal(notices,edited?1:0);
+}
+(async()=>{await stalePageTest(false);await stalePageTest(true);console.log('PASS: stale first load refreshes; edited registration displays notice without losing data.');})().catch(error=>{console.error(error);process.exitCode=1;});

@@ -2,9 +2,16 @@
 (() => {
   if (!/^https?:$/.test(location.protocol)) return;
   let dirty = false, pending = false, checking = false, baseline, registration;
+  let loadedMarkup;
+  const normaliseMarkup = html => new DOMParser().parseFromString(html, 'text/html').documentElement.outerHTML;
+  function freshURL(value) {
+    const url = new URL(value, location.href);
+    url.searchParams.set('__sv_check', Date.now().toString());
+    return url;
+  }
   document.addEventListener('input', event => { if (event.target.closest('form')) dirty = true; });
   document.addEventListener('change', event => { if (event.target.closest('form')) dirty = true; });
-  const busy = () => dirty || document.querySelector('dialog[open], .modal:not(.hidden), form button[type="submit"]:disabled');
+  const busy = () => dirty || document.querySelector('dialog[open], #formModal:not(.hidden), #upiPaymentModal:not(.hidden)');
   let banner;
   function applyUpdate() {
     if (!pending || document.visibilityState !== 'visible') return;
@@ -23,15 +30,22 @@
   }
   async function fingerprint() {
     const page = new URL('index.html', location.href).href;
-    const response = await fetch(page, {cache:'no-store', signal:AbortSignal.timeout(15000)});
+    const response = await fetch(freshURL(page), {cache:'no-store', signal:AbortSignal.timeout(15000)});
     if (!response.ok) throw new Error('Update check unavailable');
     const html = await response.text();
+    // Compare with the original DOM, before translations/widgets change it.
+    // A fresh server response must not become the baseline for a stale page.
+    if (loadedMarkup && loadedMarkup !== normaliseMarkup(html)) {
+      pending = true;
+      applyUpdate();
+      return;
+    }
     const parsed = new DOMParser().parseFromString(html, 'text/html');
     const urls = [...parsed.querySelectorAll('script[src],link[rel="stylesheet"][href]')]
       .map(node => new URL(node.getAttribute('src') || node.getAttribute('href'), page))
       .filter(url => url.origin === location.origin);
     const contents = await Promise.all(urls.map(async url => {
-      const res = await fetch(url, {cache:'no-store', signal:AbortSignal.timeout(15000)});
+      const res = await fetch(freshURL(url), {cache:'no-store', signal:AbortSignal.timeout(15000)});
       if (!res.ok) throw new Error('Update asset unavailable');
       return res.text();
     }));
@@ -39,7 +53,7 @@
     return Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2,'0')).join('');
   }
   async function check() {
-    if (checking || document.visibilityState !== 'visible' || !navigator.onLine) return;
+    if (!loadedMarkup || checking || document.visibilityState !== 'visible' || !navigator.onLine) return;
     if (pending) { applyUpdate(); return; }
     checking = true;
     try {
@@ -51,15 +65,17 @@
     finally { checking = false; }
   }
   if ('serviceWorker' in navigator && window.isSecureContext) {
-    const wasControlled = Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (wasControlled) { pending = true; applyUpdate(); }
+      pending = true; applyUpdate();
     });
     navigator.serviceWorker.register('service-worker.js', {updateViaCache:'none'})
       .then(value => { registration = value; return check(); })
       .catch(() => check());
   }
-  document.addEventListener('DOMContentLoaded', check);
+  document.addEventListener('DOMContentLoaded', () => {
+    loadedMarkup = normaliseMarkup(document.documentElement.outerHTML);
+    check();
+  });
   document.addEventListener('visibilitychange', check);
   window.addEventListener('online', check);
   setInterval(check, 5 * 60 * 1000);
