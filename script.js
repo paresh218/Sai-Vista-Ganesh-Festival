@@ -859,8 +859,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const events = [
     ["20260914", "Mirvanuk with Lezim Performance & Ganesh Sthapana", "Mirvanuk with Lezim Performance: 2:30 PM–6:30 PM IST. Lezim coordinator: Monica Jadhav. Ganesh Sthapana by Sandeep Prajapati: 7:00 PM IST."],
     ["20260915", "Housie", "Community Housie evening. Coordinators: Shilpi Jain & Priyanka Merai."],
-    ["20260916", "Games & Activities", "Games and activities for residents."],
-    ["20260917", "Games & Community Activities", "Games and community activities for residents."],
+    ["20260916", "Lemon & Spoon and Three-legged Race", "Join us for the Lemon & Spoon and Three-legged Race games."],
+    ["20260917", "Musical Chairs", "Musical Chairs, plus additional games as time permits."],
     ["20260918", "Bollywood Night", "Wing competition — 1 entry per wing. Coordinator: Deepti Lakhotia."],
     ["20260919", "Drawing Competition for Kids, Talent Show - Season 1 & Dhol Tasha Vaadan", "Drawing Competition for Kids and Talent Show - Season 1. Dhol Tasha Vaadan: 4:00 PM–6:00 PM IST, ground floor near the Pandal. Sponsored by the Cricket team. Thank you to the Cricket team for their support!"],
     ["20260920", "Community Activity Day", "Blood Donation (coordinators: Deepak Karade & Sameer Gandhi); Treasure Hunt; Thali & Rangoli Competition; Fun n Fair (coordinator: Priyank Sharma)."],

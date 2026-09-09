@@ -1,6 +1,13 @@
 (() => {
   const translations = {
     hi: {
+      "Lemon & Spoon • Three-legged Race": "नींबू-चम्मच • तीन टांगों की दौड़",
+      "Join us for the Lemon & Spoon and Three-legged Race games.": "नींबू-चम्मच और तीन टांगों की दौड़ में भाग लें।",
+      "Musical Chairs": "म्यूज़िकल चेयर्स",
+      "Musical Chairs, plus additional games as time permits.": "म्यूज़िकल चेयर्स और समय मिलने पर अन्य खेल।",
+      "16 Sep — Lemon & Spoon and Three-legged Race. Register for events.": "16 सितम्बर — नींबू-चम्मच और तीन टांगों की दौड़। कार्यक्रमों के लिए पंजीकरण करें।",
+      "17 Sep — Musical Chairs, plus additional games as time permits.": "17 सितम्बर — म्यूज़िकल चेयर्स और समय मिलने पर अन्य खेल।",
+
       "Feta cancelled": "फेटा रद्द",
       "Feta has been cancelled due to low participation.": "कम सहभागिता के कारण फेटा रद्द कर दिया गया है।",
       "Festival update": "उत्सव की सूचना",
@@ -26,6 +33,13 @@
       "No special event scheduled for today — check the full schedule.": "आज कोई विशेष कार्यक्रम निर्धारित नहीं है — पूरा कार्यक्रम देखें।", "Starts in": "शुरू होने में", "Happening now!": "अभी चल रहा है!", "Page views: {count}": "पेज व्यू: {count}", "UPI ID copied. Open any UPI app and paste it to pay ₹300.": "UPI आईडी कॉपी हो गई। ₹300 भुगतान करने के लिए किसी भी UPI ऐप में पेस्ट करें।", "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.": "इस ब्राउज़र में कॉपी उपलब्ध नहीं है। अपने UPI ऐप में karade.deepak1@ibl का उपयोग करें।"
     },
     mr: {
+      "Lemon & Spoon • Three-legged Race": "लिंबू-चमचा • तीन पायांची शर्यत",
+      "Join us for the Lemon & Spoon and Three-legged Race games.": "लिंबू-चमचा आणि तीन पायांच्या शर्यतीत सहभागी व्हा.",
+      "Musical Chairs": "संगीत खुर्ची",
+      "Musical Chairs, plus additional games as time permits.": "संगीत खुर्ची आणि वेळ मिळाल्यास इतर खेळ.",
+      "16 Sep — Lemon & Spoon and Three-legged Race. Register for events.": "16 सप्टेंबर — लिंबू-चमचा आणि तीन पायांची शर्यत. कार्यक्रमांसाठी नोंदणी करा.",
+      "17 Sep — Musical Chairs, plus additional games as time permits.": "17 सप्टेंबर — संगीत खुर्ची आणि वेळ मिळाल्यास इतर खेळ.",
+
       "Feta cancelled": "फेटा रद्द",
       "Feta has been cancelled due to low participation.": "कमी सहभागामुळे फेटा रद्द करण्यात आला आहे.",
       "Festival update": "उत्सवाची सूचना",
