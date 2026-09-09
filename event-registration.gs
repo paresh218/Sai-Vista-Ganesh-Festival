@@ -56,7 +56,7 @@ const FestivalRegistration = (() => {
     if (d.event === "prasad" && (!integer(d.adults,0,100) || !integer(d.children,0,100) || Number(d.adults)+Number(d.children)<1)) return "Enter valid adult and child counts, with at least one attendee.";
     return "";
   }
-  const collectionUrl = "https://script.google.com/macros/s/AKfycbyYbNoSxhBIT2sSVfMSFY06YXAWGN99E_HunGAA2UMLA8vlJMn-_qdGCiQ1a8s6PsW3/exec?action=payments";
+  const collectionUrl = "https://script.google.com/macros/s/AKfycbxkBboCHlZSB3JghP-3eej8dhUxe1V7fKZRsviP2J3mW77-nNjNxldARn_hAq6LxnMI/exec?action=payments";
   function culturalFundStatus(payload, wing, flat) {
     if(payload?.status!=="success" || !Array.isArray(payload.payments)) return {paid:false,message:"We could not verify the cultural fund payment right now. Please try again shortly."};
     const rows=payload.payments.filter(row=>text(row.wing).toUpperCase()===wing && text(row.flat)===flat);
