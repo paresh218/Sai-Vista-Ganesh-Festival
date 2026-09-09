@@ -710,7 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const storageKey = "saiVistaReadNotifications";
   const notifications = [
-    { id: "kurta-last-date-sep8", title: "Kurta registration has started", body: "Reminder: last date for Kurta registration is 8 September 2026. ₹300 each, sizes S–XL.", href: "#tshirt", action: "Register for Kurta" },
+    { id: "kurta-closed-sep9", title: "Kurta registration closed", body: "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.", href: "#tshirt", action: "View Kurta details" },
     { id: "feta-cancelled-sep09", title: "Feta cancelled", body: "Feta has been cancelled due to low participation.", href: "#committeeUpdates", action: "View updates" },
     {
       id: "parent-supervision-reminder-2026",

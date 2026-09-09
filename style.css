@@ -258,3 +258,16 @@ button:disabled{opacity:.6;cursor:not-allowed}
  #schedule .schedule-card:hover{transform:none}
 }
 @media(prefers-reduced-motion:reduce){#schedule .schedule-card,#schedule .schedule-filter{transition:none}#schedule .schedule-card:hover{transform:none}}
+
+/* Festival event registration */
+#eventRegistrationGrid { margin:24px 0; }
+.event-guidelines { margin:16px 0 24px; padding:16px; background:#fff4e5; border-radius:12px; }
+.event-guidelines summary { cursor:pointer; font-weight:600; }
+.event-guidelines ul { padding-left:22px; }
+.event-guidelines li { margin:12px 0; line-height:1.6; }
+#festivalEventFields h3 { margin:20px 0 12px; }
+#festivalEventForm[hidden],#festivalEventSuccess[hidden] { display:none; }
+#festivalEventStatus { margin-top:16px; }
+#festivalEventSuccess p { margin:16px 0; overflow-wrap:anywhere; }
+
+#festivalEventFields textarea { width:100%; min-height:100px; padding:12px; border:1px solid #ddd; border-radius:10px; font:inherit; resize:vertical; }

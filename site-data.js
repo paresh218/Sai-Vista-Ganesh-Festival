@@ -19,7 +19,7 @@ window.SaiVistaContent = {
 
   updates: [
     { date: "2026-09-09", category: "Announcement", title: "Feta cancelled", body: "Feta has been cancelled due to low participation.", href: "#committeeUpdates", action: "View updates" },
-    { date: "2026-09-05", category: "Registration", title: "Kurta registration is open", body: "Sizes S through XL are available. Last-date reminder: please register by 8 September 2026.", href: "#tshirt", action: "View Kurta details" },
+    { date: "2026-09-09", category: "Registration", title: "Kurta registration closed", body: "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.", href: "#tshirt", action: "View Kurta details" },
     { date: "2026-09-05", category: "Aarti", title: "Aarti nominations are open", body: "Choose a morning or evening Aarti slot for 15–24 September.", href: "#aarti", action: "Nominate for Aarti" },
     { date: "2026-09-05", category: "Schedule", title: "Festival schedule is available", body: "Check the written schedule for event timings, registration links and important notes.", href: "#schedule", action: "View schedule" }
   ]

@@ -1,6 +1,15 @@
 (() => {
   const translations = {
     hi: {
+      "Kurta registration closed": "कुर्ता पंजीकरण बंद है",
+      "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.": "कुर्ता पंजीकरण बंद है। विशेष अनुरोध के लिए देर होने से पहले जल्द से जल्द दीपक कराडे से संपर्क करें।",
+      "Contact Deepak Karade on WhatsApp ↗": "व्हाट्सऐप पर दीपक कराडे से संपर्क करें ↗",
+      "Kurta registration closed. For exceptions, contact Deepak Karade.": "कुर्ता पंजीकरण बंद है। विशेष अनुरोध के लिए दीपक कराडे से संपर्क करें।",
+      "Please confirm any exception with Deepak before making payment.": "भुगतान करने से पहले दीपक से विशेष अनुरोध की पुष्टि कर लें।",
+      "Kurta registration is closed. The product details are retained for reference.": "कुर्ता पंजीकरण बंद है। उत्पाद की जानकारी संदर्भ के लिए रखी गई है।",
+      "Registration is now closed.": "पंजीकरण अब बंद है।",
+      "₹300 • Registration closed": "₹300 • पंजीकरण बंद",
+
       "Lemon & Spoon • Three-legged Race": "नींबू-चम्मच • तीन टांगों की दौड़",
       "Join us for the Lemon & Spoon and Three-legged Race games.": "नींबू-चम्मच और तीन टांगों की दौड़ में भाग लें।",
       "Musical Chairs": "म्यूज़िकल चेयर्स",
@@ -33,6 +42,15 @@
       "No special event scheduled for today — check the full schedule.": "आज कोई विशेष कार्यक्रम निर्धारित नहीं है — पूरा कार्यक्रम देखें।", "Starts in": "शुरू होने में", "Happening now!": "अभी चल रहा है!", "Page views: {count}": "पेज व्यू: {count}", "UPI ID copied. Open any UPI app and paste it to pay ₹300.": "UPI आईडी कॉपी हो गई। ₹300 भुगतान करने के लिए किसी भी UPI ऐप में पेस्ट करें।", "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.": "इस ब्राउज़र में कॉपी उपलब्ध नहीं है। अपने UPI ऐप में karade.deepak1@ibl का उपयोग करें।"
     },
     mr: {
+      "Kurta registration closed": "कुर्ता नोंदणी बंद आहे",
+      "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.": "कुर्ता नोंदणी बंद झाली आहे. अपवादासाठी उशीर होण्यापूर्वी शक्य तितक्या लवकर दीपक कराडे यांच्याशी संपर्क साधा.",
+      "Contact Deepak Karade on WhatsApp ↗": "व्हॉट्सॲपवर दीपक कराडे यांच्याशी संपर्क साधा ↗",
+      "Kurta registration closed. For exceptions, contact Deepak Karade.": "कुर्ता नोंदणी बंद आहे. अपवादासाठी दीपक कराडे यांच्याशी संपर्क साधा.",
+      "Please confirm any exception with Deepak before making payment.": "पैसे भरण्यापूर्वी दीपक यांच्याकडून अपवादाची खात्री करून घ्या.",
+      "Kurta registration is closed. The product details are retained for reference.": "कुर्ता नोंदणी बंद आहे. उत्पादनाचा तपशील संदर्भासाठी ठेवला आहे.",
+      "Registration is now closed.": "नोंदणी आता बंद आहे.",
+      "₹300 • Registration closed": "₹300 • नोंदणी बंद",
+
       "Lemon & Spoon • Three-legged Race": "लिंबू-चमचा • तीन पायांची शर्यत",
       "Join us for the Lemon & Spoon and Three-legged Race games.": "लिंबू-चमचा आणि तीन पायांच्या शर्यतीत सहभागी व्हा.",
       "Musical Chairs": "संगीत खुर्ची",
