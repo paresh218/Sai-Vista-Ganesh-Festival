@@ -216,8 +216,7 @@ footer{display:flex;justify-content:space-between;gap:20px;padding:28px 6%;backg
 .resident-ad-empty { padding:14px 16px; border-radius:12px; background:#f5f7f2; font-size:13px; color:#506047; }
 @media(max-width:760px) { .resident-spotlight-grid { grid-template-columns:1fr; } .community-thanks,.resident-ad-invite { padding:24px; } .resident-spotlight-grid h3 { font-size:25px; } .resident-ad-invite .btn { width:100%; text-align:center; } }
 
-/* Feta registration */
-.feta-section{background:#fff4e5}.feta-payment{display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center}.feta-qr{width:100%;max-width:220px;height:auto}.feta-section figcaption{font-size:12px;text-align:center;padding:8px}.feta-section .btn{margin:16px 0}.feta-section p,#fetaSuccess p{margin:12px 0}#fetaForm[hidden],#fetaSuccess[hidden]{display:none}#fetaStatus{margin-top:14px}button:disabled{opacity:.6;cursor:not-allowed}@media(max-width:600px){.feta-payment{grid-template-columns:1fr}.feta-qr{display:block;margin:auto}}
+button:disabled{opacity:.6;cursor:not-allowed}
 /* Festival agenda: one date, clearly separated events. */
 #schedule{background:radial-gradient(ellipse at top right,#ffecd0 0,transparent 48%),#fffaf4;border-radius:32px;margin-bottom:48px}
 #schedule .section-heading>span{display:inline-block;padding:7px 15px;border-radius:30px;background:#f6e5d0;color:#783b20;font-size:11px;font-weight:700;letter-spacing:2px}

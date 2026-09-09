@@ -1,6 +1,11 @@
 (() => {
   const translations = {
     hi: {
+      "Feta cancelled": "फेटा रद्द",
+      "Feta has been cancelled due to low participation.": "कम सहभागिता के कारण फेटा रद्द कर दिया गया है।",
+      "Festival update": "उत्सव की सूचना",
+      "Thank you for your understanding.": "आपकी समझ के लिए धन्यवाद।",
+
       "Let’s grow your business together": "आइए, मिलकर आपका व्यवसाय बढ़ाएँ",
       "Want to display your brand ad or promote something with us? We have more ideas to explore. Connect with Priyank and let’s make it happen!": "अपने ब्रांड का विज्ञापन देना चाहते हैं या हमारे साथ प्रचार करना चाहते हैं? हमारे पास और भी कई विचार हैं। प्रियंक से जुड़ें और मिलकर इन्हें साकार करें!",
       "Connect with Priyank ↗": "प्रियंक से जुड़ें ↗",
@@ -21,6 +26,11 @@
       "No special event scheduled for today — check the full schedule.": "आज कोई विशेष कार्यक्रम निर्धारित नहीं है — पूरा कार्यक्रम देखें।", "Starts in": "शुरू होने में", "Happening now!": "अभी चल रहा है!", "Page views: {count}": "पेज व्यू: {count}", "UPI ID copied. Open any UPI app and paste it to pay ₹300.": "UPI आईडी कॉपी हो गई। ₹300 भुगतान करने के लिए किसी भी UPI ऐप में पेस्ट करें।", "Copy is unavailable on this browser. Use karade.deepak1@ibl in your UPI app.": "इस ब्राउज़र में कॉपी उपलब्ध नहीं है। अपने UPI ऐप में karade.deepak1@ibl का उपयोग करें।"
     },
     mr: {
+      "Feta cancelled": "फेटा रद्द",
+      "Feta has been cancelled due to low participation.": "कमी सहभागामुळे फेटा रद्द करण्यात आला आहे.",
+      "Festival update": "उत्सवाची सूचना",
+      "Thank you for your understanding.": "समजून घेतल्याबद्दल धन्यवाद.",
+
       "Let’s grow your business together": "चला, एकत्र तुमचा व्यवसाय वाढवूया",
       "Want to display your brand ad or promote something with us? We have more ideas to explore. Connect with Priyank and let’s make it happen!": "तुमच्या ब्रँडची जाहिरात करायची आहे किंवा आमच्यासोबत प्रचार करायचा आहे? आमच्याकडे आणखीही अनेक कल्पना आहेत. प्रियंकशी संपर्क साधा आणि त्या एकत्र साकार करूया!",
       "Connect with Priyank ↗": "प्रियंकशी संपर्क साधा ↗",

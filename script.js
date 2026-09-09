@@ -131,15 +131,15 @@ function initTodayCard() {
   const today = new Date();
   const event = getFestivalEvent(today);
   const important = showAdultsNotice(today);
-  document.getElementById("todayCardTitle").textContent = t(important ? "Kurta registration has started" : "Today at Sai Vista");
+  document.getElementById("todayCardTitle").textContent = t(important ? "Feta cancelled" : "Today at Sai Vista");
   document.querySelector(".today-modal-box > span").textContent = t(important ? "IMPORTANT MESSAGE" : "HAPPENING TODAY");
   document.querySelector(".today-modal-icon").textContent = important ? "📣" : "📍";
   document.getElementById("adultInterestContacts").hidden = true;
   action.hidden = false;
   if (important) {
-    dateEl.textContent = t("Registration reminders");
-    eventEl.textContent = t("Kurta registration has started! Last date to register: 8 September 2026.");
-    metaEl.textContent = t("Feta registration is open at ₹70 each. Register by Friday, 11 September 2026, 5 PM IST. Queries: Kantilal Mahajan, +91 94039 42777.");
+    dateEl.textContent = t("Festival update");
+    eventEl.textContent = t("Feta has been cancelled due to low participation.");
+    metaEl.textContent = t("Thank you for your understanding.");
     action.textContent = t("View Kurta details");
     action.href = "#tshirt";
     return;
@@ -160,7 +160,7 @@ function initTodayPopup() {
   const event = getFestivalEvent();
   if (!modal || !closeButton || !dialog || (!event && !showAdultsNotice())) return;
 
-  const todayKey = `saiVistaTodayPopup:${festivalDateKey()}`;
+  const todayKey = `saiVistaTodayPopup:feta-cancelled:${festivalDateKey()}`;
   try {
     if (sessionStorage.getItem(todayKey) === "shown") return;
     sessionStorage.setItem(todayKey, "shown");
@@ -711,7 +711,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const storageKey = "saiVistaReadNotifications";
   const notifications = [
     { id: "kurta-last-date-sep8", title: "Kurta registration has started", body: "Reminder: last date for Kurta registration is 8 September 2026. ₹300 each, sizes S–XL.", href: "#tshirt", action: "Register for Kurta" },
-    { id: "feta-registration-sep11", title: "Feta registration is open", body: "₹70 each. Register by Friday, 11 September 2026, 5 PM IST. Queries: Kantilal Mahajan, +91 94039 42777.", href: "#feta", action: "Register for Feta" },
+    { id: "feta-cancelled-sep09", title: "Feta cancelled", body: "Feta has been cancelled due to low participation.", href: "#committeeUpdates", action: "View updates" },
     {
       id: "parent-supervision-reminder-2026",
       title: "Parents, please stay with your children",
