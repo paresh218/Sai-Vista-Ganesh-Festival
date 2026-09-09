@@ -52,7 +52,7 @@ Replace Code.gs with the updated event-registration.gs, authorize UrlFetchApp ex
 
 Configured on 9 September 2026 using deployment version 4 (23:52 IST).
 
-Web app: https://script.google.com/macros/s/AKfycbxkBboCHlZSB3JghP-3eej8dhUxe1V7fKZRsviP2J3mW77-nNjNxldARn_hAq6LxnMI/exec
+Web app: https://script.google.com/macros/s/AKfycbwizEC1IeAzsbZy4mYpxjNb2ZOxPND9H9padnJtlC_c81xcavFgowW4N90sWJwtYYx7/exec
 
 ## Fun Fair payment and WhatsApp recipient
 
