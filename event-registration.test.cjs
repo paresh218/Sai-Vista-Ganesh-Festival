@@ -10,9 +10,8 @@ const talent={...good,event:'talent',performanceType:'Solo',actType:'Singing',pe
 assert.equal(M.validate(talent,config),'');assert.ok(M.validate({...talent,durationSeconds:121},config));
 assert.equal(M.validate({...talent,performanceType:'Group',groupName:'Stars',durationSeconds:240},config),'');
 assert.ok(M.validate({...talent,performanceType:'Group',groupName:'Stars',durationSeconds:241},config));
-assert.ok(M.validate({...good,event:'cooking',age:17,dishName:'Salad',ingredients:'Vegetables'},config));
 assert.ok(M.validate({...good,event:'prasad',adults:0,children:0},config));
-const players=Array.from({length:5},(_,i)=>({firstName:['Asha','Bina','Chetna','Deepa','Esha'][i],lastName:'Test',phone:'9876543210'}));
+const players=Array.from({length:5},(_,i)=>({firstName:['Test','Bina','Chetna','Deepa','Esha'][i],lastName:i===0?'Resident':'Test',phone:'9876543210'}));
 assert.equal(M.validate({...good,event:'bollywood',players},config),'');assert.ok(M.validate({...good,event:'bollywood',players:players.slice(1)},config));
 const sheets=new Map();
 function sheet(){const rows=[];return {rows,getLastRow:()=>rows.length,appendRow:r=>rows.push(r),setFrozenRows(){},getRange:(start,col,count,width)=>({getValues:()=>rows.slice(start-1,start-1+count).map(r=>r.slice(col-1,col-1+width)),setFontWeight(){},setValue(v){rows[start-1][col-1]=v;}})};}
@@ -60,3 +59,14 @@ fundPayload.payments[0].paid='Yes';assert.equal(post(stall).status,'success');
 fundOffline=true;assert.equal(post(next({...stall,firstName:'Another'},102)).status,'error');
 assert.equal(post(stall).status,'success'); // Saved retries do not create a new entry.
 console.log('PASS: cultural fund paid/unpaid/missing/ambiguous checks, server-side enforcement, fresh paid update, outage blocks new entries, saved retry is safe.');
+
+assert.match(M.validate({...good,event:'bollywood',players:players.map((p,i)=>i===0?{...p,phone:'9876543211'}:p)},config),/Player 1 must match/);
+
+const cookingOnly=next({...good,event:'cooking'},999);
+delete cookingOnly.age;
+assert.equal(M.validate(cookingOnly,config),'');
+assert.equal(post(cookingOnly).status,'error'); // Already registered participant.
+cookingOnly.firstName='Fresh';
+assert.equal(post(cookingOnly).status,'success');
+assert.ok(M.validate({...cookingOnly,agreed:false},config));
+console.log('PASS: cooking accepts no age/dish/ingredients; agreement remains required.');

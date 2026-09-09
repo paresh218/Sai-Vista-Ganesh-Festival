@@ -25,7 +25,7 @@ Only after Google Sheets confirms a save, a prefilled WhatsApp link appears for 
 ## Entries, corrections and gifts
 
 - Required on event forms: first name, last name, wing A–F, flat and Indian mobile number. Mahaprasad requires only wing, flat and adult/child counts; name and phone columns stay blank for new Mahaprasad entries. Children use a parent/guardian phone.
-- Bollywood: one entry per wing, 5–6 named players with phones. The contact fields identify the wing contact; add that person to the player list if they are playing.
+- Bollywood: one entry per wing, 5–6 named players with phones. The wing contact is Player 1. Player 1’s name and phone automatically follow the contact fields and are read-only. The server validates this match.
 - Talent: each member registers individually, with a shared group name. One solo and one group per participant maximum. Solo <=120 seconds, group <=240. Day and sequence are allotted by draw. Gifts on 21 September. Music deadline: 15 September.
 - Duplicate matching uses first name + last name + wing + flat, so the coordinator must reconcile spelling variations. Group-name consistency also needs review.
 - Pooja and Mahaprasad: one entry per household. Contact Priyank for corrections; do not submit another entry under a different name.
@@ -50,10 +50,12 @@ Replace Code.gs with the updated event-registration.gs, authorize UrlFetchApp ex
 
 ## Current deployment
 
-Configured on 9 September 2026 using deployment version 2 (23:32 IST).
+Configured on 9 September 2026 using deployment version 4 (23:52 IST).
 
 Web app: https://script.google.com/macros/s/AKfycbxkBboCHlZSB3JghP-3eej8dhUxe1V7fKZRsviP2J3mW77-nNjNxldARn_hAq6LxnMI/exec
 
 ## Fun Fair payment and WhatsApp recipient
 
 Fun Fair uses the supplied Neeraj Upadhyay QR (assets/neeraj-funfair-qr.jpeg), UPI ID `neeraj18upadhyay1@ybl`, and a ₹500 UPI link. Its saved-entry WhatsApp message goes to Neeraj at +91 8319503483. All other event messages continue to Priyank. Residents must open WhatsApp and press Send. Payment remains subject to coordinator verification; this does not change the cultural fund eligibility check.
+
+No Stove Cooking no longer collects age, dish name or ingredients. The 18+ guideline remains visible, but age is not validated from an input. Cooking requires “I have read the details and agree to it.”; Pooja and Mahaprasad require “I have read and agreed.”. Redeploy the updated script to accept cooking entries without the removed fields. Existing sheet columns and historical entries are retained.

@@ -271,3 +271,12 @@ button:disabled{opacity:.6;cursor:not-allowed}
 #festivalEventSuccess p { margin:16px 0; overflow-wrap:anywhere; }
 
 #festivalEventFields textarea { width:100%; min-height:100px; padding:12px; border:1px solid #ddd; border-radius:10px; font:inherit; resize:vertical; }
+
+.fund-check-dialog { width:min(440px,calc(100% - 32px)); margin:auto; padding:28px; border:0; border-radius:18px; color:#44261c; text-align:center; box-shadow:0 20px 70px #0005; }
+.fund-check-dialog::backdrop { background:rgba(25,15,10,.65); }
+.fund-check-dialog h2 { font-size:22px; margin:12px 0; }
+.fund-check-dialog p { line-height:1.65; margin:16px 0 24px; }
+.fund-check-spinner { width:36px; height:36px; margin:0 auto 16px; border:4px solid #f5dcc5; border-top-color:#9a3c21; border-radius:50%; animation:fund-spin 1s linear infinite; }
+.fund-check-dialog [hidden] { display:none; }
+@keyframes fund-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .fund-check-spinner { animation:none; } }

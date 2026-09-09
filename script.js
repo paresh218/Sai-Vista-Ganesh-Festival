@@ -131,17 +131,17 @@ function initTodayCard() {
   const today = new Date();
   const event = getFestivalEvent(today);
   const important = showAdultsNotice(today);
-  document.getElementById("todayCardTitle").textContent = t(important ? "Feta cancelled" : "Today at Sai Vista");
+  document.getElementById("todayCardTitle").textContent = t(important ? "Festival registration forms are available" : "Today at Sai Vista");
   document.querySelector(".today-modal-box > span").textContent = t(important ? "IMPORTANT MESSAGE" : "HAPPENING TODAY");
   document.querySelector(".today-modal-icon").textContent = important ? "📣" : "📍";
   document.getElementById("adultInterestContacts").hidden = true;
   action.hidden = false;
   if (important) {
     dateEl.textContent = t("Festival update");
-    eventEl.textContent = t("Feta has been cancelled due to low participation.");
-    metaEl.textContent = t("Thank you for your understanding.");
-    action.textContent = t("View Kurta details");
-    action.href = "#tshirt";
+    eventEl.textContent = t("Explore the event forms and guidelines. Online submission is awaiting registration setup.");
+    metaEl.textContent = t("Feta has been cancelled due to low participation.");
+    action.textContent = t("View registration forms");
+    action.href = "#registration";
     return;
   }
   dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: "long", day: "numeric", month: "long" });
@@ -160,7 +160,7 @@ function initTodayPopup() {
   const event = getFestivalEvent();
   if (!modal || !closeButton || !dialog || (!event && !showAdultsNotice())) return;
 
-  const todayKey = `saiVistaTodayPopup:feta-cancelled:${festivalDateKey()}`;
+  const todayKey = `saiVistaTodayPopup:registration-forms:${festivalDateKey()}`;
   try {
     if (sessionStorage.getItem(todayKey) === "shown") return;
     sessionStorage.setItem(todayKey, "shown");

@@ -14,6 +14,21 @@
     let current, requestId, pending=false, ready=false;
     let loaded=false;
     let fundCheckVersion=0;
+    let fundChecking=false;
+    const fundDialog=el("dialog",null,{class:"fund-check-dialog","aria-labelledby":"fundCheckTitle","aria-describedby":"fundCheckDescription"});
+    const fundTitle=el("h2","Checking cultural fund payment",{id:"fundCheckTitle"});
+    const fundDescription=el("p","Please wait while we verify your household’s payment.",{id:"fundCheckDescription",role:"status","aria-live":"polite"});
+    const fundSpinner=el("div",null,{class:"fund-check-spinner","aria-hidden":"true"});
+    const fundDismiss=el("button","OK",{type:"button",class:"btn btn-dark"});
+    fundDismiss.addEventListener("click",()=>fundDialog.close());
+    fundDialog.addEventListener("cancel",event=>{if(fundChecking)event.preventDefault();});
+    fundDialog.append(fundSpinner,fundTitle,fundDescription,fundDismiss);document.body.append(fundDialog);
+    const showFundResult=message=>{
+      fundSpinner.hidden=true;fundDismiss.hidden=false;
+      fundTitle.textContent=message.startsWith("Please pay")?"Please pay the cultural fund first":"Payment verification unavailable";
+      fundDescription.textContent=message;fundDialog.setAttribute("aria-busy","false");
+      if(!fundDialog.open)fundDialog.showModal();fundDismiss.focus();
+    };
     function field(name,label,{type="text",options,required=true,min,max,value}={}) {
       const wrap=el("div",null,{class:"form-group"});
       const id="event-"+name;wrap.append(el("label",label+(required?" *":""),{for:id}));
@@ -44,6 +59,10 @@
       fundCheckVersion++;
       current=event;requestId=crypto.randomUUID();form.reset();form.hidden=false;success.hidden=true;success.replaceChildren();fields.replaceChildren();status.textContent="";submit.disabled=true;ready=false;
       form.querySelector(".info-note").textContent="These details are saved for festival coordination. After saving, open WhatsApp and press Send to notify "+(event==="funfair"?"Neeraj Upadhyay":"Priyank")+".";
+      form.elements.agreed.closest("label").querySelector("span").textContent=event==="cooking"
+        ? "I have read the details and agree to it."
+        : ["pooja","prasad"].includes(event) ? "I have read and agreed."
+        : "I have read and accept the event guidelines, including one participation gift per child across all competitions.";
       const definition=M.events[event];document.getElementById("festivalEventTitle").textContent=definition.title+" · "+definition.date;
       const rules=document.getElementById("festivalEventRules");rules.replaceChildren();
       definition.rules.forEach(rule=>rules.append(el("li",rule)));
@@ -51,10 +70,17 @@
       if(event!=="prasad") field("lastName",event==="bollywood"?"Wing contact last name":"Participant last name");
       field("wing","Wing",{options:["A","B","C","D","E","F"]});
       const flats=[];for(let floor=1;floor<=13;floor++)for(let flat=1;flat<=4;flat++)flats.push(String(floor*100+flat));
-      field("flatNo","Flat number",{options:flats});if(event!=="prasad") field("phone","Phone number (parent/guardian for children)",{type:"tel"});
-      if(["drawing","talent","treasure","rangoli","thali","fancy","cooking"].includes(event))field("age","Participant age (completed years)",{type:"number",min:event==="cooking"?18:1});
+      field("flatNo","Flat number",{options:flats});if(event!=="prasad") field("phone",event==="bollywood"?"Wing contact phone number":"Phone number (parent/guardian for children)",{type:"tel"});
+      if(["drawing","talent","treasure","rangoli","thali","fancy"].includes(event))field("age","Participant age (completed years)",{type:"number",min:event==="cooking"?18:1});
       if(event==="bollywood") {
         for(let i=1;i<=5;i++)addPlayer(i);
+        for(const [source,target] of [["firstName","player1First"],["lastName","player1Last"],["phone","player1Phone"]]) {
+          const contact=form.elements[source], player=form.elements[target];
+          player.readOnly=true;
+          player.title="Automatically filled from the wing contact details. Edit the contact details above to change Player 1.";
+          const sync=()=>{player.value=contact.value;};
+          contact.addEventListener("input",sync);contact.addEventListener("change",sync);sync();
+        }
         const add=el("button","Add sixth player",{type:"button",class:"btn btn-outline"});
         add.addEventListener("click",()=>{addPlayer(6);add.remove();});fields.append(add);
       }
@@ -70,7 +96,6 @@
         const payment=el("div",null,{class:"funfair-payment"});
         payment.append(el("h3","Pay ₹500 to Neeraj Upadhyay"),el("p","UPI ID: neeraj18upadhyay1@ybl"),el("img",null,{src:"assets/neeraj-funfair-qr.jpeg",alt:"PhonePe payment QR for Neeraj Upadhyay",style:"display:block;width:100%;max-width:280px;height:auto;margin:16px auto"}),el("a","Pay ₹500 with UPI ↗",{href:"upi://pay?pa=neeraj18upadhyay1%40ybl&pn=Neeraj%20Upadhyay&am=500.00&cu=INR&tn=Sai%20Vista%20Fun%20Fair%20Stall",class:"btn btn-dark"}),el("p","When scanning the QR, enter ₹500 and verify the recipient before paying. Payment does not submit this form; complete your registration below. The stall fee is separate from the cultural fund and is non-refundable."));fields.append(payment);}
       if(event==="fancy")field("costume","Costume / character and introduction",{type:"textarea"});
-      if(event==="cooking"){field("dishName","Creative dish name");field("ingredients","Ingredients for coordinator approval",{type:"textarea"});}
       if(event==="prasad"){field("adults","Adults attending",{type:"number",min:0,max:100,value:0});field("children","Children attending",{type:"number",min:0,max:100,value:0});}
       let verifyFund;
       if(event==="funfair") {
@@ -83,17 +108,27 @@
         const gate=paid=>{for(const node of gated){node.hidden=!paid;for(const input of node.querySelectorAll("input,textarea,select"))input.disabled=!paid;}agreement.hidden=!paid;form.elements.agreed.disabled=!paid;submit.hidden=!paid;ready=paid&&loaded;submit.disabled=!ready;};
         gate(false);
         verifyFund=async()=>{
+          if(fundChecking)return;
           const version=++fundCheckVersion;gate(false);retry.disabled=false;
           if(!wing.value||!flat.value){fundMessage.textContent="Select your wing and flat to verify your cultural fund payment.";return;}
           retry.disabled=true;fundMessage.textContent="Checking your cultural fund payment…";
+          fundChecking=true;wing.disabled=true;flat.disabled=true;
+          fundSpinner.hidden=false;fundDismiss.hidden=true;fundTitle.textContent="Checking cultural fund payment";
+          fundDescription.textContent="Please wait while we verify your household’s payment. This may take a few seconds.";
+          fundDialog.setAttribute("aria-busy","true");fundDialog.showModal();
           try {
             const response=await fetch(M.collectionUrl,{cache:"no-store",signal:AbortSignal.timeout(15000)});
             if(!response.ok)throw Error("Unavailable");
             const result=M.culturalFundStatus(await response.json(),wing.value,flat.value);
             if(version!==fundCheckVersion||current!=="funfair"||!dialog.open)return;
             fundMessage.textContent=result.message;gate(result.paid);
-          }catch(_){if(version===fundCheckVersion){fundMessage.textContent="We could not verify the cultural fund payment right now. Please try again shortly.";gate(false);}}
-          finally{if(version===fundCheckVersion)retry.disabled=false;}
+            if(result.paid)fundDialog.close();else showFundResult(result.message);
+          }catch(_){if(version===fundCheckVersion){fundMessage.textContent="We could not verify the cultural fund payment right now. Please try again shortly.";gate(false);showFundResult(fundMessage.textContent);}}
+          finally{
+            fundChecking=false;wing.disabled=false;flat.disabled=false;
+            fundDialog.setAttribute("aria-busy","false");
+            if(version===fundCheckVersion)retry.disabled=false;
+          }
         };
         wing.addEventListener("change",verifyFund);flat.addEventListener("change",verifyFund);retry.addEventListener("click",verifyFund);
       }else{submit.hidden=false;form.elements.agreed.disabled=false;form.elements.agreed.closest("label").hidden=false;}

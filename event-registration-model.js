@@ -25,17 +25,18 @@ const FestivalRegistration = (() => {
     for (const key of (d.event === "prasad" ? [] : ["firstName","lastName"])) if (!/^[\p{L}\p{M}][\p{L}\p{M} .’'-]{0,79}$/u.test(text(d[key]))) return "Enter a valid first and last name.";
     if (!/^[A-F]$/.test(d.wing) || !/^(?:[1-9]|1[0-3])0[1-4]$/.test(d.flatNo)) return "Select a valid wing and flat number.";
     if (d.event !== "prasad" && !/^[6-9]\d{9}$/.test(phone(d.phone))) return "Enter a valid Indian mobile number.";
-    if (d.agreed !== true) return "Please accept the event guidelines and gift policy.";
+    if (d.agreed !== true) return "Please read and accept the event details.";
     if (JSON.stringify(d).length>18000) return "Entry is too long.";
-    if (["drawing","talent","treasure","rangoli","thali","fancy","cooking"].includes(d.event) && !integer(d.age,1,120)) return "Enter the participant’s age in completed years.";
+    if (["drawing","talent","treasure","rangoli","thali","fancy"].includes(d.event) && !integer(d.age,1,120)) return "Enter the participant’s age in completed years.";
     if (d.event === "drawing") {
       if (![16,18].includes(Number(config.drawingMaxAge))) return "Drawing registration awaits confirmation of the oldest age group.";
       if (!integer(d.age,3,Number(config.drawingMaxAge))) return "Age is outside the drawing competition groups.";
     }
-    if (d.event === "cooking" && !integer(d.age,18,120)) return "No Stove Cooking is for participants aged 18+ only.";
     if (d.event === "fancy" && !integer(d.age,1,17)) return "Fancy Dress is for children under 18.";
     if (d.event === "bollywood") {
       if (!Array.isArray(d.players) || d.players.length<5 || d.players.length>6) return "Provide 5–6 players.";
+      const first=d.players[0];
+      if(text(first.firstName)!==text(d.firstName)||text(first.lastName)!==text(d.lastName)||phone(first.phone)!==phone(d.phone)) return "Player 1 must match the wing contact details.";
       const names = new Set();
       for (const p of d.players) {
         if (![p.firstName,p.lastName].every(n=>/^[\p{L}\p{M}][\p{L}\p{M} .’'-]{0,79}$/u.test(text(n))) || !/^[6-9]\d{9}$/.test(phone(p.phone))) return "Enter each player’s first name, last name and valid phone.";
@@ -44,7 +45,7 @@ const FestivalRegistration = (() => {
         names.add(key);
       }
     }
-    const required = {talent:["performanceType","actType","performanceTitle"],treasure:["teamName"],funfair:["stallName","stallDetails"],fancy:["costume"],cooking:["dishName","ingredients"]}[d.event] || [];
+    const required = {talent:["performanceType","actType","performanceTitle"],treasure:["teamName"],funfair:["stallName","stallDetails"],fancy:["costume"]}[d.event] || [];
     for (const key of required) if (!text(d[key]) || text(d[key]).length>1000) return "Complete all event details (maximum 1,000 characters each).";
     if (d.event === "talent") {
       if (!["Solo","Group"].includes(d.performanceType)) return "Choose solo or group.";
