@@ -26,13 +26,13 @@ Only after Google Sheets confirms a save, a prefilled WhatsApp link appears for 
 
 - Required on event forms: first name, last name, wing A–F, flat and Indian mobile number. Mahaprasad requires only wing, flat and adult/child counts; name and phone columns stay blank for new Mahaprasad entries. Children use a parent/guardian phone.
 - Bollywood: one entry per wing, 5–6 named players with phones. The wing contact is Player 1. Player 1’s name and phone automatically follow the contact fields and are read-only. The server validates this match.
-- Talent: each member registers individually, with a shared group name. One solo and one group per participant maximum. Solo <=120 seconds, group <=240. Day and sequence are allotted by draw. Gifts on 21 September. Music deadline: 15 September.
+- Talent: each member registers individually, with a shared group name. One solo and one group per participant maximum. Solo <=120 seconds, group <=240. Day and sequence are allotted by draw. Gifts on Ganpati Visarjan day, before the miravnuk (25 September). Music deadline: 15 September.
 - Duplicate matching uses first name + last name + wing + flat, so the coordinator must reconcile spelling variations. Group-name consistency also needs review.
 - Pooja and Mahaprasad: one entry per household. Contact Priyank for corrections; do not submit another entry under a different name.
 - Fun n Fair: one table per entry, ₹500, non-refundable. Payment status starts as Not verified. This form does not collect payments or claim they were received.
 - No Stove Cooking: 18+, one person per entry, vegetarian, no pre-cut/chopped/grated raw materials. Final cooking duration and ingredient-approval process are awaiting confirmation; the source’s “such as 60 minutes” was not treated as a final rule.
-- Treasure Hunt: interest only until last year’s rules/team format are supplied.
-- Run `refreshChildrenGifts` before distribution. It combines registered children under 18 across competitions into one row per child. Mark Gift issued? and notes manually. Rerunning preserves those flags. Bollywood roster has no supplied age requirement, so it is not included in this children’s register; review any child Bollywood participants manually. Mahaprasad is a count, not competition participation.
+- Treasure Hunt: interest only while event guidelines await committee confirmation.
+- Run `refreshChildrenGifts` before distribution. It combines registered children under 18 from Drawing, Talent Show and Fancy Dress into one row per child. Mark Gift issued? and notes manually. Rerunning preserves those flags. Adult events are excluded from this children’s register. Rangoli and Pooja Thali do not collect participant age. Mahaprasad is a count, not competition participation.
 - Data rows contain common fields plus Details JSON with all event-specific answers (including all Bollywood players). Individual columns also expose every Bollywood player’s name and phone, talent details, Mahaprasad counts, stall details, costume, dish/ingredients, fees and drawing age group.
 - Writes use a script lock; retrying the same request reference returns the saved result without adding a second row. A retry with changed data is rejected. There is no public endpoint for listing resident registrations.
 
@@ -50,12 +50,16 @@ Replace Code.gs with the updated event-registration.gs, authorize UrlFetchApp ex
 
 ## Current deployment
 
-Configured on 9 September 2026 using deployment version 4 (23:52 IST).
+Updated on 10 September 2026 using deployment version 7 (06:14 IST), preserving the URL supplied for version 6. Fancy Dress closes at 17:00 IST on 19 September 2026 (`2026-09-19T17:00:00+05:30`).
 
-Web app: https://script.google.com/macros/s/AKfycbwizEC1IeAzsbZy4mYpxjNb2ZOxPND9H9padnJtlC_c81xcavFgowW4N90sWJwtYYx7/exec
+Web app: https://script.google.com/macros/s/AKfycbxPOT3PYj6Gw6fv43fFyo9EuQNUm3upp8ApnKIIsSc423O9wJXKFJ5uaYsxso9S1i0R/exec
 
 ## Fun Fair payment and WhatsApp recipient
 
 Fun Fair uses the supplied Neeraj Upadhyay QR (assets/neeraj-funfair-qr.jpeg), UPI ID `neeraj18upadhyay1@ybl`, and a ₹500 UPI link. Its saved-entry WhatsApp message goes to Neeraj at +91 8319503483. All other event messages continue to Priyank. Residents must open WhatsApp and press Send. Payment remains subject to coordinator verification; this does not change the cultural fund eligibility check.
 
 No Stove Cooking no longer collects age, dish name or ingredients. The 18+ guideline remains visible, but age is not validated from an input. Cooking requires “I have read the details and agree to it.”; Pooja and Mahaprasad require “I have read and agreed.”. Redeploy the updated script to accept cooking entries without the removed fields. Existing sheet columns and historical entries are retained.
+
+## 10 September payment check correction
+
+Fun n Fair uses the same collection endpoint as the accounts dashboard, not the event-registration settings endpoint. Both browser and server use the corrected source. Wing and flat are the first fields; all remaining inputs stay hidden and disabled until a fresh paid household check succeeds. CSS explicitly honours hidden controls. Registration settings and collection requests allow up to 45 seconds, and saves allow up to 60 seconds for slow Apps Script responses; retries retain the same reference to avoid duplicate rows.

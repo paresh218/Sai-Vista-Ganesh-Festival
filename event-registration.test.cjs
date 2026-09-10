@@ -70,3 +70,19 @@ cookingOnly.firstName='Fresh';
 assert.equal(post(cookingOnly).status,'success');
 assert.ok(M.validate({...cookingOnly,agreed:false},config));
 console.log('PASS: cooking accepts no age/dish/ingredients; agreement remains required.');
+for (const [index,event] of ['rangoli','thali'].entries()) {
+  const entry=next({...good,event,firstName:'Ageless'},1100+index);
+  delete entry.age;
+  assert.equal(M.validate(entry,config),'');
+  assert.equal(post(entry).status,'success');
+  assert.equal(sheets.get(M.events[event].sheet).rows.at(-1)[8],'');
+  assert.equal(sheets.get(M.events[event].sheet).rows.at(-1)[12],'');
+}
+console.log('PASS: Rangoli and Pooja Thali save without age or a children gift policy.');
+const dashboardSource=fs.readFileSync('script.js','utf8').match(/PAYMENT_DASHBOARD_URL = "([^"]+)"/)[1];
+assert.equal(M.collectionUrl,dashboardSource+'?action=payments');
+assert.equal(vm.runInContext('FestivalRegistration.collectionUrl',ctx),M.collectionUrl);
+const currentRegistration=fs.readFileSync('event-registration-config.js','utf8').match(/endpoint: "([^"]+)"/)[1];
+assert.notEqual(M.collectionUrl.split('?')[0],currentRegistration);
+assert.equal(M.culturalFundStatus({status:'success',service:'sai-vista-events-v1',config:{}},'A','102').paid,false);
+console.log('PASS: browser and server use the collection endpoint, not the registration settings endpoint.');

@@ -266,7 +266,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .event-guidelines ul { padding-left:22px; }
 .event-guidelines li { margin:12px 0; line-height:1.6; }
 #festivalEventFields h3 { margin:20px 0 12px; }
-#festivalEventForm[hidden],#festivalEventSuccess[hidden] { display:none; }
+#festivalEventForm[hidden],#festivalEventForm [hidden],#festivalEventSuccess[hidden] { display:none; }
 #festivalEventStatus { margin-top:16px; }
 #festivalEventSuccess p { margin:16px 0; overflow-wrap:anywhere; }
 

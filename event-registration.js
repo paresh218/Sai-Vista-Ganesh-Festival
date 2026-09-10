@@ -48,11 +48,12 @@
     async function loadConfig() {
       if(loaded)return;
       if(!endpoint){status.textContent="Registration setup is in progress. You can review the form; online saving will open when the committee connects the registration service.";return;}
+      status.textContent="Connecting to registration…";
       try {
-        const response=await fetch(endpoint,{signal:AbortSignal.timeout(15000),cache:"no-store"});
+        const response=await fetch(endpoint,{signal:AbortSignal.timeout(45000),cache:"no-store"});
         const data=await response.json();
         if(!response.ok||data.service!=="sai-vista-events-v1"||data.status!=="success")throw Error("service");
-        Object.assign(config,data.config);loaded=true;
+        Object.assign(config,data.config);loaded=true;status.textContent="";
       }catch(_){status.textContent="Unable to connect to registration. Close and reopen the form to retry.";}
     }
     async function open(event) {
@@ -62,16 +63,20 @@
       form.elements.agreed.closest("label").querySelector("span").textContent=event==="cooking"
         ? "I have read the details and agree to it."
         : ["pooja","prasad"].includes(event) ? "I have read and agreed."
-        : "I have read and accept the event guidelines, including one participation gift per child across all competitions.";
+        : M.events[event].rules.includes(M.gift)
+          ? "I have read and accept the event guidelines, including one participation gift per child across all competitions."
+          : "I have read and accept the event guidelines.";
       const definition=M.events[event];document.getElementById("festivalEventTitle").textContent=definition.title+" · "+definition.date;
       const rules=document.getElementById("festivalEventRules");rules.replaceChildren();
       definition.rules.forEach(rule=>rules.append(el("li",rule)));
-      if(event!=="prasad") field("firstName",event==="bollywood"?"Wing contact first name":"Participant first name");
-      if(event!=="prasad") field("lastName",event==="bollywood"?"Wing contact last name":"Participant last name");
+      if(!["prasad","funfair"].includes(event)) field("firstName",event==="bollywood"?"Wing contact first name":"Participant first name");
+      if(!["prasad","funfair"].includes(event)) field("lastName",event==="bollywood"?"Wing contact last name":"Participant last name");
       field("wing","Wing",{options:["A","B","C","D","E","F"]});
       const flats=[];for(let floor=1;floor<=13;floor++)for(let flat=1;flat<=4;flat++)flats.push(String(floor*100+flat));
-      field("flatNo","Flat number",{options:flats});if(event!=="prasad") field("phone",event==="bollywood"?"Wing contact phone number":"Phone number (parent/guardian for children)",{type:"tel"});
-      if(["drawing","talent","treasure","rangoli","thali","fancy"].includes(event))field("age","Participant age (completed years)",{type:"number",min:event==="cooking"?18:1});
+      field("flatNo","Flat number",{options:flats});
+      if(event==="funfair"){field("firstName","Participant first name");field("lastName","Participant last name");}
+      if(event!=="prasad") field("phone",event==="bollywood"?"Wing contact phone number":"Phone number (parent/guardian for children)",{type:"tel"});
+      if(["drawing","talent","treasure","fancy"].includes(event))field("age","Participant age (completed years)",{type:"number",min:event==="cooking"?18:1});
       if(event==="bollywood") {
         for(let i=1;i<=5;i++)addPlayer(i);
         for(const [source,target] of [["firstName","player1First"],["lastName","player1Last"],["phone","player1Phone"]]) {
@@ -94,7 +99,13 @@
       if(event==="treasure")field("teamName","Team name / individual interest");
       if(event==="funfair"){field("stallName","Stall name");field("stallDetails","What will your stall offer?",{type:"textarea"});fields.append(el("p","One entry requests one table at ₹500, non-refundable."));
         const payment=el("div",null,{class:"funfair-payment"});
-        payment.append(el("h3","Pay ₹500 to Neeraj Upadhyay"),el("p","UPI ID: neeraj18upadhyay1@ybl"),el("img",null,{src:"assets/neeraj-funfair-qr.jpeg",alt:"PhonePe payment QR for Neeraj Upadhyay",style:"display:block;width:100%;max-width:280px;height:auto;margin:16px auto"}),el("a","Pay ₹500 with UPI ↗",{href:"upi://pay?pa=neeraj18upadhyay1%40ybl&pn=Neeraj%20Upadhyay&am=500.00&cu=INR&tn=Sai%20Vista%20Fun%20Fair%20Stall",class:"btn btn-dark"}),el("p","When scanning the QR, enter ₹500 and verify the recipient before paying. Payment does not submit this form; complete your registration below. The stall fee is separate from the cultural fund and is non-refundable."));fields.append(payment);}
+        payment.append(el("h3","Pay ₹500 to Neeraj Upadhyay"),el("p","UPI ID: neeraj18upadhyay1@ybl"),el("img",null,{src:"assets/neeraj-funfair-qr.jpeg",alt:"PhonePe payment QR for Neeraj Upadhyay",style:"display:block;width:100%;max-width:280px;height:auto;margin:16px auto"}),el("a","Pay ₹500 with UPI ↗",{href:"upi://pay?pa=neeraj18upadhyay1%40ybl&pn=Neeraj%20Upadhyay&am=500.00&cu=INR&tn=Sai%20Vista%20Fun%20Fair%20Stall",class:"btn btn-dark"}),el("p","When scanning the QR, enter ₹500 and verify the recipient before paying. Payment does not submit this form; complete your registration below. The stall fee is separate from the cultural fund and is non-refundable."));const copy=el("button","Copy UPI ID",{type:"button",class:"btn btn-outline"});
+        const copyStatus=el("p","",{role:"status","aria-live":"polite"});
+        copy.addEventListener("click",async()=>{
+          try {await navigator.clipboard.writeText("neeraj18upadhyay1@ybl");copyStatus.textContent="UPI ID copied. Paste it into your UPI app to pay ₹500.";}
+          catch(_){copyStatus.textContent="Copy is unavailable. Use UPI ID neeraj18upadhyay1@ybl in your UPI app.";}
+        });
+        payment.append(copy,copyStatus);fields.append(payment);}
       if(event==="fancy")field("costume","Costume / character and introduction",{type:"textarea"});
       if(event==="prasad"){field("adults","Adults attending",{type:"number",min:0,max:100,value:0});field("children","Children attending",{type:"number",min:0,max:100,value:0});}
       let verifyFund;
@@ -117,7 +128,7 @@
           fundDescription.textContent="Please wait while we verify your household’s payment. This may take a few seconds.";
           fundDialog.setAttribute("aria-busy","true");fundDialog.showModal();
           try {
-            const response=await fetch(M.collectionUrl,{cache:"no-store",signal:AbortSignal.timeout(15000)});
+            const response=await fetch(M.collectionUrl,{cache:"no-store",signal:AbortSignal.timeout(45000)});
             if(!response.ok)throw Error("Unavailable");
             const result=M.culturalFundStatus(await response.json(),wing.value,flat.value);
             if(version!==fundCheckVersion||current!=="funfair"||!dialog.open)return;
@@ -161,7 +172,7 @@
       pending=true;submit.disabled=true;status.textContent="Saving your registration…";
       for(const node of form.elements)node.disabled=true;
       try {
-        const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({payload:JSON.stringify(data)}),signal:AbortSignal.timeout(30000)});
+        const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({payload:JSON.stringify(data)}),signal:AbortSignal.timeout(60000)});
         const result=await response.json();
         if(!response.ok||result.status!=="success"||result.registrationId!==requestId)throw Error(result.message||"Registration could not be confirmed. Retry with the same details.");
         const recipient=current==="funfair"?"Neeraj Upadhyay":"Priyank";
