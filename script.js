@@ -6,15 +6,8 @@ const t = (key, values = {}) => {
 };
 
 const currentLocale = () => window.SaiVistaI18n?.locale || "en-IN";
-const publicContent = () => window.SaiVistaContent || { festivalEvents: {}, updates: [], finance: {} };
-const getFestivalEvent = (date = new Date()) => publicContent().festivalEvents?.[`${date.getMonth() + 1}-${date.getDate()}`] || null;
-const festivalDateKey = (date = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
-const showAdultsNotice = (date = new Date()) => {
-  const key = festivalDateKey(date);
-  return key >= "2026-09-06" && key <= "2026-09-13";
-};
-
-// Ganpati T-shirt nomination
+const publicContent = () => {const content=window.SaiVistaContent || {festivalEvents:{},updates:[],finance:{}};return {...content,updates:EventUX.notices(content.updates||[])};};
+// Main navigation and festival interactions.
 document.addEventListener("DOMContentLoaded", () => {
   const menuToggle = document.querySelector(".menu-toggle");
   const siteNav = document.getElementById("siteNav");
@@ -24,172 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     menuToggle.setAttribute("aria-label", expanded ? "Open menu" : "Close menu");
     siteNav.classList.toggle("open", !expanded);
   });
-
-// Daily important notice (day-specific event)
-let dailyCountdownTimer;
-function initDailyNotice() {
-  const dateEl = document.getElementById('dailyDate');
-  const msgEl = document.getElementById('dailyMessage');
-  if (!dateEl || !msgEl) return;
-
-  const today = new Date();
-  // Use local month/day; festival dates are in September 2026
-  const month = today.getMonth() + 1; // 1-12
-  const day = today.getDate();
-
-  const event = getFestivalEvent(today);
-  const text = event ? t(event.message) : t('No special event scheduled for today — check the full schedule.');
-
-  dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: 'long', month: 'short', day: 'numeric' });
-  // Build event display with possible countdown and label
-  const countdownElId = 'dailyCountdown';
-  const countdownWrapperId = 'dailyCountdownWrapper';
-  const eventHtml = `
-    <span class="daily-event-text">${text}</span>
-    <span id="${countdownWrapperId}" class="daily-countdown-wrapper" style="display:inline-block;margin-left:10px">
-      <span class="daily-countdown-label">${t('Starts in')}</span>
-      <span id="${countdownElId}" class="daily-countdown" aria-hidden="true"></span>
-    </span>`;
-  msgEl.innerHTML = eventHtml;
-
-  // Try to parse a start time from the text (e.g., '3–7 PM', '8 AM', '7:30 PM')
-  function parseTimeFromText(t) {
-    // normalize hyphen characters
-    const s = t.replace(/[–—]/g, '-');
-    // regex to find patterns like '7:30 PM' or '8 AM' or '3-7 PM' (we pick first hour)
-    const rx = /(\d{1,2}(?::\d{2})?)(?:\s*[\-–]\s*\d{1,2}(?::\d{2})?)?\s*(AM|PM|am|pm)/;
-    const m = s.match(rx);
-    if (m) {
-      let hourPart = m[1];
-      const ampm = m[2].toUpperCase();
-      // if hourPart has minutes
-      const parts = hourPart.split(':');
-      let hh = parseInt(parts[0], 10);
-      let mm = parts[1] ? parseInt(parts[1], 10) : 0;
-      if (ampm === 'PM' && hh < 12) hh += 12;
-      if (ampm === 'AM' && hh === 12) hh = 0;
-      return { hh, mm };
-    }
-    // try range like '3-7 PM' where PM appears after range
-    const rx2 = /(\d{1,2})\s*[\-–]\s*\d{1,2}\s*(AM|PM|am|pm)/;
-    const m2 = s.match(rx2);
-    if (m2) {
-      let hh = parseInt(m2[1], 10);
-      const ampm = m2[2].toUpperCase();
-      if (ampm === 'PM' && hh < 12) hh += 12;
-      if (ampm === 'AM' && hh === 12) hh = 0;
-      return { hh, mm: 0 };
-    }
-    return null;
-  }
-
-  const parsed = parseTimeFromText(text);
-  if (parsed) {
-    // create a Date for the event time interpreted in IST (UTC+5:30)
-    // We compute the UTC instant that corresponds to the given IST time, then
-    // create a Date from that timestamp so the countdown is correct for all visitors.
-    const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000; // 5h30m in ms
-    const year = today.getFullYear();
-    const monthIndex = today.getMonth(); // 0-based
-    const dayOfMonth = today.getDate();
-    // Date.UTC(year, monthIndex, day, hh, mm) is the UTC epoch for that UTC time;
-    // subtract IST offset to get the UTC epoch that corresponds to hh:mm IST.
-    const targetUtcMs = Date.UTC(year, monthIndex, dayOfMonth, parsed.hh, parsed.mm) - IST_OFFSET_MS;
-    const target = new Date(targetUtcMs);
-    const countdownEl = document.getElementById(countdownElId);
-    function updateCountdown() {
-      const now = new Date();
-      const diff = target - now;
-      if (diff <= 0) {
-        countdownEl.textContent = t('Happening now!');
-        return;
-      }
-      const hrs = Math.floor(diff / (1000 * 60 * 60));
-      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diff % (1000 * 60)) / 1000);
-      countdownEl.textContent = `${hrs}h ${mins}m ${secs}s`;
-    }
-    updateCountdown();
-    clearInterval(dailyCountdownTimer);
-    dailyCountdownTimer = setInterval(updateCountdown, 1000);
-  } else {
-    // No parsable time — remove countdown wrapper element
-    const wrapper = document.getElementById(countdownWrapperId);
-    if (wrapper) wrapper.remove();
-  }
-}
-
-document.addEventListener('sai-vista-language-change', initDailyNotice);
-
-function initTodayCard() {
-  const dateEl = document.getElementById("todayCardDate");
-  const eventEl = document.getElementById("todayCardEvent");
-  const metaEl = document.getElementById("todayCardMeta");
-  const action = document.getElementById("todayCardAction");
-  if (!dateEl || !eventEl || !metaEl || !action) return;
-
-  const today = new Date();
-  const event = getFestivalEvent(today);
-  const important = showAdultsNotice(today);
-  document.getElementById("todayCardTitle").textContent = t(important ? "Festival registration forms are available" : "Today at Sai Vista");
-  document.querySelector(".today-modal-box > span").textContent = t(important ? "IMPORTANT MESSAGE" : "HAPPENING TODAY");
-  document.querySelector(".today-modal-icon").textContent = important ? "📣" : "📍";
-  document.getElementById("adultInterestContacts").hidden = true;
-  action.hidden = false;
-  if (important) {
-    dateEl.textContent = t("Festival update");
-    eventEl.textContent = t("Explore the event forms and guidelines. Online submission is awaiting registration setup.");
-    metaEl.textContent = t("Feta has been cancelled due to low participation.");
-    action.textContent = t("View registration forms");
-    action.href = "#registration";
-    return;
-  }
-  dateEl.textContent = today.toLocaleDateString(currentLocale(), { weekday: "long", day: "numeric", month: "long" });
-  eventEl.textContent = event ? t(event.message) : t("No special event scheduled for today — check the full schedule.");
-  metaEl.textContent = event
-    ? t("Time: {time} · Location: {place}", { time: event.time, place: t(event.place) })
-    : t("Please check the full schedule for upcoming activities.");
-  action.textContent = t("View today's schedule");
-  action.href = "#schedule";
-}
-
-function initTodayPopup() {
-  const modal = document.getElementById("todayModal");
-  const closeButton = document.getElementById("closeTodayModal");
-  const dialog = modal?.querySelector(".today-modal-box");
-  const event = getFestivalEvent();
-  if (!modal || !closeButton || !dialog || (!event && !showAdultsNotice())) return;
-
-  const todayKey = `saiVistaTodayPopup:registration-forms:${festivalDateKey()}`;
-  try {
-    if (sessionStorage.getItem(todayKey) === "shown") return;
-    sessionStorage.setItem(todayKey, "shown");
-  } catch (_) { /* The popup still works when browser storage is unavailable. */ }
-
-  const close = () => {
-    modal.classList.add("hidden");
-    document.body.style.overflow = "";
-  };
-  modal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-  closeButton.addEventListener("click", close);
-  modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
-  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !modal.classList.contains("hidden")) close(); });
-  document.getElementById("todayCardAction")?.addEventListener("click", close);
-  window.setTimeout(() => dialog.focus(), 0);
-}
-
-document.addEventListener("sai-vista-language-change", initTodayCard);
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDailyNotice);
-  document.addEventListener('DOMContentLoaded', initTodayCard);
-  document.addEventListener('DOMContentLoaded', initTodayPopup);
-} else {
-  initDailyNotice();
-  initTodayCard();
-  initTodayPopup();
-}
 
 // Logo fallback: if image fails to load, show inline SVG or text fallback
 function initLogoFallback() {
@@ -709,31 +536,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!bell || !panel || !count || !list || !markAll || !enableAlerts || !alertStatus) return;
 
   const storageKey = "saiVistaReadNotifications";
-  const notifications = [
-    { id: "kurta-closed-sep9", title: "Kurta registration closed", body: "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.", href: "#tshirt", action: "View Kurta details" },
-    { id: "feta-cancelled-sep09", title: "Feta cancelled", body: "Feta has been cancelled due to low participation.", href: "#committeeUpdates", action: "View updates" },
-    {
-      id: "parent-supervision-reminder-2026",
-      title: "Parents, please stay with your children",
-      body: "A humble request to all parents and guardians: please accompany your children and supervise them throughout the events. Children may not always follow instructions, and committee members may be unable to give them individual attention while managing activities. Please help them follow safety instructions and remain with them at all times. The committee will not be responsible for any mishap involving unattended children. Thank you for your understanding and cooperation.",
-      href: "#contact",
-      action: "Contact coordinators"
-    },
-    {
-      id: "aarti-nominations-2026",
-      title: "Aarti nominations are open",
-      body: "Choose your preferred morning or evening Aarti slot for 15–24 September.",
-      href: "#aarti",
-      action: "View Aarti slots"
-    },
-    {
-      id: "aarti-registration-reminder-2026",
-      title: "Plan your Aarti in advance",
-      body: "Slots have limited capacity. Submit your nomination early to reserve your preference.",
-      href: "#aarti",
-      action: "Nominate for Aarti"
-    }
-  ];
+  let notifications = (publicContent().updates || []).map(update => ({...update}));
 
   const getReadIds = () => {
     try {
@@ -746,6 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveReadIds = (readIds) => localStorage.setItem(storageKey, JSON.stringify([...readIds]));
 
   const renderNotifications = () => {
+    notifications = publicContent().updates || [];
     const readIds = getReadIds();
     const unread = notifications.filter((notification) => !readIds.has(notification.id));
     count.hidden = unread.length === 0;
@@ -818,6 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderNotifications();
+  setInterval(()=>{renderNotifications();initCommitteeUpdates();},60000);
   updateBrowserAlertStatus();
   document.addEventListener("sai-vista-language-change", () => {
     renderNotifications();
@@ -868,7 +673,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ["20260922", "Fancy Dress", "Fancy Dress event."],
     ["20260924", "Satyanarayan Puja & Mahaprasad", "Satyanarayan Puja. Mahaprasad: 7:00 PM–10:00 PM IST."],
     ["20260925", "Visarjan, Lezim & DJ", "Visarjan programme with Lezim and evening DJ. Lezim coordinator: Monica Jadhav."],
-    ["20260923", "No Gas Cooking Competition", "Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon."]
+    ["20260923", "No Stove Cooking Competition", "Participation gift for all; gifts worth ₹10,000 in total, sponsored by Artisanal Sweets."]
   ];
   const toNextDay = (date) => {
     const year = Number(date.slice(0, 4)), month = Number(date.slice(4, 6)) - 1, day = Number(date.slice(6, 8));

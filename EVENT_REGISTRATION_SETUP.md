@@ -1,5 +1,7 @@
 # Festival registration: Google Sheets setup
 
+**17 September 2026 update:** Follow [SEPTEMBER_17_SETUP.md](SEPTEMBER_17_SETUP.md) when updating the existing deployment. It adds Blood Donation and supersedes the older deadline instructions below. Fancy Dress now closes after 17 September, Bollywood after 18 September, and remaining event registration forms after 19 September (India time). Talent Show and Drawing are closed. The previous Fancy Dress script property is ignored by the updated code.
+
 The website has 11 event forms. All entries go into one private Google spreadsheet, with separate tabs: Bollywood Night, Drawing, Talent Show, Treasure Hunt, Rangoli, Pooja Thali, Fun n Fair, Fancy Dress, No Stove Cooking, Satyanarayan Pooja and Mahaprasad. A Children Gifts tab helps coordinate one gift per child across competitions.
 
 ## Deploy

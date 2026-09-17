@@ -21,8 +21,11 @@ let fundPayload={status:"success",payments:[{wing:"A",flat:"101",paid:"Yes"}]};
 let fundOffline=false;
 const ctx={console,Map,Set,Date,UrlFetchApp:{fetch:()=>{if(fundOffline)throw Error("offline");return {getResponseCode:()=>200,getContentText:()=>JSON.stringify(fundPayload)};}},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props[k]})},SpreadsheetApp:{openById:()=>book,flush(){}},LockService:{getScriptLock:()=>({tryLock:()=>true,waitLock(){},hasLock:()=>true,releaseLock(){}})},ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({setMimeType:()=>JSON.parse(s)})}};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync('event-registration.gs','utf8'),ctx);
+// Run existing save/gift regression cases as historical entries, then restore the
+// real policy below for closure, cutoff, and blood donation tests.
+vm.runInContext('const actualRegistrationStatus=FestivalRegistration.registrationStatus; FestivalRegistration.registrationStatus=()=>({closed:false});',ctx);
 const post=d=>ctx.doPost({parameter:{payload:JSON.stringify(d)}});
-ctx.setupEventRegistration();assert.equal(sheets.size,12);
+ctx.setupEventRegistration();assert.equal(sheets.size,13);
 assert.equal(post(good).status,'success');assert.equal(post(good).status,'success');assert.equal(sheets.get('Drawing').rows.length,2);
 assert.equal(post({...good,age:13}).status,'error');
 const next=(d,n)=>({...d,requestId:'12345678-1234-1234-1234-'+String(n).padStart(12,'0')});
@@ -30,9 +33,7 @@ assert.equal(post(next(good,2)).status,'error');
 assert.equal(post(next(talent,3)).status,'success');assert.equal(post(next(talent,4)).status,'error');
 assert.equal(post(next({...talent,performanceType:'Group',groupName:'Stars'},5)).status,'success');
 assert.equal(post(next({...good,event:'bollywood',players},6)).status,'success');assert.equal(post(next({...good,event:'bollywood',players,firstName:'Other'},7)).status,'error');
-assert.equal(post(next({...good,event:'fancy',costume:'Ganesha'},8)).status,'error');
-props.FANCY_DRESS_DEADLINE='2020-09-21T17:00:00+05:30';assert.equal(post(next({...good,event:'fancy',costume:'Ganesha'},9)).status,'error');
-props.FANCY_DRESS_DEADLINE='2099-09-21T17:00:00+05:30';assert.equal(post(next({...good,event:'fancy',costume:'Ganesha'},10)).status,'success');
+assert.equal(post(next({...good,event:'fancy',costume:'Ganesha'},10)).status,'success');
 for(const [id,extra] of Object.entries({treasure:{teamName:'Seekers'},rangoli:{},thali:{},funfair:{stallName:'Snacks',stallDetails:'Vegetarian snacks'},cooking:{age:18,dishName:'Salad',ingredients:'Vegetables'},pooja:{},prasad:{adults:2,children:1}}))assert.equal(post(next({...good,event:id,...extra},20+Object.keys(M.events).indexOf(id))).status,'success',id);
 assert.equal(post(next({...good,event:'prasad',firstName:'Other',adults:1,children:0},40)).status,'error');
 ctx.refreshChildrenGifts();assert.equal(sheets.get('Children Gifts').rows.length,2);sheets.get('Children Gifts').rows[1][6]='Yes';ctx.refreshChildrenGifts();assert.equal(sheets.get('Children Gifts').rows[1][6],'Yes');
@@ -86,3 +87,49 @@ const currentRegistration=fs.readFileSync('event-registration-config.js','utf8')
 assert.notEqual(M.collectionUrl.split('?')[0],currentRegistration);
 assert.equal(M.culturalFundStatus({status:'success',service:'sai-vista-events-v1',config:{}},'A','102').paid,false);
 console.log('PASS: browser and server use the collection endpoint, not the registration settings endpoint.');
+
+vm.runInContext('FestivalRegistration.registrationStatus=actualRegistrationStatus;',ctx);
+let clock=Date.parse('2026-09-17T12:00:00+05:30');
+ctx.Date=class extends Date {static now(){return clock;}};
+for(const id of ['drawing','talent']) {
+  assert.equal(M.registrationStatus(id,clock).closed,true);
+  assert.match(post(next({...good,...(id==='talent'?talent:{}),event:id,firstName:'Closed'},2000+['drawing','talent'].indexOf(id))).message,/closed/);
+}
+// All open events accept through the last millisecond of their final day,
+// then reject new entries exactly at midnight IST, regardless of old settings.
+props.FANCY_DRESS_DEADLINE='2099-01-01T00:00:00+05:30';
+for(const id of Object.keys(M.events).filter(id=>!['drawing','talent'].includes(id))) {
+  const cutoff=Date.parse(M.deadline(id));
+  assert.equal(M.registrationStatus(id,cutoff-1).closed,false,id);
+  assert.equal(M.registrationStatus(id,cutoff).closed,true,id);
+  clock=cutoff;
+  assert.equal(vm.runInContext(`FestivalRegistration.registrationStatus('${id}').closed`,ctx),true,id);
+}
+clock=Date.parse('2026-09-17T12:00:00+05:30');
+assert.equal(ctx.doGet().config.registrationRevision,'2026-09-17');
+const donor={event:'blood',requestId:'12345678-1234-1234-1234-000000003001',firstName:'Test Donor',lastName:'',wing:'D',flatNo:'1102',phone:'9326199515',agreed:true,donatedBefore:false};
+assert.equal(M.validate(donor,config),'');
+assert.ok(M.validate({...donor,donatedBefore:'false'},config));
+assert.ok(M.validate({...donor,firstName:''},config));
+assert.ok(M.validate({...donor,phone:'123'},config));
+assert.equal(post(donor).status,'success');
+assert.equal(post(donor).status,'success');
+const blood=sheets.get('Blood Donation');
+assert.equal(blood.rows.length,2);
+assert.equal(blood.rows[0].at(-1),'Have donated blood before?');
+assert.equal(blood.rows[1].at(-1),'No');
+assert.equal(blood.rows[1][3],'Test Donor');
+assert.equal(post({...donor,donatedBefore:true}).status,'error');
+assert.equal(post(next({...donor,firstName:'Another Donor',donatedBefore:true},3002)).status,'success');
+assert.equal(blood.rows.at(-1).at(-1),'Yes');
+for(const [id,extra,n] of [['fancy',{costume:'Ganesha'},3100],['bollywood',{players},3101],['rangoli',{},3102],['blood',{...donor},3103]]) {
+  const entry=next({...good,...extra,event:id},n);
+  clock=Date.parse(M.deadline(id));
+  const result=post(entry);
+  assert.equal(result.status,'error',id);
+  assert.match(result.message,/closed/,id);
+}
+clock=Date.parse(M.deadline('blood'));
+assert.equal(post(donor).status,'success'); // Saved retries remain safe after closure.
+assert.equal(blood.rows.length,3);
+console.log('PASS: closed Talent/Drawing, IST cutoff boundaries, server enforcement, obsolete deadline ignored, blood donation validation/history/duplicates and retries after closure.');

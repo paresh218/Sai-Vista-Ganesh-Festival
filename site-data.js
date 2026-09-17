@@ -12,15 +12,56 @@ window.SaiVistaContent = {
     "9-20": { message: "20 Sep — Blood Donation (coordinators: Deepak Karade & Sameer Gandhi); Treasure Hunt; Thali & Rangoli Competition; Fun n Fair (coordinator: Priyank Sharma).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-21": { message: "21 Sep — Talent Show (session 2).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-22": { message: "22 Sep — Fancy Dress event.", time: "As scheduled", place: "Sai Vista, Rahatani" },
-    "9-23": { message: "23 Sep — No Gas Cooking Competition. Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners! More details will be shared soon.", time: "To be announced", place: "Sai Vista, Rahatani" },
+    "9-23": { message: "23 Sep — No Stove Cooking Competition. Participation gift for all; gifts worth ₹10,000 in total, sponsored by Artisanal Sweets.", time: "To be announced", place: "Sai Vista, Rahatani" },
     "9-24": { message: "24 Sep — Satyanarayan Puja. Mahaprasad: 7:00 PM – 10:00 PM.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-25": { message: "25 Sep — Visarjan, Lezim and evening DJ. Lezim coordinator: Monica Jadhav.", time: "As scheduled", place: "Sai Vista, Rahatani" }
   },
 
   updates: [
-    { date: "2026-09-09", category: "Announcement", title: "Feta cancelled", body: "Feta has been cancelled due to low participation.", href: "#committeeUpdates", action: "View updates" },
-    { date: "2026-09-09", category: "Registration", title: "Kurta registration closed", body: "Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.", href: "#tshirt", action: "View Kurta details" },
-    { date: "2026-09-05", category: "Aarti", title: "Aarti nominations are open", body: "Choose a morning or evening Aarti slot for 15–24 September.", href: "#aarti", action: "Nominate for Aarti" },
-    { date: "2026-09-05", category: "Schedule", title: "Festival schedule is available", body: "Check the written schedule for event timings, registration links and important notes.", href: "#schedule", action: "View schedule" }
-  ]
+  {
+    "date": "2026-09-17",
+    "category": "Announcement",
+    "id": "kurta-refund-sep17",
+    "title": "Kurta: ₹50 refund",
+    "body": "We initially collected ₹300 for a different kurta. As shared with everyone during the trial, the final kurta costs ₹250. We will initiate the process of refunding ₹50 to each individual who paid ₹300.",
+    "href": "#archive",
+    "action": "View archive"
+  },
+  {
+    "date": "2026-09-17",
+    "category": "Announcement",
+    "id": "nominations-closed-sep17",
+    "title": "Talent Show & Drawing: nominations closed",
+    "body": "Nomination entries for the Talent Show and Drawing Competition are now closed.",
+    "href": "#registration",
+    "action": "View events"
+  },
+  {
+    "date": "2026-09-17",
+    "category": "Announcement",
+    "id": "fancy-deadline-sep17",
+    "title": "Fancy Dress: last day 17 September",
+    "body": "Thursday, 17 September 2026 is the last day for Fancy Dress nominations. Entries close at 11:59 PM IST.",
+    "href": "#registration",
+    "action": "View events"
+  },
+  {
+    "date": "2026-09-17",
+    "category": "Announcement",
+    "id": "bollywood-deadline-sep18",
+    "title": "Bollywood Night: last day 18 September",
+    "body": "Friday, 18 September 2026 is the last day for Bollywood Night entries. Entries close at 11:59 PM IST.",
+    "href": "#registration",
+    "action": "View events"
+  },
+  {
+    "date": "2026-09-17",
+    "category": "Announcement",
+    "id": "events-deadline-sep19",
+    "title": "Other events: last day 19 September",
+    "body": "Saturday, 19 September 2026 is the last day for all remaining event entries, including blood donation interest. Entries close at 11:59 PM IST.",
+    "href": "#registration",
+    "action": "View events"
+  }
+]
 };

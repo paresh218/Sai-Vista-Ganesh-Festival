@@ -237,14 +237,18 @@
   translations.mr["Aarti registration started!"] = "आरती नोंदणी सुरू झाली आहे!";
   const locales = { en: "en-IN", hi: "hi-IN", mr: "mr-IN" };
   const originalText = new WeakMap();
+  const lastText = new WeakMap();
   const originalAttributes = new WeakMap();
+  const lastAttributes = new WeakMap();
   let language = "en";
 
   const interpolate = (value, values = {}) => String(value).replace(/\{(\w+)\}/g, (_match, key) => values[key] ?? `{${key}}`);
-  const t = (key, values) => interpolate(translations[language]?.[key] || key, values);
+  const t = (key, values) => interpolate(translations[language]?.[key] || window.SaiVistaUXTranslate?.(key,language) || key, values);
   const normalise = (value) => String(value).replace(/\s+/g, " ").trim();
 
   const translateDocument = () => {
+    observer?.disconnect();
+    const reverseText=new Map(Object.entries(translations[language]||{}).map(([key,value])=>[value,key]));
     document.documentElement.lang = language;
     document.title = language === "hi" ? "साई विस्टा गणेश उत्सव 2026" : language === "mr" ? "साई व्हिस्टा गणेशोत्सव 2026" : "Sai Vista Ganesh Festival 2026";
     document.querySelectorAll("body *").forEach((element) => {
@@ -253,41 +257,53 @@
       if (!originalAttributes.has(element)) {
         originalAttributes.set(element, Object.fromEntries(attributes.filter((name) => element.hasAttribute(name)).map((name) => [name, element.getAttribute(name)])));
       }
-      const saved = originalAttributes.get(element);
+      const saved = originalAttributes.get(element),previous=lastAttributes.get(element)||{};
+      for(const name of attributes){const current=element.getAttribute(name);if(current!==null && current!==previous[name])saved[name]=reverseText.get(normalise(current))||current;}
+      const rendered={};
       Object.entries(saved).forEach(([name, value]) => {
         const translated = t(normalise(value));
         element.setAttribute(name, translated === normalise(value) ? value : translated);
+        rendered[name]=element.getAttribute(name);
       });
+      lastAttributes.set(element,rendered);
     });
 
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         const parent = node.parentElement;
-        if (!parent || ["SCRIPT", "STYLE", "SVG"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        if (!parent || parent.closest('[data-no-translate], [data-language]') || ["SCRIPT", "STYLE", "SVG"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
         return normalise(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach((node) => {
-      if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+      if (!originalText.has(node)||node.nodeValue!==lastText.get(node)) {
+        originalText.set(node,reverseText.get(normalise(node.nodeValue))||node.nodeValue);
+      }
       const source = originalText.get(node);
       const key = normalise(source);
       const translated = t(key);
       if (translated === key) {
         node.nodeValue = source;
+        lastText.set(node,node.nodeValue);
         return;
       }
       const leading = source.match(/^\s*/)?.[0] || "";
       const trailing = source.match(/\s*$/)?.[0] || "";
       node.nodeValue = `${leading}${translated}${trailing}`;
+      lastText.set(node,node.nodeValue);
     });
     document.querySelectorAll("[data-language]").forEach((button) => {
       const selected = button.dataset.language === language;
       button.classList.toggle("is-active", selected);
       button.setAttribute("aria-pressed", String(selected));
     });
+    if(document.body)observer?.observe(document.body,{childList:true,subtree:true,characterData:true});
   };
+
+  let scheduled=false;
+  const observer=new MutationObserver(()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;translateDocument();});});
 
   const setLanguage = (nextLanguage, announce = true) => {
     language = Object.hasOwn(locales, nextLanguage) ? nextLanguage : "en";
@@ -298,6 +314,7 @@
 
   window.SaiVistaI18n = {
     t,
+    addTranslations(bundle){for(const lang of ['hi','mr'])Object.assign(translations[lang],bundle[lang]||{});},
     get language() { return language; },
     get locale() { return locales[language]; },
     setLanguage,

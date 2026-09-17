@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-09-10-registration-fund-fix-1">
+  <meta name="site-release" content="2026-09-17-events-experience-7">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Ganesh Festival 2026 — events, registration, Aarti nomination and transparent festival accounts.">
   <meta name="theme-color" content="#7d281b">
@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
 
@@ -41,11 +41,11 @@
         </button>
         <nav id="siteNav">
             <a href="#home">Home</a>
-            <a href="#schedule">Schedule</a>
-            <a href="#registration">Registration</a>
+            <a href="#registration">Events</a>
             <a href="#aarti">Aarti</a>
             <a href="#accounts">Accounts</a>
             <a href="#suggestions">Suggestions</a>
+            <a href="#archive">Archive</a>
         </nav>
         <div class="language-switcher" role="group" aria-label="Language">
             <button type="button" data-language="en" aria-pressed="true">EN</button>
@@ -74,97 +74,13 @@
         </div>
     </aside>
 
-    <!-- Registration notice (rotating messages) -->
-    <div id="noticeBar" class="notice-bar" role="note">
-        <div class="notice-inner">
-            <div class="notice-message">
-                <span>Kurta registration closed. For exceptions, contact Deepak Karade.</span><span>Feta has been cancelled due to low participation.</span>
-                <span>Aarti registration started!</span>
-                <span>Registration forms are available to review. Online submission is awaiting setup.</span>
-                <span>Stay tuned for more updates!</span>
-
-                <span>Kurta registration closed. For exceptions, contact Deepak Karade.</span><span>Feta has been cancelled due to low participation.</span>
-                <span>Aarti registration started!</span>
-                <span>Registration forms are available to review. Online submission is awaiting setup.</span>
-                <span>Stay tuned for more updates!</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="promotion-widget">
-        <aside id="promotionChat" class="promotion-chat" aria-labelledby="promotionTitle" hidden>
-            <div class="promotion-header">
-                <span class="promotion-avatar" aria-hidden="true">P</span>
-                <div><strong>Priyank Sharma</strong><span>Let’s connect</span></div>
-                <button id="promotionClose" class="promotion-close" type="button" aria-label="Close promotion chat">×</button>
-            </div>
-            <div class="promotion-body">
-                <span class="promotion-kicker">YOUR BRAND. OUR COMMUNITY.</span>
-                <h2 id="promotionTitle">Let’s grow your business together</h2>
-                <div class="promotion-bubble"><span aria-hidden="true">👋</span><p>Want to display your brand ad or promote something with us? We have more ideas to explore. Connect with Priyank and let’s make it happen!</p></div>
-                <a class="promotion-cta" href="https://wa.me/917621940889?text=Hi%20Priyank%2C%20I%27m%20interested%20in%20advertising%20my%20brand%20or%20promoting%20my%20business%20with%20Sai%20Vista.%20Let%27s%20connect!" target="_blank" rel="noopener noreferrer">Connect with Priyank ↗</a>
-                <small>Continue on WhatsApp</small>
-            </div>
-        </aside>
-        <button id="promotionLauncher" class="promotion-launcher" type="button" aria-controls="promotionChat" aria-expanded="false" aria-label="Open promotion chat">
-            <span class="promotion-launcher-label">Let’s grow together</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-2 2V11.5a9.5 9.5 0 0 1 19 0Z"/><path d="M7 11h.01M12 11h.01M17 11h.01"/></svg>
-        </button>
-    </div>
-    <!-- Daily important notice (shows day-specific event) -->
-    <div id="dailyNotice" class="daily-notice" aria-live="polite">
-        <div class="daily-inner">
-            <strong id="dailyDate" class="daily-date"></strong>
-            <div id="dailyMessage" class="daily-message">Loading today's event…</div>
-            <a href="#schedule" class="btn btn-outline daily-link">View today's schedule</a>
-        </div>
-    </div>
-
-    <div id="todayModal" class="today-modal hidden" role="dialog" aria-modal="true" aria-labelledby="todayCardTitle" aria-describedby="todayCardEvent todayCardMeta">
-        <div class="today-modal-box" tabindex="-1">
-            <button id="closeTodayModal" class="icon-btn today-modal-close" type="button" aria-label="Close today’s update">×</button>
-            <div class="today-modal-icon" aria-hidden="true">📍</div>
-            <span>HAPPENING TODAY</span>
-            <h2 id="todayCardTitle">Today at Sai Vista</h2>
-            <p id="todayCardDate">Loading today’s details…</p>
-            <strong id="todayCardEvent">Loading today’s event…</strong>
-            <p id="todayCardMeta"></p>
-            <div id="adultInterestContacts" class="adult-interest-contacts" hidden>
-                <a class="btn btn-dark" href="https://wa.me/919049986381?text=Hi%20Deepak%2C%20I%20am%20interested%20in%20the%20proposed%20adults%27%20activity%20on%2023%20September.%20Please%20count%20my%20entry." target="_blank" rel="noopener noreferrer">Deepak Karade ↗</a>
-                <a class="btn btn-outline" href="https://wa.me/917621940889?text=Hi%20Priyank%2C%20I%20am%20interested%20in%20the%20proposed%20adults%27%20activity%20on%2023%20September.%20Please%20count%20my%20entry." target="_blank" rel="noopener noreferrer">Priyank Sharma ↗</a>
-            </div>
-            <a id="todayCardAction" class="btn btn-dark" href="#schedule">View today’s schedule</a>
-        </div>
-    </div>
+    <aside id="noticeBar" class="priority-notice" aria-label="Priority announcement"><div><strong id="priorityTitle">Festival updates</strong><p id="priorityBody">Check nomination deadlines and the Kurta refund update.</p></div><a class="text-link" href="#committeeUpdates">View all notices →</a></aside>
 
     <main id="mainContent" tabindex="-1">
-        <section id="home" class="hero">
-            <div class="hero-pattern"></div>
-            <div class="hero-content">
-                <div class="eyebrow">SAI VISTA CULTURAL COMMITTEE</div>
-                <div class="om-mark">ॐ</div>
-                <h1>Ganesh Festival <span>2026</span></h1>
-                <p class="ganesh-mantra">गणपती बाप्पा मोरया 🙏</p>
-                <p class="hero-copy">
-                    A celebration of devotion, culture, participation and community spirit.
-                </p>
-                <div class="hero-actions">
-                    <a href="#schedule" class="btn btn-light">Explore Festival</a>
-                    <a href="#registration" class="btn btn-dark">Register for Events</a>
-                    <button class="btn btn-outline install-app-button install-app-trigger hidden" type="button">Install Festival App</button>
-                </div>
-                <div class="hero-meta">
-                    <span>14 September – 25 September 2026</span>
-                    <span>•</span>
-                    <span>Sai Vista, Rahatani</span>
-                </div>
-                <div class="hero-countdown" aria-label="Festival countdown">
-                    <span class="countdown-label">Festival begins in</span>
-                    <strong id="festivalCountdown">Loading countdown…</strong>
-                </div>
-            </div>
-
-            <!-- Schedule image modal -->
+        <section id="home" class="section today-next" aria-labelledby="todayNextTitle">
+            <div class="today-next-heading"><div><span class="eyebrow">GANESH FESTIVAL · 14–25 SEPTEMBER 2026</span><h1 id="todayNextTitle">Your festival, at a glance.</h1><p>गणपती बाप्पा मोरया 🙏 · Sai Vista, Rahatani</p></div><a class="btn btn-dark" href="#registration">Find your event →</a></div>
+            <div class="agenda-grid"><article id="todayAgenda" class="agenda-card agenda-today"></article><article id="nextAgenda" class="agenda-card"></article></div>
+        </section>
             <div id="scheduleModal" class="modal hidden" aria-hidden="true">
                 <div class="schedule-modal-box">
                     <div class="modal-header">
@@ -179,126 +95,27 @@
                     </div>
                 </div>
             </div>
+
+
+        <section class="quick-grid" aria-label="Festival shortcuts">
+            <a href="#registration" class="quick-card"><div aria-hidden="true">▦</div><strong>Events & registration</strong><small>Find your activity</small></a>
+            <a href="#aarti" class="quick-card"><div aria-hidden="true">🪔</div><strong>Aarti Nomination</strong><small>Choose your slot</small></a>
+            <a href="#committeeUpdates" class="quick-card"><div aria-hidden="true">☷</div><strong>Notices</strong><small>Deadlines & updates</small></a>
+            <a href="#accounts" class="quick-card"><div aria-hidden="true">₹</div><strong>Festival Accounts</strong><small>Transparent expenses</small></a>
         </section>
-        <section id="tshirt" class="tshirt-section">
-            <div class="section tshirt-inner">
-                <div class="section-heading">
-                    <span>SAI VISTA GANPATI 2026</span>
-                    <h2>Ganpati Festival Kurta</h2>
-                    <p>
-                        Show your Ganpati spirit with the official Sai Vista Ganpati 2026
-                        Kurta.
-                    </p>
-                </div>
-
-                <div class="tshirt-card">
-                    <figure class="tshirt-product-image">
-                        <img src="assets/ganpati-kurta-real.png" alt="Model wearing the red festival kurta with Ganpati Bappa blessing him in the background">
-                    </figure>
-
-                    <div class="tshirt-info">
-                        <div class="tshirt-badge">₹300 / Kurta</div>
-                        <h3>Sai Vista Ganpati 2026 Kurta</h3>
-                        <p>
-                            Kurta registration is closed. The product details are retained for reference.
-                        </p>
-
-                        <div class="tshirt-highlights">
-                            <div>
-                                <span>💰</span>
-                                <strong>₹300</strong>
-                                <small>Per Kurta</small>
-                            </div>
-                            <div>
-                                <span>📅</span>
-                                <strong>8 Sep</strong>
-                                <small>Registration deadline</small>
-                            </div>
-                            <div>
-                                <span>👕</span>
-                                <strong>S – XL</strong>
-                                <small>Available sizes</small>
-                            </div>
-                        </div>
-
-                        <div class="deadline-box">
-                            <span>⏰ Last date to register</span>
-                            <strong>8 September 2026</strong>
-                        </div>
-                    </div>
-
-                    <div class="tshirt-form-wrap">
-                        <div class="tshirt-form-message">
-                            <div class="tshirt-form-icon">👕</div>
-                            <h3>Kurta registration closed</h3>
-                            <p>
-                                Registration is now closed.
-                                Available sizes are S, M, L and XL.
-                            </p>
-
-                            <div class="size-list">
-                                <span>S</span>
-                                <span>M</span>
-                                <span>L</span>
-                                <span>XL</span>
-                            </div>
-
-                            <div class="tshirt-note">
-                                <strong>Important:</strong>
-                                Kurta cost is <strong>₹300</strong>.
-                                Registration deadline:
-                                <strong>8 September 2026</strong>.
-                            </div>
-                            <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/sCJJgR3pCdx2Gg896" disabled aria-disabled="true">Kurta registration closed</button>
-
-                            <p>Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.</p><p><a href="https://wa.me/919049986381?text=Hi%20Deepak%2C%20Kurta%20registration%20is%20closed.%20Is%20an%20exception%20still%20possible%3F" target="_blank" rel="noopener">Contact Deepak Karade on WhatsApp ↗</a> · <a href="tel:+919049986381">90499 86381</a></p>
-                            <p>Please confirm any exception with Deepak before making payment.</p>
-                            <button id="openKurtaPayment" class="btn btn-dark kurta-upi-link" type="button">Pay ₹300 with UPI ↗</button>
-                            <small class="upi-pay-note">Choose your preferred UPI app next. ₹300 is prefilled—please verify the recipient and amount before approving payment.</small>
-
-                            <small class="form-powered">
-                                Registration is managed through Google Forms.
-                            </small>
-                        </div>
-                    </div>
-                </div>
+        <section id="registration" class="section alt-section">
+            <div class="section-heading">
+                <span>PARTICIPATE</span>
+                <h2>Events & registration</h2>
+                <p>Find the date, venue and registration details in one place. Categories help you browse; check each event’s eligibility before registering.</p>
             </div>
-        </section>
 
-
-
-
-
-<section class="schedule-spotlight">
-            <div class="spotlight-inner">
-                <div class="spotlight-copy">
-                    <div class="eyebrow">LATEST UPDATE</div>
-                    <h2>Ganpati 2026 Event Schedule</h2>
-                    <p>
-                        See the complete festival programme, important notes and registration
-                        information published by the Sai Vista Cultural Committee.
-                    </p>
-                    <button class="btn btn-dark" id="openScheduleImage">View Full Schedule ↗</button>
-                </div>
-                <button class="schedule-image-card" id="openScheduleImageCard" aria-label="Open full Ganpati 2026 schedule" aria-describedby="scheduleArtworkHelp">
-                    <img src="assets/ganpati-2026-event-schedule.png" alt="Illustrated Sai Vista Ganpati 2026 event schedule. A complete written schedule follows below.">
-                    <span class="image-overlay">Tap to enlarge</span>
-                </button>
-            </div>
-            <p id="scheduleArtworkHelp" class="schedule-artwork-help">A complete written schedule is provided below for easy reading and screen-reader access.</p>
-        </section>
-
-        <section class="quick-grid">
-            <a href="#schedule" class="quick-card"><div>📅</div><strong>Festival Schedule</strong><small>Events & activities</small></a>
-            <a href="#registration" class="quick-card"><div>📝</div><strong>Event Registration</strong><small>Participate with us</small></a>
-            <a href="#aarti" class="quick-card"><div>🪔</div><strong>Aarti Nomination</strong><small>Choose your slot</small></a>
-            <a href="#accounts" class="quick-card"><div>💰</div><strong>Festival Accounts</strong><small>Transparent expenses</small></a>
-            <a href="#tshirt" class="quick-card tshirt-quick"><div>👕</div><strong>Ganpati Kurta</strong><small>₹300 • Registration closed</small></a>
-            <a href="#suggestions" class="quick-card suggestion-quick"><div>💡</div><strong>Share a Suggestion</strong><small>Help us make the festival better</small></a>
-            <a href="#contact" class="quick-card contact-quick"><div>☎️</div><strong>Contact Us</strong><small>Coordinators & website</small></a>
-        </section>
-
-        <section id="schedule" class="section">
+            <p class="availability-box">Children receive one participation gift across all competitions. Each form shows the details needed to register.</p>
+            <div class="event-filters" role="group" aria-label="Filter events">
+                <button type="button" class="event-filter" data-event-filter="upcoming" aria-pressed="true">Upcoming</button><button type="button" class="event-filter" data-event-filter="all" aria-pressed="false">All events</button><button type="button" class="event-filter" data-event-filter="kids" aria-pressed="false">Kids</button><button type="button" class="event-filter" data-event-filter="adults" aria-pressed="false">Adults</button><button type="button" class="event-filter" data-event-filter="pooja" aria-pressed="false">Pooja</button><button type="button" class="event-filter" data-event-filter="closed" aria-pressed="false">Closed</button>
+            </div><p id="eventResults" role="status" aria-live="polite"></p>
+            <div id="eventRegistrationGrid" class="form-grid"></div><p id="eventEmpty" hidden>No events match this filter. Choose another category.</p>
+            <details class="full-programme"><summary>Full programme & festival guidelines</summary><button class="btn btn-outline" id="openScheduleImage" type="button">View Full Schedule ↗</button><section id="schedule" class="section">
             <div class="section-heading">
                 <span>14 SEPTEMBER – 25 SEPTEMBER</span>
                 <h2>Ganpati 2026 Festival Schedule</h2>
@@ -348,7 +165,7 @@
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>20</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">SUNDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Blood Donation</h3><p class="event-coordinator">Coordinators: Deepak Karade &amp; Sameer Gandhi.</p>
+                    <div class="schedule-body"><div class="event-kicker">SUNDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Blood Donation</h3><p class="event-coordinator">Coordinators: Deepak Karade &amp; Sameer Gandhi.</p><button type="button" class="btn btn-outline" data-register-event="blood">Interested in blood donation</button>
                         </div><div class="schedule-event"><h3>Treasure Hunt</h3><a href="#registration" class="text-link">View registrations →</a>
                         </div><div class="schedule-event"><h3>Thali &amp; Rangoli Competition</h3><a href="#registration" class="text-link">View registrations →</a>
                         </div><div class="schedule-event"><h3>Fun n Fair</h3><p class="event-coordinator">Coordinator: Priyank Sharma.</p><a href="#registration" class="text-link">View registrations →</a></div></div></div>
@@ -369,7 +186,7 @@
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>23</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>No Gas Cooking Competition</h3><p>Gifts for all participants and special gifts for the 1st, 2nd and 3rd place winners!</p><p>More details will be shared soon.</p></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>No Stove Cooking Competition</h3><p>Participation gift for all. Gifts worth ₹10,000 in total, sponsored by Artisanal Sweets.</p><img class="sponsor-logo" src="assets/artisanal-sweets.jpeg" alt="Artisanal Sweets — Homemade Delicacies"></div></div></div>
                 </article>
 
                 <article class="schedule-card puja-event puja-card">
@@ -394,38 +211,18 @@
                     <li>Performance day allotment will be done purely by draw; no changes will be allowed after allotment.</li>
                     <li>Entries are limited, so residents are requested to register early wherever registration is applicable.</li>
                     <li>Fancy Dress is a separate event on 22 Sep.</li>
-                    <li>Kurta registration closed on 8 September 2026. For exceptions, contact Deepak Karade. Feta has been cancelled due to low participation.</li>
+                    <li>Talent Show and Drawing nominations are closed. Fancy Dress closes on 17 September, Bollywood Night on 18 September, and all remaining event entries on 19 September 2026 (11:59 PM IST).</li>
                     <li>Any schedule concerns should be raised with the committee by Thursday so they can be reviewed based on resident impact.</li>
                     <li>Volunteers are welcome to contribute, manage or help plan events and activities.</li>
                 </ol>
                 <p class="source-note">The complete bilingual/trilingual schedule artwork is also available from the “View Full Schedule” button above.</p>
             </div>
-        </section>
-
-        <section id="registration" class="section alt-section">
-            <div class="section-heading">
-                <span>PARTICIPATE</span>
-                <h2>Registration & Festival Forms</h2>
-                <p>Choose an event to review its guidelines and register. Forms open here on the website.</p>
-            </div>
-
-            <p class="availability-box">Children receive only ONE participation gift across all competitions. Event forms require first name, last name, wing, flat number and phone number. Mahaprasad needs only wing, flat number and attendee counts.</p>
-            <div id="eventRegistrationGrid" class="form-grid"></div>
-            <div class="form-grid">
-                <!-- Kurta registration: opens inside modal dialog on the same page -->
-                <article class="form-card">
-                    <div class="form-icon">👕</div>
-                    <div class="form-tag">KURTA</div>
-                    <h3>Kurta / Traditional Wear Registration</h3>
-                    <p>Kurta registration is closed. For an exception, please contact Deepak Karade as soon as possible, before it is too late.</p><p><a href="https://wa.me/919049986381?text=Hi%20Deepak%2C%20Kurta%20registration%20is%20closed.%20Is%20an%20exception%20still%20possible%3F" target="_blank" rel="noopener">Contact Deepak Karade on WhatsApp ↗</a> · <a href="tel:+919049986381">90499 86381</a></p>
-                    <!-- Replace the URL below with the actual Google Form link for Kurta -->
-                    <button class="btn btn-outline form-open-btn" data-form-url="https://forms.gle/sCJJgR3pCdx2Gg896" disabled aria-disabled="true">Kurta registration closed</button>
-                </article>
-            </div>
-        </section>
+        </section></details>
+</section>
 
         <dialog id="eventRegistrationDialog" class="aarti-registration-dialog" aria-labelledby="festivalEventTitle">
             <div class="aarti-dialog-header"><h2 id="festivalEventTitle">Event registration</h2><button type="button" class="icon-btn" id="closeFestivalEvent" aria-label="Close event registration">&times;</button></div>
+            <div class="language-switcher dialog-language" role="group" aria-label="Form language"><button type="button" data-language="en">EN</button><button type="button" data-language="hi">हिंदी</button><button type="button" data-language="mr">मराठी</button></div>
             <details open class="event-guidelines"><summary>Event guidelines</summary><ul id="festivalEventRules"></ul></details>
             <form id="festivalEventForm" class="aarti-form">
                 <div id="festivalEventFields"></div>
@@ -548,6 +345,7 @@
             </div>
         </section>
 
+<section id="sponsors" class="section sponsors-section"><div class="section-heading"><span>WITH GRATITUDE</span><h2>Our festival supporters</h2><p>Thank you for bringing our community celebrations to life.</p></div><div class="sponsor-grid"><article class="sponsor-card"><img src="assets/artisanal-sweets.jpeg" alt="Artisanal Sweets — Homemade Delicacies"><div><span class="eyebrow">23 SEPTEMBER · NO STOVE COOKING</span><h3>Artisanal Sweets</h3><p>Participation gift for all. Gifts worth ₹10,000 in total.</p><a class="text-link" href="#registration">Explore the competition →</a></div></article><article class="sponsor-card"><div class="sponsor-symbol" aria-hidden="true">🏏</div><div><span class="eyebrow">19 SEPTEMBER · DHOL TASHA VAADAN</span><h3>Sai Vista Cricket team</h3><p>Supporting Dhol Tasha Vaadan, 4–6 PM near the Pandal.</p><a class="text-link" href="#schedule">View programme →</a></div></article></div></section>
         <section id="committeeUpdates" class="section updates-section" aria-labelledby="updatesTitle">
             <div class="section-heading">
                 <span>COMMITTEE UPDATES</span>
@@ -571,14 +369,7 @@
             <div id="expenseDashboard" class="payment-card expense-dashboard" aria-live="polite"></div>
         </section>
 
-        <section class="about-section">
-            <div>
-                <div class="eyebrow light">SAI VISTA</div>
-                <h2>Ganpati Bappa, Community & Celebration</h2>
-                <p>Our festival is a shared celebration built by residents, volunteers and the Cultural Committee.</p>
-                <p class="mantra">गणपती बाप्पा मोरया! 🙏</p>
-            </div>
-        </section>
+
 
         <section id="resident-businesses" class="section resident-businesses" aria-labelledby="residentBusinessTitle">
             <div class="section-heading">
@@ -651,6 +442,14 @@
 
             </div>
         </section>
+
+        <section id="archive" class="section alt-section">
+            <div class="section-heading"><span>PAST REGISTRATIONS</span><h2>Archive</h2><p>Kurta details and refund information for reference.</p></div>
+            <div class="form-grid">
+                <details id="kurtaArchive" class="form-card"><summary>Ganpati Kurta · Registration closed</summary><img class="archive-product" src="assets/ganpati-kurta-real.png" alt="Red Ganpati festival kurta"><h3>Final price: ₹250</h3><p>We initially collected ₹300 for a different kurta. As shared with everyone during the trial, the final kurta costs ₹250. We will initiate the process of refunding ₹50 to each individual who paid ₹300.</p><p>Registration closed on 8 September 2026. Sizes: S, M, L and XL.</p></details>
+            </div>
+        </section>
+        <section class="section more-links"><h2>More from Sai Vista</h2><div><a href="#resident-businesses">Community businesses →</a><a href="#archive">Kurta archive →</a><a href="#suggestions">Suggestions →</a><a href="#contact">Contact coordinators →</a></div></section>
     </main>
 
     <footer>
@@ -685,27 +484,17 @@
         </div>
     </div>
 
-    <div id="upiPaymentModal" class="modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="upiPaymentTitle">
-        <div class="upi-payment-box">
-            <button id="closeUpiPayment" class="icon-btn upi-close-btn" type="button" aria-label="Close payment options">×</button>
-            <div class="tshirt-form-icon">₹</div>
-            <div class="panel-kicker">KURTA PAYMENT</div>
-            <h3 id="upiPaymentTitle">Choose your UPI app</h3>
-            <p>Pay <strong>₹300</strong> to <strong>Deepak Karade</strong> for the Sai Vista Ganpati 2026 Kurta.</p>
-            <div class="upi-recipient"><span>UPI ID</span><strong>karade.deepak1@ibl</strong></div>
-            <a id="launchUpiApps" class="btn btn-dark" href="upi://pay?pa=karade.deepak1%40ibl&amp;pn=Deepak%20Karade&amp;am=300.00&amp;cu=INR&amp;tn=Sai%20Vista%20Ganpati%202026%20Kurta" data-android-intent="intent://pay?pa=karade.deepak1%40ibl&amp;pn=Deepak%20Karade&amp;am=300.00&amp;cu=INR&amp;tn=Sai%20Vista%20Ganpati%202026%20Kurta#Intent;scheme=upi;end">Choose an installed UPI app</a>
-            <button id="copyUpiId" class="btn btn-outline" type="button">Copy UPI ID</button>
-            <small id="upiPaymentHelp">Your phone will show compatible UPI apps. Verify the recipient and amount before entering your UPI PIN.</small>
-        </div>
-    </div>
-
+    <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home"><span aria-hidden="true">⌂</span>Home</a><a href="#schedule"><span aria-hidden="true">▦</span>Events</a><a href="#aarti"><span aria-hidden="true">🪔</span>Aarti</a><a href="#committeeUpdates"><span aria-hidden="true">♧</span>Notices</a></nav>
     <script src="site-updates.js"></script>
     <script src="site-data.js"></script>
     <script src="event-registration-config.js"></script>
     <script src="event-registration-model.js"></script>
-    <script src="event-registration.js"></script>
-    <script src="translations.js"></script>
-    <script src="script.js?v=23"></script>
+    <script src="event-ux.js?v=7"></script>
+    <script src="festival-experience.js?v=7"></script>
+    <script src="event-registration.js?v=7"></script>
+    <script src="translations.js?v=7"></script>
+    <script src="ux-translations.js?v=7"></script>
+    <script src="script.js?v=24"></script>
     <script src="expense-model.js?v=13"></script>
     <script src="expense-dashboard.js?v=17"></script>
 </body>

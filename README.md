@@ -1,5 +1,21 @@
 # Sai Vista Ganesh Festival 2026 — V3
 
+## Unified Events & registration experience
+
+The homepage now has four shortcuts and one static priority notice. Events combine dates, published times/venues, registration state and contact links; Upcoming, All events, Kids, Adults, Pooja and Closed filters include non-registration programme items. Full written programme and artwork remain in an expandable panel. Existing `#schedule` links lead to the combined view.
+
+Registration forms use grouped fields, mobile keyboards and inline validation. Confirmation displays the saved details followed by a separate WhatsApp step; opening WhatsApp never claims the message was delivered. The empty last-name line has been removed from blood donation messages. Hindi/Marathi translations cover the active event guidelines, fields, validation, dynamic cards, deadline notices and confirmations. Language can be switched inside the form without clearing entered details. Closed deadline notices update automatically. Events open as a dedicated view, and mobile navigation links to Home, Events, Aarti and Notices.
+
+Publish the added `event-ux.js` and `ux-translations.js` along with the changed website files. Version 8 Apps Script remains in use; no backend redeployment is needed for this UI update. Verify with `node event-ux.test.cjs` plus the existing registration, experience, updater and accounts tests. Browser verification covered inline validation, Hindi/Marathi/English switching with preserved input, category filters, mobile layout and confirmation rendering against a temporary local mock service. No additional live registrations or WhatsApp messages were created during this UI update.
+
+## 17 September resident experience update
+
+The homepage begins with Today & Next, using India time and the 2026 festival dates. The daily automatic popup has been replaced by inline cards. Registration cards show Closing today / Open / Closed badges and sort active entries before closed events. Event contact links use supplied numbers, with the committee as the fallback.
+
+Mobile screens have Home, Events, Register and Notices navigation. Accounts, Archive and Community businesses open as separate hash-linked views with Back to festival links; browser Back and direct links are supported. Archive contains Kurta only. The sponsor section acknowledges Artisanal Sweets and the Cricket team.
+
+Publish `festival-experience.js` alongside the changed HTML, CSS, registration JavaScript and service worker. This visual update does not require another Apps Script change beyond the deployment documented in `SEPTEMBER_17_SETUP.md`. Check date rollover with `node festival-experience.test.cjs`.
+
 ## Included
 - Mobile-first festival homepage
 - Festival schedule

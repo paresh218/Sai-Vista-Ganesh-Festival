@@ -1,7 +1,7 @@
 (() => {
   const M = FestivalRegistration;
   const endpoint = window.SaiVistaRegistrationConfig?.endpoint || "";
-  const config = {drawingMaxAge:18, fancyDeadline:"", musicUrl:""};
+  const config = {drawingMaxAge:18, fancyDeadline:M.deadline("fancy"), musicUrl:""};
   const el = (tag, text, attrs={}) => {const n=document.createElement(tag); if(text)n.textContent=text; for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v); return n;};
   document.addEventListener("DOMContentLoaded", () => {
     const grid=document.getElementById("eventRegistrationGrid");
@@ -11,6 +11,24 @@
     const status=document.getElementById("festivalEventStatus");
     const success=document.getElementById("festivalEventSuccess");
     const submit=document.getElementById("festivalEventSubmit");
+    form.noValidate=true;
+    const showFieldError=(input,message)=>{
+      const id=input.id+'-error';let note=document.getElementById(id);
+      if(!note){note=el('small','',{id,class:'field-error'});input.closest('.form-group, label')?.append(note);}
+      note.textContent=message;note.hidden=!message;input.setAttribute('aria-invalid',String(Boolean(message)));
+      if(message)input.setAttribute('aria-describedby',id);else input.removeAttribute('aria-describedby');
+    };
+    function checkField(input){
+      if(!input.matches('input,select,textarea')||input.disabled||!input.willValidate)return true;
+      let error='';
+      if(input.validity.valueMissing)error=input.type==='checkbox'?'Please read and accept the event details.':'This field is required.';
+      else if(input.value && input.type==='tel'&&!/^[6-9]\d{9}$/.test(M.phone(input.value)))error='Enter a valid Indian mobile number.';
+      else if(input.validity.rangeUnderflow||input.validity.rangeOverflow||input.validity.stepMismatch||input.validity.badInput)error='Enter a whole number within the shown range.';
+      else if(input.value && /firstName|lastName|player\d+(First|Last)/.test(input.name)&&!/^[\p{L}\p{M}][\p{L}\p{M} .’'-]{0,79}$/u.test(input.value.trim()))error='Use a name of up to 80 characters, without numbers.';
+      showFieldError(input,error);return !error;
+    }
+    form.addEventListener('focusout',event=>{if(event.target.matches('input,select,textarea'))checkField(event.target);});
+    form.addEventListener('input',event=>{if(event.target.getAttribute('aria-invalid')==='true')checkField(event.target);});
     let current, requestId, pending=false, ready=false;
     let loaded=false;
     let fundCheckVersion=0;
@@ -39,6 +57,11 @@
       if(type==="number"){input.min=min??0;input.max=max??120;input.step=1;}
       else input.maxLength=type==="textarea"?1000:100;
       if(value!==undefined)input.value=value;
+      if(type==='tel'){input.inputMode='tel';input.autocomplete='tel';input.placeholder='10-digit mobile number';}
+      if(type==='number')input.inputMode='numeric';
+      if(name==='firstName')input.autocomplete=current==='blood'?'name':'given-name';
+      if(name==='lastName')input.autocomplete='family-name';
+      if(type==='number')wrap.append(el('small',`${input.min}–${input.max}`,{class:'field-hint'}));
       wrap.append(input);fields.append(wrap);return input;
     }
     const addPlayer = i => {
@@ -53,13 +76,17 @@
         const response=await fetch(endpoint,{signal:AbortSignal.timeout(45000),cache:"no-store"});
         const data=await response.json();
         if(!response.ok||data.service!=="sai-vista-events-v1"||data.status!=="success")throw Error("service");
-        Object.assign(config,data.config);loaded=true;status.textContent="";
+        Object.assign(config,data.config,{fancyDeadline:M.deadline("fancy")});loaded=true;status.textContent="";
       }catch(_){status.textContent="Unable to connect to registration. Close and reopen the form to retry.";}
     }
     async function open(event) {
+      if(M.registrationStatus(event).closed){refreshCards();return;}
       fundCheckVersion++;
       current=event;requestId=crypto.randomUUID();form.reset();form.hidden=false;success.hidden=true;success.replaceChildren();fields.replaceChildren();status.textContent="";submit.disabled=true;ready=false;
-      form.querySelector(".info-note").textContent="These details are saved for festival coordination. After saving, open WhatsApp and press Send to notify "+(event==="funfair"?"Neeraj Upadhyay":"Priyank")+".";
+      dialog.querySelector('.event-guidelines').hidden=false;
+      form.querySelectorAll('.field-error').forEach(node=>node.remove());
+      form.elements.agreed.id='event-agreed';form.elements.agreed.removeAttribute('aria-invalid');form.elements.agreed.removeAttribute('aria-describedby');
+      form.querySelector(".info-note").textContent="These details are saved for festival coordination. After saving, open WhatsApp and press Send to notify "+(event==="blood"?"Sameer Gandhi":event==="funfair"?"Neeraj Upadhyay":"Priyank")+".";
       form.elements.agreed.closest("label").querySelector("span").textContent=event==="cooking"
         ? "I have read the details and agree to it."
         : ["pooja","prasad"].includes(event) ? "I have read and agreed."
@@ -69,14 +96,20 @@
       const definition=M.events[event];document.getElementById("festivalEventTitle").textContent=definition.title+" · "+definition.date;
       const rules=document.getElementById("festivalEventRules");rules.replaceChildren();
       definition.rules.forEach(rule=>rules.append(el("li",rule)));
-      if(!["prasad","funfair"].includes(event)) field("firstName",event==="bollywood"?"Wing contact first name":"Participant first name");
-      if(!["prasad","funfair"].includes(event)) field("lastName",event==="bollywood"?"Wing contact last name":"Participant last name");
+      fields.append(el('h3',event==='prasad'?'Household details':'Your details',{class:'field-section-title'}));
+      if(!["prasad","funfair"].includes(event)) field("firstName",event==="blood"?"Name":event==="bollywood"?"Wing contact first name":"Participant first name");
+      if(!["prasad","funfair","blood"].includes(event)) field("lastName",event==="bollywood"?"Wing contact last name":"Participant last name");
       field("wing","Wing",{options:["A","B","C","D","E","F"]});
       const flats=[];for(let floor=1;floor<=13;floor++)for(let flat=1;flat<=4;flat++)flats.push(String(floor*100+flat));
       field("flatNo","Flat number",{options:flats});
       if(event==="funfair"){field("firstName","Participant first name");field("lastName","Participant last name");}
-      if(event!=="prasad") field("phone",event==="bollywood"?"Wing contact phone number":"Phone number (parent/guardian for children)",{type:"tel"});
-      if(["drawing","talent","treasure","fancy"].includes(event))field("age","Participant age (completed years)",{type:"number",min:event==="cooking"?18:1});
+      if(event!=="prasad") field("phone",event==="blood"?"Mobile number":event==="bollywood"?"Wing contact phone number":"Phone number (parent/guardian for children)",{type:"tel"});
+      if(['drawing','talent','treasure','fancy','bollywood','funfair','prasad'].includes(event))fields.append(el('h3','Event details',{class:'field-section-title'}));
+      if(["drawing","talent","treasure","fancy"].includes(event))field("age","Participant age (completed years)",{type:"number",min:1,max:event==='fancy'?17:120});
+      if(event==="blood") {
+        const label=el("label",null,{class:"checkbox-row"});
+        label.append(el("input",null,{type:"checkbox",name:"donatedBefore"}),el("span","Have donated blood before?"));fields.append(label);
+      }
       if(event==="bollywood") {
         for(let i=1;i<=5;i++)addPlayer(i);
         for(const [source,target] of [["firstName","player1First"],["lastName","player1Last"],["phone","player1Phone"]]) {
@@ -150,38 +183,89 @@
         if(/^https:\/\//.test(config.musicUrl))rules.append(el("li")).append(el("a","Upload your audio file",{href:config.musicUrl,target:"_blank",rel:"noopener"}));
         else rules.append(el("li","The music submission link is awaiting committee confirmation. Contact Priyank for the link."));
       }
-      if(event==="fancy") {
-        if(!config.fancyDeadline){status.textContent="Fancy Dress registration will open once the committee confirms the registration deadline.";return;}
-        rules.append(el("li","Registration deadline: "+new Date(config.fancyDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST."));
-        if(Date.now()>=Date.parse(config.fancyDeadline)){status.textContent="Fancy Dress registration is closed.";return;}
+      rules.append(el("li",M.registrationStatus(event).label));
+      if(M.registrationStatus(event).closed){status.textContent="Nominations are closed.";return;}
+      if(event==="blood" && config.registrationRevision!=="2026-09-17"){
+        status.textContent="Blood donation registration will open once the committee activates the updated registration service.";return;
       }
       if(event==="funfair"){await verifyFund();return;}
       ready=loaded;submit.disabled=!ready;
     }
-    for(const [id,event] of Object.entries(M.events)) {
-      const card=el("article",null,{class:"form-card"});card.append(el("div",event.date,{class:"form-tag"}),el("h3",event.title));
-      const button=el("button",id==="treasure"?"Register interest":"Open registration",{type:"button",class:"btn btn-outline"});button.addEventListener("click",()=>open(id));card.append(button);grid.append(card);
+    const cards=[];
+    let cardOrder='';
+    let activeFilter='upcoming';
+    const programmeCards=[];
+    function filterCards(){
+      let count=0;const today=FestivalExperience.dayKey();
+      for(const item of [...cards,...programmeCards]){
+        const meta=item.meta||EventUX.metadata[item.id];const closed=item.meta?false:M.registrationStatus(item.id).closed;
+        item.card.hidden=!EventUX.matches(meta,activeFilter,closed,today);if(!item.card.hidden)count++;
+      }
+      document.getElementById('eventResults').textContent=count+' events shown';document.getElementById('eventEmpty').hidden=count>0;
     }
+    function refreshCards() {
+      for(const {id,button,note,badge} of cards){const state=M.registrationStatus(id);const display=FestivalExperience.badge(id);badge.textContent=display.label;badge.className='registration-badge '+display.tone;button.disabled=state.closed;button.textContent=state.closed?"Nominations closed":id==="blood"?"Interested in blood donation":id==="treasure"?"Register interest":"Open registration";note.textContent=state.label;}
+      const sorted=[...cards,...programmeCards].sort((a,b)=>(a.meta?1:FestivalExperience.badge(a.id).rank)-(b.meta?1:FestivalExperience.badge(b.id).rank)||(a.meta||EventUX.metadata[a.id]).days[0]-(b.meta||EventUX.metadata[b.id]).days[0]);
+      const nextOrder=sorted.map(item=>item.id||item.meta.id).join(',');
+      if(cardOrder!==nextOrder){for(const item of sorted)grid.append(item.card);cardOrder=nextOrder;}
+      filterCards();
+      document.querySelectorAll('[data-register-event]').forEach(button=>{const state=M.registrationStatus(button.dataset.registerEvent);button.disabled=state.closed;if(state.closed)button.textContent="Nominations closed";});
+      if(current && dialog.open && M.registrationStatus(current).closed && !pending){ready=false;submit.disabled=true;status.textContent="Nominations are closed.";}
+    }
+    for(const [id,event] of Object.entries(M.events)) {
+      const card=el("article",null,{class:"form-card"});const badge=el('span','',{class:'registration-badge'});card.append(badge,el("div",event.date,{class:"form-tag"}),el("h3",event.title));
+      const meta=EventUX.metadata[id];const details=el('div',null,{class:'event-meta'});details.append(el('p',meta.time),el('p',meta.venue));card.append(details);
+      if(id==="blood")card.append(el("p","Coordinators: Sameer Gandhi & Deepak Karade."));
+      if(id==="cooking")card.append(el("img",null,{src:"assets/artisanal-sweets.jpeg",alt:"Artisanal Sweets — Homemade Delicacies",class:"sponsor-logo"}),el("p","Participation gift for all. Gifts worth ₹10,000 in total, sponsored by Artisanal Sweets."));
+      const note=el("p");const button=el("button","",{type:"button",class:"btn btn-outline"});button.addEventListener("click",()=>open(id));card.append(note,button);
+      const recipient=id==='blood'?['Sameer Gandhi','919326199515']:id==='funfair'?['Neeraj Upadhyay',window.SaiVistaRegistrationConfig?.funfairWhatsApp]:['committee (Priyank)','917621940889'];
+      if(recipient[1])card.append(el('a','Contact '+recipient[0]+' ↗',{class:'event-contact',href:'https://wa.me/'+recipient[1]+'?text='+encodeURIComponent('Hi, I have a question about '+event.title+' at Sai Vista Ganesh Festival.'),target:'_blank',rel:'noopener noreferrer'}));
+      grid.append(card);cards.push({id,card,button,note,badge});
+    }
+    for(const meta of EventUX.programme){
+      const card=el('article',null,{class:'form-card programme-card'});
+      const date=meta.id==='aarti'?'15–24 September 2026':meta.days[0]+' September 2026';
+      card.append(el('span','Programme',{class:'registration-badge programme'}),el('div',date,{class:'form-tag'}),el('h3',meta.title));
+      const details=el('div',null,{class:'event-meta'});details.append(el('p',meta.time||'Time to be announced'),el('p',meta.venue||'Sai Vista, Rahatani'));card.append(details);
+      if(meta.href)card.append(el('a','Choose an Aarti slot',{href:meta.href,class:'btn btn-outline'}));
+      else card.append(el('p','Contact the committee for participation details.'),el('a','Contact committee (Priyank) ↗',{class:'event-contact',href:'https://wa.me/917621940889?text='+encodeURIComponent('Hi, I have a question about '+meta.title+'.'),target:'_blank',rel:'noopener'}));
+      programmeCards.push({card,meta});grid.append(card);
+    }
+    document.querySelectorAll('[data-event-filter]').forEach(button=>button.addEventListener('click',()=>{activeFilter=button.dataset.eventFilter;document.querySelectorAll('[data-event-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterCards();}));
+    refreshCards();setInterval(refreshCards,30000);
+    document.querySelectorAll('[data-register-event]').forEach(button=>button.addEventListener("click",()=>open(button.dataset.registerEvent)));
     const close=()=>{if(!pending)dialog.close();};document.getElementById("closeFestivalEvent").addEventListener("click",close);
     dialog.addEventListener("cancel",event=>{if(pending)event.preventDefault();});
     form.addEventListener("submit",async event=>{
       event.preventDefault();if(pending||!ready)return;
+      let firstInvalid;for(const input of form.elements)if(!checkField(input)&&!firstInvalid)firstInvalid=input;
+      if(firstInvalid){status.textContent='Please correct the highlighted fields.';firstInvalid.focus();return;}
       const data=Object.fromEntries(new FormData(form));data.event=current;data.requestId=requestId;data.agreed=form.elements.agreed.checked;
       if(current==="bollywood"){data.players=[];for(let i=1;i<=6;i++)if(data["player"+i+"First"]!==undefined){data.players.push({firstName:data["player"+i+"First"],lastName:data["player"+i+"Last"],phone:data["player"+i+"Phone"]});for(const suffix of ["First","Last","Phone"])delete data["player"+i+suffix];}}
-      const error=M.validate(data,config);if(error){status.textContent=error;return;}
+      if(current==="blood"){data.donatedBefore=form.elements.donatedBefore.checked;data.lastName="";}
+      if(M.registrationStatus(current).closed){status.textContent="Nominations are closed.";ready=false;submit.disabled=true;refreshCards();return;}
+      const error=M.validate(data,config);if(error){status.textContent=error;if(current==='prasad' && /counts/.test(error)){showFieldError(form.elements.adults,error);form.elements.adults.focus();}return;}
       pending=true;submit.disabled=true;status.textContent="Saving your registration…";
       for(const node of form.elements)node.disabled=true;
       try {
         const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({payload:JSON.stringify(data)}),signal:AbortSignal.timeout(60000)});
         const result=await response.json();
         if(!response.ok||result.status!=="success"||result.registrationId!==requestId)throw Error(result.message||"Registration could not be confirmed. Retry with the same details.");
-        const recipient=current==="funfair"?"Neeraj Upadhyay":"Priyank";
-        const recipientPhone=current==="funfair"?(window.SaiVistaRegistrationConfig.funfairWhatsApp||""):"917621940889";
-        const summary=["Hi "+recipient+", I registered for "+M.events[current].title+" ("+M.events[current].date+").","Reference: "+requestId,...Object.entries(data).filter(([key])=>!["event","requestId","agreed"].includes(key)).map(([key,value])=>key+": "+(key==="players"?value.map(p=>p.firstName+" "+p.lastName+" — "+p.phone).join("; "):value))].join("\n");
-        success.append(el("h3","Registration saved"),el("p","Reference: "+requestId));
-        if(/^[1-9]\d{9,14}$/.test(recipientPhone))success.append(el("p","Open WhatsApp and press Send to notify "+recipient+"."),el("a","Send details to "+recipient+" on WhatsApp ↗",{href:"https://wa.me/"+recipientPhone+"?text="+encodeURIComponent(summary),target:"_blank",rel:"noopener",class:"btn btn-dark"}));
+        const recipient=current==="blood"?"Sameer Gandhi":current==="funfair"?"Neeraj Upadhyay":"Priyank";
+        const recipientPhone=current==="blood"?"919326199515":current==="funfair"?(window.SaiVistaRegistrationConfig.funfairWhatsApp||""):"917621940889";
+        const summary=EventUX.whatsapp(data,M.events[current].title,M.events[current].date,recipient);
+        success.append(el('span','Step 1 complete',{class:'registration-badge open'}),el("h3","Registration saved"),el('p',M.events[current].title),el("p","Reference: "+requestId));
+        const details=el('dl',null,{class:'registration-summary'});
+        for(const [label,value] of EventUX.summary(data)){details.append(el('dt',label),el('dd',value,label==='Have donated blood before?'?{}:{'data-no-translate':'true'}));}
+        success.append(details,el('h4','Step 2: notify your coordinator'),el('p','Your registration is saved. No WhatsApp message has been sent yet.'));
+        if(/^[1-9]\d{9,14}$/.test(recipientPhone)){
+          const notify=el("a","Notify "+recipient+" on WhatsApp ↗",{href:"https://wa.me/"+recipientPhone+"?text="+encodeURIComponent(summary),target:"_blank",rel:"noopener",class:"btn btn-dark"});
+          const hint=el('p','Open WhatsApp, review your details and press Send.');
+          notify.addEventListener('click',()=>{hint.textContent='WhatsApp opened. Press Send there to notify your coordinator. We cannot confirm message delivery.';});
+          success.append(notify,hint);
+        }
         else success.append(el("p","Your registration is saved. Neeraj Upadhyay’s WhatsApp contact is awaiting confirmation."));
-        form.hidden=true;success.hidden=false;status.textContent="";
+        form.hidden=true;dialog.querySelector('.event-guidelines').hidden=true;success.hidden=false;status.textContent="";success.tabIndex=-1;success.focus();
       }catch(error){status.textContent=error.name==="TimeoutError"?"Confirmation timed out. Retry with the same details; the same entry will not be saved twice.":error.message;}
       finally{pending=false;for(const node of form.elements)node.disabled=false;submit.disabled=!ready;}
     });
