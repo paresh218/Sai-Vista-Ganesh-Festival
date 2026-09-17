@@ -1,17 +1,17 @@
 // Presentation metadata only; submission rules remain in FestivalRegistration.
 const EventUX = (() => {
   const metadata={
-    blood:{days:[20],categories:['adults'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    bollywood:{days:[18],categories:['adults'],time:'Evening',venue:'Sai Vista, Rahatani'},
-    drawing:{days:[19],categories:['kids'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    talent:{days:[19,21],categories:['kids'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    treasure:{days:[20],categories:['kids','adults'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    rangoli:{days:[20],categories:['adults'],time:'Time to be announced',venue:'Clubhouse'},
-    thali:{days:[20],categories:['adults','pooja'],time:'Bring your thali by 6:00 PM',venue:'Clubhouse'},
-    funfair:{days:[20],categories:['adults'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    fancy:{days:[22],categories:['kids'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    cooking:{days:[23],categories:['adults'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
-    pooja:{days:[24],categories:['pooja'],time:'Time to be announced',venue:'Sai Vista, Rahatani'},
+    blood:{days:[20],categories:['adults'],time:'09:00AM-02:00PM',venue:'Sai Vista, Rahatani'},
+    bollywood:{days:[18],categories:['adults'],time:'08:30PM onwards',venue:'Sai Vista, Rahatani'},
+    drawing:{days:[19],categories:['kids'],time:'11:00AM-01:00PM',venue:'Sai Vista, Rahatani'},
+    talent:{days:[19,21],categories:['kids'],time:'08:30PM-10:30PM',venue:'Sai Vista, Rahatani'},
+    treasure:{days:[20],categories:['kids','adults'],time:'10:00AM-01:00PM',venue:'Sai Vista, Rahatani'},
+    rangoli:{days:[20],categories:['adults'],time:'05:00PM-07:00PM',venue:'Clubhouse'},
+    thali:{days:[20],categories:['adults','pooja'],time:'02:00PM-04:00PM',venue:'Clubhouse'},
+    funfair:{days:[20],categories:['adults'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
+    fancy:{days:[22],categories:['kids'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
+    cooking:{days:[23],categories:['adults'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
+    pooja:{days:[24],categories:['pooja'],time:'05:30PM onwards',venue:'Sai Vista, Rahatani'},
     prasad:{days:[24],categories:['pooja'],time:'7:00 PM – 10:00 PM',venue:'Sai Vista, Rahatani'}
   };
   const programme=[
@@ -20,7 +20,7 @@ const EventUX = (() => {
     {id:'races',title:'Lemon & Spoon • Three-legged Race',days:[16],categories:['kids','adults']},
     {id:'chairs',title:'Musical Chairs',days:[17],categories:['kids','adults']},
     {id:'dhol',title:'Dhol Tasha Vaadan',days:[19],categories:['kids','adults'],time:'4:00 PM – 6:00 PM',venue:'Ground floor, near the Pandal'},
-    {id:'aarti',title:'Ganesh Aarti',days:[15,16,17,18,19,20,21,22,23,24],categories:['pooja'],time:'Morning & evening',href:'#aarti'},
+    {id:'aarti',title:'Ganesh Aarti',days:[15,16,17,18,19,20,21,22,23],categories:['pooja'],time:'Morning & evening',href:'#aarti'},
     {id:'visarjan',title:'Visarjan • Lezim • DJ',days:[25],categories:['pooja'],time:'As scheduled'}
   ];
   function matches(meta,filter,closed,today){
