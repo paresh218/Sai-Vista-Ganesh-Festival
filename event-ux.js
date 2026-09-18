@@ -38,7 +38,7 @@ const EventUX = (() => {
   }
   function whatsapp(data,title,date,recipient){return [`Hi ${recipient}, I registered for ${title} (${date}).`,`Reference: ${data.requestId}`,...summary(data).map(([label,value])=>`${label}: ${value}`)].join('\n');}
   function notices(updates,now=Date.now()){
-    return updates.map(update=>{
+    return updates.filter(update=>!update.expiresAt || now < Date.parse(update.expiresAt)).map(update=>{
       const event=update.id.startsWith('fancy-deadline')?'fancy':update.id.startsWith('bollywood-deadline')?'bollywood':update.id.startsWith('events-deadline')?'blood':null;
       if(!event||!FestivalRegistration.registrationStatus(event,now).closed)return {...update};
       return {...update,title:(event==='fancy'?'Fancy Dress':event==='bollywood'?'Bollywood Night':'Other events')+': nominations closed',body:'The registration deadline has passed. New entries are closed.'};

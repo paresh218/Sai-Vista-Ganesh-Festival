@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v56";
+const CACHE_NAME = "sai-vista-ganpati-2026-v58";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -22,7 +22,8 @@ const APP_SHELL = [
   "assets/sai-vista-pwa-icon-192.png",
   "assets/sai-vista-pwa-icon.png",
   "assets/ganpati-2026-event-schedule.png",
-  "assets/ganpati-kurta-real.png"
+  "assets/ganpati-kurta-real.png",
+  "assets/kurta-bill-2026-09-11.jpg"
 ];
 
 self.addEventListener("install", (event) => {

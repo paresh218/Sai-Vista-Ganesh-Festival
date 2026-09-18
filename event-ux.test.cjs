@@ -25,3 +25,16 @@ for(const lang of ['hi','mr']){
 assert.notEqual(w.SaiVistaUXTranslate('Name *','hi'),'Name *');
 assert.notEqual(w.SaiVistaUXTranslate('Notify Sameer Gandhi on WhatsApp ↗','hi'),'Notify Sameer Gandhi on WhatsApp ↗');
 console.log('PASS: filter dates/categories, complete event metadata, clean confirmation/WhatsApp details, expired notices and Hindi/Marathi active-event guideline coverage.');
+
+// The published kurta notice expires at midnight India time; archive stays intact.
+const published={window:{}};vm.runInNewContext(fs.readFileSync('site-data.js','utf8'),published);
+const publishedNotices=published.window.SaiVistaContent.updates;
+const kurta=publishedNotices.find(item=>item.id==='kurta-refund-sep18');
+const expiry=Date.parse('2026-09-20T00:00:00+05:30');
+assert.equal(Date.parse(kurta.expiresAt),expiry);
+assert.ok(U.notices(publishedNotices,expiry-1).some(item=>item.id===kurta.id));
+assert.ok(!U.notices(publishedNotices,expiry).some(item=>item.id===kurta.id));
+assert.ok(!U.notices(publishedNotices,expiry+86400000).some(item=>item.id===kurta.id));
+assert.ok(U.notices(publishedNotices,expiry).some(item=>item.id==='nominations-closed-sep17'));
+assert.ok(publishedNotices.some(item=>item.id===kurta.id));
+assert.match(fs.readFileSync('index.html','utf8'),/id="kurtaArchive"[\s\S]*assets\/kurta-bill-2026-09-11.jpg/);

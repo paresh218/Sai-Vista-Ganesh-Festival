@@ -19,11 +19,13 @@ window.SaiVistaContent = {
 
   updates: [
   {
-    "date": "2026-09-17",
+    "date": "2026-09-18",
     "category": "Announcement",
-    "id": "kurta-refund-sep17",
-    "title": "Kurta: ₹50 refund",
-    "body": "We initially collected ₹300 for a different kurta. As shared with everyone during the trial, the final kurta costs ₹250. We will initiate the process of refunding ₹50 to each individual who paid ₹300.",
+    "id": "kurta-refund-sep18",
+    "expiresAt": "2026-09-20T00:00:00+05:30",
+    "priority": true,
+    "title": "Kurta: ₹50 refunded · Bill & shop address",
+    "body": "The final kurta price was ₹250. A ₹50 refund has been paid to everyone who paid ₹300. The bill and shop address are available in the archive for everyone’s reference.",
     "href": "#archive",
     "action": "View archive"
   },

@@ -35,8 +35,9 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
   }
   function priorityNotice(){
     const updates=EventUX.notices(window.SaiVistaContent?.updates||[]);
-    const priority=updates.find(update=>update.id.includes('deadline')&&!update.title.includes('closed'))||updates[0];
-    if(priority){document.getElementById('priorityTitle').textContent=priority.title;document.getElementById('priorityBody').textContent=priority.body;}
+    const priority=updates.find(update=>update.priority)||updates.find(update=>update.id.includes('deadline')&&!update.title.includes('closed'))||updates[0];
+    document.getElementById('noticeBar').hidden=!priority;
+    if(priority){document.getElementById('priorityTitle').textContent=priority.title;document.getElementById('priorityBody').textContent=priority.body;const link=document.querySelector('#noticeBar a');link.href=priority.href||'#committeeUpdates';link.textContent=priority.priority?'View bill & shop details →':'View all notices →';}
   }
   renderAgenda();priorityNotice();setInterval(()=>{renderAgenda();priorityNotice();},60000);
   const separate=new Set(['registration','accounts','archive','resident-businesses']);

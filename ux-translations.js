@@ -1,6 +1,17 @@
 // English source strings stay stable; resident-facing copy is translated in place.
 (() => {
   const rows=[
+    ["Kurta: ₹50 refunded · Bill & shop address", "कुर्ता: ₹50 वापस किए गए · बिल और दुकान का पता", "कुर्ता: ₹50 परत केले · बिल व दुकानाचा पत्ता"],
+    ["The final kurta price was ₹250. A ₹50 refund has been paid to everyone who paid ₹300. The bill and shop address are available in the archive for everyone’s reference.", "कुर्ते की अंतिम कीमत ₹250 थी। ₹300 देने वाले सभी लोगों को ₹50 वापस कर दिए गए हैं। सभी के संदर्भ के लिए बिल और दुकान का पता आर्काइव में उपलब्ध हैं।", "कुर्त्याची अंतिम किंमत ₹250 होती. ₹300 भरलेल्या सर्वांना ₹50 परत केले आहेत. सर्वांच्या माहितीसाठी बिल व दुकानाचा पत्ता संग्रहात उपलब्ध आहेत."],
+    ["View bill & shop details →", "बिल और दुकान की जानकारी देखें →", "बिल व दुकानाची माहिती पाहा →"],
+    ["Bill & shop details", "बिल और दुकान की जानकारी", "बिल व दुकानाची माहिती"],
+    ["Shop No. 100, Main Bazar, Opp. Jai Baba Market, Pimpri, Pune 411017.", "दुकान नं. 100, मेन बाजार, जय बाबा मार्केट के सामने, पिंपरी, पुणे 411017।", "दुकान क्र. 100, मेन बाजार, जय बाबा मार्केटसमोर, पिंपरी, पुणे 411017."],
+    ["Bill dated 11 September 2026: 35 red kurtas × ₹250 = ₹8,750.", "11 सितंबर 2026 का बिल: 35 लाल कुर्ते × ₹250 = ₹8,750।", "11 सप्टेंबर 2026 चे बिल: 35 लाल कुर्ते × ₹250 = ₹8,750."],
+    ["The shop document is marked “Estimate”. The original is shared below for reference.", "दुकान के दस्तावेज़ पर “Estimate” लिखा है। संदर्भ के लिए मूल दस्तावेज़ नीचे दिया गया है।", "दुकानाच्या कागदपत्रावर “Estimate” असे नमूद आहे. संदर्भासाठी मूळ प्रत खाली दिली आहे."],
+    ["Open full-size bill / zoom ↗", "बिल पूरे आकार में खोलें / ज़ूम करें ↗", "पूर्ण आकारातील बिल उघडा / झूम करा ↗"],
+    ["Original bill photo. Open the full-size image and zoom to read all details.", "मूल बिल की तस्वीर। सभी विवरण पढ़ने के लिए पूरे आकार की तस्वीर खोलकर ज़ूम करें।", "मूळ बिलाचा फोटो. सर्व तपशील वाचण्यासाठी पूर्ण आकारातील फोटो उघडून झूम करा."],
+    ["Download original bill", "मूल बिल डाउनलोड करें", "मूळ बिल डाउनलोड करा"],
+
     ['Events & registration','कार्यक्रम और पंजीकरण','कार्यक्रम व नोंदणी'],
     ['Find the date, venue and registration details in one place. Categories help you browse; check each event’s eligibility before registering.','तारीख, स्थान और पंजीकरण एक ही जगह देखें। पंजीकरण से पहले कार्यक्रम की पात्रता पढ़ें।','तारीख, ठिकाण व नोंदणी एकाच ठिकाणी पाहा. नोंदणीपूर्वी कार्यक्रमाची पात्रता तपासा.'],
     ['Upcoming','आगामी','आगामी'],['All events','सभी कार्यक्रम','सर्व कार्यक्रम'],['Kids','बच्चे','मुले'],['Adults','वयस्क','प्रौढ'],['Pooja','पूजा','पूजा'],['Closed','बंद','बंद'],['Open','खुला','खुले'],['Closing today','आज अंतिम दिन','आज शेवटचा दिवस'],['Programme','कार्यक्रम','कार्यक्रम'],
