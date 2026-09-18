@@ -8,8 +8,8 @@ window.SaiVistaContent = {
     "9-16": { message: "16 Sep — Lemon & Spoon and Three-legged Race. Register for events.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-17": { message: "17 Sep — Musical Chairs, plus additional games as time permits.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-18": { message: "18 Sep — Bollywood Night. Wing competition — 1 entry per wing. Coordinator: Deepti Lakhotia.", time: "Evening", place: "Sai Vista, Rahatani" },
-    "9-19": { message: "19 Sep — Drawing Competition for Kids; Talent Show - Season 1; Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!", time: "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM", place: "Ground floor, near the Pandal" },
-    "9-20": { message: "20 Sep — Blood Donation (coordinators: Deepak Karade & Sameer Gandhi); Treasure Hunt; Thali & Rangoli Competition; Fun n Fair (coordinator: Priyank Sharma).", time: "As scheduled", place: "Sai Vista, Rahatani" },
+    "9-19": { message: "19 Sep — Talent Show - Season 1; Dhol Tasha Vaadan: 4–6 PM, ground floor near the Pandal. Sponsored by the Cricket team — thank you for your support!", time: "Dhol Tasha Vaadan: 4:00 PM – 6:00 PM", place: "Ground floor, near the Pandal" },
+    "9-20": { message: "20 Sep — Drawing Competition for Kids: 11:00 AM – 12:30 PM (moved to Sunday due to children’s school commitments); Blood Donation (coordinators: Deepak Karade & Sameer Gandhi); Treasure Hunt; Thali & Rangoli Competition (bring your completed pooja thali to the Pandal at 6:00 PM); Fun n Fair (coordinator: Priyank Sharma).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-21": { message: "21 Sep — Talent Show (session 2).", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-22": { message: "22 Sep — Fancy Dress event.", time: "As scheduled", place: "Sai Vista, Rahatani" },
     "9-23": { message: "23 Sep — No Stove Cooking Competition. Participation gift for all; gifts worth ₹10,000 in total, sponsored by Artisanal Sweets.", time: "To be announced", place: "Sai Vista, Rahatani" },
@@ -18,6 +18,17 @@ window.SaiVistaContent = {
   },
 
   updates: [
+{
+    "date": "2026-09-18",
+    "category": "Schedule update",
+    "id": "drawing-rescheduled-sep20",
+    "expiresAt": "2026-09-21T00:00:00+05:30",
+    "priority": true,
+    "title": "Drawing Competition moved to Sunday, 20 September",
+    "body": "Due to children’s school commitments, the Drawing Competition has moved to Sunday, 20 September 2026, 11:00 AM – 12:30 PM. For Pooja Thali Decoration, bring your completed thali to the Pandal at 6:00 PM on Sunday. All other event timings remain unchanged.",
+    "href": "#schedule",
+    "action": "View updated schedule"
+},
   {
     "date": "2026-09-18",
     "category": "Announcement",

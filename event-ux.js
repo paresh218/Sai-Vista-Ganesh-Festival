@@ -3,11 +3,11 @@ const EventUX = (() => {
   const metadata={
     blood:{days:[20],categories:['adults'],time:'09:00AM-02:00PM',venue:'Sai Vista, Rahatani'},
     bollywood:{days:[18],categories:['adults'],time:'08:30PM onwards',venue:'Sai Vista, Rahatani'},
-    drawing:{days:[19],categories:['kids'],time:'11:00AM-01:00PM',venue:'Sai Vista, Rahatani'},
+    drawing:{days:[20],categories:['kids'],time:'11:00AM-12:30PM',venue:'Sai Vista, Rahatani'},
     talent:{days:[19,21],categories:['kids'],time:'08:30PM-10:30PM',venue:'Sai Vista, Rahatani'},
     treasure:{days:[20],categories:['kids','adults'],time:'10:00AM-01:00PM',venue:'Sai Vista, Rahatani'},
     rangoli:{days:[20],categories:['adults'],time:'05:00PM-07:00PM',venue:'Clubhouse'},
-    thali:{days:[20],categories:['adults','pooja'],time:'02:00PM-04:00PM',venue:'Clubhouse'},
+    thali:{days:[20],categories:['adults','pooja'],time:'6:00 PM',venue:'Pandal'},
     funfair:{days:[20],categories:['adults'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
     fancy:{days:[22],categories:['kids'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
     cooking:{days:[23],categories:['adults'],time:'08:00PM onwards',venue:'Sai Vista, Rahatani'},
