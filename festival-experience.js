@@ -40,7 +40,7 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
     if(priority){document.getElementById('priorityTitle').textContent=priority.title;document.getElementById('priorityBody').textContent=priority.body;const link=document.querySelector('#noticeBar a');link.href=priority.href||'#committeeUpdates';link.textContent=priority.priority?'View bill & shop details →':'View all notices →';}
   }
   renderAgenda();priorityNotice();setInterval(()=>{renderAgenda();priorityNotice();},60000);
-  const separate=new Set(['registration','accounts','archive','resident-businesses']);
+  const separate=new Set(['registration','accounts','archive','resident-businesses','wallpapers']);
   const sections=[...document.querySelectorAll('main > section')];
   function route(scroll=true){
     const requested=location.hash.slice(1)||'home';
@@ -64,6 +64,14 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
   document.addEventListener('click',event=>{
     const link=event.target.closest('a[href^="#"]');
     if(link && link.hash===location.hash)route();
+  });
+  const copyWallpaper=document.getElementById('copyWallpaperLink');
+  copyWallpaper?.addEventListener('click',async()=>{
+    const field=document.getElementById('wallpaperShareLink');
+    const status=document.getElementById('wallpaperShareStatus');
+    const translate=key=>window.SaiVistaI18n?.t(key)||key;
+    try{await navigator.clipboard.writeText(field.value);status.textContent=translate('Wallpaper link copied.');}
+    catch(_){field.focus();field.select();status.textContent=translate('Select and copy the link above.');}
   });
   route(Boolean(location.hash));
 });

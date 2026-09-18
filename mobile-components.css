@@ -1,0 +1,140 @@
+/* Original festival components, inspired by Uiverse's cards, buttons and
+   segmented selectors. No third-party component code or dependencies. */
+:root{--festival-ink:#692719;--festival-line:#e6d3bf;--festival-accent:#d18a35}
+.shortcut-icon svg,.mobile-nav-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.quick-card{position:relative;text-align:left;padding:22px;border:1px solid var(--festival-line);box-shadow:0 4px 0 #ebddcd,0 10px 24px #59372108;transition:transform .18s ease,box-shadow .18s ease;background:linear-gradient(145deg,#fff,#fffaf3)}
+.quick-card .shortcut-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#f8e7d3;color:var(--festival-ink);margin-bottom:16px}
+.quick-card:nth-child(2) .shortcut-icon{background:#f9ebc5;color:#76500f}
+.quick-card:nth-child(3) .shortcut-icon{background:#eee7f1;color:#6b437a}
+.quick-card:nth-child(4) .shortcut-icon{background:#e5eee4;color:#356047}
+.quick-card strong{font-size:15px;line-height:1.45;margin:0 0 5px}
+.quick-card small{display:block;font-size:12px;line-height:1.5;color:#6f5949}
+.quick-card::after{content:'↗';position:absolute;right:18px;top:20px;color:#976c4a;font-size:20px}
+.btn{transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;touch-action:manipulation}
+.btn-dark{background:linear-gradient(135deg,#8c3624,#692719);box-shadow:0 3px 0 #4f1c12,0 7px 16px #6927191a}
+.btn:active:not(:disabled),.quick-card:active{transform:translateY(2px);box-shadow:0 1px 0 #d6bfaa}
+.btn:disabled{box-shadow:none;transform:none}
+.agenda-card{position:relative;overflow:hidden;border-radius:24px}
+.agenda-today{background:radial-gradient(ellipse at top right,#b959324d,transparent 65%),#742a1d;box-shadow:0 10px 24px #69271920}
+.agenda-today .agenda-kicker{display:inline-flex;align-items:center;gap:8px;background:#ffffff12;border:1px solid #ffffff26;border-radius:99px;padding:6px 10px;letter-spacing:1.5px}
+.agenda-today .agenda-kicker::before{content:'';width:6px;height:6px;background:#f4c578;border-radius:50%}
+.agenda-card .text-link{min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.priority-notice{border-left:4px solid var(--festival-accent);background:linear-gradient(120deg,#fff3df,#fffaf1);box-shadow:0 4px 14px #74432206}
+.priority-notice p{font-size:13px;line-height:1.65;color:#63452f}
+.priority-notice .text-link{font-size:13px;white-space:normal}
+.event-filters{padding:6px;border:1px solid var(--festival-line);border-radius:19px;background:#f0e6db;gap:5px}
+.event-filter{flex:1;border-color:transparent;background:transparent;border-radius:13px;transition:background-color .16s ease,box-shadow .16s ease;color:#654432}
+.event-filter[aria-pressed="true"]{background:#fff;color:#692719;border-color:#e2cbb4;box-shadow:0 2px 5px #62361914}
+.event-filter[aria-pressed="true"]::before{content:'';display:inline-block;width:6px;height:6px;background:#a74927;border-radius:50%;margin-right:6px;vertical-align:middle}
+.language-switcher{box-shadow:inset 0 1px 3px #6543210a}
+.language-switcher button{transition:background-color .16s ease,box-shadow .16s ease}
+.language-switcher button[aria-pressed="true"]{background:#7d281b;color:white;box-shadow:0 2px 5px #68251925}
+.full-programme>summary,#kurtaArchive>summary,.event-guidelines>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;min-height:48px}
+.full-programme>summary::-webkit-details-marker,#kurtaArchive>summary::-webkit-details-marker,.event-guidelines>summary::-webkit-details-marker{display:none}
+.full-programme>summary::after,#kurtaArchive>summary::after,.event-guidelines>summary::after{content:'+';display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:50%;background:#f8ebdc;color:#692719;font-size:22px;font-weight:400}
+.full-programme[open]>summary::after,#kurtaArchive[open]>summary::after,.event-guidelines[open]>summary::after{content:'−'}
+.form-group:focus-within label{color:#7d281b}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#9b482b;box-shadow:0 0 0 4px #b66b3020;outline:2px solid transparent}
+@media(hover:hover) and (pointer:fine){
+ .quick-card:hover{transform:translateY(-3px);box-shadow:0 6px 0 #ebddcd,0 14px 24px #59372110}
+ .btn-dark:hover{background:#642215;box-shadow:0 3px 0 #4f1c12,0 9px 20px #69271925}
+ .event-filter:hover:not([aria-pressed="true"]){background:#fff7ed}
+}
+@media(max-width:650px){
+ body{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+ .navbar{padding:10px 16px;gap:8px}
+ .navbar .language-switcher{padding:3px;background:#f5ede4;border-color:#e8dbcb}
+ .navbar .language-switcher button{min-height:36px;max-width:none;font-size:12px}
+ .menu-toggle,.notification-bell,.pwa-install-icon{min-width:44px;min-height:44px}
+ .today-next-heading .eyebrow{font-size:10px;letter-spacing:1.6px;line-height:1.8}
+ .today-next-heading h1{font-size:32px;letter-spacing:-.8px;line-height:1.16;max-width:330px}
+ .today-next-heading>.btn{display:flex;justify-content:center;width:100%;min-height:50px;border-radius:15px;margin-top:20px}
+ .agenda-grid{gap:14px}
+ .agenda-card{padding:22px}
+ .agenda-card h3{font-size:23px;letter-spacing:-.5px}
+ .agenda-message{font-size:14px;line-height:1.75}
+ .agenda-meta{padding-top:14px;border-top:1px solid #e9ddd0;font-size:12px;line-height:1.7}
+ .agenda-today .agenda-meta{border-color:#ffffff26;color:#ffe4c6}
+ .quick-grid{gap:13px;padding:0 18px;margin-top:8px;margin-bottom:24px}
+ .quick-card{padding:18px 15px;min-height:172px;border-radius:20px}
+ .quick-card strong{font-size:14px}.quick-card small{font-size:12px}
+ .quick-card .shortcut-icon{width:42px;height:42px;margin-bottom:13px;border-radius:13px}
+ .quick-card::after{right:14px;top:17px;font-size:18px}
+ .priority-notice{margin:12px 18px 0;padding:14px 15px;border-radius:15px}
+ .priority-notice strong{font-size:14px;line-height:1.5;display:block}
+ .priority-notice p{font-size:12px;line-height:1.7}
+ .priority-notice a{margin-top:5px;min-height:44px}
+ .mobile-nav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));padding:6px;gap:4px;border:1px solid #e5d5c2;border-radius:23px;background:#fffdf9f5;backdrop-filter:blur(16px);box-shadow:0 6px 26px #44271824}
+ .mobile-nav a{min-height:58px;border-radius:17px;font-size:11px;gap:3px;transition:background-color .18s ease,color .18s ease;min-width:0}
+ .mobile-nav .mobile-nav-icon{display:grid;place-items:center;margin:0;line-height:1}
+ .mobile-nav a[aria-current]{background:#7d281b;box-shadow:0 3px 7px #69271926;color:#fff}
+ .mobile-nav a:active{background:#f5e4d2;color:#692719}
+ .event-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:6px;margin:20px 0 12px}
+ .event-filter{padding:10px 5px;min-height:46px;font-size:12px;white-space:normal;overflow-wrap:anywhere}
+ #eventResults{font-size:13px}
+ #registration>.availability-box{min-height:auto;font-size:13px;line-height:1.6;padding:14px;background:#fff2dd;border:1px solid #ecd7b9;text-align:left}
+ #eventRegistrationGrid .form-card{border-radius:20px;box-shadow:0 5px 17px #69462909;padding:22px}
+ .registration-badge{font-size:12px;padding:6px 12px}
+ .event-meta p{font-size:13px}
+ .form-card .btn{border-radius:13px;min-height:48px}
+ .update-card{border-radius:19px;box-shadow:0 4px 15px #74432208;border-color:#e4cfb8;padding:20px}
+ .update-card a{min-height:44px;display:flex;align-items:center;border-top:1px solid #f0e5d8;padding-top:8px}
+ .update-meta{font-size:11px;flex-wrap:wrap}
+ .form-group input,.form-group select,.form-group textarea,#festivalEventFields textarea{font-size:16px;min-height:48px}
+ .checkbox-row{min-height:44px}.checkbox-row input{width:20px;height:20px;flex-shrink:0}
+ .notification-panel{top:124px;max-height:calc(100dvh - 230px)}
+}
+@media(prefers-reduced-motion:reduce){
+ .quick-card,.btn,.event-filter,.language-switcher button,.mobile-nav a{transition:none}
+ .quick-card:hover,.quick-card:active,.btn:active:not(:disabled){transform:none}
+}
+
+/* Our actual festival photograph and a dedicated, shareable wallpaper page. */
+.bappa-feature{max-width:1120px;margin:28px auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:48px;padding:32px;background:#f4e8d8;border:1px solid #e5d3bd;border-radius:28px}
+.bappa-photo{display:block;background:#211b16;border-radius:20px;overflow:hidden}
+.bappa-photo img{display:block;width:100%;height:auto;max-height:540px;object-fit:contain}
+.bappa-feature-copy h2{font-size:clamp(28px,3vw,38px);line-height:1.2;letter-spacing:-1px;margin:12px 0 18px;color:#522619}
+.bappa-feature-copy p{font-size:14px;line-height:1.8;color:#654c3b;margin-bottom:24px}
+.bappa-feature-copy .bappa-caption{margin-top:22px;margin-bottom:0;color:#7d281b}
+.wallpaper-layout{display:grid;grid-template-columns:minmax(240px,.8fr) 1fr;gap:56px;max-width:980px;margin:0 auto;align-items:start}
+.wallpaper-preview{margin:0;max-width:360px;justify-self:center}
+.wallpaper-preview img{display:block;width:100%;height:auto;border:6px solid #2f241d;border-radius:28px;box-shadow:0 16px 36px #34221822}
+.wallpaper-preview figcaption{font-size:12px;text-align:center;line-height:1.6;color:#6f5847;margin-top:16px}
+.wallpaper-downloads{min-width:0}
+.wallpaper-downloads h3{font-size:24px;line-height:1.3;margin:12px 0}
+.wallpaper-downloads p{font-size:14px;line-height:1.8;color:#644b3d;margin-bottom:18px}
+.wallpaper-downloads>.btn{width:100%;min-height:50px;border-radius:14px}
+.wallpaper-downloads .text-link{display:flex;align-items:center;min-height:48px;font-size:13px;overflow-wrap:anywhere}
+.wallpaper-downloads .wallpaper-note{font-size:12px;color:#73604f}
+.wallpaper-help{padding:18px;background:#fff;border:1px solid #e4d3c1;border-radius:16px;margin:22px 0}
+.wallpaper-help summary{cursor:pointer;min-height:32px;font-size:14px;font-weight:600}
+.wallpaper-help ol{padding-left:20px;margin:12px 0}.wallpaper-help li{font-size:13px;line-height:1.8;margin:8px 0}
+.wallpaper-help p{font-size:12px;margin-bottom:0}
+.wallpaper-share{margin-top:26px;padding:22px;background:#f4e8d8;border:1px solid #e4cfb8;border-radius:18px}
+.wallpaper-share h3{font-size:20px;margin-top:0}
+.wallpaper-share label{font-size:12px;font-weight:600;display:block;margin-bottom:8px}
+.wallpaper-share input{display:block;width:100%;min-width:0;padding:12px;border:1px solid #c8ae94;border-radius:10px;background:#fff;font:inherit;font-size:13px;color:#563321;margin-bottom:12px}
+.wallpaper-share .btn{width:100%;min-height:48px}
+.wallpaper-share #wallpaperShareStatus:empty{display:none}
+.wallpaper-share #wallpaperShareStatus{margin:12px 0 0;font-weight:600}
+@media(max-width:650px){
+ .bappa-feature{margin:12px 18px 28px;padding:14px;grid-template-columns:1fr;gap:22px;border-radius:24px}
+ .bappa-feature-copy{padding:0 6px 10px}.bappa-feature-copy h2{font-size:30px}
+ .bappa-feature-copy .btn{display:flex;justify-content:center;width:100%;font-size:13px;border-radius:14px;min-height:50px}
+ .wallpaper-layout{grid-template-columns:1fr;gap:28px}
+ .wallpaper-preview{max-width:250px;width:100%}
+ .wallpaper-share{padding:18px}.wallpaper-share input{font-size:16px}
+}
+
+main>section[tabindex="-1"]:focus{outline:none}
+.wallpaper-top-download{display:none}
+@media(max-width:650px){.wallpaper-top-download{display:inline-flex;margin-top:20px;min-height:50px;align-items:center;justify-content:center;border-radius:14px;font-size:13px;max-width:100%}}
+
+/* User-initiated playback keeps the devotional clip quiet until requested. */
+.bappa-video-card{max-width:980px;margin:0 auto 48px;display:grid;grid-template-columns:240px 1fr;gap:32px;align-items:center;padding:26px;border:1px solid #e4cfb8;border-radius:24px;background:#f4e8d8}
+.bappa-video-card video{display:block;width:100%;height:auto;aspect-ratio:9/16;max-height:480px;border-radius:18px;background:#211b16}
+.bappa-video-card h3{font-size:28px;line-height:1.25;margin:12px 0 16px;color:#522619}
+.bappa-video-card p{font-size:14px;line-height:1.8;color:#644b3d;margin-bottom:22px}
+.bappa-video-card .btn{min-height:48px;border-radius:14px}
+.bappa-video-card .video-details{font-size:12px;margin:18px 0 0}
+@media(max-width:650px){.bappa-video-card{grid-template-columns:1fr;padding:20px;gap:22px;margin-bottom:32px}.bappa-video-card video{width:100%;max-width:240px;justify-self:center}.bappa-video-card h3{font-size:25px}.bappa-video-card .btn{display:flex;justify-content:center;width:100%;font-size:13px}.bappa-video-card .eyebrow{font-size:10px;letter-spacing:1.5px}}

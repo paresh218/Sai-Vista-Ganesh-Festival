@@ -1,9 +1,10 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v58";
+const CACHE_NAME = "sai-vista-ganpati-2026-v60";
 const APP_SHELL = [
   "./",
   "site-updates.js",
   "index.html",
   "style.css?v=22",
+  "mobile-components.css?v=1",
   "site-data.js",
   "event-registration-config.js",
   "event-registration-model.js",
@@ -41,6 +42,8 @@ self.addEventListener("activate", (event) => {
 // Fresh files online; cached files are only an offline/error fallback.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
+  // Let the browser handle video range requests and seeking directly.
+  if (/\.(?:mp4|webm)$/i.test(new URL(event.request.url).pathname)) return;
   // Update probes must see the server, never a cached fallback.
   if (event.request.cache === "no-store") return;
   event.respondWith((async () => {
