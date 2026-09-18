@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-09-18-schedule-1">
+  <meta name="site-release" content="2026-09-18-deadline-links-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Ganesh Festival 2026 — events, registration, Aarti nomination and transparent festival accounts.">
   <meta name="theme-color" content="#7d281b">
@@ -61,7 +61,7 @@
         <button class="pwa-install-icon install-app-trigger hidden" type="button" aria-label="Install Sai Vista Ganpati app" title="Install festival app">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
         </button>
-        <a href="#registration" class="nav-cta">Register</a>
+        <a href="#registration" class="nav-cta" data-registration-link="all" hidden>Register</a>
     </header>
 
     <aside id="notificationPanel" class="notification-panel hidden" aria-label="Festival notifications">
@@ -151,17 +151,17 @@
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>16</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Lemon &amp; Spoon • Three-legged Race</h3><p>Join us for the Lemon &amp; Spoon and Three-legged Race games.</p><a href="#registration" class="text-link">Register →</a></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">WEDNESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Lemon &amp; Spoon • Three-legged Race</h3><p>Join us for the Lemon &amp; Spoon and Three-legged Race games.</p><a data-registration-link="races" hidden href="#registration" class="text-link">Register →</a></div></div></div>
                 </article>
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>17</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">THURSDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Musical Chairs</h3><p>Musical Chairs, plus additional games as time permits.</p><a href="#registration" class="text-link">Register →</a></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">THURSDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Musical Chairs</h3><p>Musical Chairs, plus additional games as time permits.</p><a data-registration-link="chairs" hidden href="#registration" class="text-link">Register →</a></div></div></div>
                 </article>
 
                 <article class="schedule-card featured activity-card">
                     <div class="date-chip"><b>18</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">SPECIAL EVENT • FRIDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Bollywood Night 🎬</h3><p>Wing competition — 1 entry per wing.</p><p class="event-coordinator">Coordinator: Deepti Lakhotia.</p><a href="#registration" class="text-link">Register →</a></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">SPECIAL EVENT • FRIDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Bollywood Night 🎬</h3><p>Wing competition — 1 entry per wing.</p><p class="event-coordinator">Coordinator: Deepti Lakhotia.</p><a data-registration-link="bollywood" hidden href="#registration" class="text-link">Register →</a></div></div></div>
                 </article>
 
                 <article class="schedule-card activity-card">
@@ -171,10 +171,10 @@
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>20</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">SUNDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Drawing Competition for Kids</h3><p class="event-time">11:00 AM – 12:30 PM</p><p>Moved to Sunday due to children’s school commitments.</p></div><div class="schedule-event"><h3>Blood Donation</h3><p class="event-coordinator">Coordinators: Deepak Karade &amp; Sameer Gandhi.</p><p class="event-time">9:00 AM – 2:00 PM · Ground floor, near the Pandal.</p><button type="button" class="btn btn-outline" data-register-event="blood">Interested in blood donation</button>
-                        </div><div class="schedule-event"><h3>Treasure Hunt</h3><p class="event-time">10:00 AM – 1:00 PM (unchanged)</p><a href="#registration" class="text-link">View registrations →</a>
-                        </div><div class="schedule-event"><h3>Thali &amp; Rangoli Competition</h3><p>For Pooja Thali Decoration, bring your completed thali to the Pandal at 6:00 PM.</p><a href="#registration" class="text-link">View registrations →</a>
-                        </div><div class="schedule-event"><h3>Fun n Fair</h3><p class="event-coordinator">Coordinator: Priyank Sharma.</p><a href="#registration" class="text-link">View registrations →</a></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">SUNDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Drawing Competition for Kids</h3><p class="event-time">11:00 AM – 12:30 PM</p><p>Moved to Sunday due to children’s school commitments.</p></div><div class="schedule-event"><h3>Blood Donation</h3><p class="event-coordinator">Coordinators: Deepak Karade &amp; Sameer Gandhi.</p><p class="event-time">9:00 AM – 2:00 PM · Ground floor, near the Pandal.</p><button type="button" class="btn btn-outline" data-register-event="blood" hidden>Interested in blood donation</button>
+                        </div><div class="schedule-event"><h3>Treasure Hunt</h3><p class="event-time">10:00 AM – 1:00 PM (unchanged)</p><a data-registration-link="treasure" hidden href="#registration" class="text-link">View registrations →</a>
+                        </div><div class="schedule-event"><h3>Thali &amp; Rangoli Competition</h3><p>For Pooja Thali Decoration, bring your completed thali to the Pandal at 6:00 PM.</p><a data-registration-link="thali" hidden href="#registration" class="text-link">View registrations →</a>
+                        </div><div class="schedule-event"><h3>Fun n Fair</h3><p class="event-coordinator">Coordinator: Priyank Sharma.</p><a data-registration-link="funfair" hidden href="#registration" class="text-link">View registrations →</a></div></div></div>
                 </article>
 
 
@@ -187,7 +187,7 @@
 
                 <article class="schedule-card activity-card">
                     <div class="date-chip"><b>22</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">TUESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Fancy Dress</h3><p>Fancy Dress is planned as a separate event.</p><a href="#registration" class="text-link">View registrations →</a></div></div></div>
+                    <div class="schedule-body"><div class="event-kicker">TUESDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Fancy Dress</h3><p>Fancy Dress is planned as a separate event.</p><a data-registration-link="fancy" hidden href="#registration" class="text-link">View registrations →</a></div></div></div>
                 </article>
 
                 <article class="schedule-card activity-card">
@@ -197,7 +197,7 @@
 
                 <article class="schedule-card puja-event puja-card">
                     <div class="date-chip"><b>24</b><small>SEP</small></div>
-                    <div class="schedule-body"><div class="event-kicker">PUJA • THURSDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Satyanarayan Puja</h3><a href="#registration" class="text-link">Open Puja registration →</a>
+                    <div class="schedule-body"><div class="event-kicker">PUJA • THURSDAY</div><div class="schedule-events"><div class="schedule-event"><h3>Satyanarayan Puja</h3><a data-registration-link="pooja" hidden href="#registration" class="text-link">Open Puja registration →</a>
                         </div><div class="schedule-event"><h3>Mahaprasad</h3><p class="event-time">7:00 PM – 10:00 PM</p></div></div></div>
                 </article>
 

@@ -361,3 +361,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #bf
 .kurta-bill figcaption{margin-top:10px;font-size:13px;line-height:1.6;color:#593c2f}
 
 .priority-notice[hidden]{display:none}
+
+/* Closed registrations must remain hidden even when button styles set display. */
+#eventRegistrationGrid button[hidden], [data-register-event][hidden], [data-registration-link][hidden] { display:none!important; }

@@ -204,13 +204,17 @@
       document.getElementById('eventResults').textContent=count+' events shown';document.getElementById('eventEmpty').hidden=count>0;
     }
     function refreshCards() {
-      for(const {id,button,note,badge} of cards){const state=M.registrationStatus(id);const display=FestivalExperience.badge(id);badge.textContent=display.label;badge.className='registration-badge '+display.tone;button.disabled=state.closed;button.textContent=state.closed?"Nominations closed":id==="blood"?"Interested in blood donation":id==="treasure"?"Register interest":"Open registration";note.textContent=state.label;}
+      for(const {id,button,note,badge} of cards){const state=M.registrationStatus(id);const display=FestivalExperience.badge(id);badge.textContent=display.label;badge.className='registration-badge '+display.tone;button.hidden=state.closed;button.disabled=state.closed;button.textContent=state.closed?"Nominations closed":id==="blood"?"Interested in blood donation":id==="treasure"?"Register interest":"Open registration";note.textContent=state.label;}
       const sorted=[...cards,...programmeCards].sort((a,b)=>(a.meta?1:FestivalExperience.badge(a.id).rank)-(b.meta?1:FestivalExperience.badge(b.id).rank)||(a.meta||EventUX.metadata[a.id]).days[0]-(b.meta||EventUX.metadata[b.id]).days[0]);
       const nextOrder=sorted.map(item=>item.id||item.meta.id).join(',');
       if(cardOrder!==nextOrder){for(const item of sorted)grid.append(item.card);cardOrder=nextOrder;}
       filterCards();
-      document.querySelectorAll('[data-register-event]').forEach(button=>{const state=M.registrationStatus(button.dataset.registerEvent);button.disabled=state.closed;if(state.closed)button.textContent="Nominations closed";});
-      if(current && dialog.open && M.registrationStatus(current).closed && !pending){ready=false;submit.disabled=true;status.textContent="Nominations are closed.";}
+      document.querySelectorAll('[data-register-event]').forEach(button=>{const state=M.registrationStatus(button.dataset.registerEvent);button.hidden=state.closed;button.disabled=state.closed;if(state.closed)button.textContent="Nominations closed";});
+      document.querySelectorAll('[data-registration-link]').forEach(link=>{
+        const event=link.dataset.registrationLink;
+        link.hidden=event==='all'?Object.keys(M.events).every(id=>M.registrationStatus(id).closed):M.registrationStatus(event).closed;
+      });
+      if(current && dialog.open && M.registrationStatus(current).closed && !pending){ready=false;submit.disabled=true;form.hidden=true;status.textContent="Nominations are closed.";}
     }
     for(const [id,event] of Object.entries(M.events)) {
       const card=el("article",null,{class:"form-card"});const badge=el('span','',{class:'registration-badge'});card.append(badge,el("div",event.date,{class:"form-tag"}),el("h3",event.title));
@@ -232,7 +236,9 @@
       programmeCards.push({card,meta});grid.append(card);
     }
     document.querySelectorAll('[data-event-filter]').forEach(button=>button.addEventListener('click',()=>{activeFilter=button.dataset.eventFilter;document.querySelectorAll('[data-event-filter]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));filterCards();}));
-    refreshCards();setInterval(refreshCards,30000);
+    refreshCards();setInterval(refreshCards,1000);
+    window.addEventListener("focus",refreshCards);
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshCards();});
     document.querySelectorAll('[data-register-event]').forEach(button=>button.addEventListener("click",()=>open(button.dataset.registerEvent)));
     const close=()=>{if(!pending)dialog.close();};document.getElementById("closeFestivalEvent").addEventListener("click",close);
     dialog.addEventListener("cancel",event=>{if(pending)event.preventDefault();});
