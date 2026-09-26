@@ -40,11 +40,12 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
     if(priority){document.getElementById('priorityTitle').textContent=priority.title;document.getElementById('priorityBody').textContent=priority.body;const link=document.querySelector('#noticeBar a');link.href=priority.href||'#committeeUpdates';link.textContent=priority.action ? priority.action+' →' : 'View all notices →';}
   }
   renderAgenda();priorityNotice();setInterval(()=>{renderAgenda();priorityNotice();},60000);
-  const separate=new Set(['registration','accounts','archive','resident-businesses','wallpapers']);
+  const separate=new Set(['archive','resident-businesses']);
   const sections=[...document.querySelectorAll('main > section')];
   function route(scroll=true){
     const requested=location.hash.slice(1)||'home';
-    const id=requested==='schedule'?'registration':requested;
+    const archived = new Set(['registration','schedule','aarti','wallpapers','sponsors']);
+    const id=archived.has(requested)?'archive':requested;
     const selected=id==='mainContent'?(document.body.dataset.view||'main'):separate.has(id)?id:'main';
     document.body.dataset.view=selected;
     for(const section of sections)section.hidden=selected==='main'?separate.has(section.id):section.id!==selected;
@@ -54,7 +55,7 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
     }
     const nav=document.getElementById('siteNav');nav?.classList.remove('open');
     const toggle=document.querySelector('.menu-toggle');toggle?.setAttribute('aria-expanded','false');toggle?.setAttribute('aria-label','Open menu');
-    if(scroll){const target=document.getElementById(id);if(target){if(id==='home')window.scrollTo({top:0,behavior:'instant'});else target.scrollIntoView({block:'start',behavior:'instant'});if(target.matches('section')){target.tabIndex=-1;target.focus({preventScroll:true});}}}
+    if(scroll){const target=document.getElementById(requested) || document.getElementById(id);if(target){if(id==='home')window.scrollTo({top:0,behavior:'instant'});else target.scrollIntoView({block:'start',behavior:'instant'});if(target.matches('section')){target.tabIndex=-1;target.focus({preventScroll:true});}}}
   }
   for(const id of separate){
     const section=document.getElementById(id);if(!section)continue;

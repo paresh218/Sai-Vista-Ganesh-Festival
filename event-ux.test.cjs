@@ -28,7 +28,7 @@ console.log('PASS: filter dates/categories, complete event metadata, clean confi
 
 // The published kurta notice expires at midnight India time; archive stays intact.
 const published={window:{}};vm.runInNewContext(fs.readFileSync('site-data.js','utf8'),published);
-const publishedNotices=published.window.SaiVistaContent.updates;
+const publishedNotices=published.window.SaiVistaContent.archivedUpdates;
 const kurta=publishedNotices.find(item=>item.id==='kurta-refund-sep18');
 const expiry=Date.parse('2026-09-20T00:00:00+05:30');
 assert.equal(Date.parse(kurta.expiresAt),expiry);

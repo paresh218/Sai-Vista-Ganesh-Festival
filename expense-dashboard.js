@@ -7,7 +7,7 @@
   let data, busy=false, updated='', failure='';
   const filters={festival:'',category:'',from:'',to:''};
   function render() {
-    const detailsOpen = el.querySelector(".dashboard-details")?.open || false;
+    const detailsOpen = el.querySelector(".dashboard-details")?.open ?? true;
     el.innerHTML=`<div class="payment-toolbar"><h3>Live Expense Dashboard</h3><button id="expenseRefresh" type="button" ${busy?'disabled':''}>${busy?'Refreshing…':'Refresh expenses'}</button></div><p role="status">${esc(failure || (updated ? `Last successful refresh: ${updated} · Auto-refresh every 60 seconds` : 'Loading live expenses…'))}</p>`;
     el.querySelector('button').onclick=refresh;
     if(!data) return;

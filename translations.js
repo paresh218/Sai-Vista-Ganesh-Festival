@@ -250,7 +250,7 @@
     observer?.disconnect();
     const reverseText=new Map(Object.entries(translations[language]||{}).map(([key,value])=>[value,key]));
     document.documentElement.lang = language;
-    document.title = language === "hi" ? "साई विस्टा गणेश उत्सव 2026" : language === "mr" ? "साई व्हिस्टा गणेशोत्सव 2026" : "Sai Vista Ganesh Festival 2026";
+    document.title = language === "hi" ? "साई विस्टा नवरात्रि उत्सव 2026" : language === "mr" ? "साई व्हिस्टा नवरात्रोत्सव 2026" : "Sai Vista Navratri Festival 2026";
     document.querySelectorAll("body *").forEach((element) => {
       if (["SCRIPT", "STYLE", "SVG", "PATH"].includes(element.tagName)) return;
       const attributes = ["aria-label", "title", "placeholder", "alt"];

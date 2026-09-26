@@ -483,7 +483,7 @@ function renderPaymentDashboard(dashboard, payments) {
   const wings = [...new Set(payments.map(row => row.wing))].sort();
   let selectedWing = "All", statusFilter = "all", sortBy = "flat";
   const render = () => {
-    const detailsOpen = dashboard.querySelector(".dashboard-details")?.open || false;
+    const detailsOpen = dashboard.querySelector(".dashboard-details")?.open ?? true;
     const visible = payments.filter(row => (selectedWing === "All" || row.wing === selectedWing) && (statusFilter === "all" || String(row.paid) === statusFilter));
     const paid = payments.filter(row => row.paid), unpaid = payments.filter(row => !row.paid);
     const received = paid.reduce((sum, row) => sum + row.amount, 0), pending = unpaid.reduce((sum, row) => sum + row.amount, 0);

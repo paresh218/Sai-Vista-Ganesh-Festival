@@ -17,7 +17,7 @@ window.SaiVistaContent = {
     "9-25": { message: "25 Sep — Visarjan, Lezim and evening DJ. Lezim coordinator: Monica Jadhav.", time: "As scheduled", place: "Sai Vista, Rahatani" }
   },
 
-  updates: [
+  archivedUpdates: [
 {
     "date": "2026-09-18",
     "category": "Schedule update",
@@ -78,3 +78,25 @@ window.SaiVistaContent = {
   }
 ]
 };
+
+window.SaiVistaContent.updates = [
+  {
+    "date": "2026-09-26",
+    "category": "Navratri 2026",
+    "id": "navratri-october-2026",
+    "priority": true,
+    "title": "Navratri at Sai Vista · 11–21 October 2026",
+    "body": "Get ready to celebrate Navratri with the Sai Vista family from 11 October to 21 October 2026. Programme and participation details will be announced here.",
+    "href": "#home",
+    "action": "Explore Navratri"
+  },
+  {
+    "date": "2026-09-26",
+    "category": "Cultural Committee",
+    "id": "ganesh-thank-you-2026",
+    "title": "Thank you, Sai Vista Family! 🙏",
+    "body": "Dear Sai Vista Family,\n\nThank you, everyone, for your overwhelming response and wholehearted participation in this year’s Ganesh Festival! 🙏 Your support and enthusiasm made this celebration truly special.\n\nWe have learned so much this year and look forward to returning with even greater enthusiasm and making our future celebrations better.\n\nOn behalf of the Cultural Committee, we sincerely apologise for anything we may have unintentionally missed or any inconvenience caused. Thank you for your understanding, encouragement, and continued support.\n\nGanpati Bappa Morya! 🌺🙏\n\nWarm regards,\nSai Vista Cultural Committee",
+    "href": "#archive",
+    "action": "Visit the Ganesh Festival archive"
+  }
+];

@@ -193,7 +193,7 @@
     }
     const cards=[];
     let cardOrder='';
-    let activeFilter='upcoming';
+    let activeFilter='all';
     const programmeCards=[];
     function filterCards(){
       let count=0;const today=FestivalExperience.dayKey();

@@ -1,11 +1,11 @@
 {
-  "name": "Sai Vista Ganpati 2026",
-  "short_name": "Sai Vista Ganpati",
-  "description": "Festival schedule, registrations and Aarti nominations for Sai Vista Ganpati 2026.",
+  "name": "Sai Vista Festivals 2026",
+  "short_name": "Sai Vista",
+  "description": "Navratri 11\u201321 October 2026, community photos and festival accounts.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#fffaf5",
-  "theme_color": "#7d281b",
+  "theme_color": "#641847",
   "icons": [
     {
       "src": "assets/sai-vista-pwa-icon-192.png",
