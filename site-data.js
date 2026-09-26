@@ -89,7 +89,9 @@ window.SaiVistaContent.updates = [
     "body": "Get ready to celebrate Navratri with the Sai Vista family from 11 October to 21 October 2026. Programme and participation details will be announced here.",
     "href": "#home",
     "action": "Explore Navratri"
-  },
+  }
+];
+window.SaiVistaContent.archivedUpdates.push(...[
   {
     "date": "2026-09-26",
     "category": "Cultural Committee",
@@ -99,4 +101,4 @@ window.SaiVistaContent.updates = [
     "href": "#archive",
     "action": "Visit the Ganesh Festival archive"
   }
-];
+]);

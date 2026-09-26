@@ -23,4 +23,15 @@
   document.getElementById('registration').append(forms);
   const accounts = document.getElementById('accounts');
   document.querySelector('.quick-grid').after(accounts);
+  document.addEventListener('DOMContentLoaded', () => {
+    const message = window.SaiVistaContent?.archivedUpdates.find(update => update.id === 'ganesh-thank-you-2026');
+    if (!message) return;
+    const card = document.createElement('article');
+    card.className = 'update-card';
+    const title = document.createElement('h3'), body = document.createElement('p');
+    title.textContent = message.title;
+    body.textContent = message.body;
+    card.append(title, body);
+    heading.after(card);
+  });
 })();
