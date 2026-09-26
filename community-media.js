@@ -1,11 +1,9 @@
 (() => {
   const endpoint = window.SaiVistaPhotos?.endpoint;
-  const videoForm = document.getElementById('communityVideoForm');
   const reelForm = document.getElementById('communityReelForm');
   const status = document.getElementById('mediaStatus');
   const grid = document.getElementById('communityMediaGrid');
   const refreshButton = document.getElementById('refreshCommunityMedia');
-  const maxBytes = 25000000;
   let ready = false, instagramScript;
   function reelUrl(value) {
     const match = /^https:\/\/(?:www\.)?instagram\.com\/reels?\/([A-Za-z0-9_-]{5,64})\/?(?:\?[^#\s]*)?(?:#[^\s]*)?$/i.exec(value.trim());
@@ -70,21 +68,19 @@
     try {
       const result = await request({ cache: 'no-store' }, endpoint + '?action=media');
       ready = result.mediaVersion === 2;
+      window.SaiVistaMediaReady = ready;
+      window.dispatchEvent(new CustomEvent('sai-vista-media-ready', { detail: ready }));
       if (!ready) throw Error('Video and Reel submissions are coming soon. The committee is updating the upload service.');
       render(result.items || []);
       status.textContent = grid.children.length ? 'Approved community moments. Choose a video to watch.' : 'No approved videos yet. Be the first to share a festival moment.';
-      for (const form of [videoForm, reelForm]) { if (!form.dataset.busy) form.querySelector('button').disabled = false; }
-      if (!videoForm.dataset.busy) document.getElementById('videoUploadStatus').textContent = 'MP4 or WebM · up to 25 MB (25,000,000 bytes).';
+      for (const form of [reelForm]) { if (!form.dataset.busy) form.querySelector('button').disabled = false; }
       if (!reelForm.dataset.busy) document.getElementById('reelUploadStatus').textContent = 'Use the direct public Reel link. Duplicate links are recognised.';
     } catch (error) {
       status.textContent = error.message;
-      if (!ready) for (const id of ['videoUploadStatus', 'reelUploadStatus']) document.getElementById(id).textContent = 'Submissions will open after the committee updates the service.';
+      if (!ready) for (const id of ['reelUploadStatus']) document.getElementById(id).textContent = 'Submissions will open after the committee updates the service.';
     } finally { refreshButton.disabled = false; }
   }
-  function base64(file) {
-    return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = () => reject(Error('Could not read this video. Please select it again.')); reader.readAsDataURL(file); });
-  }
-  for (const [form, type, messageId] of [[videoForm, 'video', 'videoUploadStatus'], [reelForm, 'instagram', 'reelUploadStatus']]) {
+  for (const [form, type, messageId] of [[reelForm, 'instagram', 'reelUploadStatus']]) {
     let requestId;
     form.addEventListener('input', () => { requestId = null; });
     form.addEventListener('submit', async event => {
@@ -93,17 +89,10 @@
       const payload = { action: 'submitMedia', type, caption: form.elements.caption.value.trim(), consent: form.elements.consent.checked };
       try {
         if (!payload.caption || !payload.consent) throw Error('Add a caption and confirm permission to share.');
-        let file;
-        if (type === 'instagram') payload.url = reelUrl(form.elements.reelUrl.value);
-        else {
-          file = document.getElementById('communityVideoFile').files[0];
-          if (!file || !['video/mp4', 'video/webm'].includes(file.type) || file.size > maxBytes || !file.size) throw Error('Choose an MP4 or WebM video no larger than 25 MB.');
-          payload.mime = file.type;
-        }
+        payload.url = reelUrl(form.elements.reelUrl.value);
         requestId ||= crypto.randomUUID(); payload.requestId = requestId;
         form.dataset.busy = 'true'; for (const control of form.elements) control.disabled = true;
-        message.textContent = type === 'video' ? 'Uploading video… Keep this page open. Larger clips can take a few minutes.' : 'Submitting Reel…';
-        if (file) payload.video = await base64(file);
+        message.textContent = 'Submitting Reel…';
         const result = await request({ method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
         message.textContent = result.pending ? (result.duplicate ? 'This submission is already awaiting committee approval.' : 'Received! Your submission will appear after committee approval.') : 'This Reel is already in the community gallery.';
         form.reset(); requestId = null;

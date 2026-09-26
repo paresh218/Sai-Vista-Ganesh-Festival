@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-09-26-navratri-7">
+  <meta name="site-release" content="2026-09-26-navratri-11">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Navratri Festival 2026 — 11–21 October, community photos, member payments and expenditure.">
   <meta name="theme-color" content="#641847">
@@ -43,7 +43,7 @@
         </button>
         <nav id="siteNav">
             <a href="#home">Home</a>
-            <a href="#communityPhotos">Upload your pic</a>
+            <a href="#communityPhotos">Share a moment</a>
             <a href="#committeeUpdates">Updates</a>
             <a href="#accounts">Accounts</a>
             <a href="#suggestions">Suggestions</a>
@@ -81,12 +81,25 @@
 
     <main id="mainContent" tabindex="-1">
         <section id="home" class="section navratri-hero" data-no-translate>
-          <div><span class="eyebrow">SAI VISTA · 11–21 OCTOBER 2026</span><h1>Colours. Devotion.<br>Celebration, together.</h1><p class="festival-name">Navratri 2026</p><p>Get ready for a beautiful celebration with your Sai Vista family. Programme and participation details will be announced here.</p><div class="hero-actions"><a class="btn btn-dark" href="#communityPhotos">Upload your pic ✨</a><a class="btn btn-outline" href="#accounts">Member payments & expenditure →</a></div></div>
-          <img src="assets/navratri-2026.png" alt="Festive Navratri illustration of Goddess Durga with marigolds and glowing diyas" fetchpriority="high">
+          <div><span class="eyebrow">SAI VISTA · 11–21 OCTOBER 2026</span><h1>Colours. Devotion.<br>Celebration, together.</h1><p class="festival-name">Navratri 2026</p><p>Get ready for a beautiful celebration with your Sai Vista family. Programme and participation details will be announced here.</p><div class="hero-actions"><a class="btn btn-dark" href="#communityPhotos">Share a photo or video ✨</a><a class="btn btn-outline" href="#accounts">Member payments & expenditure →</a></div></div>
+          <div id="goddessSlideshow" class="goddess-slideshow" role="region" aria-roledescription="carousel" aria-label="Nine goddesses of Navratri">
+            <button id="openHeroGoddess" class="goddess-slide-image" type="button" aria-haspopup="dialog" aria-label="View Maa Shailputri and her festival day">
+              <img id="heroGoddessImage" src="assets/navratri-shailputri.png" alt="Devotional illustration of Maa Shailputri" width="1254" height="1254" fetchpriority="high">
+              <span>Explore this goddess ↗</span>
+            </button>
+            <div id="heroGoddessCaption" class="goddess-slide-caption" aria-live="off" aria-atomic="true"><span id="heroGoddessDay">DAY 1 · 11 OCTOBER · ORANGE</span><h2 id="heroGoddessName">Maa Shailputri</h2></div>
+            <div class="goddess-slide-controls"><button id="previousGoddess" type="button" aria-label="Previous goddess">←</button><span id="goddessSlideCount">1 / 9</span><button id="pauseGoddesses" type="button">Pause</button><button id="nextGoddess" type="button" aria-label="Next goddess">→</button></div>
+            <p id="goddessSlideStatus" class="goddess-slide-status" role="status"></p>
+          </div>
+        </section>
+        <section id="navratriDays" class="section navratri-days" data-no-translate aria-labelledby="navratriDaysTitle">
+          <div class="section-heading"><span>NINE DAYS · NINE COLOURS</span><h2 id="navratriDaysTitle">Celebrate each day in colour</h2><p id="navratriTodayStatus" role="status"></p></div>
+          <div id="navratriDayCards" class="navratri-day-cards" aria-label="Navratri colour calendar"></div>
+          <p class="calendar-note">11–19 October · Colours follow the Sai Vista celebration calendar, in India time. Our community celebrations continue until 21 October. Select a day to see its goddess.</p>
         </section>
         <section id="communityPhotos" class="section community-photos" data-no-translate aria-labelledby="photosTitle">
-          <div class="section-heading"><span>OUR COMMUNITY, IN PICTURES</span><h2 id="photosTitle">Your moment in the spotlight</h2><p>Share a festival photo for the community slideshow.</p></div>
-          <div id="photoSlideshow" hidden><button id="openCommunityPhoto" class="photo-expand" type="button" aria-label="Open photo full screen" aria-haspopup="dialog"><img id="communitySlide" alt=""><span class="photo-expand-hint">⛶ View full screen</span></button><p id="slideCaption"></p><div class="hero-actions"><button id="previousPhoto" type="button">← Previous</button><button id="pausePhotos" type="button">Pause slideshow</button><button id="nextPhoto" type="button">Next →</button></div></div>
+          <div class="section-heading"><span>OUR COMMUNITY, IN PICTURES</span><h2 id="photosTitle">Your moment in the spotlight</h2><p>Photos, short videos and Reels from our Sai Vista family.</p></div>
+          <p id="galleryPhotoStatus" role="status"></p><div id="photoSlideshow" hidden><button id="openCommunityPhoto" class="photo-expand" type="button" aria-label="Open photo full screen" aria-haspopup="dialog"><img id="communitySlide" alt=""><span class="photo-expand-hint">⛶ View full screen</span></button><p id="slideCaption"></p><div class="hero-actions"><button id="previousPhoto" type="button">← Previous</button><button id="pausePhotos" type="button">Pause slideshow</button><button id="nextPhoto" type="button">Next →</button></div></div>
           <div class="celebration-share" aria-labelledby="celebrationShareTitle">
             <span class="eyebrow">SPREAD THE FESTIVE SPIRIT</span><h3 id="celebrationShareTitle">Share our celebration</h3>
             <p>Bring your friends and neighbours along. Share a festival moment and help them discover Sai Vista.</p>
@@ -101,12 +114,20 @@ https://saivistaculturalcommittee.in
             <p>For Instagram, download a photo and paste the caption into your post. Add our website using a link sticker in your Story. For Facebook, include the website link with your post.</p>
             <p id="celebrationShareStatus" role="status" aria-live="polite">You choose where to share. Nothing is posted automatically.</p>
           </div>
-          <form id="communityPhotoForm"><label>Your photo<input id="communityPhotoFile" type="file" accept="image/jpeg,image/png,image/webp" required></label><label>Caption<input id="communityPhotoCaption" maxlength="100" placeholder="A moment to remember" required></label><label class="photo-consent"><input id="communityPhotoConsent" type="checkbox" required> I have permission from everyone pictured to share this photo publicly.</label><button class="btn btn-dark" id="uploadCommunityPhoto" type="submit">Upload your pic</button><p id="photoStatus" role="status">Checking photo uploads…</p></form>
+          <form id="communityPhotoForm" class="unified-upload">
+            <div class="upload-intro"><span class="eyebrow">ONE PLACE TO SHARE</span><h3>Upload a photo or video</h3><p>Choose one file. We’ll take care of the rest.</p></div>
+            <label class="upload-picker" for="communityPhotoFile"><span>＋ Choose a photo or video</span><small>Photos: JPG, PNG, WebP · up to 10 MB<br>Videos: MP4, WebM · up to 25 MB</small><input id="communityPhotoFile" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" aria-describedby="uploadFileHelp" required></label>
+            <p id="uploadFileHelp">Photos appear in the slideshow. Videos are reviewed by the committee before appearing.</p>
+            <div id="uploadPreview" hidden><img id="uploadPhotoPreview" alt="Selected photo preview" hidden><video id="uploadVideoPreview" controls playsinline preload="metadata" hidden></video><p id="uploadFileSummary"></p><button id="clearUploadFile" type="button">Choose another file</button></div>
+            <label for="communityPhotoCaption">Add a caption<input id="communityPhotoCaption" name="caption" maxlength="100" placeholder="A moment to remember…" required></label>
+            <label class="photo-consent"><input id="communityPhotoConsent" name="consent" type="checkbox" required> I have permission from everyone pictured to share this photo or video publicly.</label>
+            <button class="btn btn-dark" id="uploadCommunityPhoto" type="submit">Share this moment</button><p id="photoStatus" role="status" aria-live="polite">Choose a photo or video to get started.</p>
+          </form>
           <div class="community-media" aria-labelledby="mediaTitle">
             <span class="eyebrow">FESTIVAL MOMENTS IN MOTION</span><h3 id="mediaTitle">Community videos & Instagram Reels</h3>
             <p>Share a short clip or your public Instagram Reel. Submissions appear after committee approval.</p>
             <div class="media-submit-grid">
-              <form id="communityVideoForm"><h4>Upload a short video</h4><label>Video · MP4 or WebM, maximum 25 MB<input id="communityVideoFile" type="file" accept="video/mp4,video/webm" required></label><label>Caption<input name="caption" maxlength="100" required></label><label class="media-consent"><input name="consent" type="checkbox" required> I have permission to share this video publicly on this website.</label><button type="submit" disabled>Submit video for approval</button><p role="status" id="videoUploadStatus">Checking video uploads…</p></form>
+
               <form id="communityReelForm"><h4>Share an Instagram Reel</h4><label>Public Reel link<input name="reelUrl" type="url" placeholder="https://www.instagram.com/reel/…/" required></label><label>Caption<input name="caption" maxlength="100" required></label><label class="media-consent"><input name="consent" type="checkbox" required> I have permission to feature this public Reel on this website.</label><p>The creator must allow embedding. Private or restricted Reels may only open on Instagram.</p><button type="submit" disabled>Submit Reel for approval</button><p role="status" id="reelUploadStatus">Checking Reel submissions…</p></form>
             </div>
             <div class="hero-actions"><button id="refreshCommunityMedia" type="button">Refresh videos</button></div><p id="mediaStatus" role="status">Loading community videos…</p><div id="communityMediaGrid" class="community-media-grid"></div>
@@ -555,6 +576,11 @@ https://saivistaculturalcommittee.in
         <img id="fullScreenPhoto" alt="">
         <p id="fullScreenCaption"></p>
     </dialog>
+    <dialog id="navratriDayDialog" class="navratri-day-dialog" aria-labelledby="navratriDayTitle" data-no-translate>
+      <div class="day-dialog-header"><span id="navratriDayLabel"></span><button id="closeNavratriDay" type="button" aria-label="Close daily goddess">×</button></div>
+      <img id="navratriGoddessImage" alt=""><p id="goddessImageStatus" role="status" hidden>Illustration unavailable. The day’s details are shown below.</p>
+      <div class="day-dialog-copy"><p id="navratriDayDate"></p><h2 id="navratriDayTitle" tabindex="-1"></h2><p id="navratriDayColour"></p><p>Celebrate with your Sai Vista family. Wear a touch of the day’s colour and share your festival moments.</p><small>Devotional illustration</small><button id="continueNavratriDay" class="btn btn-dark" type="button">Continue to the celebration →</button></div>
+    </dialog>
     <dialog id="committeeWelcome" class="committee-welcome" aria-labelledby="committeeWelcomeTitle" data-no-translate>
         <div class="welcome-topline"><span>SAI VISTA CULTURAL COMMITTEE</span><button type="button" class="welcome-close" aria-label="Close committee message">×</button></div>
         <div class="welcome-letter">
@@ -565,9 +591,12 @@ https://saivistaculturalcommittee.in
         </div>
         <div class="welcome-footer"><button type="button" class="btn btn-dark welcome-continue">Continue to Sai Vista →</button></div>
     </dialog>
+    <script src="navratri-days.js"></script>
+    <script src="goddess-slideshow.js"></script>
     <script src="navratri-layout.js"></script>
     <script src="photo-gallery-config.js"></script>
     <script src="photo-gallery.js"></script>
+    <script src="community-upload.js"></script>
     <script src="community-media.js"></script>
     <script src="site-updates.js"></script>
     <script src="site-data.js"></script>

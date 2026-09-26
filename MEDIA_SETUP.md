@@ -14,6 +14,8 @@ The website changes are ready locally. Your existing deployed photo service must
 
 ## Review and approve submissions
 
+**Easier option:** approval by email is now prepared for paresh218@gmail.com and freakypriyank@gmail.com. Follow **EMAIL_APPROVAL_SETUP.md** once to activate it. Both receive a review link; either can reply APPROVE or REJECT. The manual procedure below remains a fallback.
+
 New videos and Reel records are private pending files in your dedicated Drive folder, named `pending-media-…`. They are not shown publicly until approved.
 
 1. Open a pending video and review it. For a pending Reel, open/download its small JSON file and visit the `url` inside. Confirm that the Reel is appropriate, public and can be embedded. Submission validates the URL, but cannot prove public visibility.

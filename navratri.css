@@ -23,6 +23,17 @@ body{background:#fff9f1;color:#352033}
 .navratri-hero{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;padding-top:36px;padding-bottom:36px}
 .navratri-hero h1{font-size:clamp(2.3rem,5vw,4.5rem);line-height:1.12;color:#641847;margin:18px 0}
 .navratri-hero>img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:26px;box-shadow:0 18px 48px #64184722}
+.goddess-slideshow{--slide-accent:#963e09;--slide-pale:#fff3e8;min-width:0;border:1px solid #e1cda9;border-radius:24px;overflow:hidden;background:var(--slide-pale);box-shadow:0 18px 48px #64184718}
+.goddess-slide-image{position:relative;display:block;width:100%;padding:0;border:0;background:#fff8eb;cursor:pointer}
+.goddess-slide-image img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain}
+.goddess-slide-image>span{position:absolute;bottom:12px;right:12px;border-radius:18px;background:#201622d9;color:white;padding:8px 12px;font-size:.75rem}
+.goddess-slide-caption{text-align:center;padding:18px 16px 8px}.goddess-slide-caption>span{font-size:.65rem;letter-spacing:.11em;font-weight:600;color:var(--slide-accent)}
+.goddess-slide-caption h2{font-size:clamp(1.3rem,2.4vw,1.8rem);color:var(--slide-accent);line-height:1.3;margin:6px 0}
+.goddess-slide-controls{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 16px 18px}
+.goddess-slide-controls button{min-width:44px;min-height:44px;border:1px solid var(--slide-accent);border-radius:24px;background:white;color:var(--slide-accent);padding:8px 14px;cursor:pointer;font:inherit}
+.goddess-slide-controls>span{font-size:.8rem;font-variant-numeric:tabular-nums;color:#51404b}
+.goddess-slideshow button:focus-visible{outline:3px solid var(--slide-accent);outline-offset:-4px}
+.goddess-slide-status{font-size:.8rem;margin:0;text-align:center;padding:0 14px 14px}.goddess-slide-status:empty{display:none}
 .festival-name{font-size:1.6rem;font-weight:700;color:#9a3f72}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
 .btn-dark,.nav-cta{background:#641847;color:white}
@@ -81,3 +92,66 @@ body{background:#fff9f1;color:#352033}
 #archive>section{max-width:100%;margin-top:28px}
 #archive>h3{color:#641847}
 @media(max-width:700px){.navratri-hero{grid-template-columns:1fr;gap:20px}.navratri-hero>img{aspect-ratio:16/10}.community-photos,#accounts{padding:20px}#communityPhotoForm{grid-template-columns:1fr}#communitySlide{height:260px}.hero-actions .btn{width:100%;text-align:center}.mobile-nav a{padding:16px 6px}}
+
+/* The swatch is the festival colour; the darker accent keeps text readable. */
+:root{--day-accent:#641847;--day-pale:#f8edf4;--day-swatch:#efbd64;--festival-ink:var(--day-accent);--festival-accent:var(--day-accent)}
+body{background:linear-gradient(180deg,var(--day-pale),#fffcf8 1100px)}
+.navratri-hero h1,.festival-name,#accounts .section-heading h2,.community-media h3,.community-media h4,.celebration-share h3,.section-heading h2,.navratri-days h2{color:var(--day-accent)}
+.btn-dark,.nav-cta,.welcome-topline,.community-media button,.celebration-share button,.mobile-nav a[aria-current]{background:var(--day-accent);color:#fff}
+.priority-notice,.community-photos{background:var(--day-pale)}
+.navbar{border-bottom-color:var(--day-swatch)}
+.btn-outline{border-color:var(--day-accent);color:var(--day-accent)}
+.priority-notice a,.text-link,.quick-card strong{color:var(--day-accent)}
+.navratri-days{padding-top:16px;padding-bottom:24px}
+.navratri-day-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.navratri-day-card{display:grid;grid-template-columns:36px 1fr;gap:4px 12px;text-align:left;padding:16px;border:1px solid #d5c9d0;border-radius:16px;background:#fff;color:#352b34;font:inherit;cursor:pointer;min-width:0}
+.navratri-day-card i{grid-row:1/4;align-self:center;display:block;width:32px;height:32px;background:var(--swatch);border:1px solid #0003;border-radius:50%}
+.navratri-day-card span{font-size:.75rem}.navratri-day-card strong{font-size:1rem}
+.navratri-day-card[aria-current]{border:2px solid var(--day-accent);background:var(--day-pale)}
+.navratri-day-card:focus-visible{outline:3px solid var(--day-accent);outline-offset:3px}
+.calendar-note{font-size:.8rem;line-height:1.7;margin-top:16px;color:#5b5058}
+.day-dialog-open{overflow:hidden}
+.navratri-day-dialog{width:min(540px,calc(100vw - 24px));max-height:calc(100dvh - 24px);margin:auto;padding:0;border:1px solid var(--day-accent);border-radius:22px;background:var(--day-pale);color:#302832;overflow:auto;overscroll-behavior:contain;box-sizing:border-box}
+.navratri-day-dialog::backdrop{background:#201622bf;backdrop-filter:blur(4px)}
+.day-dialog-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:var(--day-accent);color:white;position:sticky;top:0;z-index:1}
+.day-dialog-header span{font-size:.75rem;letter-spacing:.14em;font-weight:600}
+.day-dialog-header button{width:44px;height:44px;border:1px solid #fff9;border-radius:50%;background:transparent;color:white;font-size:28px;cursor:pointer}
+#navratriGoddessImage{display:block;width:100%;max-height:45dvh;object-fit:contain;background:#fff8e9}
+.day-dialog-copy{padding:18px 24px 24px;text-align:center}
+.day-dialog-copy h2{color:var(--day-accent);font-size:1.8rem;margin:8px 0;line-height:1.2}
+.day-dialog-copy h2:focus{outline:none}
+.day-dialog-copy p{font-size:.88rem;line-height:1.6;margin:8px 0}
+#navratriDayColour{font-weight:700;color:var(--day-accent)}
+.day-dialog-copy small{display:block;color:#675762;margin:10px 0}
+.day-dialog-copy .btn{width:100%;box-sizing:border-box;white-space:normal}
+#communityPhotoForm{display:flex;flex-direction:column;gap:16px;margin:20px 0 28px;padding:24px;background:white;border:1px solid #dacbd6;border-radius:20px}
+.upload-intro h3{font-size:1.35rem;color:var(--day-accent);margin:6px 0}.upload-intro p{margin:0;font-size:.9rem}
+#communityPhotoForm .upload-picker{padding:20px;border:2px dashed var(--day-accent);border-radius:16px;background:var(--day-pale);text-align:center;cursor:pointer}
+.upload-picker>span{font-weight:600;color:var(--day-accent)}.upload-picker small{font-size:.78rem;font-weight:400;line-height:1.7}
+#communityPhotoForm input[type=file]{border:0;background:transparent;padding:8px 0;font-size:14px;max-width:100%;min-width:0}
+#communityPhotoForm input::file-selector-button{border:0;border-radius:8px;padding:10px;background:var(--day-accent);color:white;margin-right:8px}
+#uploadFileHelp,#photoStatus{font-size:.85rem;margin:0;line-height:1.6}
+#uploadPreview{padding:12px;background:var(--day-pale);border-radius:12px;text-align:center}
+#uploadPreview img,#uploadPreview video{max-width:100%;max-height:240px;object-fit:contain;border-radius:10px}
+#uploadFileSummary{overflow-wrap:anywhere;font-size:.85rem}
+#clearUploadFile{padding:10px;border:1px solid var(--day-accent);background:white;border-radius:10px;color:var(--day-accent);cursor:pointer}
+.sharing-details{margin:18px 0;border:1px solid #d7c8d0;border-radius:14px;background:#fffaf7}
+.sharing-details>summary{padding:16px;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--day-accent);min-height:48px;box-sizing:border-box}
+.sharing-details .celebration-share{margin:0;border:0}.sharing-details .media-submit-grid{display:block;margin:0}.sharing-details .media-submit-grid form{border:0}
+[hidden]{display:none!important}
+@media(max-width:760px){
+ .navratri-day-cards{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 3px 12px;gap:10px}
+ .navratri-day-card{flex:0 0 175px;scroll-snap-align:start;padding:14px;grid-template-columns:26px 1fr;gap:5px 8px}
+ .navratri-day-card i{width:24px;height:24px}.navratri-day-card span:last-child{grid-column:1/-1;font-size:.75rem}
+ .navratri-hero{gap:18px}.navratri-hero h1{font-size:2.25rem;margin:12px 0}.festival-name{font-size:1.35rem}
+ .community-photos{padding:18px!important;border-radius:18px}#communityPhotoForm{padding:16px;gap:14px}
+ .community-photos input:not([type=checkbox]),.community-photos textarea,.community-photos select{font-size:16px!important}
+ .community-photos button{min-height:44px}.community-photos .hero-actions{gap:8px}.celebration-share{padding:16px}.celebration-share .hero-actions{display:grid;grid-template-columns:1fr}
+ .photo-consent input,.media-consent input{flex-shrink:0;width:20px;height:20px}.photo-consent{font-size:.85rem;line-height:1.6}
+ .section{scroll-margin-top:130px}.community-media h3{font-size:1.3rem}#accounts{padding:18px!important}
+ .payment-dashboard{grid-template-columns:minmax(0,1fr)}.payment-dashboard>*,.payment-card,.payment-viz>*{min-width:0}
+ .collection-summary,.finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-summary strong{font-size:23px}
+ .payment-card{padding:16px}.payment-toolbar{gap:12px}.payment-table-wrap{max-width:100%}
+ .mobile-nav{padding-bottom:env(safe-area-inset-bottom);left:8px;right:8px}.mobile-nav a{min-height:48px;padding:10px 4px}
+}
+@media(max-width:380px){.navbar{gap:6px;padding-left:10px;padding-right:10px}.brand-logo{max-width:115px}.language-switcher button{padding:7px}.navratri-hero h1{font-size:2rem}.section-heading h2{font-size:1.7rem}}

@@ -1,7 +1,5 @@
 (() => {
-  const form = document.getElementById('communityPhotoForm');
-  const status = document.getElementById('photoStatus');
-  const submit = document.getElementById('uploadCommunityPhoto');
+  const status = document.getElementById('galleryPhotoStatus');
   const endpoint = window.SaiVistaPhotos?.endpoint;
   let photos = [], index = 0, paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pause = document.getElementById('pausePhotos');
@@ -102,33 +100,8 @@
     photos = (result.photos || []).filter(photo => /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(photo.image) && typeof photo.caption === 'string');
     show();
   }
-  if (!endpoint) {
-    submit.disabled = true;
-    status.textContent = 'Community photo uploads are coming soon. The committee is connecting the shared gallery.';
-    return;
-  }
-  refresh().then(() => { status.textContent = 'Upload a JPG, PNG or WebP photo (up to 10 MB) to appear in the public slideshow.'; }).catch(error => { status.textContent = error.message; });
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    const file = document.getElementById('communityPhotoFile').files[0];
-    if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 10 * 1024 * 1024) {
-      status.textContent = 'Choose a JPG, PNG or WebP image under 10 MB.'; return;
-    }
-    submit.disabled = true;
-    status.textContent = 'Uploading your photo…';
-    try {
-      const bitmap = await createImageBitmap(file);
-      const scale = Math.min(1, 1280 / Math.max(bitmap.width, bitmap.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
-      const context = canvas.getContext('2d'); context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height); context.drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close();
-      const image = canvas.toDataURL('image/jpeg', 0.8);
-      if (image.length > 1400000) throw Error('This photo is too large. Please choose a smaller image.');
-      await request({ method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ image, caption: document.getElementById('communityPhotoCaption').value.trim(), consent: document.getElementById('communityPhotoConsent').checked }) });
-      form.reset(); index = 0;
-      status.textContent = 'Your photo has been uploaded. Thank you for sharing!';
-      try { await refresh(); } catch (_) { status.textContent = 'Your photo was saved. Reload this page to refresh the slideshow.'; }
-    } catch (error) { status.textContent = error.name === 'TimeoutError' ? 'The upload could not be confirmed. Refresh the gallery before trying again.' : error.message; }
-    finally { submit.disabled = false; }
-  });
+  if (!endpoint) { status.textContent = 'Community photos are coming soon.'; return; }
+  const loadPhotos = () => refresh().then(() => { status.textContent = photos.length ? '' : 'Your community gallery is waiting for its first photo.'; }).catch(error => { status.textContent = error.message; });
+  window.addEventListener('sai-vista-photo-uploaded', loadPhotos);
+  loadPhotos();
 })();

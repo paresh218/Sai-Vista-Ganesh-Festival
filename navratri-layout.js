@@ -23,6 +23,17 @@
   document.getElementById('registration').append(forms);
   const accounts = document.getElementById('accounts');
   document.querySelector('.quick-grid').after(accounts);
+  const uploads = document.getElementById('communityPhotoForm');
+  document.querySelector('#communityPhotos .section-heading').after(uploads);
+  // Keep secondary sharing options compact on phones.
+  const sharing = document.querySelector('.celebration-share');
+  const sharingDetails = document.createElement('details'); sharingDetails.className = 'sharing-details';
+  const sharingSummary = document.createElement('summary'); sharingSummary.textContent = 'Share our celebration on Instagram or Facebook';
+  sharing.before(sharingDetails); sharingDetails.append(sharingSummary, sharing);
+  const reels = document.querySelector('.media-submit-grid');
+  const reelDetails = document.createElement('details'); reelDetails.className = 'sharing-details';
+  const reelSummary = document.createElement('summary'); reelSummary.textContent = 'Have an Instagram Reel? Share its link';
+  reels.before(reelDetails); reelDetails.append(reelSummary, reels);
   document.addEventListener('DOMContentLoaded', () => {
     const message = window.SaiVistaContent?.archivedUpdates.find(update => update.id === 'ganesh-thank-you-2026');
     if (!message) return;
@@ -47,6 +58,8 @@
     });
     // Run after the other initial page handlers have finished setting navigation focus.
     setTimeout(() => {
+      const day = window.NavratriDays?.current();
+      if (day) { window.openNavratriDay(day); return; }
       welcome.showModal();
       document.body.classList.add('welcome-open');
       document.getElementById('committeeWelcomeTitle').focus({ preventScroll: true });
