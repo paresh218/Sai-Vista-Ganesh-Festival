@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-09-26-navratri-2">
+  <meta name="site-release" content="2026-09-26-navratri-7">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Navratri Festival 2026 — 11–21 October, community photos, member payments and expenditure.">
   <meta name="theme-color" content="#641847">
@@ -86,8 +86,31 @@
         </section>
         <section id="communityPhotos" class="section community-photos" data-no-translate aria-labelledby="photosTitle">
           <div class="section-heading"><span>OUR COMMUNITY, IN PICTURES</span><h2 id="photosTitle">Your moment in the spotlight</h2><p>Share a festival photo for the community slideshow.</p></div>
-          <div id="photoSlideshow" hidden><img id="communitySlide" alt=""><p id="slideCaption"></p><div class="hero-actions"><button id="previousPhoto" type="button">← Previous</button><button id="pausePhotos" type="button">Pause slideshow</button><button id="nextPhoto" type="button">Next →</button></div></div>
+          <div id="photoSlideshow" hidden><button id="openCommunityPhoto" class="photo-expand" type="button" aria-label="Open photo full screen" aria-haspopup="dialog"><img id="communitySlide" alt=""><span class="photo-expand-hint">⛶ View full screen</span></button><p id="slideCaption"></p><div class="hero-actions"><button id="previousPhoto" type="button">← Previous</button><button id="pausePhotos" type="button">Pause slideshow</button><button id="nextPhoto" type="button">Next →</button></div></div>
+          <div class="celebration-share" aria-labelledby="celebrationShareTitle">
+            <span class="eyebrow">SPREAD THE FESTIVE SPIRIT</span><h3 id="celebrationShareTitle">Share our celebration</h3>
+            <p>Bring your friends and neighbours along. Share a festival moment and help them discover Sai Vista.</p>
+            <div class="hero-actions"><button id="downloadCommunityPhoto" type="button" disabled>Download photo</button><button id="downloadBrandedPhoto" type="button" disabled>Download with Sai Vista footer</button><button id="copyCelebrationCaption" type="button">Copy caption</button><button id="shareCelebrationWebsite" type="button">Share website</button></div>
+            <p class="share-photo-note">Photo downloads use the currently displayed slideshow photo. The branded version adds a footer below the photo.</p>
+            <label for="celebrationCaption">Your ready-to-share caption</label>
+            <textarea id="celebrationCaption" rows="5" readonly>Celebrating together with the Sai Vista family! 🌺✨
+Explore our festival moments and upcoming celebrations:
+https://saivistaculturalcommittee.in
+#SaiVistaCelebrates #SaiVistaNavratri2026</textarea>
+            <label for="celebrationWebsite">Website link</label><input id="celebrationWebsite" readonly value="https://saivistaculturalcommittee.in">
+            <p>For Instagram, download a photo and paste the caption into your post. Add our website using a link sticker in your Story. For Facebook, include the website link with your post.</p>
+            <p id="celebrationShareStatus" role="status" aria-live="polite">You choose where to share. Nothing is posted automatically.</p>
+          </div>
           <form id="communityPhotoForm"><label>Your photo<input id="communityPhotoFile" type="file" accept="image/jpeg,image/png,image/webp" required></label><label>Caption<input id="communityPhotoCaption" maxlength="100" placeholder="A moment to remember" required></label><label class="photo-consent"><input id="communityPhotoConsent" type="checkbox" required> I have permission from everyone pictured to share this photo publicly.</label><button class="btn btn-dark" id="uploadCommunityPhoto" type="submit">Upload your pic</button><p id="photoStatus" role="status">Checking photo uploads…</p></form>
+          <div class="community-media" aria-labelledby="mediaTitle">
+            <span class="eyebrow">FESTIVAL MOMENTS IN MOTION</span><h3 id="mediaTitle">Community videos & Instagram Reels</h3>
+            <p>Share a short clip or your public Instagram Reel. Submissions appear after committee approval.</p>
+            <div class="media-submit-grid">
+              <form id="communityVideoForm"><h4>Upload a short video</h4><label>Video · MP4 or WebM, maximum 25 MB<input id="communityVideoFile" type="file" accept="video/mp4,video/webm" required></label><label>Caption<input name="caption" maxlength="100" required></label><label class="media-consent"><input name="consent" type="checkbox" required> I have permission to share this video publicly on this website.</label><button type="submit" disabled>Submit video for approval</button><p role="status" id="videoUploadStatus">Checking video uploads…</p></form>
+              <form id="communityReelForm"><h4>Share an Instagram Reel</h4><label>Public Reel link<input name="reelUrl" type="url" placeholder="https://www.instagram.com/reel/…/" required></label><label>Caption<input name="caption" maxlength="100" required></label><label class="media-consent"><input name="consent" type="checkbox" required> I have permission to feature this public Reel on this website.</label><p>The creator must allow embedding. Private or restricted Reels may only open on Instagram.</p><button type="submit" disabled>Submit Reel for approval</button><p role="status" id="reelUploadStatus">Checking Reel submissions…</p></form>
+            </div>
+            <div class="hero-actions"><button id="refreshCommunityMedia" type="button">Refresh videos</button></div><p id="mediaStatus" role="status">Loading community videos…</p><div id="communityMediaGrid" class="community-media-grid"></div>
+          </div>
         </section>
             <div id="scheduleModal" class="modal hidden" aria-hidden="true">
                 <div class="schedule-modal-box">
@@ -527,9 +550,25 @@
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile navigation" data-no-translate><a href="#home">Home</a><a href="#accounts">Accounts</a><a href="#archive">Archive</a><a href="#committeeUpdates">Updates</a></nav>
+    <dialog id="communityPhotoViewer" class="photo-viewer" aria-label="Full-screen community photo" data-no-translate>
+        <button id="closeCommunityPhoto" class="photo-viewer-close" type="button" aria-label="Close full-screen photo" autofocus>×</button>
+        <img id="fullScreenPhoto" alt="">
+        <p id="fullScreenCaption"></p>
+    </dialog>
+    <dialog id="committeeWelcome" class="committee-welcome" aria-labelledby="committeeWelcomeTitle" data-no-translate>
+        <div class="welcome-topline"><span>SAI VISTA CULTURAL COMMITTEE</span><button type="button" class="welcome-close" aria-label="Close committee message">×</button></div>
+        <div class="welcome-letter">
+            <div class="welcome-flower" aria-hidden="true">🌺</div>
+            <p class="welcome-kicker">WITH HEARTFELT GRATITUDE</p>
+            <h2 id="committeeWelcomeTitle" tabindex="-1" autofocus>A celebration made special<br>by you.</h2>
+            <div id="committeeWelcomeMessage"></div>
+        </div>
+        <div class="welcome-footer"><button type="button" class="btn btn-dark welcome-continue">Continue to Sai Vista →</button></div>
+    </dialog>
     <script src="navratri-layout.js"></script>
     <script src="photo-gallery-config.js"></script>
     <script src="photo-gallery.js"></script>
+    <script src="community-media.js"></script>
     <script src="site-updates.js"></script>
     <script src="site-data.js"></script>
     <script src="event-registration-config.js"></script>

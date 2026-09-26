@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v61";
+const CACHE_NAME = "sai-vista-ganpati-2026-v62";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -10,6 +10,7 @@ const APP_SHELL = [
   "navratri-layout.js",
   "photo-gallery-config.js",
   "photo-gallery.js",
+  "community-media.js",
   "assets/navratri-2026.png",
   "event-registration-config.js",
   "event-registration-model.js",
