@@ -1,0 +1,40 @@
+/* Final responsive layout: shared gutters, readable line lengths and calm surfaces. */
+:root{--page-width:1160px;--page-gutter:clamp(18px,4vw,48px)}
+body{background:#fcfaf8;color:#352b34}
+main>.section{width:calc(100% - var(--page-gutter)*2);max-width:var(--page-width);margin-inline:auto;padding:40px 0;min-width:0}
+main>.section .section-heading{max-width:720px;margin-bottom:24px}
+.section-heading h2{font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.2;letter-spacing:-.035em;margin:8px 0 12px}
+.section-heading p{font-size:.95rem;color:#685d65;line-height:1.75}
+.section-heading>span,.eyebrow{font-size:.7rem;letter-spacing:.13em;line-height:1.7}
+main>.navratri-hero{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,64px);padding-block:40px}
+.navratri-hero>div{min-width:0}.navratri-hero h1{font-size:clamp(2.4rem,4.4vw,3.9rem);letter-spacing:-.045em;line-height:1.12}
+.navratri-hero p:not(.festival-name){max-width:520px;font-size:.95rem;line-height:1.8;color:#685d65}.festival-name{font-size:1.2rem;margin-bottom:12px}
+.navratri-hero .hero-actions{gap:10px;margin-top:24px}.navratri-hero .btn{padding:12px 18px;border-radius:12px;font-size:.83rem;white-space:normal}
+.goddess-slideshow{width:100%;max-width:440px;justify-self:end;border-radius:22px;box-shadow:0 12px 36px #3520330c}
+.goddess-slide-image img{max-height:400px;object-fit:contain}.goddess-slide-caption{padding-top:12px}.goddess-slide-controls{padding-bottom:14px;gap:12px}
+.navratri-timings{gap:14px}.navratri-timings article{padding:22px;border-radius:16px}.navratri-timings h3{font-size:clamp(1.25rem,2vw,1.65rem);white-space:nowrap}.navratri-music{border-radius:16px;padding:22px;max-width:none}
+.raas-rang-grid{grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:clamp(24px,5vw,64px);padding:28px;background:white;border:1px solid var(--ui-line);border-radius:24px}
+.raas-rang-grid video{width:100%;max-width:320px;max-height:470px;justify-self:center;border-radius:14px}.raas-rang-invite{padding:0;background:transparent}.raas-rang-invite h3{margin:12px 0 18px}.raas-rang-invite p{font-size:.95rem;margin:12px 0}.raas-rang-invite .btn{margin-top:12px;border-radius:12px}
+main>#communityPhotos,main>#accounts{padding:28px!important;margin-block:24px;border:1px solid var(--ui-line);border-radius:22px;background:#fff}
+#communityPhotoForm{background:var(--day-pale);border:0;margin-top:0}#communityPhotoForm .upload-picker{background:#fff;border-width:1px}
+.community-media-grid>*,.navratri-timings>*,.raas-rang-grid>*,.payment-dashboard>*{min-width:0}
+.community-media-card,.sharing-details{border-color:var(--ui-line);background:#fff}.community-media-card p{overflow-wrap:anywhere}
+main>.quick-grid{max-width:var(--page-width);margin-inline:auto;width:calc(100% - var(--page-gutter)*2);padding-inline:0}
+.navbar{gap:12px;padding-inline:var(--page-gutter);border-bottom:1px solid var(--ui-line)}.navbar .brand{flex-shrink:0}.brand-logo{margin-right:0}.navbar nav a{color:#51404b}.notification-bell,.pwa-install-icon{flex-shrink:0;background:var(--day-pale);color:var(--day-accent)}
+@media(min-width:901px) and (max-width:1180px){.navbar{flex-wrap:wrap}.navbar nav{order:5;width:100%;justify-content:center;margin:0;padding-top:8px;border-top:1px solid var(--ui-line)}.navbar .language-switcher{margin-left:auto}}
+@media(max-width:900px){main>.navratri-hero{grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:24px}.navratri-hero h1{font-size:2.65rem}.navbar nav.open{max-height:70dvh;overflow:auto}}
+@media(max-width:700px){
+ main>.section{padding-block:28px}.section-heading{margin-bottom:20px}.section-heading p{font-size:.9rem}
+ main>.navratri-hero{grid-template-columns:1fr;gap:24px;padding-top:26px}.navratri-hero h1{font-size:clamp(2.2rem,8.8vw,3.2rem);max-width:520px}.navratri-hero .hero-actions{display:grid;grid-template-columns:1fr 1fr}.navratri-hero .hero-actions .btn:first-child{grid-column:1/-1}.navratri-hero .hero-actions .btn{width:auto;font-size:.78rem;padding:12px 10px;display:flex;align-items:center;justify-content:center;margin:0}
+ .goddess-slideshow{max-width:440px;justify-self:center}.goddess-slide-image img{max-height:340px}.goddess-slide-caption h2{font-size:1.4rem}
+ .navratri-timings{grid-template-columns:1fr;gap:10px}.navratri-timings article{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:18px}.navratri-timings article>span{align-self:center}.navratri-timings h3{margin:0;font-size:1.25rem}.navratri-timings p{grid-column:1/-1;margin:4px 0 0;font-size:.83rem}
+ .navratri-music{padding:18px}.navratri-music p{font-size:.85rem}
+ .raas-rang-grid{grid-template-columns:1fr;padding:18px;gap:24px;border-radius:18px}.raas-rang-grid video{max-height:380px;max-width:100%}.raas-rang-invite h3{font-size:1.8rem}.raas-rang-invite .btn{display:flex;justify-content:center;width:100%}
+ main>#communityPhotos,main>#accounts{padding:18px!important;border-radius:18px}.community-media h3{line-height:1.3}.community-media .hero-actions{flex-wrap:wrap}
+ .navbar{flex-wrap:wrap;gap:8px;padding:10px 16px}.navbar .brand{margin-right:auto}.navbar .language-switcher{order:4;margin-left:0}.navbar .menu-toggle{order:3}.navbar .notification-bell{order:2}.navbar .pwa-install-icon{order:2}.navbar nav{order:5;width:100%}.navbar nav.open{position:static;flex-basis:100%;box-shadow:none;border-radius:12px}
+ .notification-panel{top:112px;right:12px;max-height:calc(100dvh - 200px);overflow:auto}.mobile-nav{background:#fff;border:1px solid var(--ui-line);box-shadow:0 4px 24px #35203314}.mobile-nav a{font-size:11px}
+}
+@media(max-width:360px){.navratri-timings article{grid-template-columns:1fr}.navratri-timings h3{margin-top:4px}.navratri-hero .hero-actions{grid-template-columns:1fr}.brand-logo{max-width:115px}.navratri-day-card{flex-basis:155px}}
+main>.section .section-heading{text-align:left;margin-inline:0}main>.section .section-heading p{margin-inline:0}
+main>.quick-grid{margin-top:24px;margin-bottom:24px}
+@media(min-width:701px) and (max-width:900px){.navratri-hero .hero-actions .btn{flex:1 1 100%;text-align:center}.navratri-timings{grid-template-columns:1fr}.navratri-timings article{padding:18px}.raas-rang-grid{gap:24px;padding:22px}}

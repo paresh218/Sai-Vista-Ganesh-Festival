@@ -44,25 +44,10 @@
     body.textContent = message.body;
     card.append(title, body);
     heading.after(card);
-    const welcome = document.getElementById('committeeWelcome');
-    const letter = document.getElementById('committeeWelcomeMessage');
-    for (const paragraph of message.body.split('\n\n')) {
-      const p = document.createElement('p');
-      p.textContent = paragraph;
-      letter.append(p);
-    }
-    welcome.querySelectorAll('button').forEach(button => button.addEventListener('click', () => welcome.close()));
-    welcome.addEventListener('close', () => {
-      document.body.classList.remove('welcome-open');
-      document.querySelector('.brand')?.focus({ preventScroll: true });
-    });
     // Run after the other initial page handlers have finished setting navigation focus.
     const openWelcome = () => setTimeout(() => {
       const day = window.NavratriDays?.current();
       if (day) { window.openNavratriDay(day); return; }
-      welcome.showModal();
-      document.body.classList.add('welcome-open');
-      document.getElementById('committeeWelcomeTitle').focus({ preventScroll: true });
     }, 0);
     if (window.SaiVistaResidentReady) openWelcome();
     else window.addEventListener('sai-vista-resident-ready', openWelcome, { once: true });
