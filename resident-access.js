@@ -1,4 +1,8 @@
 const ResidentAccess = {
+  parse(value) {
+    const match = String(value).trim().toUpperCase().match(/^([A-F])[ -]*(1[0-3]|[1-9])(0[1-4])$/);
+    return match ? this.flat(match[1], match[2], match[3]) : null;
+  },
   flat(wing, floor, unit) {
     if (!/^[A-F]$/.test(wing) || !/^(?:[1-9]|1[0-3])$/.test(String(floor)) || !/^0[1-4]$/.test(unit)) return null;
     return `${wing}-${floor}${unit}`;
@@ -9,10 +13,7 @@ if (typeof document !== 'undefined') (() => {
   const config = window.SaiVistaVisitConfig || {};
   const gate = document.getElementById('residentGate');
   const form = document.getElementById('residentGateForm');
-  const wing = document.getElementById('residentWing'), floor = document.getElementById('residentFloor'), unit = document.getElementById('residentUnit');
-  for (const [select, values] of [[wing, [...'ABCDEF']], [floor, Array.from({ length: 13 }, (_, i) => String(i + 1))], [unit, ['01','02','03','04']]]) {
-    for (const value of values) { const option = document.createElement('option'); option.value = value; option.textContent = value; select.append(option); }
-  }
+  const flatInput = document.getElementById('residentFlat');
   if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is used only for this page visit and is not sent to a logging service. Your entered flat is self-reported, not verified residency.';
   else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your entered flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Your entered flat is self-reported, not verified residency.';
   let flat, queue = [], sending = false;
@@ -33,12 +34,16 @@ if (typeof document !== 'undefined') (() => {
     } catch (_) { /* Retry in-memory on the next interval; never save visit histories on a shared device. */ }
     finally { sending = false; }
   }
-  form.addEventListener('change', () => { document.getElementById('residentFlatPreview').textContent = ResidentAccess.flat(wing.value, floor.value, unit.value) || ''; });
+  flatInput.addEventListener('input', () => {
+    flatInput.removeAttribute('aria-invalid');
+    document.getElementById('residentGateStatus').textContent = '';
+    document.getElementById('residentFlatPreview').textContent = ResidentAccess.parse(flatInput.value) || '';
+  });
   gate.addEventListener('cancel', event => event.preventDefault());
   gate.addEventListener('close', () => { if (!flat) gate.showModal(); });
   form.addEventListener('submit', event => {
-    event.preventDefault(); const value = ResidentAccess.flat(wing.value, floor.value, unit.value);
-    if (!value || !document.getElementById('residentConfirm').checked) { document.getElementById('residentGateStatus').textContent = 'Select your wing, floor and flat, then confirm to continue.'; return; }
+    event.preventDefault(); const value = ResidentAccess.parse(flatInput.value);
+    if (!value) { document.getElementById('residentGateStatus').textContent = 'Enter your flat like A-101 or F-1304. Wings A–F, floors 1–13, flats 01–04.'; flatInput.setAttribute('aria-invalid', 'true'); flatInput.focus(); return; }
     flat = value; window.SaiVistaResidentReady = true;
     document.documentElement.classList.remove('resident-locked'); gate.close();
     record('entry', 'site'); flush();
@@ -67,5 +72,5 @@ if (typeof document !== 'undefined') (() => {
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
   setInterval(flush, 10000);
   gate.showModal();
-  document.addEventListener('DOMContentLoaded', () => setTimeout(() => { if (!flat) wing.focus(); }, 0));
+  document.addEventListener('DOMContentLoaded', () => setTimeout(() => { if (!flat) flatInput.focus(); }, 0));
 })();

@@ -1,6 +1,6 @@
 # Required flat entry and private visit records
 
-The required gate is ready in the local website. Every page load requires a wing A–F, floor 1–13, unit 01–04 and acknowledgement. Examples: A-101, F-1304. It cannot be dismissed normally without completing those fields. No resident identity is stored between page loads.
+The required gate is ready in the local website. Every page load requires one flat-number entry (wing A–F, floor 1–13, unit 01–04). Continuing acknowledges the visible visit-record notice. A101, A-101 and A 101 are accepted. Examples: A-101, F-1304. It cannot be dismissed normally without completing those fields. No resident identity is stored between page loads.
 
 This is a **self-reported flat entry gate, not authentication**. The static site files and existing public data endpoints remain accessible to someone bypassing JavaScript. Genuine resident-only protection would require authenticated hosting and protecting every data endpoint. An entered flat or IP cannot prove a person's identity.
 
@@ -35,3 +35,4 @@ Apps Script's documented web request event does not expose the client IP. Do not
 No logging infrastructure was deployed and no visitor records were transmitted during implementation. Publish the frontend and configure/deploy the private collector to activate recording.
 
 Reference: https://developers.google.com/apps-script/guides/web#request_parameters
+
