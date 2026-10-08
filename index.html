@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="responsive-refinement.css">
 </head>
 <body>
-    <dialog id="residentGate" aria-labelledby="residentGateTitle" data-no-translate>
+    <dialog id="residentGate" aria-labelledby="residentGateTitle">
       <span class="eyebrow">WELCOME TO SAI VISTA</span><h1 id="residentGateTitle">Enter your flat</h1><p>One quick step to join the celebration.</p>
       <form id="residentGateForm"><label for="residentFlat">Your own flat number</label><input id="residentFlat" name="residentFlat" type="text" placeholder="e.g. A-101" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" aria-describedby="residentFlatHelp residentGateStatus" required><p id="residentFlatHelp">A101, A-101 or A 101 all work.<br>Wings A–F · Floors 1–13 · Flats 01–04.</p><p id="residentFlatPreview" aria-live="polite"></p>
         <div class="resident-privacy"><strong>Visit records</strong><p id="residentLoggingNotice">When logging is enabled, the committee records your entered flat, sections viewed, selected actions, date/time, browser/device details and IP address. These private records are kept for 90 days. Your entered flat is self-reported, not verified residency.</p></div>
@@ -91,7 +91,7 @@
     <aside id="noticeBar" class="priority-notice" hidden aria-label="Priority announcement"><div><strong id="priorityTitle">Kurta: ₹50 refunded · Bill &amp; shop address</strong><p id="priorityBody">The final kurta price was ₹250. A ₹50 refund has been paid to everyone who paid ₹300. The bill and shop address are available in the archive for everyone’s reference.</p></div><a class="text-link" href="#archive">View bill &amp; shop details →</a></aside>
 
     <main id="mainContent" tabindex="-1">
-        <section id="home" class="section navratri-hero" data-no-translate>
+        <section id="home" class="section navratri-hero">
           <div><span class="eyebrow">SAI VISTA · 11–21 OCTOBER 2026</span><h1>Colours. Devotion.<br>Celebration, together.</h1><p class="festival-name">Navratri 2026</p><p>Celebrate with your Sai Vista family. Daily Aarti at 7:45 PM, followed by Garba from 8:00 PM to 10:30 PM.</p><div class="hero-actions"><a class="btn btn-dark" href="#navratriProgramme">Aarti &amp; Garba timings →</a><a class="btn btn-outline" href="#communityPhotos">Share a photo or video ✨</a><a class="btn btn-outline" href="#accounts">Member payments & expenditure →</a></div></div>
           <div id="goddessSlideshow" class="goddess-slideshow" role="region" aria-roledescription="carousel" aria-label="Nine goddesses of Navratri">
             <button id="openHeroGoddess" class="goddess-slide-image" type="button" aria-haspopup="dialog" aria-label="View Maa Shailputri and her festival day">
@@ -103,7 +103,7 @@
             <p id="goddessSlideStatus" class="goddess-slide-status" role="status"></p>
           </div>
         </section>
-        <section id="navratriProgramme" class="section navratri-programme" data-no-translate aria-labelledby="navratriProgrammeTitle">
+        <section id="navratriProgramme" class="section navratri-programme" aria-labelledby="navratriProgrammeTitle">
           <div class="section-heading"><span>YOUR EVENING AT SAI VISTA</span><h2 id="navratriProgrammeTitle">Aarti, Garba &amp; good company</h2><p>Join us every evening during our Navratri celebrations. All timings are in India time.</p></div>
           <div class="navratri-timings">
             <article><span>DAILY AARTI</span><h3>7:45 PM</h3><p>Begin the evening together with devotion.</p></article>
@@ -112,16 +112,16 @@
           </div>
           <div class="navratri-music"><h3>A playlist for everyone</h3><p>Our coordinators have curated a special playlist for all audiences, with a mix of slow, medium and fast-tempo songs.</p><p><strong>No song requests will be entertained during Garba, except in the final 15 minutes (10:15–10:30 PM).</strong> Thank you for helping us keep the evening enjoyable for everyone.</p></div>
         </section>
-        <section id="raasRangPreview" class="section raas-rang-preview" data-no-translate aria-labelledby="raasRangTitle">
+        <section id="raasRangPreview" class="section raas-rang-preview" aria-labelledby="raasRangTitle">
           <div class="section-heading"><span>SAI VISTA RAAS RANG 2026</span><h2 id="raasRangTitle">The colours are coming to life</h2><p>A first look at our celebration setup. Come for the Garba, stay for the memories.</p></div>
           <div class="raas-rang-grid"><video controls playsinline preload="none" poster="assets/raas-rang-setup-2026.jpeg" aria-label="Sai Vista Raas Rang celebration setup video"><source src="assets/raas-rang-setup-2026.mp4" type="video/mp4">Watch our <a href="assets/raas-rang-setup-2026.mp4">setup video</a>.</video><div class="raas-rang-invite"><span class="eyebrow">16–18 OCTOBER · FRIDAY–SUNDAY</span><h3>Dress up. Step in. Shine.</h3><p>Wear your festive best! A professional photographer will be there to capture your moments on 16, 17 and 18 October.</p><p>Visit the <strong>photo booth</strong> and make memories with your family and friends.</p><a class="btn btn-dark" href="#navratriProgramme">See the evening timings →</a><p><a href="assets/raas-rang-setup-2026.jpeg" target="_blank" rel="noopener">View the setup photo ↗</a></p></div></div>
         </section>
-        <section id="navratriDays" class="section navratri-days" data-no-translate aria-labelledby="navratriDaysTitle">
+        <section id="navratriDays" class="section navratri-days" aria-labelledby="navratriDaysTitle">
           <div class="section-heading"><span>NINE DAYS · NINE COLOURS</span><h2 id="navratriDaysTitle">Celebrate each day in colour</h2><p id="navratriTodayStatus" role="status"></p></div>
           <div id="navratriDayCards" class="navratri-day-cards" aria-label="Navratri colour calendar"></div>
           <p class="calendar-note">11–19 October · Colours follow the Sai Vista celebration calendar, in India time. Our community celebrations continue until 21 October. Select a day to see its goddess.</p>
         </section>
-        <section id="communityPhotos" class="section community-photos" data-no-translate aria-labelledby="photosTitle">
+        <section id="communityPhotos" class="section community-photos" aria-labelledby="photosTitle">
           <div class="section-heading"><span>OUR COMMUNITY, IN PICTURES</span><h2 id="photosTitle">Your moment in the spotlight</h2><p>Photos, short videos and Reels from our Sai Vista family.</p></div>
           <p id="galleryPhotoStatus" role="status"></p><div id="photoSlideshow" hidden><button id="openCommunityPhoto" class="photo-expand" type="button" aria-label="Open photo full screen" aria-haspopup="dialog"><img id="communitySlide" alt=""><span class="photo-expand-hint">⛶ View full screen</span></button><p id="slideCaption"></p><div class="hero-actions"><button id="previousPhoto" type="button">← Previous</button><button id="pausePhotos" type="button">Pause slideshow</button><button id="nextPhoto" type="button">Next →</button></div></div>
           <div class="celebration-share" aria-labelledby="celebrationShareTitle">
@@ -173,7 +173,7 @@ https://saivistaculturalcommittee.in
             </div>
 
 
-        <section class="quick-grid" aria-label="Community shortcuts" data-no-translate><a class="quick-card" href="#paymentDashboard"><strong>Member paid amounts</strong><small>View contributions by wing and flat</small></a><a class="quick-card" href="#expenseDashboard"><strong>Expenditure</strong><small>Expenses, collections & balance</small></a><a class="quick-card" href="#committeeUpdates"><strong>Latest updates</strong><small>From your Cultural Committee</small></a><a class="quick-card" href="#archive"><strong>Ganesh Festival archive</strong><small>2026 programme, forms & memories</small></a></section>
+        <section class="quick-grid" aria-label="Community shortcuts"><a class="quick-card" href="#paymentDashboard"><strong>Member paid amounts</strong><small>View contributions by wing and flat</small></a><a class="quick-card" href="#expenseDashboard"><strong>Expenditure</strong><small>Expenses, collections & balance</small></a><a class="quick-card" href="#committeeUpdates"><strong>Latest updates</strong><small>From your Cultural Committee</small></a><a class="quick-card" href="#archive"><strong>Ganesh Festival archive</strong><small>2026 programme, forms & memories</small></a></section>
         <section class="section bappa-feature" aria-labelledby="bappaTitle">
             <a class="bappa-photo" href="#wallpapers" aria-label="View Ganpati Bappa 2026 photo and wallpapers"><img src="assets/ganpati-bappa-2026-original.jpg" width="3024" height="4032" loading="lazy" alt="Sai Vista Ganpati Bappa 2026, with the moon and galaxy decoration and flower garlands"></a>
             <div class="bappa-feature-copy"><span class="eyebrow">OUR BAPPA · 2026</span><h2 id="bappaTitle">A little Bappa, always with you.</h2><p>Our Sai Vista Ganpati Bappa, captured during this year’s celebration. Keep the blessings close with a wallpaper for your phone.</p><a class="btn btn-dark" href="#wallpapers">Download Bappa wallpaper →</a><p class="bappa-caption">गणपती बाप्पा मोरया 🙏</p></div>
@@ -594,13 +594,13 @@ https://saivistaculturalcommittee.in
         </div>
     </div>
 
-    <nav class="mobile-nav" aria-label="Mobile navigation" data-no-translate><a href="#home">Home</a><a href="#accounts">Accounts</a><a href="#archive">Archive</a><a href="#committeeUpdates">Updates</a></nav>
-    <dialog id="communityPhotoViewer" class="photo-viewer" aria-label="Full-screen community photo" data-no-translate>
+    <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home">Home</a><a href="#accounts">Accounts</a><a href="#archive">Archive</a><a href="#committeeUpdates">Updates</a></nav>
+    <dialog id="communityPhotoViewer" class="photo-viewer" aria-label="Full-screen community photo">
         <button id="closeCommunityPhoto" class="photo-viewer-close" type="button" aria-label="Close full-screen photo" autofocus>×</button>
         <img id="fullScreenPhoto" alt="">
         <p id="fullScreenCaption"></p>
     </dialog>
-    <dialog id="navratriDayDialog" class="navratri-day-dialog" aria-labelledby="navratriDayTitle" data-no-translate>
+    <dialog id="navratriDayDialog" class="navratri-day-dialog" aria-labelledby="navratriDayTitle">
       <div class="day-dialog-header"><span id="navratriDayLabel"></span><button id="closeNavratriDay" type="button" aria-label="Close daily goddess">×</button></div>
       <img id="navratriGoddessImage" alt=""><p id="goddessImageStatus" role="status" hidden>Illustration unavailable. The day’s details are shown below.</p>
       <div class="day-dialog-copy"><p id="navratriDayDate"></p><h2 id="navratriDayTitle" tabindex="-1"></h2><p id="navratriDayColour"></p><p>Celebrate with your Sai Vista family. Wear a touch of the day’s colour and share your festival moments.</p><small>Devotional illustration</small><button id="continueNavratriDay" class="btn btn-dark" type="button">Continue to the celebration →</button></div>
@@ -623,6 +623,7 @@ https://saivistaculturalcommittee.in
     <script src="event-registration.js?v=7"></script>
     <script src="translations.js?v=7"></script>
     <script src="ux-translations.js?v=7"></script>
+    <script src="navratri-translations.js"></script>
     <script src="script.js?v=24"></script>
     <script src="expense-model.js?v=13"></script>
     <script src="expense-dashboard.js?v=17"></script>
