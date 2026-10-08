@@ -155,3 +155,33 @@ body{background:linear-gradient(180deg,var(--day-pale),#fffcf8 1100px)}
  .mobile-nav{padding-bottom:env(safe-area-inset-bottom);left:8px;right:8px}.mobile-nav a{min-height:48px;padding:10px 4px}
 }
 @media(max-width:380px){.navbar{gap:6px;padding-left:10px;padding-right:10px}.brand-logo{max-width:115px}.language-switcher button{padding:7px}.navratri-hero h1{font-size:2rem}.section-heading h2{font-size:1.7rem}}
+
+/* Shared surfaces and controls follow the active Navratri day. */
+:root{--ui-line:#e3d8df;--ui-muted:#655b63;--festival-ink:var(--day-accent,#641847);--festival-line:var(--ui-line)}
+.btn-dark,.btn-dark:hover,.nav-cta,.language-switcher button[aria-pressed="true"]{background:var(--day-accent,#641847);color:#fff;box-shadow:0 4px 12px #24152512}
+.btn,.community-media button,.celebration-share button{min-height:44px;line-height:1.4}
+.community-media button,.celebration-share button{background:var(--day-accent,#641847);border-color:var(--day-accent,#641847)}
+.section-heading h2,.community-media h3,.community-media h4,.celebration-share h3,#accounts .section-heading h2,.festival-name{color:var(--day-accent,#641847)}
+.quick-card{border-color:var(--ui-line);box-shadow:0 4px 16px #24152508;background:#fff}
+.quick-card small,.priority-notice p{color:var(--ui-muted)}
+.priority-notice,.community-photos{background:var(--day-pale,#f8edf4)}
+.welcome-topline{background:var(--day-accent,#641847)}
+.committee-welcome h2,#committeeWelcomeMessage p:first-child,#committeeWelcomeMessage p:nth-last-child(2){color:var(--day-accent,#641847)}
+input,select,textarea{box-sizing:border-box}
+:where(a,button,input,select,textarea,summary):focus-visible{outline:3px solid var(--day-accent,#641847);outline-offset:3px}
+@media(max-width:760px){
+ .hero-actions>.btn{flex:1 1 180px;text-align:center;justify-content:center}
+ .section-heading p{line-height:1.7}.community-media-player>iframe{max-width:100%}
+ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+.navratri-programme{padding-top:24px;padding-bottom:24px}
+.navratri-timings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.navratri-timings article{padding:24px;border:1px solid var(--ui-line,#e3d8df);border-radius:18px;background:#fff}
+.navratri-timings article>span{font-size:.72rem;letter-spacing:.1em;font-weight:600;color:var(--day-accent,#641847)}
+.navratri-timings h3{font-size:clamp(1.3rem,2.5vw,1.8rem);line-height:1.3;margin:12px 0;color:var(--day-accent,#641847)}
+.navratri-timings p,.navratri-music p{font-size:.9rem;line-height:1.75;margin:8px 0;color:#554952}
+.navratri-music{margin-top:18px;padding:22px 24px;border-radius:18px;background:var(--day-pale,#f8edf4);border-left:4px solid var(--day-accent,#641847)}
+.navratri-music h3{margin:0 0 8px;color:var(--day-accent,#641847)}
+@media(max-width:760px){.navratri-timings{grid-template-columns:1fr;gap:10px}.navratri-timings article{padding:18px}.navratri-timings h3{margin:6px 0}.navratri-music{padding:18px}}
+.raas-rang-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center}.raas-rang-grid video{display:block;width:100%;max-height:560px;aspect-ratio:9/16;object-fit:contain;background:#211523;border-radius:20px}.raas-rang-invite{padding:28px;background:var(--day-pale,#f8edf4);border-radius:20px}.raas-rang-invite h3{font-size:clamp(1.6rem,3vw,2.3rem);color:var(--day-accent,#641847);line-height:1.25}.raas-rang-invite p{line-height:1.8}.raas-rang-invite a:not(.btn){color:var(--day-accent,#641847)}@media(max-width:760px){.raas-rang-grid{grid-template-columns:1fr;gap:16px}.raas-rang-grid video{max-height:480px}.raas-rang-invite{padding:20px}}

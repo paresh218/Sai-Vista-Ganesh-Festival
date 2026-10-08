@@ -36,3 +36,26 @@ No logging infrastructure was deployed and no visitor records were transmitted d
 
 Reference: https://developers.google.com/apps-script/guides/web#request_parameters
 
+
+## Daily email report — one-time activation
+
+Recipients: paresh218@gmail.com and freakypriyank@gmail.com.
+
+1. In the existing **private visit logs** Apps Script project, replace the code with the updated `visitor-logs.gs` and save. Do not change the gallery project.
+2. Select **setupDailyVisitEmail** from the function menu, click **Run**, and approve the email permission for the committee account. This installs one trigger; repeating setup does not duplicate it.
+3. The report sends once per day on the first successful trigger run at or after **23:00 India time**, normally within five minutes. Google scheduling and email delivery are not exact-time guarantees. Failed runs retry during the 23:00 hour; check Apps Script Executions for failures. No historical backlog is sent.
+4. The report covers the previous 23:00 up to the current 23:00, including yesterday's late-night activity. It includes activity totals, distinct entered-flat count, top sections and the private Sheet link. No raw device/IP data is emailed. Share the Sheet privately with those two recipients if they need detailed records.
+
+The trigger uses saved editor code, so a new web-app deployment URL is not needed for this email feature. The website still needs publishing for the UI improvements. No trigger or email is activated merely by editing these local files.
+
+## Morning festival posters — 6 AM, 11–21 October 2026
+
+All 11 ready-to-share PNG images are in `assets/daily-posters`. The nine Navratri days use the supplied day colour and existing goddess illustration. The final two dates use a general celebration design. Posters for 16–18 October include professional photography and photo-booth reminders.
+
+1. Publish the updated website, including the daily-posters folder and setup video/photo.
+2. Paste the updated `visitor-logs.gs` into the existing private logging project and save.
+3. Run **setupMorningFestivalEmails** once and authorize email and external-request access. Keep the existing 11 PM report trigger. No new web-app URL is required.
+4. Each date's poster is emailed inline and as a PNG attachment to paresh218@gmail.com and freakypriyank@gmail.com, on the first successful run at/after 06:00 IST (normally within five minutes). Retries run during the 6 AM hour only; no wrong-day catch-up emails are sent. Google does not guarantee exact delivery time. The public image must return HTTP 200 and image/png; missing files cause a visible failed execution and a later retry.
+5. After 21 October, no more festival emails are sent. You may remove the sendMorningFestivalEmail trigger after the festival.
+
+Scheduling code is prepared locally, not activated in your Google account. Local tests do not send emails.

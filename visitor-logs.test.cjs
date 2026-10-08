@@ -1,0 +1,8 @@
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+let sent=[],props={},hour='22',data=[];
+const c={Date:class extends Date{constructor(v){super(v===undefined?'2026-10-08T17:32:00Z':v)}},Set,Map,Utilities:{formatDate(d,t,f){if(f==='HH')return hour;const x=new Date(d.getTime()+19800000).toISOString();return f==='yyyy-MM-dd'?x.slice(0,10):x}},LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock(){}})},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props[k],setProperty:(k,v)=>props[k]=v})},SpreadsheetApp:{openById:()=>({getSheetByName:()=>({getLastRow:()=>data.length+1,getRange:()=>({getDisplayValues:()=>data})}),getUrl:()=> 'https://private-sheet.example'})},MailApp:{sendEmail:m=>sent.push(m)}};
+vm.createContext(c);vm.runInContext(fs.readFileSync('visitor-logs.gs','utf8'),c);
+c.sendDailyVisitEmail();assert.equal(sent.length,0);
+hour='23';data=[['id','2026-10-08','22:59:00','A-101','section','accounts','','visit1'],['late','2026-10-08','23:01:00','B-102','section','home','','visit2']];
+c.sendDailyVisitEmail();assert.equal(sent.length,1);assert.equal(sent[0].to,'paresh218@gmail.com,freakypriyank@gmail.com');assert.ok(sent[0].body.includes('Visits with recorded activity: 1'));assert.ok(!sent[0].body.includes('- home:'));c.sendDailyVisitEmail();assert.equal(sent.length,1);
+const w=c.visitReportWindow(new Date('2026-10-08T17:30:00Z'));assert.equal(w.end.toISOString(),'2026-10-08T17:30:00.000Z');assert.equal(w.start.toISOString(),'2026-10-07T17:30:00.000Z');console.log('PASS: India-time cutoff, recipient routing, report window and repeat-send protection');

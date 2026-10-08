@@ -81,12 +81,32 @@ window.SaiVistaContent = {
 
 window.SaiVistaContent.updates = [
   {
+    "date": "2026-10-08",
+    "category": "Raas Rang 2026",
+    "id": "raas-rang-photo-booth-oct16-18",
+    "priority": true,
+    "title": "16–18 October: dress up for the camera!",
+    "body": "Wear your festive best on Friday 16, Saturday 17 and Sunday 18 October. A professional photographer will capture your moments, and our photo booth is ready for memories with family and friends. Take a first look at the Raas Rang setup on the site.",
+    "href": "#raasRangPreview",
+    "action": "Preview the setup"
+  },
+  {
+    "date": "2026-10-08",
+    "category": "Navratri programme",
+    "id": "navratri-daily-timings-oct08",
+    "priority": true,
+    "title": "Daily Aarti at 7:45 PM · Garba from 8:00–10:30 PM",
+    "body": "Join us each evening for Aarti at 7:45 PM and Garba from 8:00 PM to 10:30 PM (India time). Our coordinators have curated a playlist for all audiences, mixing slow, medium and fast-tempo songs. No song requests will be entertained during Garba except in the final 15 minutes, 10:15–10:30 PM.",
+    "href": "#navratriProgramme",
+    "action": "View timings & music guidelines"
+  },
+  {
     "date": "2026-09-26",
     "category": "Navratri 2026",
     "id": "navratri-october-2026",
     "priority": true,
     "title": "Navratri at Sai Vista · 11–21 October 2026",
-    "body": "Get ready to celebrate Navratri with the Sai Vista family from 11 October to 21 October 2026. Programme and participation details will be announced here.",
+    "body": "Celebrate Navratri with the Sai Vista family from 11 October to 21 October 2026. Daily Aarti begins at 7:45 PM, followed by Garba from 8:00 PM to 10:30 PM.",
     "href": "#home",
     "action": "Explore Navratri"
   }

@@ -48,3 +48,83 @@ function purgeOldVisitLogs() {
   const cutoff = Utilities.formatDate(new Date(Date.now() - 90 * 86400000), 'Asia/Kolkata', 'yyyy-MM-dd');
   for (const sheet of book.getSheets()) if (/^\d{4}-\d{2}-\d{2}$/.test(sheet.getName()) && sheet.getName() < cutoff && book.getSheets().length > 1) book.deleteSheet(sheet);
 }
+
+// Run once from the editor after updating this separate logging project.
+function setupDailyVisitEmail() {
+  setupVisitLogs();
+  MailApp.getRemainingDailyQuota(); // Requests email permission during setup.
+  if (!ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'sendDailyVisitEmail')) {
+    ScriptApp.newTrigger('sendDailyVisitEmail').timeBased().everyMinutes(5).create();
+  }
+}
+function visitReportWindow(now) {
+  const date = Utilities.formatDate(now, 'Asia/Kolkata', 'yyyy-MM-dd');
+  let end = new Date(date + 'T23:00:00+05:30');
+  if (now < end) end = new Date(end.getTime() - 86400000);
+  return { start: new Date(end.getTime() - 86400000), end, key: Utilities.formatDate(end, 'Asia/Kolkata', 'yyyy-MM-dd') };
+}
+function sendDailyVisitEmail() {
+  const now = new Date();
+  // Late-night retries only: no surprise historical email on initial daytime setup.
+  if (Number(Utilities.formatDate(now, 'Asia/Kolkata', 'HH')) !== 23) return;
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) return;
+  try {
+    const props = PropertiesService.getScriptProperties(), period = visitReportWindow(now);
+    if (props.getProperty('VISIT_REPORT_SENT') === period.key) return;
+    const book = SpreadsheetApp.openById(props.getProperty('VISIT_SHEET_ID'));
+    const rows = [];
+    const dates = [...new Set([period.start, period.end].map(d => Utilities.formatDate(d, 'Asia/Kolkata', 'yyyy-MM-dd')))];
+    dates.forEach(date => {
+      const sheet = book.getSheetByName(date);
+      if (!sheet || sheet.getLastRow() < 2) return;
+      sheet.getRange(2, 1, sheet.getLastRow() - 1, 13).getDisplayValues().forEach(row => {
+        const received = new Date(row[1] + 'T' + row[2] + '+05:30');
+        if (received >= period.start && received < period.end) rows.push(row);
+      });
+    });
+    const visits = new Set(rows.map(r => r[7])), flats = new Set(rows.map(r => r[3]));
+    const sections = new Map();
+    rows.filter(r => r[4] === 'section').forEach(r => sections.set(r[5], (sections.get(r[5]) || 0) + 1));
+    const top = [...sections].sort((a,b) => b[1]-a[1]).slice(0,10).map(([name,count]) => '- ' + name + ': ' + count).join('\n') || 'No section views recorded.';
+    const format = d => Utilities.formatDate(d, 'Asia/Kolkata', 'dd MMM yyyy, HH:mm');
+    const body = 'Sai Vista daily visit report\n\n' + format(period.start) + ' to ' + format(period.end) + ' IST (end exclusive)\n\n' +
+      'Visits with recorded activity: ' + visits.size + '\nDistinct entered flats: ' + flats.size + '\nRecorded activities: ' + rows.length + '\n\nMost viewed sections\n' + top +
+      '\n\nPrivate detailed records: ' + book.getUrl() + '\n\nFlat entries are self-reported, not verified identities. Records may be incomplete if visitors are offline or block logging. Activity after 23:00 appears in the next report. Sheet access remains restricted; this email does not grant access.';
+    MailApp.sendEmail({to:'paresh218@gmail.com,freakypriyank@gmail.com',subject:'Sai Vista | Daily visit report | ' + period.key,body,name:'Sai Vista Cultural Committee'});
+    props.setProperty('VISIT_REPORT_SENT', period.key);
+  } finally { lock.releaseLock(); }
+}
+
+// Run once after the daily poster PNGs have been published on the website.
+function setupMorningFestivalEmails() {
+  MailApp.getRemainingDailyQuota();
+  if (!ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'sendMorningFestivalEmail')) {
+    ScriptApp.newTrigger('sendMorningFestivalEmail').timeBased().everyMinutes(5).create();
+  }
+}
+function morningFestivalDay(now) {
+  const date = Utilities.formatDate(now, 'Asia/Kolkata', 'yyyy-MM-dd');
+  const hour = Number(Utilities.formatDate(now, 'Asia/Kolkata', 'HH'));
+  return date >= '2026-10-11' && date <= '2026-10-21' && hour === 6 ? date : null;
+}
+function sendMorningFestivalEmail() {
+  const now = new Date(), date = morningFestivalDay(now);
+  if (!date) return;
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) return;
+  try {
+    const props = PropertiesService.getScriptProperties();
+    if (props.getProperty('MORNING_POSTER_SENT') === date) return;
+    const url = 'https://saivistaculturalcommittee.in/assets/daily-posters/' + date + '.png';
+    const response = UrlFetchApp.fetch(url, {muteHttpExceptions:true});
+    if (response.getResponseCode() !== 200) throw Error('Publish the daily poster first: ' + date);
+    const blob = response.getBlob();
+    if (!/^image\/png/i.test(blob.getContentType())) throw Error('Poster URL did not return a PNG image.');
+    blob.setName('Sai-Vista-Raas-Rang-' + date + '.png');
+    const weekend = ['2026-10-16','2026-10-17','2026-10-18'].includes(date);
+    const text = 'Good morning! Your Sai Vista Raas Rang poster for ' + date + ' is attached, ready to share.\n\nDaily Aarti: 7:45 PM\nGarba: 8:00–10:30 PM\nSong requests: final 15 minutes only, 10:15–10:30 PM. All timings are IST.' + (weekend ? '\n\nDress up in your festive best today! A professional photographer and photo booth will help capture your moments.' : '') + '\n\nhttps://saivistaculturalcommittee.in';
+    MailApp.sendEmail({to:'paresh218@gmail.com,freakypriyank@gmail.com',subject:'Sai Vista Raas Rang | Today’s poster | ' + date,body:text,htmlBody:'<p>'+text.replace(/\n/g,'<br>')+'</p><img src="cid:dailyPoster" alt="Today’s Sai Vista festival schedule" width="540" style="max-width:100%;height:auto">',inlineImages:{dailyPoster:blob},attachments:[blob],name:'Sai Vista Cultural Committee'});
+    props.setProperty('MORNING_POSTER_SENT',date);
+  } finally { lock.releaseLock(); }
+}

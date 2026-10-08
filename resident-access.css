@@ -7,3 +7,9 @@
 
 #residentFlat{text-transform:uppercase;letter-spacing:.06em}#residentFlatHelp{margin:0;color:#685464}#residentFlatPreview:empty{display:none}#residentGateStatus{color:#9a1839}#residentGate .resident-confirm{margin:0;font-size:.78rem}
 
+#residentGate{border-color:var(--day-accent,#641847);background:#fffdfb;box-shadow:0 24px 80px #24152525;padding:clamp(20px,5vw,32px)}
+#residentGate h1{color:var(--day-accent,#641847);letter-spacing:-.03em}
+#residentGate input[type="text"]{box-sizing:border-box;font-size:20px;min-height:54px;border-radius:12px}
+#residentGate button{min-height:50px;border-radius:12px;background:var(--day-accent,#641847)}
+#residentGate .resident-privacy{background:var(--day-pale,#f8edf4)}
+#residentGateForm{gap:12px}#residentGate .resident-confirm{color:#655b63;line-height:1.6}
