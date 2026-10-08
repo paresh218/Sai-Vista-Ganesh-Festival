@@ -57,12 +57,14 @@
       document.querySelector('.brand')?.focus({ preventScroll: true });
     });
     // Run after the other initial page handlers have finished setting navigation focus.
-    setTimeout(() => {
+    const openWelcome = () => setTimeout(() => {
       const day = window.NavratriDays?.current();
       if (day) { window.openNavratriDay(day); return; }
       welcome.showModal();
       document.body.classList.add('welcome-open');
       document.getElementById('committeeWelcomeTitle').focus({ preventScroll: true });
     }, 0);
+    if (window.SaiVistaResidentReady) openWelcome();
+    else window.addEventListener('sai-vista-resident-ready', openWelcome, { once: true });
   });
 })();

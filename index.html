@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-09-26-navratri-11">
+  <meta name="site-release" content="2026-10-08-resident-gate-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Navratri Festival 2026 — 11–21 October, community photos, member payments and expenditure.">
   <meta name="theme-color" content="#641847">
@@ -19,8 +19,18 @@
   <link rel="stylesheet" href="style.css?v=22">
   <link rel="stylesheet" href="mobile-components.css?v=1">
   <link rel="stylesheet" href="navratri.css">
+  <style>html.resident-locked body> :not(#residentGate):not(script):not(noscript){visibility:hidden!important}html.resident-locked{overflow:hidden}</style>
+  <link rel="stylesheet" href="resident-access.css">
 </head>
 <body>
+    <dialog id="residentGate" aria-labelledby="residentGateTitle" data-no-translate>
+      <span class="eyebrow">WELCOME TO SAI VISTA</span><h1 id="residentGateTitle">Your own flat is required</h1><p>Please enter your own flat to continue.<br>Wings A–F · Floors 1–13 · Flats 01–04.</p>
+      <form id="residentGateForm"><label>Wing<select id="residentWing" required><option value="">Select wing</option></select></label><label>Floor<select id="residentFloor" required><option value="">Select floor</option></select></label><label>Flat on this floor<select id="residentUnit" required><option value="">Select flat</option></select></label><p id="residentFlatPreview"></p>
+        <div class="resident-privacy"><strong>Visit records</strong><p id="residentLoggingNotice">When logging is enabled, the committee records your entered flat, sections viewed, selected actions, date/time, browser/device details and IP address. These private records are kept for 90 days. Your entered flat is self-reported, not verified residency.</p></div>
+        <label class="resident-confirm"><input id="residentConfirm" type="checkbox" required> This is my own flat and I have read the visit-record notice.</label><button type="submit">Enter the website →</button><p id="residentGateStatus" role="status"></p>
+      </form>
+    </dialog>
+    <noscript><p>JavaScript is required to enter your flat and open this website.</p></noscript>
 
     <a class="skip-link" href="#mainContent">Skip to main content</a>
 
@@ -591,6 +601,8 @@ https://saivistaculturalcommittee.in
         </div>
         <div class="welcome-footer"><button type="button" class="btn btn-dark welcome-continue">Continue to Sai Vista →</button></div>
     </dialog>
+    <script src="resident-access-config.js"></script>
+    <script src="resident-access.js"></script>
     <script src="navratri-days.js"></script>
     <script src="goddess-slideshow.js"></script>
     <script src="navratri-layout.js"></script>

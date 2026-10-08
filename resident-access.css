@@ -1,0 +1,6 @@
+#residentGate{box-sizing:border-box;width:min(480px,calc(100vw - 24px));max-height:calc(100dvh - 24px);margin:auto;overflow:auto;padding:28px;border:1px solid #d8b98b;border-radius:22px;background:#fffaf5;color:#352033}
+#residentGate::backdrop{background:#241525}#residentGate h1{font-size:1.7rem;line-height:1.25;margin:12px 0}#residentGate p{font-size:.88rem;line-height:1.6}
+#residentGateForm{display:grid;gap:14px}#residentGateForm label{display:grid;gap:6px;font-size:.9rem;font-weight:500}#residentGate select{width:100%;min-height:46px;padding:10px;font:inherit;font-size:16px;border:1px solid #bca3b4;border-radius:10px;background:white;color:#352033}
+#residentGate .resident-confirm{display:flex;align-items:flex-start;gap:10px;font-size:.85rem}#residentConfirm{width:20px;height:20px;flex-shrink:0}#residentGate button{padding:14px;border:0;border-radius:24px;background:#641847;color:white;font:inherit;font-weight:600;cursor:pointer}
+.resident-privacy{padding:14px;background:#f2eaf0;border-radius:12px}.resident-privacy p{margin:8px 0 0}#residentFlatPreview{margin:0;font-weight:600}#residentGateStatus:empty{display:none}#residentGate :focus-visible{outline:3px solid #a56a10;outline-offset:3px}
+@media(max-width:480px){#residentGate{padding:22px}}
