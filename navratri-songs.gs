@@ -1,7 +1,7 @@
 // Read-only song library; all access stays inside the dedicated shared root.
 const SONG_ROOT_ID = '1BkL8XO3KYJxPgAB2zyrKrbpZjIzJykma';
 function songMedia(file) {
-  return !file.isTrashed() && (file.getMimeType().startsWith('audio/') || file.getMimeType() === 'video/mp4' || /\.(mp3|m4a|mp4|aac|wav|ogg|opus|flac|webm)$/i.test(file.getName()));
+  return !file.isTrashed();
 }
 function songWalk(folder, path, seen, depth) {
   if (depth > 8 || seen.has(folder.getId())) return [];
