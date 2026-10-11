@@ -40,3 +40,5 @@ Analysis runs sequentially in a worker, only when requested, and caches compact 
 The visible site checks for new uploads every 60 seconds and rechecks on focus or player opening (15-second minimum). It updates the selected playlist without stopping playback. Audio downloads are shared between duration calculation and playback in a session memory cache capped at 50 MB / six completed songs; next-track preloading continues. First-time downloads still depend on Drive/network speed.
 
 All non-trashed uploaded files are listed, including MPEG and documents. The player checks browser MIME support before direct playback; unsupported files show Drive preview/open options and are skipped by automatic next-track selection and duration downloads. Drive preview itself depends on Google's format support; download/conversion may be needed.
+
+MPEG-labeled files containing MP3 audio are detected from their ID3 / MPEG Layer III frame header and played as audio/mpeg without altering the Drive original. MPEG video containers still require audio conversion. Verified against the actual Yei Oh Vitthale upload: browser decoded 336.144 seconds and playback advanced.

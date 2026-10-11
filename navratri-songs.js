@@ -21,7 +21,7 @@
  function stop(){clear();index=-1;$('songNowPlaying').textContent='Choose a song from the playlist';$('songQueuePosition').textContent='';$('songPlaybackStatus').textContent='Playback stopped.';render();if(navigator.mediaSession){navigator.mediaSession.metadata=null;navigator.mediaSession.playbackState='none';}}
  function drive(song,preview=false){return 'https://drive.google.com/file/d/'+song.id+(preview?'/preview':'/view')+(song.resourceKey?'?resourcekey='+encodeURIComponent(song.resourceKey):'');}
  function fallback(song){const box=$('songPlayer');box.hidden=false;const link=document.createElement('a');link.href=drive(song);link.target='_blank';link.rel='noopener';link.textContent='Open in Google Drive ↗';const button=document.createElement('button');button.type='button';button.textContent='Use Drive preview';button.onclick=()=>{clear();box.hidden=false;const frame=document.createElement('iframe');frame.src=drive(song,true);frame.title='Drive preview: '+song.name;frame.allow='autoplay';box.append(frame,link);$('songPlaybackStatus').textContent='Drive preview · use its own controls. Sound adjustments and automatic next work in the advanced player.';};box.append(link,button);}
- function playable(song){if(!song.mime)return true;return /^(audio\/|video\/(mp4|webm|ogg)$)/.test(song.mime)&&(!audio.canPlayType||!!audio.canPlayType(song.mime));}
+ function playable(song){if(!song.mime)return true;const mime=song.mime==='video/mpeg'?'audio/mpeg':song.mime;return /^(audio\/|video\/(mp4|webm|ogg|mpeg)$)/.test(mime)&&(!audio.canPlayType||!!audio.canPlayType(mime));}
  function render(){totalTime();const list=$('songList');list.replaceChildren();const query=$('songSearch').value.trim().toLowerCase();let count=0;songs.forEach((song,i)=>{if(!song.name.toLowerCase().includes(query))return;count++;const row=document.createElement('article');row.className='song-row'+(i===index?' is-playing':'');const title=document.createElement('h3');title.textContent=String(i+1).padStart(2,'0')+' · '+song.name+(song.path?' · '+song.path:'');const button=document.createElement('button');button.type='button';button.className='btn btn-dark';button.textContent=!playable(song)?'Open / preview file':i===index?'Selected':'Play song';button.setAttribute('aria-label','Play '+song.name);if(i===index)button.setAttribute('aria-current','true');button.onclick=()=>load(i);row.append(title,button);list.append(row);});$('songStatus').textContent=songs.length?count+' of '+songs.length+' songs · '+(selected()?.name||'Library'):'No songs uploaded in this folder yet.';if(songs.length&&!count)$('songStatus').textContent='No songs match your search.';$('songPrevious').disabled=$('songNext').disabled=!songs.length;}
  let loading=false;
  function following(){const eligible=songs.map((s,i)=>playable(s)?i:-1).filter(i=>i>=0);if(!eligible.length)return -1;if(repeat===2)return playable(songs[index]||{})?index:-1;if(shuffle){const choices=eligible.filter(i=>i!==index);return choices.length?choices[Math.floor(Math.random()*choices.length)]:eligible[0];}return eligible.find(i=>i>index)??(repeat===1?eligible[0]:-1);}
@@ -51,10 +51,18 @@
    if(song.size>25000000)throw Error('This file exceeds the 25 MB DJ-player limit. Use Drive preview.');
    const url=new URL(config.endpoint);url.searchParams.set('action','audio');url.searchParams.set('group',group);url.searchParams.set('id',song.id);
    const r=await fetch(url,{signal,cache:'no-store'}),data=await r.json();
-   if(!r.ok||!data.ok||typeof data.audio!=='string'||! /^(audio\/|video\/(mp4|webm|ogg)$|application\/octet-stream$)/.test(data.mime))throw Error(data.error||'Unable to load this song.');
+   if(!r.ok||!data.ok||typeof data.audio!=='string'||! /^(audio\/|video\/(mp4|webm|ogg|mpeg)$|application\/octet-stream$)/.test(data.mime))throw Error(data.error||'Unable to load this song.');
    if(data.audio.length>33400000)throw Error('This file is too large. Use Drive preview.');
    const binary=atob(data.audio),bytes=new Uint8Array(binary.length);for(let n=0;n<binary.length;n++)bytes[n]=binary.charCodeAt(n);
-   const media=new Blob([bytes],{type:data.mime});window.PlaylistTime.measure(media).then(n=>saveDuration(song,n));return media;
+   let mime=data.mime;
+   if(mime==='video/mpeg'){
+     let offset=0;
+     if(bytes[0]===73&&bytes[1]===68&&bytes[2]===51)offset=10+((bytes[6]&127)*2097152+(bytes[7]&127)*16384+(bytes[8]&127)*128+(bytes[9]&127));
+     const mp3=offset+4<=bytes.length&&bytes[offset]===255&&(bytes[offset+1]&224)===224&&(bytes[offset+1]&6)===2&&(bytes[offset+1]&24)!==8&&(bytes[offset+2]&240)!==0&&(bytes[offset+2]&240)!==240&&(bytes[offset+2]&12)!==12;
+     if(!mp3)throw Error('This MPEG file needs audio conversion to MP3 or M4A for DJ playback');
+     mime='audio/mpeg';
+   }
+   const media=new Blob([bytes],{type:mime});window.PlaylistTime.measure(media).then(n=>saveDuration(song,n));return media;
  }
  const dj=new window.SaiVistaDJ({
    fetchBlob,rate:()=>Number($('songSpeed').value),connect:sound,
