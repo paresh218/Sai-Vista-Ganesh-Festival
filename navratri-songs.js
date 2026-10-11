@@ -33,7 +33,7 @@
    if(!r.ok||!data.ok||typeof data.audio!=='string'||! /^(audio\/|video\/mp4$|application\/octet-stream$)/.test(data.mime))throw Error(data.error||'Unable to load this song.');
    if(data.audio.length>33400000)throw Error('This file is too large. Use Drive preview.');
    const binary=atob(data.audio),bytes=new Uint8Array(binary.length);for(let n=0;n<binary.length;n++)bytes[n]=binary.charCodeAt(n);
-   const media=new Blob([bytes],{type:data.mime});saveDuration(song,await window.PlaylistTime.measure(media));return media;
+   const media=new Blob([bytes],{type:data.mime});window.PlaylistTime.measure(media).then(n=>saveDuration(song,n));return media;
  }
  const dj=new window.SaiVistaDJ({
    fetchBlob,rate:()=>Number($('songSpeed').value),connect:sound,
