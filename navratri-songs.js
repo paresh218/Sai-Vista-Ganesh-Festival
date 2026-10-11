@@ -1,48 +1,26 @@
 (() => {
-  const config = window.SaiVistaSongs, select = document.getElementById('songDay'), status = document.getElementById('songStatus'), list = document.getElementById('songList'), player = document.getElementById('songPlayer'), upload = document.getElementById('songUploadLink');
-  let catalogue = [];
-  for (const day of config.days) {
-    const option = document.createElement('option'); option.value = day.day;
-    option.textContent = 'Day ' + day.day + ' · ' + new Date(day.date + 'T12:00:00+05:30').toLocaleDateString('en-IN', {day:'numeric',month:'long',timeZone:'Asia/Kolkata'});
-    select.append(option);
-  }
-  select.value = window.NavratriDays?.current()?.day || 1;
-  const stop = () => { player.replaceChildren(); player.hidden = true; };
-  function render() {
-    stop(); list.replaceChildren();
-    const day = config.days.find(day => day.day === Number(select.value));
-    upload.href = 'https://drive.google.com/drive/folders/' + day.folderId;
-    upload.textContent = 'Upload songs for Day ' + day.day + ' in Google Drive ↗';
-    const songs = catalogue.find(entry => entry.day === day.day)?.songs || [];
-    if (!config.endpoint) { status.textContent = 'Song playback is being set up. Open the day’s folder in Google Drive.'; return; }
-    status.textContent = songs.length ? songs.length + ' songs · Day ' + day.day : 'No songs uploaded for this day yet.';
-    for (const song of songs) {
-      if (!/^[A-Za-z0-9_-]+$/.test(song.id)) continue;
-      const row = document.createElement('article'); row.className = 'song-row';
-      const title = document.createElement('h3'); title.textContent = song.name;
-      const play = document.createElement('button'); play.type = 'button'; play.className = 'btn btn-dark'; play.textContent = 'Play song'; play.setAttribute('aria-label','Play ' + song.name);
-      play.onclick = () => {
-        stop(); const frame = document.createElement('iframe');
-        const key = song.resourceKey ? '?resourcekey=' + encodeURIComponent(song.resourceKey) : '';
-        frame.src = 'https://drive.google.com/file/d/' + song.id + '/preview' + key;
-        frame.title = 'Song player: ' + song.name; frame.allow = 'autoplay';
-        const name = document.createElement('p'); name.textContent = song.name;
-        const open = document.createElement('a'); open.href = 'https://drive.google.com/file/d/' + song.id + '/view' + key; open.textContent = 'Open song in Google Drive ↗'; open.target = '_blank'; open.rel = 'noopener';
-        player.append(name,frame,open); player.hidden = false;
-      };
-      row.append(title,play); list.append(row);
-    }
-  }
-  async function refresh() {
-    if (!config.endpoint) { render(); return; }
-    const button = document.getElementById('refreshSongs'); button.disabled = true; status.textContent = 'Loading songs…';
-    try {
-      const response = await fetch(config.endpoint,{signal:AbortSignal.timeout(30000),cache:'no-store'}), data = await response.json();
-      if (!response.ok || data.ok !== true || !Array.isArray(data.days)) throw Error('Unavailable');
-      catalogue = data.days; render();
-    } catch (_) { stop(); list.replaceChildren(); status.textContent = 'Could not load songs. Try Refresh songs or open the day’s Drive folder.'; }
-    finally { button.disabled = false; }
-  }
-  select.onchange = render; document.getElementById('refreshSongs').onclick = refresh; document.getElementById('stopSong').onclick = stop;
-  render(); refresh();
+ const $=id=>document.getElementById(id), config=window.SaiVistaSongs, audio=$('songAudio');
+ let catalogue=[], songs=[], index=-1, generation=0, request, blob, shuffle=false, repeat=0, ctx, bands, refreshing=false;
+ const presets={flat:[0,0,0],bass:[6,0,1],voice:[-2,4,2],garba:[4,1,3],soft:[1,-1,-3]};
+ const format=n=>Number.isFinite(n)?Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0'):'0:00';
+ for(const day of config.days){const option=document.createElement('option');option.value=day.day;option.textContent='Day '+day.day+' · '+new Date(day.date+'T12:00:00+05:30').toLocaleDateString('en-IN',{day:'numeric',month:'long',timeZone:'Asia/Kolkata'});$('songDay').append(option);}
+ $('songDay').value=window.NavratriDays?.current()?.day||1; audio.volume=.8;
+ function eq(){if(bands)['Bass','Mid','Treble'].forEach((name,i)=>bands[i].gain.setTargetAtTime(Number($('song'+name).value),ctx.currentTime,.02));}
+ async function sound(){try{if(!ctx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error();ctx=new AC();const source=ctx.createMediaElementSource(audio);bands=['lowshelf','peaking','highshelf'].map((type,i)=>{const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=[200,1200,4000][i];f.Q.value=.7;return f;});const gain=ctx.createGain();gain.gain.value=.5;const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-6;limiter.knee.value=6;limiter.ratio.value=12;source.connect(bands[0]);bands[0].connect(bands[1]);bands[1].connect(bands[2]);bands[2].connect(gain);gain.connect(limiter);limiter.connect(ctx.destination);eq();}await ctx.resume();$('songEqStatus').textContent='Equalizer active · headroom and a limiter help control peaks.';}catch(_){$('songEqStatus').textContent='Equalizer unavailable in this browser.';}}
+ function position(){$('songElapsed').textContent=format(audio.currentTime);$('songDuration').textContent=format(audio.duration);$('songSeek').disabled=!Number.isFinite(audio.duration)||audio.duration<=0;$('songSeek').value=audio.duration?Math.round(audio.currentTime/audio.duration*1000):0;}
+ function clear(){generation++;request?.abort();request=null;audio.pause();audio.removeAttribute('src');audio.load();if(blob)URL.revokeObjectURL(blob);blob=null;$('songPlayer').replaceChildren();$('songPlayer').hidden=true;$('songPlayPause').disabled=true;$('songPlayPause').textContent='Play';position();}
+ function stop(){clear();index=-1;$('songNowPlaying').textContent='Choose a song from the playlist';$('songQueuePosition').textContent='';$('songPlaybackStatus').textContent='Playback stopped.';render();if(navigator.mediaSession){navigator.mediaSession.metadata=null;navigator.mediaSession.playbackState='none';}}
+ function drive(song,preview=false){return 'https://drive.google.com/file/d/'+song.id+(preview?'/preview':'/view')+(song.resourceKey?'?resourcekey='+encodeURIComponent(song.resourceKey):'');}
+ function fallback(song){const box=$('songPlayer');box.hidden=false;const link=document.createElement('a');link.href=drive(song);link.target='_blank';link.rel='noopener';link.textContent='Open in Google Drive ↗';const button=document.createElement('button');button.type='button';button.textContent='Use Drive preview';button.onclick=()=>{clear();box.hidden=false;const frame=document.createElement('iframe');frame.src=drive(song,true);frame.title='Drive preview: '+song.name;frame.allow='autoplay';box.append(frame,link);$('songPlaybackStatus').textContent='Drive preview · use its own controls. Sound adjustments and automatic next work in the advanced player.';};box.append(link,button);}
+ function render(){const list=$('songList');list.replaceChildren();const query=$('songSearch').value.trim().toLowerCase();let count=0;songs.forEach((song,i)=>{if(!song.name.toLowerCase().includes(query))return;count++;const row=document.createElement('article');row.className='song-row'+(i===index?' is-playing':'');const title=document.createElement('h3');title.textContent=String(i+1).padStart(2,'0')+' · '+song.name;const button=document.createElement('button');button.type='button';button.className='btn btn-dark';button.textContent=i===index?'Selected':'Play song';button.setAttribute('aria-label','Play '+song.name);if(i===index)button.setAttribute('aria-current','true');button.onclick=()=>load(i);row.append(title,button);list.append(row);});$('songStatus').textContent=songs.length?count+' of '+songs.length+' songs · Day '+$('songDay').value:'No songs uploaded for this day yet.';if(songs.length&&!count)$('songStatus').textContent='No songs match your search.';$('songPrevious').disabled=$('songNext').disabled=!songs.length;}
+ async function load(i){if(!songs[i])return;clear();index=i;const token=generation,song=songs[i];$('songNowPlaying').textContent=song.name;$('songQueuePosition').textContent=(i+1)+' / '+songs.length;$('songPlaybackStatus').textContent='Loading song…';render();fallback(song);await sound();if(token!==generation)return;const controller=new AbortController();request=controller;const timer=setTimeout(()=>controller.abort(),120000);try{if(song.size>25000000)throw Error('This song exceeds the 25 MB advanced-player limit. Use Drive preview.');const url=new URL(config.endpoint);url.searchParams.set('action','audio');url.searchParams.set('day',$('songDay').value);url.searchParams.set('id',song.id);const response=await fetch(url,{signal:controller.signal,cache:'no-store'}),data=await response.json();if(token!==generation)return;if(!response.ok||!data.ok||typeof data.audio!=='string'||!/^audio\//.test(data.mime))throw Error(data.error||'Advanced audio is unavailable. Use Drive preview.');if(data.audio.length>33400000)throw Error('This song is too large. Use Drive preview.');const binary=atob(data.audio),bytes=new Uint8Array(binary.length);for(let n=0;n<binary.length;n++)bytes[n]=binary.charCodeAt(n);blob=URL.createObjectURL(new Blob([bytes],{type:data.mime}));audio.src=blob;audio.playbackRate=Number($('songSpeed').value);$('songPlayPause').disabled=false;if(navigator.mediaSession&&window.MediaMetadata)navigator.mediaSession.metadata=new MediaMetadata({title:song.name,artist:'Sai Vista',album:'Navratri · Day '+$('songDay').value});try{await audio.play();}catch(_){$('songPlaybackStatus').textContent='Song ready. Press Play to start.';}}catch(error){if(token===generation)$('songPlaybackStatus').textContent=error.name==='AbortError'?'Song loading timed out. Retry or use Drive preview.':error.message;}finally{clearTimeout(timer);if(token===generation)request=null;}}
+ function next(direction=1,automatic=false){if(!songs.length)return;if(automatic&&repeat===2&&index>=0){audio.currentTime=0;audio.play().catch(()=>{});return;}let target;if(shuffle&&songs.length>1){target=Math.floor(Math.random()*(songs.length-1));if(target>=index&&index>=0)target++;}else target=index<0?0:index+direction;if(target>=songs.length){if(automatic&&repeat===0){$('songPlaybackStatus').textContent='Playlist finished.';return;}target=0;}if(target<0)target=songs.length-1;load(target);}
+ function day(){stop();$('songSearch').value='';const selected=config.days.find(d=>d.day===Number($('songDay').value));$('songUploadLink').href='https://drive.google.com/drive/folders/'+selected.folderId;$('songUploadLink').textContent='Upload songs for Day '+selected.day+' in Google Drive ↗';songs=(catalogue.find(d=>d.day===selected.day)?.songs||[]).filter(s=>typeof s.name==='string'&&/^[A-Za-z0-9_-]+$/.test(s.id));render();}
+ async function refresh(){if(refreshing||!config.endpoint)return;refreshing=true;$('refreshSongs').disabled=true;$('songStatus').textContent='Loading playlist…';try{const r=await fetch(config.endpoint,{signal:AbortSignal.timeout(30000),cache:'no-store'}),data=await r.json();if(!r.ok||!data.ok||!Array.isArray(data.days))throw Error();catalogue=data.days;day();}catch(_){$('songStatus').textContent='Could not refresh the playlist. Try again; your current list is kept.';}finally{refreshing=false;$('refreshSongs').disabled=false;}}
+ $('songPlayPause').onclick=async()=>{if(!audio.src)return;await sound();if(audio.paused)audio.play().catch(()=>{$('songPlaybackStatus').textContent='Could not play this format. Use Drive preview.';});else audio.pause();};
+ audio.onplay=()=>{$('songPlayPause').textContent='Pause';$('songPlaybackStatus').textContent='Playing';if(navigator.mediaSession)navigator.mediaSession.playbackState='playing';};audio.onpause=()=>{$('songPlayPause').textContent='Play';if(audio.src)$('songPlaybackStatus').textContent='Paused';if(navigator.mediaSession)navigator.mediaSession.playbackState='paused';};audio.onended=()=>next(1,true);audio.ontimeupdate=audio.onloadedmetadata=position;audio.onerror=()=>{$('songPlayPause').disabled=true;$('songPlaybackStatus').textContent='This audio format could not be played. Use Drive preview.';};
+ $('songSeek').oninput=()=>{if(Number.isFinite(audio.duration))audio.currentTime=Number($('songSeek').value)/1000*audio.duration;};$('songVolume').oninput=()=>{audio.volume=Number($('songVolume').value)/100;$('songVolumeValue').textContent=$('songVolume').value+'%';};$('songMute').onclick=()=>{audio.muted=!audio.muted;$('songMute').textContent=audio.muted?'Unmute':'Mute';$('songMute').setAttribute('aria-pressed',String(audio.muted));};$('songSpeed').onchange=()=>{audio.playbackRate=Number($('songSpeed').value);};$('songPrevious').onclick=()=>{if(audio.currentTime>3)audio.currentTime=0;else next(-1);};$('songNext').onclick=()=>next();$('songShuffle').onclick=()=>{shuffle=!shuffle;$('songShuffle').setAttribute('aria-pressed',String(shuffle));};$('songRepeat').onclick=()=>{repeat=(repeat+1)%3;$('songRepeat').textContent='Repeat: '+['off','all','one'][repeat];};
+ function preset(name){['Bass','Mid','Treble'].forEach((band,i)=>{$('song'+band).value=presets[name][i];$('song'+band+'Value').textContent=presets[name][i]+' dB';});$('songPreset').value=name;eq();}$('songPreset').onchange=()=>{if(presets[$('songPreset').value])preset($('songPreset').value);};$('songResetEq').onclick=()=>preset('flat');['Bass','Mid','Treble'].forEach(band=>{$('song'+band).oninput=()=>{$('song'+band+'Value').textContent=$('song'+band).value+' dB';$('songPreset').value='custom';eq();};});
+ if(navigator.mediaSession)for(const [action,handler]of Object.entries({play:()=>$('songPlayPause').onclick(),pause:()=>audio.pause(),previoustrack:()=>$('songPrevious').onclick(),nexttrack:()=>next(),stop,seekto:d=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(d.seekTime,audio.duration));}})){try{navigator.mediaSession.setActionHandler(action,handler);}catch(_){}}
+ $('songDay').onchange=day;$('songSearch').oninput=render;$('refreshSongs').onclick=refresh;$('stopSong').onclick=stop;window.addEventListener('pagehide',stop);day();refresh();
 })();

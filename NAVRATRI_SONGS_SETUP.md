@@ -26,3 +26,6 @@ The read-only Apps Script service is deployed in the committee account:
 To change service code, update Code.gs in this project and Deploy → Manage deployments → Edit → New version. Preserve the endpoint URL. For another festival year, update day folders and dates in both the service and website configuration.
 
 Verified live: all nine day lists return successfully and are currently empty. Automated checks cover audio filtering, ordering, resource keys and safe failures. A real song’s playback must be checked after the first upload.
+
+## Advanced player
+The website uses browser Web Audio for bass, mid/vocals and treble (-12 to +12 dB), presets, volume, speed, seeking, shuffle, repeat and automatic next. Device media controls are supported where available. The selected song loads completely before playing (up to 25 MB); long or unsupported files can use Drive preview. Downloads use the existing Apps Script service, restricted to audio directly inside the nine day folders. This is intended for a small community, subject to Drive/Apps Script quotas. No Python packages or paid streaming service are required.
