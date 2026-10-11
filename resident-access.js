@@ -6,15 +6,22 @@ const ResidentAccess = {
   flat(wing, floor, unit) {
     if (!/^[A-F]$/.test(wing) || !/^(?:[1-9]|1[0-3])$/.test(String(floor)) || !/^0[1-4]$/.test(unit)) return null;
     return `${wing}-${floor}${unit}`;
+  },
+  remembered(storage) {
+    try { return this.parse(storage.getItem('saiVistaResidentFlat')); } catch (_) { return null; }
+  },
+  remember(storage, value) {
+    try { const flat = this.parse(value); if (flat) storage.setItem('saiVistaResidentFlat', flat); } catch (_) { /* Storage may be disabled. */ }
   }
 };
 if (typeof module !== 'undefined') module.exports = ResidentAccess;
 if (typeof document !== 'undefined') (() => {
   const config = window.SaiVistaVisitConfig || {};
+  let storage; try { storage = window.localStorage; } catch (_) {}
   const gate = document.getElementById('residentGate');
   const form = document.getElementById('residentGateForm');
   const flatInput = document.getElementById('residentFlat');
-  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is used only for this page visit and is not sent to a logging service. Your entered flat is self-reported, not verified residency.';
+  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is remembered on this browser and is not sent to a logging service. Your entered flat is self-reported, not verified residency.';
   else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your entered flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Your entered flat is self-reported, not verified residency.';
   let flat, queue = [], sending = false;
   const sessionId = crypto.randomUUID();
@@ -44,7 +51,10 @@ if (typeof document !== 'undefined') (() => {
   form.addEventListener('submit', event => {
     event.preventDefault(); const value = ResidentAccess.parse(flatInput.value);
     if (!value) { document.getElementById('residentGateStatus').textContent = 'Enter your flat like A-101 or F-1304. Wings A–F, floors 1–13, flats 01–04.'; flatInput.setAttribute('aria-invalid', 'true'); flatInput.focus(); return; }
-    flat = value; window.SaiVistaResidentReady = true;
+    enter(value);
+  });
+  function enter(value) {
+    flat = value; ResidentAccess.remember(storage, value); window.SaiVistaResidentReady = true;
     document.documentElement.classList.remove('resident-locked'); gate.close();
     record('entry', 'site'); flush();
     // Log only meaningful named site sections, never form contents, captions or external URLs.
@@ -62,7 +72,7 @@ if (typeof document !== 'undefined') (() => {
     }, 1000);
     document.querySelectorAll('main section[id]').forEach(section => observer.observe(section));
     window.dispatchEvent(new Event('sai-vista-resident-ready'));
-  });
+  }
   document.addEventListener('click', event => {
     const target = event.target.closest('button[id], a[href^="#"]'); if (!target || !flat || target.closest('#residentGate')) return;
     const id = target.id || target.getAttribute('href').slice(1);
@@ -71,6 +81,10 @@ if (typeof document !== 'undefined') (() => {
   window.addEventListener('hashchange', () => { const section = location.hash.slice(1); if (/^[A-Za-z][A-Za-z0-9-]{0,79}$/.test(section)) record('navigation', section); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
   setInterval(flush, 10000);
-  gate.showModal();
+  const change = document.createElement('button'); change.type = 'button'; change.textContent = 'Change flat / forget this device'; change.className = 'btn btn-outline';
+  change.onclick = () => { try { storage.removeItem('saiVistaResidentFlat'); } catch (_) {} location.reload(); };
+  document.querySelector('footer').append(change);
+  const remembered = ResidentAccess.remembered(storage);
+  if (remembered) enter(remembered); else gate.showModal();
   document.addEventListener('DOMContentLoaded', () => setTimeout(() => { if (!flat) flatInput.focus(); }, 0));
 })();
