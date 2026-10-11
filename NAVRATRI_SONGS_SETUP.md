@@ -44,3 +44,5 @@ All non-trashed uploaded files are listed, including MPEG and documents. The pla
 MPEG-labeled files containing MP3 audio are detected from their ID3 / MPEG Layer III frame header and played as audio/mpeg without altering the Drive original. MPEG video containers still require audio conversion. Verified against the actual Yei Oh Vitthale upload: browser decoded 336.144 seconds and playback advanced.
 
 Direct playback and next-track preloading now allow files up to 50 MB, including the current 28.8 MB and 40.2 MB uploads. Base64 audio is normalized, validated and decoded in 32 KB chunks to avoid allocating a second full-file binary string. Malformed downloads return a clear retry message. Memory cache remains bounded at 50 MB.
+
+Deck B selection starts preloading immediately and stays selected when the library refreshes. Replacing B preserves the prepared deck until its replacement succeeds. Cache eviction no longer aborts downloads that a deck or analysis is awaiting.

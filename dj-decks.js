@@ -26,7 +26,8 @@ class SaiVistaDJ {
       entry.promise=this.options.fetchBlob(song,group,controller.signal).finally(()=>clearTimeout(timeout));
       entry.promise.catch(()=>{if(this.cache.get(key)===entry)this.cache.delete(key);});
       this.cache.set(key,entry);
-      while(this.cache.size>2){const old=this.cache.keys().next().value;const oldEntry=this.cache.get(old);oldEntry.controller.abort();this.cache.delete(old);}
+      // Eviction must not cancel a download already awaited by Deck B or analysis.
+      while(this.cache.size>2){const old=this.cache.keys().next().value;this.cache.delete(old);}
     }
     return this.cache.get(key).promise;
   }
@@ -70,11 +71,11 @@ class SaiVistaDJ {
     }
   }
   async stage(song,group) {
-    const token=++this.stageSerial;this.release(this.staged);this.staged=null;
+    const token=++this.stageSerial;
     const data=await this.data(song,group);if(token!==this.stageSerial)return null;
     const audio=this.options.makeAudio(),url=URL.createObjectURL(data),deck={audio,url,mix:0,song,group};
     audio.src=url;audio.preload='auto';audio.volume=0;audio.muted=this.muted;audio.playbackRate=this.options.rate();
-    try{deck.connection=await this.options.connect(audio);if(token!==this.stageSerial){this.release(deck);return null;}this.staged=deck;return deck;}catch(e){this.release(deck);throw e;}
+    try{deck.connection=await this.options.connect(audio);if(token!==this.stageSerial){this.release(deck);return null;}const old=this.staged;this.staged=deck;this.release(old);return deck;}catch(e){this.release(deck);throw e;}
   }
   async startManual() {
     if(!this.staged)return false;this.settle();const incoming=this.staged;
