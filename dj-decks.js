@@ -2,7 +2,7 @@
 class SaiVistaDJ {
   constructor(options) {
     this.options=options; this.active=null; this.outgoing=null; this.pending=null;
-    this.cache=new Map(); this.serial=0; this.volume=.8; this.muted=false; this.fadeSeconds=3;
+    this.stageSerial=0;this.cache=new Map(); this.serial=0; this.volume=.8; this.muted=false; this.fadeSeconds=3;
   }
   release(deck) {
     if(!deck)return;
@@ -32,14 +32,14 @@ class SaiVistaDJ {
   }
   preload(song,group) { if(song && song.size<=25000000)this.data(song,group).catch(()=>{}); }
   async switch(song,group) {
-    const token=++this.serial; this.settle();
+    this.manual=false;const token=++this.serial; this.settle();
     this.release(this.pending); this.pending=null;
     let candidate;
     try {
       const data=await this.data(song,group);
       if(token!==this.serial)return false;
       const audio=this.options.makeAudio(),url=URL.createObjectURL(data);
-      candidate={audio,url,mix:0};this.pending=candidate;
+      candidate={audio,url,mix:0,song,group};this.pending=candidate;
       audio.preload='auto';audio.src=url;audio.volume=0;audio.muted=this.muted;
       audio.playbackRate=this.options.rate();
       candidate.connection=await this.options.connect(audio);
@@ -69,14 +69,40 @@ class SaiVistaDJ {
       return false;
     }
   }
+  async stage(song,group) {
+    const token=++this.stageSerial;this.release(this.staged);this.staged=null;
+    const data=await this.data(song,group);if(token!==this.stageSerial)return null;
+    const audio=this.options.makeAudio(),url=URL.createObjectURL(data),deck={audio,url,mix:0,song,group};
+    audio.src=url;audio.preload='auto';audio.volume=0;audio.muted=this.muted;audio.playbackRate=this.options.rate();
+    try{deck.connection=await this.options.connect(audio);if(token!==this.stageSerial){this.release(deck);return null;}this.staged=deck;return deck;}catch(e){this.release(deck);throw e;}
+  }
+  async startManual() {
+    if(!this.staged)return false;this.settle();const incoming=this.staged;
+    await incoming.audio.play();if(this.staged!==incoming)return false;
+    this.staged=null;this.outgoing=this.active;this.active=incoming;this.manual=true;
+    if(this.outgoing)this.outgoing.audio.onended=this.outgoing.audio.ontimeupdate=null;
+    this.manualMix(this.outgoing?0:1);this.options.commit(incoming.audio,incoming.song);return true;
+  }
+  manualMix(value) {
+    clearInterval(this.timer);this.timer=null;const x=Math.max(0,Math.min(1,value));
+    if(this.active)this.active.mix=this.outgoing?Math.sin(x*Math.PI/2):1;
+    if(this.outgoing)this.outgoing.mix=Math.cos(x*Math.PI/2);this.applyVolume();
+  }
+  finishManual(){this.manual=false;this.settle();}
   pause() {this.settle();this.active?.audio.pause();}
   cancelSwitch() {this.serial++;this.settle();this.release(this.pending);this.pending=null;for(const entry of this.cache.values())entry.controller.abort();this.cache.clear();}
   stop() {
+    this.stageSerial++;this.release(this.staged);this.staged=null;this.manual=false;
     this.serial++;this.settle();this.release(this.pending);this.pending=null;
     this.release(this.active);this.active=null;
     for(const entry of this.cache.values())entry.controller.abort();this.cache.clear();
   }
 }
+SaiVistaDJ.math={
+ normalize:rms=>Math.min(2,Math.max(.25,.12/rms)),
+ sync:(a,b)=>{if(!(a.bpm>0&&b.bpm>0))throw Error('BPM required');const rate=a.bpm*a.rate/b.bpm;if(rate<.5||rate>2)throw Error('Tempo difference too large');const ba=60/a.bpm,bb=60/b.bpm,phase=((a.time-(a.offset||0))%ba+ba)%ba/ba,beat=Math.round((b.time-(b.offset||0))/bb-phase);return{rate,time:Math.max(0,(b.offset||0)+(beat+phase)*bb)};},
+ loop:(time,bpm,offset,beats,duration)=>{const beat=60/bpm,start=Math.max(0,offset+Math.floor((time-offset)/beat)*beat),end=start+beats*beat;return end<=duration?{start,end}:null;}
+};
 if(typeof window!=='undefined')window.SaiVistaDJ=SaiVistaDJ;
 if(typeof module!=='undefined')module.exports=SaiVistaDJ;
 
