@@ -50,7 +50,11 @@
  async function downloadBlob(song,group,signal,background=false){
    if(song.size>50000000)throw Error('This file exceeds the 50 MB DJ-player limit. Use Drive preview.');
    const url=new URL(config.endpoint);url.searchParams.set('action','audio');url.searchParams.set('group',group);url.searchParams.set('id',song.id);
-   const r=await fetch(url,{signal,cache:'no-store',priority:background?'low':'high'}),data=await r.json();
+   let r,data;
+   for(let attempt=0;attempt<3;attempt++){
+     try{r=await fetch(url,{signal,cache:'no-store',priority:background?'low':'high'});if(r.status===429||r.status>=500)throw Error('Temporary service response');data=await r.json();break;}
+     catch(error){if(signal?.aborted)throw error;if(attempt===2)throw Error('The song service is temporarily unavailable. Please try again shortly');await new Promise(resolve=>setTimeout(resolve,400*(attempt+1)));}
+   }
    if(!r.ok||!data.ok||typeof data.audio!=='string'||! /^(audio\/|video\/(mp4|webm|ogg|mpeg)$|application\/octet-stream$)/.test(data.mime))throw Error(data.error||'Unable to load this song.');
    if(data.audio.length>66666668)throw Error('This file is too large. Use Drive preview.');
    const encoded=data.audio.replace(/^data:[^,]*;base64,/i,'').replace(/\s/g,'').replace(/-/g,'+').replace(/_/g,'/');

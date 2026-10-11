@@ -50,3 +50,5 @@ Deck B selection starts preloading immediately and stays selected when the libra
 Performance: duration discovery yields while playback/deck/preload requests are pending. Background duration fetches use low priority; playback fetches high priority where supported. Modern browsers use native Uint8Array.fromBase64, retaining chunked decoding for older browsers.
 
 Next-track preloading now prepares a silent native audio element as well as its complete download; switching reuses that same element without resetting its source. Only one incoming element is retained and stop/folder changes release it. Duration calculation waits while an active track is playing to reduce background downloads/decoding.
+
+Audio requests now retry transient HTML/non-JSON, network, HTTP 429 and HTTP 5xx responses twice with short backoff. Current playback remains intact; persistent service failures produce a recoverable error rather than exposing a JSON parser exception.
