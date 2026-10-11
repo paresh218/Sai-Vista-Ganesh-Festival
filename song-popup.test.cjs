@@ -1,7 +1,8 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 class El{constructor(){this.children=[];this.audio=[];}append(...els){this.children.push(...els)}querySelector(s){return this.lookup?.[s]}querySelectorAll(){return this.audio}removeAttribute(){}after(){}setAttribute(){}addEventListener(t,f){this[t]=f}showModal(){this.open=true}close(){this.open=false}}
 const title=new El(),controls=new El(),section=new El(),body=new El(),audio={src:'blob:song',paused:false,currentTime:5,duration:100};section.children=[title,controls];
-const created=[];vm.runInNewContext(fs.readFileSync('song-popup.js','utf8'),{document:{getElementById:()=>section,body,createElement:()=>{const e=new El();e.lookup={'#navratriSongsTitle':title,'.player-controls':controls};e.audio=[audio];created.push(e);return e;}}});
+let previewCallback,writes=0;const now={textContent:'Pankhida'};let previewText='';const track={get textContent(){return previewText},set textContent(v){writes++;previewText=v}};const created=[];vm.runInNewContext(fs.readFileSync('song-popup.js','utf8'),{MutationObserver:class{constructor(cb){previewCallback=cb}observe(){}},document:{getElementById:()=>section,body,createElement:()=>{const e=new El();e.lookup={'#navratriSongsTitle':title,'.player-controls':controls,'#songNowPlaying':now,'.dj-preview-track':track};e.audio=[audio];created.push(e);return e;}}});
+previewCallback();previewCallback();assert.equal(writes,1);now.textContent='Garba';previewCallback();previewCallback();assert.equal(writes,2);
 const get=name=>created.find(e=>e.textContent===name);
 get('Open DJ player ♫').onclick();assert.equal(body.children[0].open,true);get('Minimise player').onclick();assert.equal(body.children[0].open,false);assert.equal(audio.paused,false);
 get('Set cue').onclick();audio.currentTime=20;get('Go to cue').onclick();assert.equal(audio.currentTime,5);
