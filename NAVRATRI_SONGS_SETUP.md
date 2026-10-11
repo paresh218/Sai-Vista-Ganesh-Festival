@@ -42,3 +42,5 @@ The visible site checks for new uploads every 60 seconds and rechecks on focus o
 All non-trashed uploaded files are listed, including MPEG and documents. The player checks browser MIME support before direct playback; unsupported files show Drive preview/open options and are skipped by automatic next-track selection and duration downloads. Drive preview itself depends on Google's format support; download/conversion may be needed.
 
 MPEG-labeled files containing MP3 audio are detected from their ID3 / MPEG Layer III frame header and played as audio/mpeg without altering the Drive original. MPEG video containers still require audio conversion. Verified against the actual Yei Oh Vitthale upload: browser decoded 336.144 seconds and playback advanced.
+
+Direct playback and next-track preloading now allow files up to 50 MB, including the current 28.8 MB and 40.2 MB uploads. Base64 audio is normalized, validated and decoded in 32 KB chunks to avoid allocating a second full-file binary string. Malformed downloads return a clear retry message. Memory cache remains bounded at 50 MB.

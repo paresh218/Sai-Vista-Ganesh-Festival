@@ -30,7 +30,7 @@ class SaiVistaDJ {
     }
     return this.cache.get(key).promise;
   }
-  preload(song,group) { if(song && song.size<=25000000)this.data(song,group).catch(()=>{}); }
+  preload(song,group) { if(song && song.size<=50000000)this.data(song,group).catch(()=>{}); }
   async switch(song,group) {
     this.manual=false;const token=++this.serial; this.settle();
     this.release(this.pending); this.pending=null;

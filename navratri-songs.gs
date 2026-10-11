@@ -38,7 +38,7 @@ function doGet(e) {
       const p=e.parameter, group=groups.find(g=>g.key===p.group || (!p.group && g.day===Number(p.day)));
       const song=group && group.songs.find(s=>s.id===p.id);
       if(!song) return songJson({ok:false,error:'Song not found in this library.'});
-      if(song.size>25000000) return songJson({ok:false,error:'This file exceeds the 25 MB DJ-player limit. Use Drive preview.'});
+      if(song.size>50000000) return songJson({ok:false,error:'This file exceeds the 50 MB DJ-player limit. Use Drive preview.'});
       const file=DriveApp.getFileById(song.id), blob=file.getBlob();
       return songJson({ok:true,mime:file.getMimeType(),audio:Utilities.base64Encode(blob.getBytes())});
     }
