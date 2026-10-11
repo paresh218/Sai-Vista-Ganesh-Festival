@@ -23,7 +23,7 @@ class SaiVistaDJ {
     if(!this.cache.has(key)) {
       const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),120000);
       const entry={controller,promise:null};
-      entry.promise=this.options.fetchBlob(song,group,controller.signal).finally(()=>clearTimeout(timeout));
+      entry.promise=this.options.fetchBlob(song,group,controller.signal).then(blob=>{entry.ready=true;return blob;}).finally(()=>clearTimeout(timeout));
       entry.promise.catch(()=>{if(this.cache.get(key)===entry)this.cache.delete(key);});
       this.cache.set(key,entry);
       // Eviction must not cancel a download already awaited by Deck B or analysis.

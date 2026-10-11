@@ -28,13 +28,13 @@
  let queued=-1;
  function prepare(){if(dj.manual)return;queued=following();$('songNextName').textContent=queued>=0?'Up next: '+songs[queued].name:'End of playlist';if(queued>=0)dj.preload(songs[queued],selected().key);}
  const mediaCache=new Map();let mediaBytes=0;
- function fetchBlob(song,group,signal){
+ function fetchBlob(song,group,signal,background=false){
    const key=group+':'+song.id+':'+(song.size||0)+':'+(song.modifiedTime||song.modified||'');
    let entry=mediaCache.get(key);
    if(entry){mediaCache.delete(key);mediaCache.set(key,entry);}
    else{
      entry={bytes:0};mediaCache.set(key,entry);
-     entry.promise=downloadBlob(song,group,AbortSignal.timeout(120000)).then(media=>{
+     entry.promise=downloadBlob(song,group,AbortSignal.timeout(120000),background).then(media=>{
        entry.bytes=media.size;mediaBytes+=media.size;
        for(const [id,item] of mediaCache){if(mediaBytes<=50000000&&mediaCache.size<=6)break;if(item.bytes){mediaCache.delete(id);mediaBytes-=item.bytes;}}
        return media;
@@ -47,16 +47,16 @@
      entry.promise.then(resolve,reject).finally(()=>signal.removeEventListener('abort',abort));
    });
  }
- async function downloadBlob(song,group,signal){
+ async function downloadBlob(song,group,signal,background=false){
    if(song.size>50000000)throw Error('This file exceeds the 50 MB DJ-player limit. Use Drive preview.');
    const url=new URL(config.endpoint);url.searchParams.set('action','audio');url.searchParams.set('group',group);url.searchParams.set('id',song.id);
-   const r=await fetch(url,{signal,cache:'no-store'}),data=await r.json();
+   const r=await fetch(url,{signal,cache:'no-store',priority:background?'low':'high'}),data=await r.json();
    if(!r.ok||!data.ok||typeof data.audio!=='string'||! /^(audio\/|video\/(mp4|webm|ogg|mpeg)$|application\/octet-stream$)/.test(data.mime))throw Error(data.error||'Unable to load this song.');
    if(data.audio.length>66666668)throw Error('This file is too large. Use Drive preview.');
    const encoded=data.audio.replace(/^data:[^,]*;base64,/i,'').replace(/\s/g,'').replace(/-/g,'+').replace(/_/g,'/');
    if(!/^[A-Za-z0-9+/]*={0,2}$/.test(encoded)||encoded.length%4===1)throw Error('The song download was incomplete. Please refresh and try again');
-   const bytes=new Uint8Array(Math.floor(encoded.length*3/4)-(encoded.endsWith('==')?2:encoded.endsWith('=')?1:0));let offset=0;
-   try{for(let start=0;start<encoded.length;start+=32768){const binary=atob(encoded.slice(start,start+32768));for(let n=0;n<binary.length;n++)bytes[offset++]=binary.charCodeAt(n);}}catch(_){throw Error('The song download could not be decoded. Please refresh and try again');}
+   const bytes=typeof Uint8Array.fromBase64==='function'?Uint8Array.fromBase64(encoded):new Uint8Array(Math.floor(encoded.length*3/4)-(encoded.endsWith('==')?2:encoded.endsWith('=')?1:0));let offset=0;
+   try{if(typeof Uint8Array.fromBase64!=='function')for(let start=0;start<encoded.length;start+=32768){const binary=atob(encoded.slice(start,start+32768));for(let n=0;n<binary.length;n++)bytes[offset++]=binary.charCodeAt(n);}}catch(_){throw Error('The song download could not be decoded. Please refresh and try again');}
    let mime=data.mime;
    if(mime==='video/mpeg'){
      let offset=0;
@@ -88,6 +88,6 @@
  function preset(name){['Bass','Mid','Treble'].forEach((band,i)=>{$('song'+band).value=presets[name][i];$('song'+band+'Value').textContent=presets[name][i]+' dB';});$('songPreset').value=name;eq();}$('songPreset').onchange=()=>{if(presets[$('songPreset').value])preset($('songPreset').value);};$('songResetEq').onclick=()=>preset('flat');['Bass','Mid','Treble'].forEach(band=>{$('song'+band).oninput=()=>{$('song'+band+'Value').textContent=$('song'+band).value+' dB';$('songPreset').value='custom';eq();};});
  if(navigator.mediaSession)for(const [action,handler]of Object.entries({play:()=>$('songPlayPause').onclick(),pause:()=>dj.pause(),previoustrack:()=>$('songPrevious').onclick(),nexttrack:()=>next(),stop,seekto:d=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.max(0,Math.min(d.seekTime,audio.duration));}})){try{navigator.mediaSession.setActionHandler(action,handler);}catch(_){}}
  window.SaiVistaStudioBridge={get dj(){return dj;},get songs(){return songs;},get group(){return selected();},get audio(){return audio;},get ctx(){return ctx;},get bands(){return bands;},normalizers,sound,load,prepare};
- $('songCalculateTime').onclick=async()=>{const button=$('songCalculateTime');button.disabled=true;button.textContent='Calculating…';const group=selected(),token=generation;try{for(const song of [...songs]){if(token!==generation)break;if(durations[window.PlaylistTime.key(song)]>0)continue;if(song.size>50000000||!playable(song))continue;const cached=dj.cache.get(group.key+':'+song.id);const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);try{await(cached?.promise||fetchBlob(song,group.key,controller.signal));}catch(_){}finally{clearTimeout(timeout);}}}finally{button.disabled=false;button.textContent='Calculate playlist time';totalTime();}};
+ $('songCalculateTime').onclick=async()=>{const button=$('songCalculateTime');button.disabled=true;button.textContent='Calculating…';const group=selected(),token=generation;try{for(const song of [...songs]){while(token===generation&&(loading||[...dj.cache.values()].some(entry=>!entry.ready)||document.getElementById('studioLoad')?.disabled))await new Promise(resolve=>setTimeout(resolve,250));if(token!==generation)break;if(durations[window.PlaylistTime.key(song)]>0)continue;if(song.size>50000000||!playable(song))continue;const cached=dj.cache.get(group.key+':'+song.id);const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);try{await(cached?.promise||fetchBlob(song,group.key,controller.signal,true));}catch(_){}finally{clearTimeout(timeout);}}}finally{button.disabled=false;button.textContent='Calculate playlist time';totalTime();}};
  $('songDay').onchange=day;$('songSearch').oninput=render;$('refreshSongs').onclick=()=>refresh(false);$('stopSong').onclick=stop;$('songCrossfade').oninput=()=>{dj.fadeSeconds=Number($('songCrossfade').value);$('songCrossfadeValue').textContent=dj.fadeSeconds+' seconds';};window.addEventListener('pagehide',stop);refresh();
 })();
