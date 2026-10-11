@@ -9,12 +9,17 @@
  const title=document.createElement('h2');title.textContent='Navratri Songs for Sai Vista';title.id='navratriSongsTitle';
  content.querySelector('#navratriSongsTitle').removeAttribute('id');
  const note=document.createElement('p');note.textContent='Open your playlist and DJ controls. Music continues when you minimise the player.';
- section.append(title,note,open);dialog.append(close,content);document.body.append(dialog);
+ const preview=document.createElement('div');preview.className='dj-preview';preview.innerHTML='<div class="dj-preview-copy"><span class="player-eyebrow">SAI VISTA · LIVE DJ PLAYER</span><h3>Your Garba. Your mix.</h3><p>Day-wise playlists · seamless crossfade · bass &amp; treble · cue &amp; loops</p><strong class="dj-preview-track">Choose your first track</strong></div><div class="dj-preview-art" aria-hidden="true"><div class="dj-disc"></div><div class="dj-bars">▂ ▅ ▃ ▇ ▄ ▆ ▂ ▅ ▇ ▃ ▆ ▄</div></div>';preview.append(open);section.append(title,preview,note);
+ const header=document.createElement('div');header.className='dj-popup-header';const label=document.createElement('strong');label.textContent='SAI VISTA / DJ STUDIO';header.append(label,close);content.className='dj-popup-content';dialog.append(header,content);document.body.append(dialog);
+ const now=content.querySelector('#songNowPlaying'),track=preview.querySelector('.dj-preview-track');if(now&&track&&typeof MutationObserver!=='undefined')new MutationObserver(()=>{track.textContent=now.textContent;}).observe(now,{childList:true,subtree:true,characterData:true});
  const controls=content.querySelector('.player-controls');
  let cue=0,loopStart=null,loopEnd=null,current=null;
  const active=()=>[...content.querySelectorAll('audio')].find(a=>a.src && !a.paused)||[...content.querySelectorAll('audio')].find(a=>a.src);
  const status=document.createElement('p');status.textContent='Cue and loop controls apply to the current song.';
  const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{const a=active();if(!a)return;if(current!==a){current=a;cue=0;loopStart=loopEnd=null;}action(a,b);};controls.append(b);return b;};
+ button('−10 seconds',a=>{a.currentTime=Math.max(0,a.currentTime-10);});
+ button('+10 seconds',a=>{if(Number.isFinite(a.duration))a.currentTime=Math.min(a.duration,a.currentTime+10);});
+ button('Loop 8 seconds',a=>{if(Number.isFinite(a.duration)&&a.duration-a.currentTime>=8){loopStart=a.currentTime;loopEnd=loopStart+8;a.saiVistaLoop=true;status.textContent='8-second loop active.';}});
  button('Set cue',a=>{cue=a.currentTime;status.textContent='Cue saved at '+Math.floor(cue)+' seconds.';});
  button('Go to cue',a=>{a.currentTime=cue;});
  button('Loop start',a=>{loopStart=a.currentTime;loopEnd=null;a.saiVistaLoop=false;status.textContent='Loop start saved. Choose Loop end.';});
