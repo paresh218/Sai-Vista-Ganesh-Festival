@@ -31,17 +31,30 @@ class SaiVistaDJ {
     }
     return this.cache.get(key).promise;
   }
-  preload(song,group) { if(song && song.size<=50000000)this.data(song,group).catch(()=>{}); }
+  preload(song,group) {
+    if(!song||song.size>50000000)return;const key=group+':'+song.id;
+    if(this.prepared?.key===key)return;
+    this.discardPrepared();const entry={key,deck:null};this.prepared=entry;
+    entry.promise=this.data(song,group).then(data=>{
+      if(this.prepared!==entry)return null;
+      const audio=this.options.makeAudio(),url=URL.createObjectURL(data);
+      const deck={audio,url,mix:0,song,group};entry.deck=deck;
+      audio.preload='auto';audio.src=url;audio.volume=0;audio.muted=this.muted;audio.load();return deck;
+    }).catch(()=>{if(this.prepared===entry)this.prepared=null;return null;});
+  }
+  discardPrepared(){const old=this.prepared;this.prepared=null;if(old?.deck)this.release(old.deck);}
   async switch(song,group) {
     this.manual=false;const token=++this.serial; this.settle();
     this.release(this.pending); this.pending=null;
     let candidate;
     try {
-      const data=await this.data(song,group);
+      const entry=this.prepared?.key===group+':'+song.id?this.prepared:null;
+      candidate=entry?await entry.promise:null;
       if(token!==this.serial)return false;
-      const audio=this.options.makeAudio(),url=URL.createObjectURL(data);
-      candidate={audio,url,mix:0,song,group};this.pending=candidate;
-      audio.preload='auto';audio.src=url;audio.volume=0;audio.muted=this.muted;
+      if(candidate)this.prepared=null;
+      else{const data=await this.data(song,group);if(token!==this.serial)return false;const audio=this.options.makeAudio(),url=URL.createObjectURL(data);candidate={audio,url,mix:0,song,group};}
+      const {audio,url}=candidate;this.pending=candidate;
+      audio.preload='auto';if(audio.src!==url)audio.src=url;audio.volume=0;audio.muted=this.muted;
       audio.playbackRate=this.options.rate();
       candidate.connection=await this.options.connect(audio);
       await audio.play(); // Resolution confirms the incoming deck has started.
@@ -91,8 +104,9 @@ class SaiVistaDJ {
   }
   finishManual(){this.manual=false;this.settle();}
   pause() {this.settle();this.active?.audio.pause();}
-  cancelSwitch() {this.serial++;this.settle();this.release(this.pending);this.pending=null;for(const entry of this.cache.values())entry.controller.abort();this.cache.clear();}
+  cancelSwitch() {this.discardPrepared();this.serial++;this.settle();this.release(this.pending);this.pending=null;for(const entry of this.cache.values())entry.controller.abort();this.cache.clear();}
   stop() {
+    this.discardPrepared();
     this.stageSerial++;this.release(this.staged);this.staged=null;this.manual=false;
     this.serial++;this.settle();this.release(this.pending);this.pending=null;
     this.release(this.active);this.active=null;

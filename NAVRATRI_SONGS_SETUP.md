@@ -48,3 +48,5 @@ Direct playback and next-track preloading now allow files up to 50 MB, including
 Deck B selection starts preloading immediately and stays selected when the library refreshes. Replacing B preserves the prepared deck until its replacement succeeds. Cache eviction no longer aborts downloads that a deck or analysis is awaiting.
 
 Performance: duration discovery yields while playback/deck/preload requests are pending. Background duration fetches use low priority; playback fetches high priority where supported. Modern browsers use native Uint8Array.fromBase64, retaining chunked decoding for older browsers.
+
+Next-track preloading now prepares a silent native audio element as well as its complete download; switching reuses that same element without resetting its source. Only one incoming element is retained and stop/folder changes release it. Duration calculation waits while an active track is playing to reduce background downloads/decoding.
