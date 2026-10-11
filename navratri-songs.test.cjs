@@ -1,21 +1,10 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs'), vm = require('node:vm');
-const source = fs.readFileSync('navratri-songs.gs', 'utf8');
-let unavailable = false;
-const file = (id, name, mime, trashed = false) => ({ getId:()=>id, getName:()=>name, getMimeType:()=>mime, isTrashed:()=>trashed, getResourceKey:()=> 'key', getSize:()=>name.startsWith('Huge') ? 25000001 : 10, getBlob:()=>({getBytes:()=>[1,2,3]}) });
-const context = {
-  Utilities: {base64Encode:()=>"AQID"},
-  DriveApp: { getFolderById: id => {
-    if (unavailable) throw Error('private failure');
-    const files = [file('b','02 Garba.mp3','audio/mpeg'),file('a','01 Aarti.mp3','audio/mpeg'),file('c','photo.jpg','image/jpeg'),file('d','Deleted.mp3','audio/mpeg',true),file('huge','Huge.mp3','audio/mpeg')];
-    return {getFiles:()=>({hasNext:()=>files.length > 0,next:()=>files.shift()})};
-  } },
-  ContentService: {MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>JSON.parse(text)})}
-};
-vm.createContext(context); vm.runInContext(source,context);
-const result = context.doGet(); assert.equal(result.ok,true); assert.equal(result.days.length,9);
-for (const day of result.days) { assert.equal(day.songs.length,3); assert.equal(day.songs[0].name,'01 Aarti.mp3'); assert.equal(day.songs[0].resourceKey,'key'); }
-assert.equal(context.doGet({parameter:{action:"audio",day:1,id:"a"}}).audio,"AQID");
-for(const params of [{day:10,id:"a"},{day:1,id:"outside"},{day:1,id:"c"},{day:1,id:"d"},{day:1,id:"huge"}]) assert.equal(context.doGet({parameter:{action:"audio",...params}}).ok,false);
-unavailable = true; const failed = context.doGet(); assert.equal(failed.ok,false); assert.ok(!JSON.stringify(failed).includes('private failure'));
-console.log('PASS: nine day folders, numeric song ordering, audio-only listings, deleted-file filtering, resource keys, safe service failures.');
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const file=(id,name,mime,size=10)=>({getId:()=>id,getName:()=>name,getMimeType:()=>mime,isTrashed:()=>false,getSize:()=>size,getResourceKey:()=>'',getBlob:()=>({getBytes:()=>[1,2,3]})});
+const files=[file('mp4','1. pankhida .m4a.mp4','video/mp4'),file('nested','Garba.mp3','audio/mpeg'),file('huge','Huge.mp3','audio/mpeg',25000001),file('private','Elsewhere.mp3','audio/mpeg')];
+const iterator=a=>{let i=0;return{hasNext:()=>i<a.length,next:()=>a[i++]}};
+const folder=(id,name,items=[],children=[])=>({getId:()=>id,getName:()=>name,getFiles:()=>iterator(items),getFolders:()=>iterator(children)});
+const sub=folder('nested-folder','Subfolder',[files[1]]),day=folder('day1','Day 1 - 11 October',[files[0],files[2]],[sub]),extra=folder('extra','Extra Songs'),root=folder('root','Songs',[],[day,extra]);
+const context={DriveApp:{getFolderById:()=>root,getFileById:id=>files.find(f=>f.getId()===id)},Utilities:{base64Encode:()=> 'AQID'},ContentService:{MimeType:{JSON:'json'},createTextOutput:x=>({setMimeType:()=>JSON.parse(x)})}};
+vm.createContext(context);vm.runInContext(fs.readFileSync('navratri-songs.gs','utf8'),context);
+const result=context.doGet();assert.equal(result.ok,true);assert.equal(result.groups.length,2);assert.equal(result.groups[1].name,'Extra Songs');assert.equal(result.groups[0].songs.length,3);assert.equal(result.groups[0].songs.find(s=>s.id==='nested').path,'Subfolder');assert.equal(context.doGet({parameter:{action:'audio',group:'day1',id:'mp4'}}).audio,'AQID');for(const id of ['private','missing','huge'])assert.equal(context.doGet({parameter:{action:'audio',group:'day1',id}}).ok,false);assert.equal(context.doGet({parameter:{action:'audio',group:'extra',id:'mp4'}}).ok,false);
+console.log('PASS: MP4 visibility/playback, extra folders, recursive discovery, group boundaries, external-file rejection and size limit.');

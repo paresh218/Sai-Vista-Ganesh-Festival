@@ -1,36 +1,48 @@
-// Separate read-only Apps Script web app owned by the committee.
-const SONG_DAYS = [{"day":1,"date":"2026-10-11","folderId":"1pCKc18l9oPHSSNdA8_ZInqXRhiLH-87m"},{"day":2,"date":"2026-10-12","folderId":"1EV-51lEpcHoS918-Q-Imz2vgmVmg9e3L"},{"day":3,"date":"2026-10-13","folderId":"1AQgF8K4v_uowKlKhXhl6soGil8I8Is89"},{"day":4,"date":"2026-10-14","folderId":"1_3wZGFotGFfisiBf1mygsSbkbTAPhvme"},{"day":5,"date":"2026-10-15","folderId":"1VW3Nza8YLCv1gyWw2V0w0lMRAui_2vGO"},{"day":6,"date":"2026-10-16","folderId":"1fw4keYJdD3dGWw34ZhBg6IDB54nqC_Zx"},{"day":7,"date":"2026-10-17","folderId":"1-JdSWkBLrC3xbN6IegD2-IoQhezoexUZ"},{"day":8,"date":"2026-10-18","folderId":"1ZQAy8S2St9TEPuRHeCxiYqjQ6x-vpJ-C"},{"day":9,"date":"2026-10-19","folderId":"1oMoRgBU8ittTh0Di-23j-h13IbEGFEBD"}];
+// Read-only song library; all access stays inside the dedicated shared root.
+const SONG_ROOT_ID = '1BkL8XO3KYJxPgAB2zyrKrbpZjIzJykma';
+function songMedia(file) {
+  return !file.isTrashed() && (file.getMimeType().startsWith('audio/') || file.getMimeType() === 'video/mp4' || /\.(mp3|m4a|mp4|aac|wav|ogg|opus|flac|webm)$/i.test(file.getName()));
+}
+function songWalk(folder, path, seen, depth) {
+  if (depth > 8 || seen.has(folder.getId())) return [];
+  seen.add(folder.getId());
+  let songs = [], files = folder.getFiles();
+  while (files.hasNext()) {
+    const file = files.next();
+    if (songMedia(file)) songs.push({id:file.getId(),name:file.getName(),size:file.getSize(),mime:file.getMimeType(),resourceKey:file.getResourceKey() || '',path});
+  }
+  const children = folder.getFolders();
+  while (children.hasNext()) {
+    const child = children.next();
+    songs = songs.concat(songWalk(child, path ? path + ' / ' + child.getName() : child.getName(), seen, depth + 1));
+  }
+  return songs;
+}
+function songLibrary() {
+  const root = DriveApp.getFolderById(SONG_ROOT_ID), children = root.getFolders(), groups = [];
+  const rootFiles = root.getFiles(), songs = [];
+  while(rootFiles.hasNext()) { const file = rootFiles.next(); if(songMedia(file)) songs.push({id:file.getId(),name:file.getName(),size:file.getSize(),mime:file.getMimeType(),resourceKey:file.getResourceKey() || '',path:''}); }
+  if(songs.length) groups.push({key:'root',name:'Shared songs',folderId:root.getId(),songs});
+  while(children.hasNext()) {
+    const folder = children.next(), match = /^Day\s+(\d+)\b/i.exec(folder.getName());
+    groups.push({key:folder.getId(),day:match ? Number(match[1]) : null,name:folder.getName(),folderId:folder.getId(),songs:songWalk(folder,'',new Set(),0)});
+  }
+  groups.sort((a,b)=>(a.day || 100)-(b.day || 100) || a.name.localeCompare(b.name,undefined,{numeric:true}));
+  groups.forEach(group=>group.songs.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true})));
+  return groups;
+}
 function doGet(e) {
-  if (e && e.parameter && e.parameter.action === 'audio') return songAudio(e.parameter);
   try {
-    const days = SONG_DAYS.map(day => {
-      const files = DriveApp.getFolderById(day.folderId).getFiles(), songs = [];
-      while (files.hasNext()) {
-        const file = files.next();
-        if (!file.getMimeType().startsWith('audio/') || file.isTrashed()) continue;
-        songs.push({ id: file.getId(), name: file.getName(), size: file.getSize(), resourceKey: file.getResourceKey() || '' });
-      }
-      songs.sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-      return { day: day.day, songs };
-    });
-    return songJson({ ok: true, days });
-  } catch (_) { return songJson({ ok: false, error: 'Songs are temporarily unavailable.' }); }
+    const groups = songLibrary();
+    if(e && e.parameter && e.parameter.action === 'audio') {
+      const p=e.parameter, group=groups.find(g=>g.key===p.group || (!p.group && g.day===Number(p.day)));
+      const song=group && group.songs.find(s=>s.id===p.id);
+      if(!song) return songJson({ok:false,error:'Song not found in this library.'});
+      if(song.size>25000000) return songJson({ok:false,error:'This file exceeds the 25 MB DJ-player limit. Use Drive preview.'});
+      const file=DriveApp.getFileById(song.id), blob=file.getBlob();
+      return songJson({ok:true,mime:file.getMimeType(),audio:Utilities.base64Encode(blob.getBytes())});
+    }
+    return songJson({ok:true,version:3,groups,days:groups.filter(g=>g.day)});
+  } catch(_) { return songJson({ok:false,error:'Songs are temporarily unavailable. Please refresh.'}); }
 }
 function songJson(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
-function verifySongFolders() { SONG_DAYS.forEach(day => DriveApp.getFolderById(day.folderId).getName()); }
-// Only audio directly in one of the configured day folders can be downloaded.
-function songAudio(params) {
-  try {
-    const day = SONG_DAYS.find(day => day.day === Number(params.day));
-    if (!day || !/^[A-Za-z0-9_-]+$/.test(params.id || '')) throw Error('Invalid song.');
-    const files = DriveApp.getFolderById(day.folderId).getFiles();
-    while (files.hasNext()) {
-      const file = files.next();
-      if (file.getId() !== params.id) continue;
-      if (file.isTrashed() || !file.getMimeType().startsWith('audio/')) throw Error('Not an audio file.');
-      if (file.getSize() > 25000000) return songJson({ok:false,error:'This song exceeds the 25 MB advanced-player limit. Use Drive preview instead.'});
-      return songJson({ok:true,mime:file.getMimeType(),audio:Utilities.base64Encode(file.getBlob().getBytes())});
-    }
-    throw Error('Song not found.');
-  } catch (_) { return songJson({ok:false,error:'Unable to load this song. Try Drive preview.'}); }
-}
