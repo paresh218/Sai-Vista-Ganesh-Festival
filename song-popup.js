@@ -5,7 +5,7 @@
  const close=document.createElement('button');close.type='button';close.className='btn btn-outline';close.textContent='Minimise player';close.onclick=()=>dialog.close();
  const content=document.createElement('div');
  for(const child of [...section.children])content.append(child);
- const open=document.createElement('button');open.type='button';open.className='btn btn-dark';open.textContent='Open DJ player ♫';open.onclick=()=>{dialog.showModal();const calculate=document.getElementById('songCalculateTime');if(calculate&&!calculate.disabled)calculate.onclick();};
+ const open=document.createElement('button');open.type='button';open.className='btn btn-dark';open.textContent='Open DJ player ♫';open.onclick=()=>{dialog.showModal();window.dispatchEvent?.(new Event('sai-vista-player-open'));const calculate=document.getElementById('songCalculateTime');if(calculate&&!calculate.disabled)calculate.onclick();};
  const title=document.createElement('h2');title.textContent='Navratri Songs for Sai Vista';title.id='navratriSongsTitle';
  content.querySelector('#navratriSongsTitle').removeAttribute('id');
  const note=document.createElement('p');note.textContent='Open your playlist and DJ controls. Music continues when you minimise the player.';

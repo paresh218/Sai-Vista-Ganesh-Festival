@@ -12,7 +12,7 @@ if(typeof document!=='undefined')(()=>{
  const set=(el,value)=>{if(el.textContent!==value)el.textContent=value;};
  function update(){const state=miniPlaybackState(bridge()?.dj);bar.hidden=!state||!!dialog?.open;document.body.classList.toggle('has-song-mini',!bar.hidden);if(!state)return;set(badge,'♫ '+state.status);set(title,state.title);set(toggle,state.playing?'Pause':'Resume');}
  toggle.onclick=async()=>{const b=bridge();if(!b)return;const state=miniPlaybackState(b.dj);if(state?.playing)b.dj.pause();else if(b.dj.active){await b.sound(b.dj.active.audio);b.dj.active.audio.play().catch(()=>{});}update();};
- open.onclick=()=>{dialog?.showModal();update();};stop.onclick=()=>{document.getElementById('stopSong').click();update();};dialog?.addEventListener('close',update);
+ open.onclick=()=>{dialog?.showModal();window.dispatchEvent(new Event('sai-vista-player-open'));update();};stop.onclick=()=>{document.getElementById('stopSong').click();update();};dialog?.addEventListener('close',update);
  for(const event of ['play','pause','ended','emptied'])document.addEventListener(event,update,true);
  setInterval(update,500);update();
 })();
