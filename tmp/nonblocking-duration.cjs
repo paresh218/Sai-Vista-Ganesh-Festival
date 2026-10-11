@@ -1,0 +1,1 @@
+const fs=require('fs');let p=fs.readFileSync('navratri-songs.js','utf8');p=p.replace('saveDuration(song,await window.PlaylistTime.measure(media));return media;', 'window.PlaylistTime.measure(media).then(n=>saveDuration(song,n));return media;');fs.writeFileSync('navratri-songs.js',p);

@@ -1,0 +1,1 @@
+const fs=require('fs');let p=fs.readFileSync('navratri-songs.js','utf8');p=p.replace("finally{refreshing=false;$('refreshSongs').disabled=false;}","finally{refreshing=false;$('refreshSongs').disabled=false;if(document.querySelector?.('.song-popup[open]')&&!$('songCalculateTime').disabled)$('songCalculateTime').onclick();}");fs.writeFileSync('navratri-songs.js',p);

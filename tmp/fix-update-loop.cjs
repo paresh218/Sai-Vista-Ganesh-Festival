@@ -1,0 +1,3 @@
+const fs=require('fs');let p=fs.readFileSync('song-popup.js','utf8');p=p.replace('track.textContent=now.textContent;', 'if(track.textContent!==now.textContent)track.textContent=now.textContent;');fs.writeFileSync('song-popup.js',p);
+p=fs.readFileSync('translations.js','utf8');p=p.replace('node.nodeValue = source;', 'if (node.nodeValue !== source) node.nodeValue = source;').replace('node.nodeValue = `${leading}${translated}${trailing}`;', 'const nextText = `${leading}${translated}${trailing}`;\n      if (node.nodeValue !== nextText) node.nodeValue = nextText;');fs.writeFileSync('translations.js',p);
+p=fs.readFileSync('service-worker.js','utf8').replace('2026-v79','2026-v80');fs.writeFileSync('service-worker.js',p);

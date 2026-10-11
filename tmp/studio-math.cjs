@@ -1,0 +1,7 @@
+const fs=require('fs');let p=fs.readFileSync('dj-decks.js','utf8');p=p.replace("if(typeof window!=='undefined')window.SaiVistaDJ=SaiVistaDJ;",`SaiVistaDJ.math={
+ normalize:rms=>Math.min(2,Math.max(.25,.12/rms)),
+ sync:(a,b)=>{if(!(a.bpm>0&&b.bpm>0))throw Error('BPM required');const rate=a.bpm*a.rate/b.bpm;if(rate<.5||rate>2)throw Error('Tempo difference too large');const ba=60/a.bpm,bb=60/b.bpm,phase=((a.time-(a.offset||0))%ba+ba)%ba/ba,beat=Math.round((b.time-(b.offset||0))/bb-phase);return{rate,time:Math.max(0,(b.offset||0)+(beat+phase)*bb)};},
+ loop:(time,bpm,offset,beats,duration)=>{const beat=60/bpm,start=Math.max(0,offset+Math.floor((time-offset)/beat)*beat),end=start+beats*beat;return end<=duration?{start,end}:null;}
+};
+if(typeof window!=='undefined')window.SaiVistaDJ=SaiVistaDJ;`);fs.writeFileSync('dj-decks.js',p);
+p=fs.readFileSync('dj-studio.js','utf8').replace('Math.min(2,Math.max(.25,.12/rms))','window.SaiVistaDJ.math.normalize(rms)');p=p.replace("const phase=((a.audio.currentTime-(ma.offset||0))%beatA+beatA)%beatA/beatA;const bb=Math.round((b.audio.currentTime-(mb.offset||0))/beatB-phase);const target=Math.max(0,(mb.offset||0)+(bb+phase)*beatB);", "const target=Math.min(b.audio.duration,window.SaiVistaDJ.math.sync({bpm:ma.bpm,rate:a.audio.playbackRate,time:a.audio.currentTime,offset:ma.offset},{bpm:mb.bpm,time:b.audio.currentTime,offset:mb.offset}).time);");fs.writeFileSync('dj-studio.js',p);

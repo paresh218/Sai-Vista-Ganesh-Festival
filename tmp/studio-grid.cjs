@@ -1,0 +1,3 @@
+const fs=require('fs');let p=fs.readFileSync('dj-studio.js','utf8');p=p.replace("cueButtons('studioACues',deckA);cueButtons('studioBCues',deckB);", `cueButtons('studioACues',deckA);cueButtons('studioBCues',deckB);
+ for(const [id,getDeck]of [['studioACues',deckA],['studioBCues',deckB]]){const grid=document.createElement('button');grid.textContent='Set beat here';grid.onclick=()=>{const d=getDeck(),m=meta(d);if(!d||!m.bpm){status('Enter BPM first.');return;}metadata[key(d)]={...m,offset:d.audio.currentTime%(60/m.bpm)};save();status('Beat grid aligned to this position.');};$(id).append(grid);}`);
+p=p.replace("if(!host.closest('dialog')?.open||host.hidden)return;", "if(!host.closest('dialog')?.open||host.hidden)return;");fs.writeFileSync('dj-studio.js',p);
