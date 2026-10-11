@@ -285,13 +285,14 @@
       const key = normalise(source);
       const translated = t(key);
       if (translated === key) {
-        node.nodeValue = source;
+        if (node.nodeValue !== source) node.nodeValue = source;
         lastText.set(node,node.nodeValue);
         return;
       }
       const leading = source.match(/^\s*/)?.[0] || "";
       const trailing = source.match(/\s*$/)?.[0] || "";
-      node.nodeValue = `${leading}${translated}${trailing}`;
+      const nextText = `${leading}${translated}${trailing}`;
+      if (node.nodeValue !== nextText) node.nodeValue = nextText;
       lastText.set(node,node.nodeValue);
     });
     document.querySelectorAll("[data-language]").forEach((button) => {
