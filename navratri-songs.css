@@ -11,3 +11,40 @@
 .song-mini[hidden]{display:none}.song-mini{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:900;display:flex;gap:10px;align-items:center;width:min(780px,calc(100% - 32px));box-sizing:border-box;padding:14px 18px;border:1px solid #8d667f;border-radius:18px;background:#291829;color:#fff8ed;box-shadow:0 8px 35px #0005}.song-mini>div{flex:1;min-width:0;display:grid;gap:4px}.song-mini strong{font-size:.8rem;color:#efbd64}.song-mini-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem}.song-mini button{min-height:44px;padding:8px 12px;border:1px solid #efbd64;border-radius:10px;background:#efbd64;color:#291523;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}.song-mini button:last-child{background:transparent;color:#fff8ed;border-color:#a88098}.song-mini button:focus-visible{outline:3px solid #fff8ed;outline-offset:3px}body.has-song-mini{padding-bottom:115px}@media(max-width:600px){.song-mini{bottom:calc(76px + env(safe-area-inset-bottom));flex-wrap:wrap;padding:12px;gap:8px}.song-mini>div{flex-basis:100%}.song-mini button{flex:1}body.has-song-mini{padding-bottom:205px}}
 
 .retro-panel{padding:16px;margin:16px 0;background:#17251f;color:#d9ffea;border:1px solid #66ad86;border-radius:12px}.retro-panel summary{cursor:pointer;font-weight:700}.retro-eq{display:grid;grid-template-columns:repeat(10,minmax(50px,1fr));gap:8px;overflow-x:auto;padding:16px 0}.retro-eq label{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.75rem}.retro-eq input{writing-mode:vertical-lr;direction:rtl;appearance:auto;width:26px;height:110px;accent-color:#63ffc1}.retro-panel canvas{display:block;width:100%;height:130px;margin-top:14px;border-radius:8px}.retro-panel select,.retro-panel button,.song-move{min-height:44px;padding:8px;border:1px solid #67ad87;border-radius:8px;background:#f0fff6;color:#183123}.retro-panel small{display:block;margin-top:12px}.song-move{max-width:135px}.retro-panel button{margin:8px 12px 8px 0}
+/* Explicit player regions replace the old implicit row placements. */
+.song-popup .dj-popup-content.player-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);gap:20px;padding:22px;align-items:start}
+.player-workspace>.workspace-toolbar{grid-column:1/-1;margin:0;padding:14px 16px;background:#f0e6dd;border-radius:14px;gap:12px}
+.player-workspace>.advanced-player{grid-column:1;grid-row:auto;margin:0;min-width:0;padding:22px;border-radius:16px}
+.player-workspace>.workspace-playlist{grid-column:2;grid-row:2/4;min-width:0;padding:20px;border:1px solid #ddcbbd;border-radius:16px;background:#fff}
+.player-workspace>.workspace-sound{grid-column:1;grid-row:auto;min-width:0;padding:20px;border:1px solid #ddcbbd;border-radius:16px;background:#fff}
+.player-workspace>.workspace-dj{grid-column:1/-1;grid-row:auto;margin:0}
+.workspace-playlist h3,.workspace-sound h3,.workspace-dj>h3{margin:0 0 16px;font-size:1.15rem}
+.workspace-playlist .song-toolbar{display:grid;grid-template-columns:1fr;margin:0 0 16px;gap:6px;background:none;padding:0}
+.workspace-playlist #songSearch{width:100%;box-sizing:border-box;min-height:44px}
+.workspace-playlist .playlist-time{margin:10px 0;padding:12px;background:#f9f3eb;border-radius:10px}
+.workspace-playlist .playlist-time small{line-height:1.5}
+.workspace-playlist>p{font-size:.85rem;line-height:1.55;margin:12px 0}
+.workspace-playlist .song-list{max-height:480px;overflow:auto;overscroll-behavior:contain}
+.workspace-playlist .song-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:14px;background:#fffaf4}
+.workspace-playlist .song-row h3{grid-column:1/-1;font-size:.9rem;margin:0;line-height:1.5;overflow-wrap:anywhere}
+.workspace-playlist .song-row button{justify-self:start;min-height:44px}
+.workspace-playlist .song-move{width:125px;max-width:100%;font-size:.8rem}
+.workspace-playlist .workspace-download,.workspace-playlist .song-upload{margin-top:16px;border-top:1px solid #e8dad0;padding-top:14px}
+.workspace-download summary,.workspace-extras summary,.workspace-sound summary{cursor:pointer;font-weight:700;min-height:30px}
+.workspace-download .player-settings{display:grid;gap:10px;padding-top:14px}
+.workspace-extras{margin-top:18px;padding-top:14px;border-top:1px solid #ffffff30}
+.workspace-extras button{margin:8px 6px 0 0;padding:10px;min-height:44px;border:1px solid #bb95a9;border-radius:9px;background:#fff4e7;color:#382038}
+.workspace-extras p{font-size:.8rem}
+.workspace-sound .song-equalizer{color:#3c2131;margin:0;border:none;padding:0}
+.workspace-sound .retro-panel{margin:16px 0 0}
+.workspace-sound .retro-eq{grid-template-columns:repeat(10,minmax(30px,1fr));gap:4px}
+.workspace-sound .retro-eq input{height:95px}
+.workspace-sound .retro-panel select{max-width:100%}
+.workspace-sound .player-settings{color:#3c2131}
+.player-workspace #songSmoothStatus{display:block;flex-basis:100%;font-size:.78rem;line-height:1.5;color:#edd7e4}
+.player-workspace .player-controls{gap:8px}
+.player-workspace .player-controls button{min-height:44px}
+.player-workspace .workspace-toolbar select{flex:1;min-width:180px}
+@media(max-width:850px){.song-popup .dj-popup-content.player-workspace{grid-template-columns:1fr;padding:14px;gap:14px}.player-workspace>.advanced-player,.player-workspace>.workspace-playlist,.player-workspace>.workspace-sound,.player-workspace>.workspace-dj{grid-column:1;grid-row:auto}.player-workspace>.workspace-playlist{padding:16px}.workspace-playlist .song-list{max-height:360px}.dj-popup-header{flex-wrap:wrap;gap:8px}.dj-popup-header strong{flex-basis:100%}.workspace-toolbar label{flex-basis:100%}.workspace-toolbar button{flex:1}}
+
+.workspace-transitions{margin:14px 0;padding:12px;border:1px solid #ffffff30;border-radius:10px}.workspace-transitions summary{cursor:pointer;font-size:.9rem;font-weight:700}.workspace-transitions label:has(input[type=checkbox]){display:flex;align-items:center;gap:10px}.workspace-transitions input[type=checkbox]{width:20px;height:20px;margin:0}.workspace-transitions .player-settings{padding-top:14px}.workspace-download[open]{padding-bottom:10px}
