@@ -1,0 +1,6 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const records=new Map();let blocked=true,opens=0;
+const database={close(){},transaction(){const tx={};tx.objectStore=()=>Object.fromEntries(['get','getKey','put','clear'].map(method=>[method,(value,key)=>{const r={};setImmediate(()=>{if(method==='put'){records.set(key,value);r.result=key;}else if(method==='clear')records.clear();else r.result=method==='get'?records.get(value):records.has(value)?value:undefined;r.onsuccess();tx.oncomplete();});return r;}]));return tx;}};
+const context={window:{},setTimeout,clearTimeout,indexedDB:{open(){opens++;const r={result:database};setImmediate(()=>blocked?r.onblocked():r.onsuccess());return r;}}};
+vm.runInNewContext(fs.readFileSync('song-offline.js','utf8'),context);
+(async()=>{const store=context.window.SaiVistaOffline;await assert.rejects(store.get('a'),/unavailable/);blocked=false;assert.equal(await store.has('a'),false);await store.put('a','music');assert.equal(await store.has('a'),true);assert.equal(await store.get('a'),'music');assert.equal(opens,2,'Blocked open must allow retry');await store.clear();assert.equal(await store.has('a'),false);console.log('PASS: blocked storage recovery, saved-file lookup, local reads and clearing');})().catch(e=>{console.error(e);process.exitCode=1;});
