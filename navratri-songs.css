@@ -48,3 +48,22 @@
 @media(max-width:850px){.song-popup .dj-popup-content.player-workspace{grid-template-columns:1fr;padding:14px;gap:14px}.player-workspace>.advanced-player,.player-workspace>.workspace-playlist,.player-workspace>.workspace-sound,.player-workspace>.workspace-dj{grid-column:1;grid-row:auto}.player-workspace>.workspace-playlist{padding:16px}.workspace-playlist .song-list{max-height:360px}.dj-popup-header{flex-wrap:wrap;gap:8px}.dj-popup-header strong{flex-basis:100%}.workspace-toolbar label{flex-basis:100%}.workspace-toolbar button{flex:1}}
 
 .workspace-transitions{margin:14px 0;padding:12px;border:1px solid #ffffff30;border-radius:10px}.workspace-transitions summary{cursor:pointer;font-size:.9rem;font-weight:700}.workspace-transitions label:has(input[type=checkbox]){display:flex;align-items:center;gap:10px}.workspace-transitions input[type=checkbox]{width:20px;height:20px;margin:0}.workspace-transitions .player-settings{padding-top:14px}.workspace-download[open]{padding-bottom:10px}
+/* Shared Sai Vista player palette. */
+.song-popup{--player-plum:#3e2037;--player-deep:#261724;--player-gold:#e9bd70;--player-cream:#fff8ed;--player-border:#b990ab;--player-muted:#ead6e3;background:var(--player-cream)}
+.song-popup .dj-popup-header{background:var(--player-deep);color:var(--player-gold);border-color:var(--player-border)}
+.song-popup .player-workspace>.advanced-player,.song-popup .workspace-sound,.song-popup .workspace-playlist{background:var(--player-plum);color:var(--player-cream);border:1px solid var(--player-border);border-radius:16px}
+.song-popup .workspace-toolbar,.song-popup .workspace-playlist .playlist-time,.song-popup .workspace-playlist .song-row{background:var(--player-deep);color:var(--player-cream);border-color:var(--player-border)}
+.song-popup .workspace-toolbar label,.song-popup .workspace-playlist h3,.song-popup .workspace-sound h3,.song-popup .workspace-sound .song-equalizer,.song-popup .workspace-sound .player-settings,.song-popup .workspace-playlist .playlist-time small,.song-popup .workspace-playlist .song-upload,.song-popup .workspace-playlist>p{color:var(--player-cream)}
+.song-popup .workspace-playlist .song-row.is-playing{border-color:var(--player-gold);box-shadow:inset 3px 0 var(--player-gold)}
+.song-popup button,.song-popup .btn,.song-popup .retro-panel button,.song-popup .workspace-extras button{background:var(--player-gold);color:var(--player-deep);border:1px solid var(--player-gold);border-radius:10px;font-weight:600;min-height:44px}
+.song-popup .btn-outline,.song-popup #songMute,.song-popup #songShuffle,.song-popup #songRepeat{background:transparent;color:var(--player-cream);border-color:var(--player-border)}
+.song-popup button:disabled{opacity:.5;cursor:not-allowed}
+.song-popup button:hover:not(:disabled){filter:brightness(1.08)}
+.song-popup button:focus-visible,.song-popup select:focus-visible,.song-popup input:focus-visible,.song-popup summary:focus-visible{outline:3px solid var(--player-gold);outline-offset:3px}
+.song-popup select,.song-popup input[type=search],.song-popup input[type=number],.song-popup .song-move,.song-popup .retro-panel select{background:var(--player-cream);color:var(--player-deep);border:1px solid var(--player-border);border-radius:10px;min-height:44px}
+.song-popup input[type=range],.song-popup input[type=checkbox]{accent-color:var(--player-gold)}
+.song-popup .workspace-download,.song-popup .workspace-playlist .song-upload,.song-popup .workspace-extras{border-color:var(--player-border)}
+.song-popup .retro-panel{background:var(--player-deep);color:var(--player-cream);border-color:var(--player-border);border-radius:12px}
+.song-popup .retro-panel small,.song-popup #songSmoothStatus,.song-popup #songEqStatus{color:var(--player-muted)}
+.song-popup summary,.song-popup .player-eyebrow,.song-popup #songNextName,.song-popup .workspace-dj>h3{color:var(--player-gold)}
+.song-popup .song-upload a{color:var(--player-deep)}
