@@ -57,6 +57,7 @@ class SaiVistaDJ {
       audio.preload='auto';if(audio.src!==url)audio.src=url;audio.volume=0;audio.muted=this.muted;
       audio.playbackRate=this.options.rate();
       candidate.connection=await this.options.connect(audio);
+      await this.options.beforePlay?.(candidate,this.active);
       await audio.play(); // Resolution confirms the incoming deck has started.
       if(token!==this.serial){this.release(candidate);return false;}
       this.pending=null;

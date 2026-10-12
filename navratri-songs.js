@@ -71,7 +71,20 @@
    }
    const media=new Blob([bytes],{type:mime});window.PlaylistTime.measure(media).then(n=>saveDuration(song,n));return media;
  }
+ function smoothMix(incoming,outgoing){
+   if(!$('songSmoothMix').checked)return;
+   const a=incoming.audio;for(const name of ['preservesPitch','webkitPreservesPitch','mozPreservesPitch'])if(name in a)a[name]=true;
+   let metadata={};try{metadata=JSON.parse(localStorage.getItem('saiVistaDJMetadata')||'{}');}catch(_){}
+   const info=deck=>metadata[deck.song.id+':'+(deck.song.size||0)]||{},next=info(incoming),previous=outgoing&&info(outgoing);
+   const gain=normalizers.get(a);if(gain&&next.rms>0)gain.gain.setTargetAtTime(window.SaiVistaDJ.math.normalize(next.rms),ctx.currentTime,.05);
+   if(outgoing){const oldGain=normalizers.get(outgoing.audio);if(oldGain&&previous.rms>0)oldGain.gain.setTargetAtTime(window.SaiVistaDJ.math.normalize(previous.rms),ctx.currentTime,.05);}
+   let message='Smooth crossfade active. Analyse BPM to match tempo.';
+   if(outgoing&&!outgoing.audio.paused&&previous.bpm>0&&next.bpm>0){const rate=previous.bpm*outgoing.audio.playbackRate/next.bpm;if(rate>=.85&&rate<=1.15){a.playbackRate=rate;try{const aligned=window.SaiVistaDJ.math.sync({bpm:previous.bpm,rate:outgoing.audio.playbackRate,time:outgoing.audio.currentTime,offset:previous.offset},{bpm:next.bpm,time:0,offset:next.offset});if(Number.isFinite(a.duration)&&aligned.time<a.duration)a.currentTime=aligned.time;}catch(_){}message='Tempo matched · pitch preserved where supported · smooth crossfade.';}else message='Tempo difference exceeds 15%; using smooth crossfade without extreme speed changes.';}
+   $('songSmoothStatus').textContent=message;
+ }
+ $('songSmoothMix').onchange=()=>{if($('songSmoothMix').checked){$('songCrossfade').value=Math.max(6,Number($('songCrossfade').value));dj.fadeSeconds=Number($('songCrossfade').value);$('songCrossfadeValue').textContent=dj.fadeSeconds+' seconds';$('songSmoothStatus').textContent='Enabled. Upcoming switches use analysed BPM and loudness. Analyse in advanced DJ studio or enter BPM there.';}else{$('songSmoothStatus').textContent='Smooth Auto Mix off.';audio.playbackRate=Number($('songSpeed').value);for(const deck of [dj.active,dj.outgoing]){const gain=deck&&normalizers.get(deck.audio);if(gain)gain.gain.setTargetAtTime(1,ctx.currentTime,.05);}}};
  const dj=new window.SaiVistaDJ({
+   beforePlay:smoothMix,
    fetchBlob,rate:()=>Number($('songSpeed').value),connect:sound,
    makeAudio:()=>{const element=document.createElement('audio');element.hidden=true;$('songAudio').after(element);return element;},
    commit:(element,song)=>{audio=element;window.SaiVistaStudioTrackChanged?.(element);index=songs.findIndex(s=>s.id===song.id);bindAudio();$('songNowPlaying').textContent=song.name;$('songQueuePosition').textContent=(index+1)+' / '+songs.length;$('songPlayPause').disabled=false;$('songPlayPause').textContent='Pause';$('songPlaybackStatus').textContent=dj.outgoing?'Crossfading…':'Playing';$('songPlayer').replaceChildren();fallback(song);render();prepare();if(navigator.mediaSession&&window.MediaMetadata){navigator.mediaSession.metadata=new MediaMetadata({title:song.name,artist:'Sai Vista',album:selected().name});navigator.mediaSession.playbackState='playing';}},
