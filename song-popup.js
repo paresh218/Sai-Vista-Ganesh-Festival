@@ -14,7 +14,7 @@
  const now=content.querySelector('#songNowPlaying'),track=preview.querySelector('.dj-preview-track');if(now&&track&&typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(track.textContent!==now.textContent)track.textContent=now.textContent;}).observe(now,{childList:true,subtree:true,characterData:true});
  const controls=content.querySelector('.player-controls');
  let cue=0,loopStart=null,loopEnd=null,current=null;
- const active=()=>[...content.querySelectorAll('audio')].find(a=>a.src && !a.paused)||[...content.querySelectorAll('audio')].find(a=>a.src);
+ const active=()=>window.SaiVistaStudioBridge?.dj.active?.audio||[...content.querySelectorAll('audio')].find(a=>a.src && !a.paused)||[...content.querySelectorAll('audio')].find(a=>a.src);
  const status=document.createElement('p');status.textContent='Cue and loop controls apply to the current song.';
  const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{const a=active();if(!a)return;if(current!==a){current=a;cue=0;loopStart=loopEnd=null;}action(a,b);};controls.append(b);return b;};
  button('−10 seconds',a=>{a.currentTime=Math.max(0,a.currentTime-10);});

@@ -6,6 +6,7 @@ class SaiVistaDJ {
   }
   release(deck) {
     if(!deck)return;
+    deck.audio.onplaying=deck.audio.onwaiting=deck.audio.onstalled=deck.audio.onseeking=deck.audio.onseeked=deck.audio.ondurationchange=null;
     deck.audio.onplay=deck.audio.onpause=deck.audio.onended=deck.audio.ontimeupdate=deck.audio.onerror=deck.audio.onloadedmetadata=null;
     deck.connection?.disconnect(); deck.audio.pause(); deck.audio.removeAttribute('src'); deck.audio.load();
     URL.revokeObjectURL(deck.url); deck.audio.remove();
@@ -65,6 +66,7 @@ class SaiVistaDJ {
       this.active=candidate;
       if(old && !old.audio.paused && this.fadeSeconds>0) {
         this.outgoing=old;
+        old.audio.onplaying=old.audio.onwaiting=old.audio.onstalled=old.audio.onseeking=old.audio.onseeked=old.audio.ondurationchange=null;
         old.audio.onplay=old.audio.onpause=old.audio.onended=old.audio.ontimeupdate=old.audio.onerror=old.audio.onloadedmetadata=null;
         const start=Date.now(),duration=this.fadeSeconds*1000;
         this.timer=setInterval(()=>{
