@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const file=(id,name,mime,size=10)=>({getId:()=>id,getName:()=>name,getMimeType:()=>mime,isTrashed:()=>false,getSize:()=>size,getResourceKey:()=>'',getBlob:()=>({getBytes:()=>[1,2,3]})});
-const files=[file('mp4','1. pankhida .m4a.mp4','video/mp4',100000000),file('nested','Garba.mp3','audio/mpeg'),file('mpeg','6. Song.mp3.mpeg','video/mpeg'),file('pdf','Notes.pdf','application/pdf'),file('huge','Huge.mp3','audio/mpeg',100000001),file('private','Elsewhere.mp3','audio/mpeg')];
+const files=[file('mp4','1. pankhida .m4a.mp4','video/mp4'),file('nested','Garba.mp3','audio/mpeg'),file('mpeg','6. Song.mp3.mpeg','video/mpeg'),file('pdf','Notes.pdf','application/pdf'),file('huge','Huge.mp3','audio/mpeg',50000001),file('private','Elsewhere.mp3','audio/mpeg')];
 const iterator=a=>{let i=0;return{hasNext:()=>i<a.length,next:()=>a[i++]}};
 const folder=(id,name,items=[],children=[])=>({getId:()=>id,getName:()=>name,getFiles:()=>iterator(items),getFolders:()=>iterator(children)});
 const sub=folder('nested-folder','Subfolder',[files[1]]),day=folder('day1','Day 1 - 11 October',[files[0],files[2],files[3],files[4]],[sub]),extra=folder('extra','Extra Songs'),root=folder('root','Songs',[],[day,extra]);

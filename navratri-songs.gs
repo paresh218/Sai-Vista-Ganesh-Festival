@@ -38,11 +38,11 @@ function doGet(e) {
       const p=e.parameter, group=groups.find(g=>g.key===p.group || (!p.group && g.day===Number(p.day)));
       const song=group && group.songs.find(s=>s.id===p.id);
       if(!song) return songJson({ok:false,error:'Song not found in this library.'});
-      if(song.size>100000000) return songJson({ok:false,error:'This file exceeds the 100 MB DJ-player limit. Use Drive preview.'});
+      if(song.size>50000000) return songJson({ok:false,error:'This file exceeds the 50 MB DJ-player limit. Use Drive preview.'});
       const file=DriveApp.getFileById(song.id), blob=file.getBlob();
       return songJson({ok:true,mime:file.getMimeType(),audio:Utilities.base64Encode(blob.getBytes())});
     }
-    return songJson({ok:true,version:4,groups,days:groups.filter(g=>g.day)});
+    return songJson({ok:true,version:3,groups,days:groups.filter(g=>g.day)});
   } catch(_) { return songJson({ok:false,error:'Songs are temporarily unavailable. Please refresh.'}); }
 }
 function songJson(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
