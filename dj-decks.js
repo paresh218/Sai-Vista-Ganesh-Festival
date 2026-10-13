@@ -33,7 +33,7 @@ class SaiVistaDJ {
     return this.cache.get(key).promise;
   }
   preload(song,group) {
-    if(!song||song.size>50000000)return;const key=group+':'+song.id;
+    if(!song||song.size>100000000)return;const key=group+':'+song.id;
     if(this.prepared?.key===key)return;
     this.discardPrepared();const entry={key,deck:null};this.prepared=entry;
     entry.promise=this.data(song,group).then(data=>{
