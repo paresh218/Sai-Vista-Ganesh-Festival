@@ -62,3 +62,5 @@ Classic music experience: drag/drop playlist ordering plus accessible Move to me
 Player layout now uses explicit playback, playlist, sound/visualization, and DJ-tool regions. Transitions, cue/loops, and local downloads are expandable. Existing controls are moved without cloning or recreating audio, preserving playback and event handlers. Responsive layout stacks regions below 850 px. Browser checks passed for relocated Smooth Auto Mix and minimise/reopen while playing.
 
 Playback limit update: website and service now accept tracks through 100,000,000 bytes, including next-track preloading, duration discovery and offline saving. The 50 MB session cache and 25 MB analysis limit remain bounded separately. Service catalogue version is 4.
+
+Large files use authenticated Drive byte ranges of 12 MB each, validated before joining base64 chunks. This avoids converting an entire file over 50 MB into an Apps Script byte array. Catalogue version 5.

@@ -39,10 +39,27 @@ function doGet(e) {
       const song=group && group.songs.find(s=>s.id===p.id);
       if(!song) return songJson({ok:false,error:'Song not found in this library.'});
       if(song.size>100000000) return songJson({ok:false,error:'This file exceeds the 100 MB DJ-player limit. Use Drive preview.'});
-      const file=DriveApp.getFileById(song.id), blob=file.getBlob();
-      return songJson({ok:true,mime:file.getMimeType(),audio:Utilities.base64Encode(blob.getBytes())});
+      const file=DriveApp.getFileById(song.id);
+      return songJson({ok:true,mime:file.getMimeType(),audio:songAudio(file,song)});
     }
-    return songJson({ok:true,version:4,groups,days:groups.filter(g=>g.day)});
+    return songJson({ok:true,version:5,groups,days:groups.filter(g=>g.day)});
   } catch(_) { return songJson({ok:false,error:'Songs are temporarily unavailable. Please refresh.'}); }
 }
 function songJson(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
+
+// Base64 chunks are divisible by three bytes, so joining preserves the original audio.
+function songAudio(file,song) {
+  if(song.size<=50000000) return Utilities.base64Encode(file.getBlob().getBytes());
+  const parts=[], chunk=12000000;
+  for(let start=0;start<song.size;start+=chunk) {
+    const end=Math.min(song.size,start+chunk)-1;
+    const headers={Authorization:'Bearer '+ScriptApp.getOAuthToken(),Range:'bytes='+start+'-'+end};
+    if(song.resourceKey) headers['X-Goog-Drive-Resource-Keys']=song.id+'/'+song.resourceKey;
+    const response=UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(song.id)+'?alt=media',{headers,muteHttpExceptions:true});
+    if(response.getResponseCode()!==206) throw Error('Audio range download failed');
+    const bytes=response.getContent();
+    if(bytes.length!==end-start+1) throw Error('Incomplete audio range');
+    parts.push(Utilities.base64Encode(bytes));
+  }
+  return parts.join('');
+}
