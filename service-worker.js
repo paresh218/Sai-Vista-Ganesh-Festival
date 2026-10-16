@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v106";
+const CACHE_NAME = "sai-vista-ganpati-2026-v108";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -16,6 +16,9 @@ const APP_SHELL = [
   "navratri-songs.js",
   "song-offline.js",
   "garba-special.js",
+  "garba-dj-controls.js",
+  "player-modern.js",
+  "player-modern.css",
   "garba-special.css",
   "garba-catalogue.json",
   "song-retro.js",

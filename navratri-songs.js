@@ -125,8 +125,10 @@
   await window.SaiVistaOffline.put('garba-local:'+id+':'+song.size+':',file);
   const next=[...localGarba.filter(s=>s.id!==id),song];
   localStorage.setItem('saiVistaGarbaFiles',JSON.stringify(next));localGarba=next;
-  applyLibrary(catalogue);
+  applyLibrary(catalogue);return song;
  },
+ getGarbaSong:id=>localGarba.find(s=>s.id===id),
+ async playGarba(id){this.openGarba();const at=songs.findIndex(s=>s.id===id);if(at>=0)await load(at);else throw Error("Import this song again to use DJ playback.");},
  openGarba(){applyLibrary(catalogue);$('songDay').value='garba-local';day();}
  };
  $('songCalculateTime').onclick=async()=>{const button=$('songCalculateTime');button.disabled=true;button.textContent='Calculating…';const group=selected(),token=generation;try{for(const song of [...songs]){while(token===generation&&(saving||dj.active&&!dj.active.audio.paused||loading||[...dj.cache.values()].some(entry=>!entry.ready)||document.getElementById('studioLoad')?.disabled))await new Promise(resolve=>setTimeout(resolve,250));if(token!==generation)break;if(durations[window.PlaylistTime.key(song)]>0)continue;if(song.size>50000000||!playable(song))continue;const cached=dj.cache.get(group.key+':'+song.id);const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);try{await(cached?.promise||fetchBlob(song,group.key,controller.signal,true));}catch(_){}finally{clearTimeout(timeout);}}}finally{button.disabled=false;button.textContent='Calculate playlist time';totalTime();}};

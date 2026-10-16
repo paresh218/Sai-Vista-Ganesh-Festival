@@ -19,3 +19,12 @@ Saving every reference song offline requires corresponding permitted audio files
 ## Verification
 
 Seven automated test files cover the new catalogue and controls, automatic next, online/DJ handoff, offline messaging, imports and duplicate detection, offline DJ playback without network requests, refresh preservation, existing deck transitions, sound controls, decoding, storage, cue and loops. Live visual and real YouTube playback verification remain outstanding: the available inspection browser timed out on both the public site and the local preview. No deployment was performed.
+
+
+## Modern player and full DJ audio matching
+
+The player now uses Daily songs, Garba Special, Sound, DJ studio and Offline views. Main transport controls route to active online Garba: play/pause, next/previous, seek, volume/mute, supported playback rates, shuffle, repeat-one, cue points and timed loops. Online audio cannot be processed by the local EQ, analyser, effects or recorder.
+
+Use my audio beside a Garba track imports a permitted audio file into IndexedDB and remembers the association on this browser. Choosing that track subsequently loads its saved audio into the existing DJ engine, including offline. All existing DJ capabilities then apply, with their existing file size, format and analysis limits. Uploaded/imported files are not obtained from YouTube.
+
+The deployment includes automated tests for shared transport routing and linked-audio handoff. Visual browser verification remains outstanding; the user explicitly requested deployment with that limitation.
