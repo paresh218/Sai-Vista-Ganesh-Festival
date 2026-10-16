@@ -81,16 +81,15 @@ window.SaiVistaContent = {
 
 window.SaiVistaContent.updates = [
   {
-    "date": "2026-10-08",
-    "category": "Raas Rang 2026",
-    "id": "raas-rang-photo-booth-oct16-18",
+    "date": "2026-10-16",
+    "category": "Weekend vibes",
+    "id": "navratri-weekend-music-oct16",
     "priority": true,
-    "title": "16–18 October: dress up for the camera!",
-    "body": "Wear your festive best on Friday 16, Saturday 17 and Sunday 18 October. A professional photographer will capture your moments, and our photo booth is ready for memories with family and friends. Take a first look at the Raas Rang setup on the site.",
-    "href": "#raasRangPreview",
-    "action": "Preview the setup"
-  },
-  {
+    "title": "Be ready for weekend vibes with Sai Vista Navratri!",
+    "body": "Your weekend. Your Garba. Your vibe. Explore Garba Special, daily playlists and DJ controls in our music player, then join your Sai Vista family for an evening of celebration.",
+    "href": "#weekendMusic",
+    "action": "Get into the weekend vibe"
+  },  {
     "date": "2026-10-08",
     "category": "Navratri programme",
     "id": "navratri-daily-timings-oct08",

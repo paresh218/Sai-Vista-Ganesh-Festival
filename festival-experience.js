@@ -44,7 +44,7 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
   const sections=[...document.querySelectorAll('main > section')];
   function route(scroll=true){
     const requested=location.hash.slice(1)||'home';
-    const archived = new Set(['registration','schedule','aarti','wallpapers','sponsors']);
+    const archived = new Set(['registration','schedule','aarti','wallpapers','sponsors','raasRangPreview']);
     const id=archived.has(requested)?'archive':requested;
     const selected=id==='mainContent'?(document.body.dataset.view||'main'):separate.has(id)?id:'main';
     document.body.dataset.view=selected;
@@ -55,6 +55,7 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
     }
     const nav=document.getElementById('siteNav');nav?.classList.remove('open');
     const toggle=document.querySelector('.menu-toggle');toggle?.setAttribute('aria-expanded','false');toggle?.setAttribute('aria-label','Open menu');
+    if(requested==='raasRangPreview'){const archivedSpotlight=document.getElementById('raasRangArchive');if(archivedSpotlight)archivedSpotlight.open=true;}
     if(scroll){const target=document.getElementById(requested) || document.getElementById(id);if(target){if(id==='home')window.scrollTo({top:0,behavior:'instant'});else target.scrollIntoView({block:'start',behavior:'instant'});if(target.matches('section')){target.tabIndex=-1;target.focus({preventScroll:true});}}}
   }
   for(const id of separate){

@@ -3,6 +3,7 @@
  const dialog=document.querySelector('.song-popup'),content=dialog?.querySelector('.player-workspace');if(!content)return;
  const make=(tag,text)=>{const e=document.createElement(tag);if(text)e.textContent=text;return e;};
  dialog.classList.add('modern-player');
+ const weekendOpen=document.getElementById('weekendMusicOpen');if(weekendOpen)weekendOpen.onclick=()=>{dialog.showModal();window.dispatchEvent(new Event('sai-vista-player-open'));};
  const player=content.querySelector(':scope > .advanced-player'),library=content.querySelector('.workspace-playlist'),sound=content.querySelector('.workspace-sound'),studio=content.querySelector('.workspace-dj');
  const toolbar=content.querySelector('.workspace-toolbar'),garba=content.querySelector('.garba-special');
  const browse=make('div');browse.className='modern-browse';
