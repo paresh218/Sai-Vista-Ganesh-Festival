@@ -86,7 +86,7 @@ window.SaiVistaContent.updates = [
     "id": "navratri-weekend-music-oct16",
     "priority": true,
     "title": "Be ready for weekend vibes with Sai Vista Navratri!",
-    "body": "Your weekend. Your Garba. Your vibe. Explore Garba Special, daily playlists and DJ controls in our music player, then join your Sai Vista family for an evening of celebration.",
+    "body": "Your weekend. Your Garba. Your vibe. Explore Garba Special, daily playlists and DJ controls in our music player, then join your Sai Vista family for an evening of celebration. No ad hoc song requests on weekends. We will follow the planned activity.",
     "href": "#weekendMusic",
     "action": "Get into the weekend vibe"
   },  {
@@ -95,7 +95,7 @@ window.SaiVistaContent.updates = [
     "id": "navratri-daily-timings-oct08",
     "priority": true,
     "title": "Daily Aarti at 7:45 PM · Garba from 8:00–10:30 PM",
-    "body": "Join us each evening for Aarti at 7:45 PM and Garba from 8:00 PM to 10:30 PM (India time). Our coordinators have curated a playlist for all audiences, mixing slow, medium and fast-tempo songs. No song requests will be entertained during Garba except in the final 15 minutes, 10:15–10:30 PM.",
+    "body": "Join us each evening for Aarti at 7:45 PM and Garba from 8:00 PM to 10:30 PM (India time). Our coordinators have curated a playlist for all audiences, mixing slow, medium and fast-tempo songs. No ad hoc song requests on weekends. We will follow the planned activity. On weekdays, song requests are limited to 10:15–10:30 PM.",
     "href": "#navratriProgramme",
     "action": "View timings & music guidelines"
   },
