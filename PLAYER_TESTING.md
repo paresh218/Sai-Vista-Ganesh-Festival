@@ -40,3 +40,11 @@ The complete-interface tests run the actual HTML and production player scripts t
 These scenarios have permanent automated regression tests.
 
 The live browser audit also found and fixed narrow-screen file-picker overflow and overlap between the site-update notice and mini-player controls.
+
+## Live browser audit (16 October 2026)
+
+- Actual saved audio decoded and played; elapsed time advanced and live spectrum activated.
+- Mini-player pause/resume and reopening succeeded after separating the update notice.
+- All five views were inspected at 320, 390, 768, 1024 and 1440 CSS pixels; the single Offline overflow at 320px was fixed and retested with no overflow.
+- The catalogue's first track used the user's associated saved audio successfully. One unlinked online track did not start; this is not counted as a playback pass. The embed viewport was corrected to YouTube's documented 200px minimum while remaining off screen, and autoplay blocking now has explicit feedback.
+- Actual phone lock, OS sleep, live provider availability, and every browser/device combination remain unverified. Automated tests simulate these integrations; they do not remove external restrictions.
