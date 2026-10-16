@@ -123,3 +123,18 @@ test('blocked sound recovery asks for a tap and does not retry in a loop',async 
  await e.pulse(500);await e.pulse(500);assert.equal(calls,1,'Blocked automatic recovery has a cooldown');
  e.bridge.ctx.resume=async()=>{e.bridge.ctx.state='running';};await e.$('songPlayPause').onclick();assert.equal(e.bridge.audio.paused,false);
 });
+
+test('expanded cue panel contains all eight working controls with Garba loaded first',async t=>{
+ const e=await setup(t);await e.click('Open DJ player ♫');const extras=e.d.querySelector('.workspace-extras');
+ extras.querySelector('summary').click();assert.equal(extras.open,true);
+ const labels=['−10 seconds','+10 seconds','Loop 8 seconds','Set cue','Go to cue','Loop start','Loop end','Clear loop'];
+ assert.deepEqual([...extras.querySelectorAll('button')].map(b=>b.textContent),labels);
+ assert.equal(e.d.querySelector('.garba-special').querySelectorAll('.player-controls button').length,4,'Cue controls must not leak into the Garba transport');
+ await e.bridge.load(0);const a=e.bridge.audio;a.currentTime=20;
+ await e.click('Set cue');a.currentTime=40;await e.click('Go to cue');assert.equal(a.currentTime,20);
+ await e.click('−10 seconds');assert.equal(a.currentTime,10);await e.click('+10 seconds');assert.equal(a.currentTime,20);
+ await e.click('Loop 8 seconds');a.currentTime=28;a.dispatchEvent(new e.w.Event('timeupdate'));assert.equal(a.currentTime,20);
+ await e.click('Clear loop');assert.equal(a.saiVistaLoop,false);
+ a.currentTime=30;await e.click('Loop start');a.currentTime=35;await e.click('Loop end');a.currentTime=36;a.dispatchEvent(new e.w.Event('timeupdate'));assert.equal(a.currentTime,30);
+ await e.click('Clear loop');extras.querySelector('summary').click();assert.equal(extras.open,false);extras.querySelector('summary').click();assert.equal(extras.querySelectorAll('button').length,8);
+});

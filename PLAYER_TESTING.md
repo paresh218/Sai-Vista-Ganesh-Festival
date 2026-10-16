@@ -55,3 +55,7 @@ The live browser audit also found and fixed narrow-screen file-picker overflow a
 - Saved-song Play creates/unlocks Web Audio before asynchronous storage reads, preserving the user gesture.
 - Simulated suspended and interrupted sound output recovers without toggling playback or replacing the track. Paused tracks remain paused. Failed recovery requests a tap and uses a cooldown.
 - Regression tests failed before the fix. These simulations do not establish physical-device audible output or OS lock behaviour.
+
+## Cue panel regression (16 October 2026)
+
+Garba inserts its own transport before the main player. Cue controls must be attached specifically to the advanced player's transport before layout moves them into the expandable panel. The integration test checks all eight buttons, repeated expansion, cue recall, jumps, timed/custom loops and clearing, with both transports present. It failed with an empty panel before this fix.
