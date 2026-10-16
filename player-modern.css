@@ -43,3 +43,5 @@
 
 /* Keep the minimised player visible outside the dialog for both audio sources. */
 .song-mini{background:linear-gradient(145deg,#2e3041,#242633);border:1px solid #414358;color:#eeebf3;border-radius:22px;box-shadow:9px 9px 24px #13141e66,-3px -3px 12px #41435933;z-index:1200}.song-mini strong{color:#ed8eac}.song-mini button{background:linear-gradient(145deg,#d94f7b,#b6325a);border:0;color:white;border-radius:18px;box-shadow:4px 4px 9px #171824}.song-mini button:last-child{background:#292b3a;color:#eeebf3;border:1px solid #414358}.song-mini button:disabled{opacity:.45}.song-mini[hidden]{display:none}
+
+.song-popup.modern-player.is-expanded{width:98vw;max-width:1440px;max-height:96dvh}@media(max-width:760px){.song-popup.modern-player.is-expanded{width:100%;max-width:100%;max-height:100dvh}}
