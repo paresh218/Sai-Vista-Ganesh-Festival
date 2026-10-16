@@ -117,6 +117,9 @@
  const restoreAudio=()=>{if(!audio.paused&&ctx?.state==='suspended')ctx.resume().catch(()=>{$('songPlaybackStatus').textContent='Press Play to resume audio.';});};
  window.addEventListener('pageshow',restoreAudio);document.addEventListener?.('visibilitychange',restoreAudio);
  window.SaiVistaStudioBridge={get dj(){return dj;},get songs(){return songs;},get group(){return selected();},get audio(){return audio;},get ctx(){return ctx;},get bands(){return bands;},normalizers,sound,load,prepare,
+ get groups(){return catalogue;},
+ selectGroup(key){if(!catalogue.some(g=>g.key===key))return;$('songDay').value=key;day();},
+ startPlanned(){shuffle=false;repeat=0;$('songShuffle').setAttribute('aria-pressed','false');$('songRepeat').textContent='Repeat: off';dj.finishManual();return load(0);},
  async importGarba(file){
   if(!file.size||file.size>50000000)throw Error('Choose an audio file up to 50 MB.');
   const digest=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());
