@@ -17,7 +17,7 @@ runInNewContext(readFileSync('garba-special.js','utf8'),context);
  const [heading,note,category,query,video,controls,status,list,label,help,local]=panel.children;
  assert.equal(category.children.length,8);assert.equal(list.children.length,16);
  await list.children[0].children[0].onclick();assert.equal(paused,1);assert.equal(cancelled,1);assert.equal(video.hidden,false);
- assert.equal(options.width,'100%','YouTube player must remain visible');
+ assert.equal(options.width,'1');assert.equal(video['aria-hidden'],'true');assert.ok(video.className.includes('garba-audio-only'));assert.ok(!note.textContent.includes('PYC'));
  options.events.onReady({target:{loadVideoById:id=>loaded.push(id)}});loaded=[];options.events.onStateChange({data:0});await new Promise(resolve=>setImmediate(resolve));assert.equal(loaded[0],catalogue.slots.prachin[1].id,'Ended song advances automatically');
  events['sai-vista-dj-play']();assert.equal(onlinePaused,1,'Starting DJ audio pauses YouTube');
  query.value='pankhida';query.oninput();assert.ok(list.children.length>0&&list.children.length<16);
@@ -27,7 +27,7 @@ runInNewContext(readFileSync('garba-special.js','utf8'),context);
  label.children[0].files=[{name:'test.mp3',size:100,type:'audio/mpeg'}];await label.children[0].onchange();assert.equal(imports,1);
  local.onclick();assert.equal(opened,1);assert.equal(panel.hidden,true);
  assert.equal(Object.values(catalogue.slots).flat().length,88);for(const t of Object.values(catalogue.slots).flat())assert.match(t.id,/^[\w-]{11}$/);
- console.log('PASS: 88 songs, eight collections, filtering, visible embed, automatic next, playback handoff, offline message, file import and DJ navigation.');
+ console.log('PASS: 88 songs, eight collections, filtering, audio-only controls, automatic next, playback handoff, offline message, file import and DJ navigation.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
 
 

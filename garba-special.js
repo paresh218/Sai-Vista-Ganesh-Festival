@@ -4,21 +4,21 @@
  const make=(tag,text)=>{const el=document.createElement(tag);if(text)el.textContent=text;return el;};
  const panel=make('section');panel.className='garba-special';panel.hidden=true;
  const launch=make('button','Garba Special ♫');launch.type='button';launch.className='btn btn-dark';
- const heading=make('h3','Garba Special'),note=make('p','Eight collections from the PYC catalogue. YouTube songs need internet. Import your own audio below for offline playback with all DJ controls.');
+ const heading=make('h3','Garba Special'),note=make('p','Eight Garba collections to enjoy. YouTube songs need internet. Import your own audio below for offline playback with all DJ controls.');
  const category=make('select');category.setAttribute('aria-label','Garba collection');
  const search=make('input');search.type='search';search.placeholder='Find a Garba song';search.setAttribute('aria-label','Find a Garba song');
  const list=make('div');list.className='garba-track-list';
  const status=make('p');status.setAttribute('role','status');
  const mount=make('div');mount.id='garbaYouTube';
- const video=make('div');video.className='garba-video';video.hidden=true;video.append(mount);
+ const video=make('div');video.className='garba-video garba-audio-only';video.setAttribute('aria-hidden','true');video.append(mount);
  const controls=make('div');controls.className='player-controls';
+ const toggle=make('button','Play / Pause');toggle.type='button';controls.append(toggle);
  const next=make('button','Next song'),shuffle=make('button','Shuffle: off'),stop=make('button','Stop online music');
  for(const b of [next,shuffle,stop])b.type='button';controls.append(next,shuffle,stop);
  const fileLabel=make('label','Save your audio files for offline DJ playback');
  const files=make('input');files.type='file';files.multiple=true;files.accept='audio/*,.mp3,.m4a,.wav,.ogg,.flac';fileLabel.append(files);
  const local=make('button','Open saved Garba in DJ player');local.type='button';
- const source=make('a','Catalogue reference: PYC Garba Juke Box ↗');source.href='https://garba.pycnavratri.com/';source.target='_blank';source.rel='noopener';
- panel.append(heading,note,category,search,video,controls,status,list,fileLabel,make('p','Imported files stay in this browser on this device. Keep a backup; clearing browser storage removes saved audio. YouTube songs cannot be saved here.'),local,source);
+ panel.append(heading,note,category,search,video,controls,status,list,fileLabel,make('p','Imported files stay in this browser on this device. Keep a backup; clearing browser storage removes saved audio. YouTube songs cannot be saved here.'),local);
  document.getElementById('songDay').closest('.song-day-picker')?.append(launch);
  if(!launch.parentNode)document.getElementById('songSearch').parentNode.before(launch);
  launch.after(panel);
@@ -34,13 +34,14 @@
  async function play(i){
   const token=++request,t=tracks[i];if(!t)return;
   if(!navigator.onLine){status.textContent='You are offline. Open saved Garba in the DJ player below.';return;}
-  status.textContent='Loading YouTube…';video.hidden=false;
-  try{await api();if(token!==request)return;pauseDJ();at=i;render();status.textContent=t.title+' · use the video controls to play or pause.';
+  status.textContent='Loading music…';
+  try{await api();if(token!==request)return;pauseDJ();at=i;render();status.textContent=t.title+' · use Play / Pause to control music.';
    desiredVideo=t.id;
    if(player){if(playerReady)player.loadVideoById(t.id);}
-   else player=new window.YT.Player('garbaYouTube',{width:'100%',height:'100%',videoId:t.id,playerVars:{playsinline:1},events:{onReady:e=>{playerReady=true;if(desiredVideo)e.target.loadVideoById(desiredVideo);},onStateChange:e=>{if(e.data===1){if(desiredVideo)pauseDJ();else player?.pauseVideo?.();}if(e.data===0&&desiredVideo)next.onclick();},onError:()=>{status.textContent='This video cannot play here. Try another song or its YouTube link.';}}});
+   else player=new window.YT.Player('garbaYouTube',{width:'1',height:'1',videoId:t.id,playerVars:{playsinline:1},events:{onReady:e=>{playerReady=true;if(desiredVideo)e.target.loadVideoById(desiredVideo);},onStateChange:e=>{if(e.data===1){if(desiredVideo)pauseDJ();else player?.pauseVideo?.();}if(e.data===0&&desiredVideo)next.onclick();},onError:()=>{status.textContent='This video cannot play here. Try another song or its YouTube link.';}}});
   }catch(e){status.textContent=e.message;}
  }
+ toggle.onclick=()=>{if(!playerReady||at<0){if(tracks.length)play(at<0?0:at);return;}if(player.getPlayerState?.()===1){player.pauseVideo();status.textContent='Paused';}else{desiredVideo=tracks[at].id;pauseDJ();player.playVideo();status.textContent=tracks[at].title;}};
  next.onclick=()=>{if(!tracks.length)return;let n=(at+1)%tracks.length;if(random&&tracks.length>1){n=Math.floor(Math.random()*(tracks.length-1));if(n>=at)n++;}play(n);};
  shuffle.onclick=()=>{random=!random;shuffle.textContent='Shuffle: '+(random?'on':'off');shuffle.setAttribute('aria-pressed',String(random));};
  stop.onclick=()=>{request++;desiredVideo=null;player?.stopVideo?.();status.textContent='Online playback stopped.';};
