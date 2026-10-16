@@ -10,7 +10,7 @@ if(typeof document!=='undefined')(()=>{
  const bridge=window.SaiVistaStudioBridge,dialog=document.querySelector('.song-popup'),browse=dialog?.querySelector('.modern-browse');if(!bridge||!browse)return;
  const make=(tag,text)=>{const el=document.createElement(tag);if(text)el.textContent=text;return el;};
  const box=make('section');box.className='evening-card';box.setAttribute('aria-label','Tonight at Sai Vista');
- const title=make('h3','Tonight at Sai Vista'),copy=make('p','One tap to play today’s planned playlist, in order.');
+ const title=make('h3','Tonight at Sai Vista');
  const start=make('button','▶ Start tonight’s music');start.type='button';
  const queue=make('p');queue.className='evening-queue';queue.setAttribute('role','status');
  const check=make('button','Check offline readiness');check.type='button';
@@ -18,7 +18,9 @@ if(typeof document!=='undefined')(()=>{
  const progress=make('progress');progress.max=1;progress.value=0;progress.setAttribute('aria-label','Songs saved offline');
  const status=make('p','Choose a playlist to check your saved music.');status.setAttribute('role','status');
  const missing=make('details'),summary=make('summary','Songs still needed'),list=make('ul');missing.append(summary,list);missing.hidden=true;
- box.append(title,copy,start,queue,check,save,progress,status,missing);browse.before(box);
+ box.append(title,start,queue);dialog.querySelector('.workspace-playlist').prepend(box);
+ const offline=dialog.querySelector('.modern-offline'),readiness=make('section');readiness.className='offline-readiness';readiness.setAttribute('aria-label','Offline readiness');const actions=make('div');actions.className='offline-readiness-actions';actions.append(check,save);readiness.append(make('h3','Offline readiness'),make('p','Check and save the playlist currently selected in Daily songs.'),actions,progress,status,missing);offline.append(readiness);
+ const originalSave=document.getElementById('songSaveDevice');originalSave.hidden=true;
  let serial=0;
  async function inspect(){const token=++serial,group=bridge.group?{...bridge.group,songs:[...bridge.songs]}:null;check.disabled=true;status.textContent='Checking this device…';try{
   const result=await playlistReadiness(group,key=>window.SaiVistaOffline.has(key));if(token!==serial)return;
@@ -28,7 +30,7 @@ if(typeof document!=='undefined')(()=>{
  check.onclick=inspect;save.onclick=async()=>{const button=document.getElementById('songSaveDevice');if(button.disabled)return;save.disabled=true;try{await button.onclick();await inspect();}finally{save.disabled=false;}};
  start.onclick=async()=>{const day=window.NavratriDays?.current()?.day,group=tonightGroup(bridge.groups,day);if(!group){queue.textContent='Today’s playlist is not available yet. Choose a playlist in Daily songs.';return;}start.disabled=true;try{window.SaiVistaGarba?.stop();bridge.selectGroup(group.key);await bridge.startPlanned();await inspect();}finally{start.disabled=false;}};
  document.getElementById('songDay').addEventListener('change',inspect);window.addEventListener('sai-vista-player-open',inspect);
- const offline=dialog.querySelector('.modern-offline');if(offline){const hint=make('p','Use Check offline readiness above to see exactly which songs are saved on this device.');offline.prepend(hint);}
+ offline.prepend(readiness);
  const art=dialog.querySelector('.modern-art'),canvas=make('canvas');canvas.width=480;canvas.height=160;canvas.className='evening-spectrum';canvas.setAttribute('aria-hidden','true');art.append(canvas);
  const caption=art.querySelector('.modern-art-caption'),staticBars=art.querySelector('.modern-equalizer'),draw=canvas.getContext('2d');let analyser,output,bytes,lastQueue='';
  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;

@@ -53,10 +53,10 @@ test('online Garba uses shared controls and cannot be overwritten by the paused 
  e.$('stopSong').click();await e.settle();assert.equal(e.w.SaiVistaGarba.active,false);assert.equal(e.$('songPlayPause').disabled,true,'Stop clears the shared controls');
 });
 test('offline readiness, storage failures, imported Garba and Tonight planned playback',async t=>{
- const e=await setup(t);await e.click('Open DJ player ♫');await e.click('Check offline readiness');assert.match(e.d.querySelector('.evening-card').textContent,/0 of 2 songs saved/);
- await e.$('songSaveDevice').onclick();await e.click('Check offline readiness');assert.match(e.d.querySelector('.evening-card').textContent,/2 of 2 songs saved.*Ready offline/);
- e.setOffline(true);await e.click('▶ Start tonight’s music');assert.equal(e.bridge.dj.active.song.id,'a');assert.equal(e.$('songShuffle').getAttribute('aria-pressed'),'false');assert.equal(e.$('songRepeat').textContent,'Repeat: off');
- e.setStorageBlocked(true);await e.click('Check offline readiness');assert.match(e.d.querySelector('.evening-card').textContent,/unconfirmed/);e.setStorageBlocked(false);
+ const e=await setup(t);await e.click('Open DJ player ♫');await e.click('Offline');await e.click('Check offline readiness');assert.match(e.d.querySelector('.offline-readiness').textContent,/0 of 2 songs saved/);
+ await e.$('songSaveDevice').onclick();await e.click('Check offline readiness');assert.match(e.d.querySelector('.offline-readiness').textContent,/2 of 2 songs saved.*Ready offline/);
+ e.setOffline(true);await e.click('Daily songs');await e.click('▶ Start tonight’s music');assert.equal(e.bridge.dj.active.song.id,'a');assert.equal(e.$('songShuffle').getAttribute('aria-pressed'),'false');assert.equal(e.$('songRepeat').textContent,'Repeat: off');
+ e.setStorageBlocked(true);await e.click('Offline');await e.click('Check offline readiness');assert.match(e.d.querySelector('.offline-readiness').textContent,/unconfirmed/);e.setStorageBlocked(false);
  const file=new Blob(['my garba'],{type:'audio/mpeg'});file.name='My Garba.mp3';const imported=await e.bridge.importGarba(file);await e.bridge.playGarba(imported.id);assert.equal(e.bridge.dj.active.song.id,imported.id);assert.equal(e.bridge.audio.paused,false);assert.equal(e.downloads,2);
 });
 test('advanced studio: staged deck, manual mixing, beat loops, effects and local recording',async t=>{
@@ -84,4 +84,14 @@ test('live spectrum runs for local audio, pauses in background and leaves audio 
  const e=await setup(t);await e.click('Open DJ player ♫');await e.bridge.load(0);const frame=e.rafs.at(-1);frame();assert.equal(e.d.querySelector('.evening-spectrum').hidden,false);assert.equal(e.d.querySelector('.modern-equalizer').hidden,true);
  Object.defineProperty(e.d,'hidden',{configurable:true,value:true});e.d.dispatchEvent(new e.w.Event('visibilitychange'));frame();assert.equal(e.bridge.audio.paused,false,'Backgrounding must not pause audio');
  Object.defineProperty(e.d,'hidden',{configurable:true,value:false});e.bridge.audio.pause();frame();assert.equal(e.d.querySelector('.evening-spectrum').hidden,true);assert.equal(e.d.querySelector('.modern-equalizer').hidden,false);
+});
+test('Tonight stays in Daily songs and offline actions stay inside Offline',async t=>{
+ const e=await setup(t);await e.click('Open DJ player ♫');
+ assert.ok(e.d.querySelector('.workspace-playlist .evening-card'),'Tonight belongs inside the daily playlist, not above the whole player');
+ const check=e.button('Check offline readiness'),save=e.button('Save selected playlist');
+ assert.ok(check.closest('.modern-offline'),'Readiness action must stay in Offline');
+ assert.ok(save.closest('.modern-offline'),'Save action must stay in Offline');
+ await e.click('Daily songs');assert.equal(check.closest('.modern-offline').hidden,true);
+ await e.click('Offline');assert.equal(check.closest('.modern-offline').hidden,false);
+ check.click();await e.settle();assert.match(e.d.querySelector('.offline-readiness').textContent,/0 of 2 songs saved/);
 });
