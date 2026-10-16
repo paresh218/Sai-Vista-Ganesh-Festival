@@ -25,7 +25,7 @@
  }
  for(const panel of Object.values(panels))if(panel)browse.append(panel);
  browse.prepend(nav);content.append(browse);
- const art=make('div');art.className='modern-art';art.setAttribute('aria-hidden','true');art.innerHTML='<span class="modern-art-kicker">SAI VISTA SELECTS</span><div class="modern-record"><i></i></div><span class="modern-art-caption">RAAS / RANG / REPEAT</span>';player.prepend(art);
+ const art=make('div');art.className='modern-art';art.setAttribute('aria-hidden','true');art.innerHTML='<span class="modern-art-kicker">SAI VISTA / PLAYER</span><strong class="modern-art-title">MUSIC</strong><div class="modern-equalizer"><i style="height:35%"></i><i style="height:65%"></i><i style="height:45%"></i><i style="height:80%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:72%"></i><i style="height:92%"></i><i style="height:58%"></i><i style="height:78%"></i><i style="height:100%"></i><i style="height:62%"></i><i style="height:42%"></i><i style="height:70%"></i></div><span class="modern-art-caption">RAAS · RANG · REPEAT</span>';player.prepend(art);
  const title=dialog.querySelector('.dj-popup-header strong');if(title)title.textContent='SAI VISTA / MUSIC';
  const heading=library.querySelector('h3');if(heading)heading.textContent='Made for your evening';
  const instructions=[...library.children].find(e=>e.tagName==='P'&&e.textContent.startsWith('Drag songs'));if(instructions){const details=make('details');details.className='modern-help';details.append(make('summary','Arrange your playlist'));instructions.before(details);details.append(instructions);}
