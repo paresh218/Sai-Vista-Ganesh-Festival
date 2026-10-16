@@ -15,7 +15,7 @@ runInNewContext(readFileSync('garba-special.js','utf8'),context);
  const launch=root.children.find(e=>e.textContent==='Garba Special ♫');assert.ok(launch);
  await launch.onclick();const panel=root.children.find(e=>e.tag==='section');assert.equal(panel.hidden,false);
  const [heading,note,category,query,video,controls,status,list,label,help,local]=panel.children;
- assert.equal(category.children.length,8);assert.equal(list.children.length,16);
+ assert.equal(category.children.length,8);assert.equal(list.children.length,16);assert.ok(list.children.every(row=>row.children.length===1),'Song rows must contain no external video links');
  await list.children[0].children[0].onclick();assert.equal(paused,1);assert.equal(cancelled,1);assert.equal(video.hidden,false);
  assert.equal(options.width,'1');assert.equal(video['aria-hidden'],'true');assert.ok(video.className.includes('garba-audio-only'));assert.ok(!note.textContent.includes('PYC'));
  options.events.onReady({target:{loadVideoById:id=>loaded.push(id)}});loaded=[];options.events.onStateChange({data:0});await new Promise(resolve=>setImmediate(resolve));assert.equal(loaded[0],catalogue.slots.prachin[1].id,'Ended song advances automatically');
