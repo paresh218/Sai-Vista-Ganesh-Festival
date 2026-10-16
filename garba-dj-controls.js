@@ -11,7 +11,7 @@
   if(event.type==='input'&&id==='songVolume')action=()=>{p.setVolume?.(Number(el.value));$('songVolumeValue').textContent=el.value+'%';};
   if(event.type==='change'&&id==='songSpeed')action=()=>{const rate=Number(el.value),rates=p.getAvailablePlaybackRates?.()||[1];if(rates.includes(rate))p.setPlaybackRate(rate);else{$('songPlaybackStatus').textContent='This speed is unavailable for the online song.';el.value=String(p.getPlaybackRate?.()||1);}};
   if(event.type==='click'){
-   const actions={songPlayPause:g.toggle,songNext:g.next,songPrevious:g.previous,songShuffle:g.shuffle,stopSong:g.stop,songRepeat:()=>{g.repeatOne=!g.repeatOne;el.textContent='Repeat: '+(g.repeatOne?'one':'all');},songMute:()=>{if(p.isMuted?.()){p.unMute();el.textContent='Mute';}else{p.mute?.();el.textContent='Unmute';}}};action=actions[id];
+   const actions={songPlayPause:g.toggle,songNext:g.next,songPrevious:g.previous,songShuffle:g.shuffle,stopSong:()=>{g.stop();$('stopSong').onclick?.();},songRepeat:()=>{g.repeatOne=!g.repeatOne;el.textContent='Repeat: '+(g.repeatOne?'one':'all');},songMute:()=>{if(p.isMuted?.()){p.unMute();el.textContent='Mute';}else{p.mute?.();el.textContent='Unmute';}}};action=actions[id];
    if(!id){const label=el.textContent;action={'−10 seconds':()=>seek(current()-10),'+10 seconds':()=>seek(current()+10),'Set cue':()=>{cue=current();},'Go to cue':()=>seek(cue),'Loop start':()=>{loopStart=current();loopEnd=null;},'Loop end':()=>{if(loopStart!==null&&current()>loopStart+.5)loopEnd=current();},'Loop 8 seconds':()=>{loopStart=current();loopEnd=loopStart+8;},'Clear loop':()=>{loopStart=loopEnd=null;}}[label];}
   }
   if(action){event.preventDefault();event.stopImmediatePropagation();action();}

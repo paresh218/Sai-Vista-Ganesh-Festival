@@ -1,0 +1,11 @@
+{
+  "name": "sai-vista-festival",
+  "private": true,
+  "scripts": {
+    "test": "node --test *.test.cjs",
+    "test:player": "node test-player.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}
