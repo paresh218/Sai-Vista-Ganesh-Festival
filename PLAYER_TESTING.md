@@ -24,7 +24,7 @@ The complete-interface tests run the actual HTML and production player scripts t
 
 ## Browser/device checks after relevant changes
 
-1. At 320, 390, 768, 1024 and 1440 CSS pixels: verify no horizontal overflow; check all views, open menus, long song names, visible Move to labels, 44px touch targets, expand/compact and mini-player. Reset temporary viewport overrides afterward.
+1. At 320, 390, 768, 1024 and 1440 CSS pixels: verify no horizontal overflow; check all views, open menus, long song names, visible Move to labels, 44px touch targets, expand/compact and mini-player. When an update is available, ensure its notice stays above the mini-player and does not intercept its buttons. Reset temporary viewport overrides afterward.
 2. In a browser, play a permitted saved audio file. Confirm elapsed time increases, seeking changes position, pause/resume works, spectrum reacts, minimise retains sound, and reopening retains controls. Stop audio after testing; preserve the user's playlist selection/order.
 3. Play an online Garba song. Confirm progress and controls, next/repeat, and switching to local/manual playback without overlapping sources. Record video/region/network errors as external limitations; do not silently mark unavailable playback as passed.
 4. Save a test playlist, disconnect the network, reopen, and play saved files. Confirm missing files and blocked/quota-limited storage show honest feedback. Do not delete the user's saved music for a test.
@@ -38,3 +38,5 @@ The complete-interface tests run the actual HTML and production player scripts t
 - Starting an unbound/staged local deck could leave online Garba playing simultaneously. Any real local audio `play` event now transfers media-control ownership and pauses Garba.
 
 These scenarios have permanent automated regression tests.
+
+The live browser audit also found and fixed narrow-screen file-picker overflow and overlap between the site-update notice and mini-player controls.

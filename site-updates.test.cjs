@@ -25,7 +25,7 @@ async function pageTest({loaded='current',server='current',edited=false,storage=
   const listeners={}; let reloads=0, notices=0;
   const doc={visibilityState:'visible',addEventListener:(type,fn)=>listeners[type]=fn,
     querySelector:selector=>selector.startsWith('meta')?{content:loaded}:null,
-    body:{append(){notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
+    body:{append(el){assert.equal(el.className,'site-update-notice','Update notice needs a stable class for safe player positioning');notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
   const ctx={document:doc,location:{protocol:'https:',href:'https://example.test/index.html',origin:'https://example.test',reload(){reloads++;}},
     navigator:{onLine:true},window:{addEventListener(){}},URL,Date,AbortSignal,TextEncoder,crypto:require('node:crypto').webcrypto,
     sessionStorage:{getItem:key=>{if(blocked)throw Error('blocked');return storage.get(key);},setItem:(key,value)=>storage.set(key,value)},

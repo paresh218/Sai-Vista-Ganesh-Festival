@@ -27,6 +27,7 @@
     if (!busy() && canAutoReload(pending)) { reloading = true; location.reload(); return; }
     if (banner) return;
     banner = document.createElement('aside');
+    banner.className = 'site-update-notice';
     banner.setAttribute('role', 'status');
     banner.style.cssText = 'position:fixed;bottom:16px;left:16px;right:16px;z-index:10000;background:#fff3d7;color:#35271f;padding:16px;border:1px solid #ad702d;border-radius:12px;box-shadow:0 4px 20px #0003';
     banner.append('A site update is available. If you are registering, finish before updating. ');
