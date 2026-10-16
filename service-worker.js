@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v104";
+const CACHE_NAME = "sai-vista-ganpati-2026-v105";
 const APP_SHELL = [
   "./",
   "site-updates.js",

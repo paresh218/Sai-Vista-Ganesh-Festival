@@ -24,6 +24,11 @@
  launch.after(panel);
  let catalogue,tracks=[],at=-1,random=false,player,playerReady=false,desiredVideo=null,apiPromise,request=0;
  const labels={prachin:'Traditional',sanedo:'Sanedo',khelaiya:'Khelaiya',indipop:'Indipop',filmi:'Film songs',fusion:'Fusion',gujpop:'Gujarati pop',techno:'Techno'};
+ function mediaControls(){
+  if(!navigator.mediaSession)return;
+  if(window.MediaMetadata&&tracks[at])navigator.mediaSession.metadata=new window.MediaMetadata({title:tracks[at].title,artist:tracks[at].artist,album:'Garba Special'});
+  for(const [action,handler] of Object.entries({play:()=>{if(!playerReady||at<0)return;desiredVideo=tracks[at].id;pauseDJ();player.playVideo();},pause:()=>player?.pauseVideo?.(),stop:()=>stop.onclick(),nexttrack:()=>next.onclick(),previoustrack:()=>play((at-1+tracks.length)%tracks.length),seekto:e=>player?.seekTo?.(e.seekTime,true)}))try{navigator.mediaSession.setActionHandler(action,handler);}catch(_){}
+ }
  const pauseDJ=()=>{bridge.dj.cancelSwitch();bridge.dj.pause();};
  function api(){
   if(window.YT?.Player)return Promise.resolve();
@@ -36,9 +41,9 @@
   if(!navigator.onLine){status.textContent='You are offline. Open saved Garba in the DJ player below.';return;}
   status.textContent='Loading music…';
   try{await api();if(token!==request)return;pauseDJ();at=i;render();status.textContent=t.title+' · use Play / Pause to control music.';
-   desiredVideo=t.id;
+   desiredVideo=t.id;mediaControls();
    if(player){if(playerReady)player.loadVideoById(t.id);}
-   else player=new window.YT.Player('garbaYouTube',{width:'1',height:'1',videoId:t.id,playerVars:{playsinline:1},events:{onReady:e=>{playerReady=true;if(desiredVideo)e.target.loadVideoById(desiredVideo);},onStateChange:e=>{if(e.data===1){if(desiredVideo)pauseDJ();else player?.pauseVideo?.();}if(e.data===0&&desiredVideo)next.onclick();},onError:()=>{status.textContent='This video cannot play here. Try another song or its YouTube link.';}}});
+   else player=new window.YT.Player('garbaYouTube',{width:'1',height:'1',videoId:t.id,playerVars:{playsinline:1},events:{onReady:e=>{playerReady=true;if(desiredVideo)e.target.loadVideoById(desiredVideo);},onStateChange:e=>{if(e.data===1){if(desiredVideo){pauseDJ();mediaControls();if(navigator.mediaSession)navigator.mediaSession.playbackState="playing";}else player?.pauseVideo?.();}if(e.data===2&&navigator.mediaSession)navigator.mediaSession.playbackState="paused";if(e.data===0&&desiredVideo)next.onclick();},onError:()=>{status.textContent='This video cannot play here. Try another song or its YouTube link.';}}});
   }catch(e){status.textContent=e.message;}
  }
  toggle.onclick=()=>{if(!playerReady||at<0){if(tracks.length)play(at<0?0:at);return;}if(player.getPlayerState?.()===1){player.pauseVideo();status.textContent='Paused';}else{desiredVideo=tracks[at].id;pauseDJ();player.playVideo();status.textContent=tracks[at].title;}};
