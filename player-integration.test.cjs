@@ -95,3 +95,31 @@ test('Tonight stays in Daily songs and offline actions stay inside Offline',asyn
  await e.click('Offline');assert.equal(check.closest('.modern-offline').hidden,false);
  check.click();await e.settle();assert.match(e.d.querySelector('.offline-readiness').textContent,/0 of 2 songs saved/);
 });
+
+test('seek colours follow local playback, seeking, online playback and stop',async t=>{
+ const e=await setup(t);await e.bridge.load(0);
+ e.bridge.audio.currentTime=25;await e.pulse(500);
+ assert.equal(e.$('songSeek').style.getPropertyValue('--seek-progress'),'25%');
+ e.input('songSeek','700');assert.equal(e.$('songSeek').style.getPropertyValue('--seek-progress'),'70%');
+ await e.click('Garba Special');e.d.querySelector('.garba-track>button').click();await e.settle();e.yt.time=40;await e.pulse(500);
+ assert.equal(e.$('songSeek').style.getPropertyValue('--seek-progress'),'40%');
+ e.$('stopSong').click();await e.settle();assert.equal(e.$('songSeek').style.getPropertyValue('--seek-progress'),'0%');
+});
+
+test('saved audio unlocks sound before async loading and recovers interrupted output without pause/play',async t=>{
+ const e=await setup(t);const file=new Blob(['audio'],{type:'audio/mpeg'});file.name='Saved.mp3';const imported=await e.bridge.importGarba(file);
+ const pending=e.bridge.playGarba(imported.id);
+ assert.ok(e.bridge.ctx,'AudioContext is created in the initial Play gesture, before storage awaits');await pending;
+ const audio=e.bridge.audio,ctx=e.bridge.ctx;let resumes=0;ctx.resume=async()=>{resumes++;ctx.state='running';};
+ for(const state of ['suspended','interrupted']){ctx.state=state;await e.pulse(500);assert.equal(ctx.state,'running');assert.equal(audio.paused,false);}
+ assert.equal(resumes,2);assert.equal(e.bridge.audio,audio,'Recovery preserves the track and position');
+ audio.pause();ctx.state='suspended';await e.pulse(500);assert.equal(resumes,2,'User-paused audio stays paused');
+});
+
+test('blocked sound recovery asks for a tap and does not retry in a loop',async t=>{
+ const e=await setup(t);await e.bridge.load(0);let calls=0;
+ e.bridge.ctx.resume=async()=>{calls++;throw Error('Gesture required');};e.bridge.ctx.state='interrupted';
+ e.bridge.ctx.onstatechange();await e.settle();assert.match(e.$('songPlaybackStatus').textContent,/Press Play/);
+ await e.pulse(500);await e.pulse(500);assert.equal(calls,1,'Blocked automatic recovery has a cooldown');
+ e.bridge.ctx.resume=async()=>{e.bridge.ctx.state='running';};await e.$('songPlayPause').onclick();assert.equal(e.bridge.audio.paused,false);
+});

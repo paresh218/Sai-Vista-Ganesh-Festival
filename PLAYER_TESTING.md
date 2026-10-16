@@ -48,3 +48,10 @@ The live browser audit also found and fixed narrow-screen file-picker overflow a
 - All five views were inspected at 320, 390, 768, 1024 and 1440 CSS pixels; the single Offline overflow at 320px was fixed and retested with no overflow.
 - The catalogue's first track used the user's associated saved audio successfully. One unlinked online track did not start; this is not counted as a playback pass. The embed viewport was corrected to YouTube's documented 200px minimum while remaining off screen, and autoplay blocking now has explicit feedback.
 - Actual phone lock, OS sleep, live provider availability, and every browser/device combination remain unverified. Automated tests simulate these integrations; they do not remove external restrictions.
+
+## Seek and silent-output regression (16 October 2026)
+
+- Pink/grey seek progress updates during playback, manual seeking, online Garba and Stop.
+- Saved-song Play creates/unlocks Web Audio before asynchronous storage reads, preserving the user gesture.
+- Simulated suspended and interrupted sound output recovers without toggling playback or replacing the track. Paused tracks remain paused. Failed recovery requests a tap and uses a cooldown.
+- Regression tests failed before the fix. These simulations do not establish physical-device audible output or OS lock behaviour.

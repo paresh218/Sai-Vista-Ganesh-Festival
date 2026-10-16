@@ -2,7 +2,7 @@
 (() => {
  const $=id=>document.getElementById(id),garba=()=>window.SaiVistaGarba;
  let cue=0,loopStart=null,loopEnd=null,lastTrack=null;
- const seek=t=>{const p=garba()?.player,d=p?.getDuration?.();if(d>0)p.seekTo(Math.max(0,Math.min(d,t)),true);};
+ const seek=t=>{const p=garba()?.player,d=p?.getDuration?.();if(d>0){const target=Math.max(0,Math.min(d,t));p.seekTo(target,true);$('songSeek').style?.setProperty('--seek-progress',target/d*100+'%');}};
  const current=()=>garba()?.player?.getCurrentTime?.()||0;
  function route(event){
   const g=garba();if(!g?.active)return;const el=event.target.closest?.('button,input,select');if(!el)return;
@@ -18,5 +18,5 @@
  }
  for(const type of ['click','input','change'])document.addEventListener(type,route,true);
  const fmt=n=>Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
- const timer=setInterval(()=>{const g=garba();if(!g?.active)return;const p=g.player;if(lastTrack!==g.track?.id){lastTrack=g.track?.id;cue=0;loopStart=loopEnd=null;}const time=current(),duration=p?.getDuration?.()||0;if(loopEnd!==null&&time>=loopEnd)seek(loopStart);$('songSeek').disabled=duration<=0;$('songSeek').value=duration?Math.round(time/duration*1000):0;$('songElapsed').textContent=fmt(time);$('songDuration').textContent=fmt(duration);$('songPlayPause').disabled=false;$('songNext').disabled=$('songPrevious').disabled=false;$('songPlayPause').textContent=p?.getPlayerState?.()===1?'Pause':'Play';$('songQueuePosition').textContent=(g.position+1)+' / '+g.count;$('songNextName').textContent='Garba Special · online playback';},500);timer.unref?.();
+ const timer=setInterval(()=>{const g=garba();if(!g?.active)return;const p=g.player;if(lastTrack!==g.track?.id){lastTrack=g.track?.id;cue=0;loopStart=loopEnd=null;}const time=current(),duration=p?.getDuration?.()||0;if(loopEnd!==null&&time>=loopEnd)seek(loopStart);$('songSeek').disabled=duration<=0;$('songSeek').value=duration?Math.round(time/duration*1000):0;$('songSeek').style?.setProperty('--seek-progress',Math.max(0,Math.min(100,Number($('songSeek').value)/10))+'%');$('songElapsed').textContent=fmt(time);$('songDuration').textContent=fmt(duration);$('songPlayPause').disabled=false;$('songNext').disabled=$('songPrevious').disabled=false;$('songPlayPause').textContent=p?.getPlayerState?.()===1?'Pause':'Play';$('songQueuePosition').textContent=(g.position+1)+' / '+g.count;$('songNextName').textContent='Garba Special · online playback';},500);timer.unref?.();
 })();
