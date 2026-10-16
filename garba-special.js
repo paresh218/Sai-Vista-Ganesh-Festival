@@ -1,0 +1,52 @@
+// Online source links and device-owned audio share one entry point.
+(() => {
+ const bridge=window.SaiVistaStudioBridge;if(!bridge)return;
+ const make=(tag,text)=>{const el=document.createElement(tag);if(text)el.textContent=text;return el;};
+ const panel=make('section');panel.className='garba-special';panel.hidden=true;
+ const launch=make('button','Garba Special ♫');launch.type='button';launch.className='btn btn-dark';
+ const heading=make('h3','Garba Special'),note=make('p','Eight collections from the PYC catalogue. YouTube songs need internet. Import your own audio below for offline playback with all DJ controls.');
+ const category=make('select');category.setAttribute('aria-label','Garba collection');
+ const search=make('input');search.type='search';search.placeholder='Find a Garba song';search.setAttribute('aria-label','Find a Garba song');
+ const list=make('div');list.className='garba-track-list';
+ const status=make('p');status.setAttribute('role','status');
+ const mount=make('div');mount.id='garbaYouTube';
+ const video=make('div');video.className='garba-video';video.hidden=true;video.append(mount);
+ const controls=make('div');controls.className='player-controls';
+ const next=make('button','Next song'),shuffle=make('button','Shuffle: off'),stop=make('button','Stop online music');
+ for(const b of [next,shuffle,stop])b.type='button';controls.append(next,shuffle,stop);
+ const fileLabel=make('label','Save your audio files for offline DJ playback');
+ const files=make('input');files.type='file';files.multiple=true;files.accept='audio/*,.mp3,.m4a,.wav,.ogg,.flac';fileLabel.append(files);
+ const local=make('button','Open saved Garba in DJ player');local.type='button';
+ const source=make('a','Catalogue reference: PYC Garba Juke Box ↗');source.href='https://garba.pycnavratri.com/';source.target='_blank';source.rel='noopener';
+ panel.append(heading,note,category,search,video,controls,status,list,fileLabel,make('p','Imported files stay in this browser on this device. Keep a backup; clearing browser storage removes saved audio. YouTube songs cannot be saved here.'),local,source);
+ document.getElementById('songDay').closest('.song-day-picker')?.append(launch);
+ if(!launch.parentNode)document.getElementById('songSearch').parentNode.before(launch);
+ launch.after(panel);
+ let catalogue,tracks=[],at=-1,random=false,player,playerReady=false,desiredVideo=null,apiPromise,request=0;
+ const labels={prachin:'Traditional',sanedo:'Sanedo',khelaiya:'Khelaiya',indipop:'Indipop',filmi:'Film songs',fusion:'Fusion',gujpop:'Gujarati pop',techno:'Techno'};
+ const pauseDJ=()=>{bridge.dj.cancelSwitch();bridge.dj.pause();};
+ function api(){
+  if(window.YT?.Player)return Promise.resolve();
+  if(apiPromise)return apiPromise;
+  apiPromise=new Promise((resolve,reject)=>{const previous=window.onYouTubeIframeAPIReady;const timer=setTimeout(()=>{apiPromise=null;reject(Error('YouTube did not load. Check your internet connection or use saved audio.'));},15000);window.onYouTubeIframeAPIReady=()=>{clearTimeout(timer);previous?.();resolve();};const script=make('script');script.src='https://www.youtube.com/iframe_api';script.onerror=()=>{clearTimeout(timer);apiPromise=null;reject(Error('YouTube is unavailable. Use saved audio or try again.'));};document.head.append(script);});return apiPromise;
+ }
+ function render(){list.replaceChildren();const q=search.value.toLowerCase();tracks.forEach((t,i)=>{if(!(t.title+' '+t.artist).toLowerCase().includes(q))return;const row=make('div');row.className='garba-track';const b=make('button',(i===at?'♪ ':'')+t.title+' · '+t.artist);b.type='button';b.onclick=()=>play(i);const link=make('a','YouTube ↗');link.href='https://www.youtube.com/watch?v='+t.id;link.target='_blank';link.rel='noopener';row.append(b,link);list.append(row);});}
+ async function play(i){
+  const token=++request,t=tracks[i];if(!t)return;
+  if(!navigator.onLine){status.textContent='You are offline. Open saved Garba in the DJ player below.';return;}
+  status.textContent='Loading YouTube…';video.hidden=false;
+  try{await api();if(token!==request)return;pauseDJ();at=i;render();status.textContent=t.title+' · use the video controls to play or pause.';
+   desiredVideo=t.id;
+   if(player){if(playerReady)player.loadVideoById(t.id);}
+   else player=new window.YT.Player('garbaYouTube',{width:'100%',height:'100%',videoId:t.id,playerVars:{playsinline:1},events:{onReady:e=>{playerReady=true;if(desiredVideo)e.target.loadVideoById(desiredVideo);},onStateChange:e=>{if(e.data===1){if(desiredVideo)pauseDJ();else player?.pauseVideo?.();}if(e.data===0&&desiredVideo)next.onclick();},onError:()=>{status.textContent='This video cannot play here. Try another song or its YouTube link.';}}});
+  }catch(e){status.textContent=e.message;}
+ }
+ next.onclick=()=>{if(!tracks.length)return;let n=(at+1)%tracks.length;if(random&&tracks.length>1){n=Math.floor(Math.random()*(tracks.length-1));if(n>=at)n++;}play(n);};
+ shuffle.onclick=()=>{random=!random;shuffle.textContent='Shuffle: '+(random?'on':'off');shuffle.setAttribute('aria-pressed',String(random));};
+ stop.onclick=()=>{request++;desiredVideo=null;player?.stopVideo?.();status.textContent='Online playback stopped.';};
+ window.addEventListener('sai-vista-dj-play',()=>{request++;desiredVideo=null;player?.pauseVideo?.();});
+ category.onchange=()=>{stop.onclick();tracks=catalogue.slots[category.value]||[];at=-1;render();};search.oninput=render;
+ launch.onclick=async()=>{panel.hidden=!panel.hidden;if(panel.hidden||catalogue)return;status.textContent='Loading collections…';try{const r=await fetch('garba-catalogue.json');if(!r.ok)throw Error();catalogue=await r.json();for(const key of Object.keys(catalogue.slots)){const o=make('option',labels[key]||key);o.value=key;category.append(o);}category.value=Object.keys(catalogue.slots)[0];category.onchange();status.textContent='Choose a song to start.';}catch(_){status.textContent='Could not load the collections. Reopen Garba Special to retry.';}};
+ files.onchange=async()=>{files.disabled=true;let saved=0;try{await navigator.storage?.persist?.();for(const file of files.files){if(file.size>50000000||!(file.type.startsWith('audio/')||/\.(mp3|m4a|wav|ogg|flac)$/i.test(file.name)))continue;status.textContent='Saving '+file.name+'…';await bridge.importGarba(file);saved++;}status.textContent=saved+' files saved. Open saved Garba to use the DJ controls.';}catch(e){status.textContent=saved+' saved. '+e.message;}finally{files.disabled=false;files.value='';}};
+ local.onclick=()=>{stop.onclick();bridge.openGarba();panel.hidden=true;};
+})();

@@ -1,0 +1,461 @@
+{
+  "source": "https://garba.pycnavratri.com/",
+  "slots": {
+    "prachin": [
+      {
+        "id": "fPgqCMnhTNM",
+        "title": "Pankhida Tu Udi Jaje Pavagadh Re",
+        "artist": "Atul Purohit"
+      },
+      {
+        "id": "233KgzQwL6o",
+        "title": "Maa Pava Te Gadh Thi Utarya",
+        "artist": "Diwaliben Bhil"
+      },
+      {
+        "id": "6MpjP4w8Gtk",
+        "title": "Tara Vina Shyam",
+        "artist": "Atul Purohit"
+      },
+      {
+        "id": "jCy9Nn6VSQk",
+        "title": "Maa No Mandavo Shangaro",
+        "artist": "Kanu Patel"
+      },
+      {
+        "id": "J1xS30m1X08",
+        "title": "Tara Dungare Thi Utaryo Vagh",
+        "artist": "Hemant Chauhan"
+      },
+      {
+        "id": "HpmaYBLEkw8",
+        "title": "Sonal Garbo Shire",
+        "artist": "Kishor Manraja"
+      },
+      {
+        "id": "aOQETVm1k54",
+        "title": "Sona No Garbo Rupla Idhoni",
+        "artist": "Ruchita Prajapati"
+      },
+      {
+        "id": "kO31dHZaNPQ",
+        "title": "Tara Vina Shyam Mane",
+        "artist": "Praful Dave"
+      },
+      {
+        "id": "lPO7G8wlCqQ",
+        "title": "Dholida Dhol Re Vagad",
+        "artist": "Rupal Doshi"
+      },
+      {
+        "id": "LEOs_IM3YN8",
+        "title": "Rangtali Rangtali",
+        "artist": "Anuradha Paudwal"
+      },
+      {
+        "id": "1UgkmnKCnOI",
+        "title": "Aaj Ni Ghadi Te Radiyamni",
+        "artist": "Pamela Jain"
+      },
+      {
+        "id": "OdYuV9NkEKQ",
+        "title": "Lal Darwaje Tambu Taniya",
+        "artist": "Gopal Bharwad"
+      },
+      {
+        "id": "IzocwgaDHsg",
+        "title": "Man Mor Bani Thanghat Kare",
+        "artist": "Kirtidan Gadhvi"
+      },
+      {
+        "id": "cba0nuJI9as",
+        "title": "Tame Ekvar Marvad Jajo",
+        "artist": "Kirtidan Gadhvi"
+      },
+      {
+        "id": "vNKyrRNJlDo",
+        "title": "Khodal Aavo To Ramiae",
+        "artist": "Kirtidan Gadhvi"
+      },
+      {
+        "id": "n85LFMv7w9E",
+        "title": "Adhya Shakti Tujne Namu",
+        "artist": "Hardik Dave"
+      }
+    ],
+    "sanedo": [
+      {
+        "id": "yh6G0nqtLY0",
+        "title": "Sanedo Lal Sanedo",
+        "artist": "Rajdeep Barot"
+      },
+      {
+        "id": "fT6Q5Ubd9Js",
+        "title": "Sanedo Lal Sanedo",
+        "artist": "Kamlesh Barot"
+      },
+      {
+        "id": "2l-JHpsRVJE",
+        "title": "Sanedo",
+        "artist": "Jignesh Barot"
+      },
+      {
+        "id": "QeyM6SdsZgE",
+        "title": "Sanedo - Garba Anthem",
+        "artist": "Twinkal Patel"
+      },
+      {
+        "id": "dsiEf6Uz2K8",
+        "title": "Titoda Dhamal",
+        "artist": "Kaushik Bharwad, Suresh Dumana & Hetal Bharwad"
+      },
+      {
+        "id": "hOqSozmNrWI",
+        "title": "Mara Nakhna Parvada",
+        "artist": "Lalita Ghodadra"
+      },
+      {
+        "id": "RVTPe2dSTjI",
+        "title": "Hu To Gai Ti Mele",
+        "artist": "Aishwarya Majmudar"
+      },
+      {
+        "id": "5MMqwxJ3VBY",
+        "title": "Tetudo 2",
+        "artist": "Geeta Rabari"
+      },
+      {
+        "id": "9SsMg5HJMrM",
+        "title": "Aaj Mare Orde Re",
+        "artist": "Geeta Rabari"
+      },
+      {
+        "id": "Te-1fu0UdQE",
+        "title": "Galgoto Me Zukine Lidho",
+        "artist": "Geeta Rabari"
+      },
+      {
+        "id": "ADrU6kxcIsk",
+        "title": "Mogal Maadi",
+        "artist": "Aishwarya Majmudar"
+      },
+      {
+        "id": "y5qVrICwQgw",
+        "title": "Chotile Dakla Vagya",
+        "artist": "Aishwarya Majmudar"
+      }
+    ],
+    "indipop": [
+      {
+        "id": "Rbz1qFlRL_Y",
+        "title": "Maine Payal Hai Chhankai",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "h6by4WdrJq0",
+        "title": "Yaad Piya Ki Aane Lagi",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "QIe_gL5Na8g",
+        "title": "O Piya",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "4V2SU8LMXxo",
+        "title": "Meri Chunar Udd Udd Jaye",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "Xna3I11v9Vs",
+        "title": "Chudi",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "DwbaFnjxDo0",
+        "title": "Saawan Mein",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "7jY8MT9CIAo",
+        "title": "Indhana Winva",
+        "artist": "Falguni Pathak"
+      },
+      {
+        "id": "SpLsOg8qlZM",
+        "title": "Pankhida Pankhida",
+        "artist": "Falguni Pathak"
+      }
+    ],
+    "filmi": [
+      {
+        "id": "4a25J3p0kVI",
+        "title": "Dholi Taro Dhol Baaje",
+        "artist": "Kavita Krishnamurthy, Vinod Rathod & Karsan Sargathia"
+      },
+      {
+        "id": "3X7x4Ye-tqo",
+        "title": "Nagada Sang Dhol",
+        "artist": "Shreya Ghoshal & Osman Mir"
+      },
+      {
+        "id": "asYxxtiWUyw",
+        "title": "Chogada",
+        "artist": "Darshan Raval, Asees Kaur & Lijo George-Dj Chetas"
+      },
+      {
+        "id": "i0_m90T04uw",
+        "title": "Kamariya",
+        "artist": "Aastha Gill, Sachin Sanghvi, Jigar Saraiya & Divya Kumar"
+      },
+      {
+        "id": "gE3XkDXpB74",
+        "title": "Udi Udi Jaye",
+        "artist": "Sukhwinder Singh, Bhoomi Trivedi & Karsan Sagathia"
+      },
+      {
+        "id": "xJsvTCMg0qA",
+        "title": "Mor Bani Thanghat Kare",
+        "artist": "Osman Mir"
+      },
+      {
+        "id": "2bp7zdzWj3Y",
+        "title": "Rangilo Maro Dholna",
+        "artist": "Shubha Mudgal & Sukhwinder Singh"
+      },
+      {
+        "id": "sDZA54sTqwQ",
+        "title": "Vaagyo Re Dhol",
+        "artist": "Bhoomi Trivedi"
+      }
+    ],
+    "fusion": [
+      {
+        "id": "t7wSjy9Lv-o",
+        "title": "Khalasi",
+        "artist": "Aditya Gadhvi x Achint"
+      },
+      {
+        "id": "DZmNMseW9s4",
+        "title": "Jobaniyu",
+        "artist": "Aditya Gadhvi"
+      },
+      {
+        "id": "JYLEyMvj6sE",
+        "title": "Rang Bhini Radha",
+        "artist": "Aditya Gadhvi"
+      },
+      {
+        "id": "rPQ3TdzSt-Q",
+        "title": "Navlaakhaai Lobadiyaliyu",
+        "artist": "Aditya Gadhvi"
+      },
+      {
+        "id": "iraezTzB938",
+        "title": "Naagar Nandji Na Laal",
+        "artist": "Aditya Gadhvi"
+      },
+      {
+        "id": "PfHslYMJGGg",
+        "title": "Mor Bani & Kasumbi No Rang",
+        "artist": "Meghdhanush"
+      },
+      {
+        "id": "TZahY_0jc0M",
+        "title": "Ghammar Ghammar",
+        "artist": "Meghdhanush"
+      },
+      {
+        "id": "Ow_shIWfs3E",
+        "title": "Apna Malak Na",
+        "artist": "Meghdhanush"
+      },
+      {
+        "id": "rjL-T4Lq2rc",
+        "title": "Vaa Vaya Ne Vadal Vadaldi Varsi",
+        "artist": "Santvani Trivedi"
+      },
+      {
+        "id": "9n7tWwa77mY",
+        "title": "Ramo Re",
+        "artist": "Jigardan Gadhavi"
+      },
+      {
+        "id": "D8wMuwgfcn8",
+        "title": "Rudi Ne Rangili Re",
+        "artist": "Jigardan Gadhavi"
+      },
+      {
+        "id": "5U9uP6riAZM",
+        "title": "Laadki",
+        "artist": "Sachin-Jigar, Kirtidan Gadhvi & Rekha Bhardwaj"
+      },
+      {
+        "id": "uVN92NrkB7c",
+        "title": "Garba Shuffle",
+        "artist": "The Comedy Factory"
+      },
+      {
+        "id": "nHTFqJK_JfA",
+        "title": "Garba Shuffle 2.0",
+        "artist": "The Comedy Factory"
+      },
+      {
+        "id": "JjyPlG0jFE8",
+        "title": "Tara Vina Shyam x Re Kanha",
+        "artist": "Balraj Shastri & Denisha Ghumra"
+      },
+      {
+        "id": "Bb8GAxsaZfI",
+        "title": "Vitthal Vitthal",
+        "artist": "Balraj Shastri & Denisha Ghumra"
+      }
+    ],
+    "gujpop": [
+      {
+        "id": "Gdgm79jAa3I",
+        "title": "Char Char Bangdi Vali Gadi",
+        "artist": "Kinjal Dave"
+      },
+      {
+        "id": "NuVYL-OXx4M",
+        "title": "Leri Lala",
+        "artist": "Kinjal Dave"
+      },
+      {
+        "id": "LPil3MjFDAM",
+        "title": "Ranjaniyu",
+        "artist": "Kinjal Dave"
+      },
+      {
+        "id": "NpiD70ZrZTc",
+        "title": "Vichudo",
+        "artist": "Kinjal Dave"
+      },
+      {
+        "id": "1tyh2-t7GYo",
+        "title": "Kum Kum Pagle Madi Padharo Re",
+        "artist": "Geeta Rabari"
+      },
+      {
+        "id": "EgLkO8sXmtY",
+        "title": "Koi Kejo Kana Na Kan Maa",
+        "artist": "Geeta Rabari"
+      },
+      {
+        "id": "T7HfbzNUuvI",
+        "title": "Ghaghro Ghume",
+        "artist": "Vijay Suvada"
+      },
+      {
+        "id": "oxe6HPzf04M",
+        "title": "Kala Sha Kala",
+        "artist": "Purva Mantri"
+      },
+      {
+        "id": "NJtUfRmVNJQ",
+        "title": "Vaar Vaar",
+        "artist": "Purva Mantri"
+      },
+      {
+        "id": "T6_gSwR5S6c",
+        "title": "Rumjhum",
+        "artist": "Purva Mantri"
+      }
+    ],
+    "techno": [
+      {
+        "id": "RdBANtshrE4",
+        "title": "Mahisagar",
+        "artist": "AREUBLUE"
+      },
+      {
+        "id": "PIErBUEI_LQ",
+        "title": "Duha",
+        "artist": "AREUBLUE"
+      },
+      {
+        "id": "w8YOZDnrjvw",
+        "title": "Moomal",
+        "artist": "AREUBLUE"
+      },
+      {
+        "id": "gBeBK9QQtv8",
+        "title": "Dakla",
+        "artist": "Bandish Projekt & Aishwarya Joshi"
+      },
+      {
+        "id": "pwezb1oHfPA",
+        "title": "Dakla 2",
+        "artist": "Bandish Projekt & Aishwarya Joshi"
+      },
+      {
+        "id": "dsdcDr8BOTw",
+        "title": "Dakla 4",
+        "artist": "Bandish Projekt & Aishwarya Joshi"
+      },
+      {
+        "id": "HI8rUfSOCm8",
+        "title": "Dakla 5",
+        "artist": "Bandish Projekt & Aishwarya Joshi"
+      },
+      {
+        "id": "Dl3g954da4g",
+        "title": "Rasiyo Rupalo (House Edit)",
+        "artist": "Purva Mantri"
+      }
+    ],
+    "khelaiya": [
+      {
+        "id": "zzMmtXouwvg",
+        "title": "Babla's Disco Dandia Theme",
+        "artist": "Babla & Kanchan"
+      },
+      {
+        "id": "GtBaZfBRklM",
+        "title": "Dadiya Mory Lay Lay",
+        "artist": "Babla & Kanchan"
+      },
+      {
+        "id": "CJRGtgQBxno",
+        "title": "Abhale Thi Utari Maa",
+        "artist": "Hema Desai"
+      },
+      {
+        "id": "pW50IR-Jv6o",
+        "title": "Nagar Bajaar",
+        "artist": "Hema Desai"
+      },
+      {
+        "id": "MZfio6XBaT4",
+        "title": "Maa Taro Garbo",
+        "artist": "Hema Desai"
+      },
+      {
+        "id": "Tg0XB-WzxuE",
+        "title": "Hun To Patan Sher Ni",
+        "artist": "Hema Desai"
+      },
+      {
+        "id": "kJ5xb_MN6Uw",
+        "title": "Oncha Oncha Re",
+        "artist": "Damyanti Bardai"
+      },
+      {
+        "id": "dU0Tl7G2nEY",
+        "title": "Maadi Tara Mandiriyama",
+        "artist": "Damyanti Bardai"
+      },
+      {
+        "id": "h94Py-rFDvA",
+        "title": "Ke Odhni Odhu Odhu Ne Udi Jaye",
+        "artist": "Alka Yagnik"
+      },
+      {
+        "id": "iqNrLy84dNw",
+        "title": "Navratri Non-Stop Garba",
+        "artist": "Master Rana"
+      }
+    ]
+  }
+}
