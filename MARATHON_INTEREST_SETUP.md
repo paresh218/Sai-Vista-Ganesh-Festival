@@ -25,7 +25,7 @@ The event remains tentative: early to mid December 2026. No date, distance or ro
 
 The existing Apps Script web app was updated to **version 9 on 20 October 2026, 14:52 IST**, keeping its existing URL, execution identity and audience. Historical event code was preserved when adding marathon handling. The new handler saves only to the separate private marathon sheet.
 
-Website changes remain local and have not been published to GitHub Pages. Local preview: http://127.0.0.1:8911/. Use HTTP for browser testing rather than opening index.html as a file.
+Website changes publish from the main branch through GitHub Pages at https://saivistaculturalcommittee.in/. The release marker is 2026-10-20-kojagiri-card-4 and the service-worker cache is v127. Pages serves this static site directly using .nojekyll; temporary dependencies are excluded from Git tracking. Local preview: http://127.0.0.1:8911/. Use HTTP for browser testing rather than opening index.html as a file.
 
 For future backend changes, update the existing project's Code.gs using event-registration.gs (review historical event differences first), then Deploy → Manage deployments → Edit → New version. Keep the same endpoint. The new response file ID is in marathonBook(). Do not change the legacy eventBook() destination.
 
