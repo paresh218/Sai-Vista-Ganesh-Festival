@@ -3,6 +3,9 @@
 ################################################################################
 
 /.vs
-/node_modules/
+node_modules/
 /.video-tools/
 /tmp/video/
+
+# Local previews and generated working files.
+/tmp/
