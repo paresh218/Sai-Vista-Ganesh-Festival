@@ -1,0 +1,11 @@
+Player rollback and regression checks — 13 October 2026
+
+Restored all seven deployed files changed during the 100 MB work. Published rollback commits cba742e and 0d093ff. The deployed website files match baseline commit 6977a56 exactly.
+Restored Apps Script deployment to Version 5 (11 October), catalogue version 3. Restored source and original manifest, removed the temporary diagnostic, and restored manifest visibility to its original setting.
+Playback limit is again 50,000,000 bytes. No 100 MB download path remains active.
+
+PASS: all ten existing player suites: service catalogue/size restrictions, player controls, audio decoding, offline storage, two decks, Deck B replacement failure, studio math/cleanup, playlist time, popup cue/loops, and mini-player state.
+PASS in live Edge browser: real MP4 audio playback and advancing time, seek, pause/resume, mute/unmute, speed selection, search, cue and 8-second loop controls, minimise/reopen without stopping audio, folder change preserving playback, Deck B loading, simultaneous manual mix, crossfader, finish mix, and Stop playback.
+PASS in local Edge fixture using the unchanged player: automatic next from a 20-second track, correct 40-second playlist total, saving two songs, reloading with the API returning 503, continued saved native audio playback, and clearing saved test songs.
+No player regression was found in these checks. Browser checks covered desktop Edge; mobile devices and every uploaded song were not individually tested.
+Edited MP3 output files and pre-existing workspace edits were preserved.

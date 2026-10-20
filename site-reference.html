@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>PYC ગરબા Juke Box - garba music</title>
+    <meta name="description" content="Eight kinds of garba: prachin, sanedo, khelaiya, indipop, filmi, fusion, Gujarati pop and techno. Pick one and it plays." />
+    <meta name="theme-color" content="#F2E8D5" />
+
+    <!-- Absolute, not "/assets/...". The Open Graph spec asks for a full URL and
+         the big scrapers do not resolve a relative one - the card came back
+         with no picture at all, which reads exactly like a stale image. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://garba.pycnavratri.com/" />
+    <meta property="og:site_name" content="PYC ગરબા Juke Box" />
+    <meta property="og:title" content="PYC ગરબા Juke Box" />
+    <meta property="og:description" content="Eight kinds of garba: prachin, sanedo, khelaiya, indipop, filmi, fusion, Gujarati pop and techno. Pick one and it plays." />
+    <meta property="og:image" content="https://garba.pycnavratri.com/assets/og-jukebox.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PYC ગરબા Juke Box - eight kinds of garba, pick one and it plays" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PYC ગરબા Juke Box" />
+    <meta name="twitter:description" content="Eight kinds of garba: prachin, sanedo, khelaiya, indipop, filmi, fusion, Gujarati pop and techno. Pick one and it plays." />
+    <meta name="twitter:image" content="https://garba.pycnavratri.com/assets/og-jukebox.jpg" />
+
+    <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/assets/icon-512.png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+    <link rel="preload" href="/assets/fonts/anek-500.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/anek-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/kumar-one-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <!-- Google Analytics. Signals and ad personalisation are switched off: this
+         site measures what people listen to and has no advertising use for the
+         cross-device profile those two flags turn on. Leaving them on is what
+         makes GA a heavier thing to consent to than it needs to be here. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-STVY1KNSQ5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-STVY1KNSQ5', {
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+      });
+    </script>
+
+    <!-- Meta Pixel, page views only (operator, 2026-09-23: "pixel on garba and
+         plan"). This is the one advertising use the page has: it is PYC's
+         website dataset (1080739678185063, the same as pycnavratri.com), so
+         people who found the juke box can be reached again by PYC Navratri
+         ads. It loads async, reports the visit and nothing about what is
+         played, and is covered by pycnavratri.com/privacy (linked top right).
+         GA above keeps its ad signals off: that decision is about GA. -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1080739678185063');
+      fbq('track', 'PageView');
+    </script>
+  </head>
+
+  <body>
+    <!-- The sound. A 1x1 iframe parked off-screen; everything visible is ours. -->
+    <div id="yt" aria-hidden="true"></div>
+
+    <canvas
+      id="floor"
+      aria-label="A circle of garba dancers turning around a lamp. The outer ring shows how far through the track you are."
+    ></canvas>
+
+    <!-- She is drawn on the canvas but the words about her are not: the scene
+         paints no text anywhere. app.js parks this under her and takes it away
+         the moment she sets off. pointer-events:none deliberately - the dancer
+         is the target, and a bubble sitting over her would swallow the tap. -->
+    <div class="join-hint" id="join-hint" aria-hidden="true">
+      Your Garba gang is waiting! <span class="join-hint-emoji">&#128131;&#129705;</span>
+      <b>Click to join the group.</b>
+    </div>
+
+    <header class="top">
+      <!-- The full lockup: PYC's mark, the name in the language it belongs to,
+           and what the thing actually is. Fixed two-colour artwork, so unlike
+           the drawn wordmark it replaced it cannot take currentColor - app.js
+           swaps it on the same light/dark rule as the credit lockup below. -->
+      <div class="brand">
+        <a class="logo" href="/" aria-label="PYC Garba Juke Box - home">
+          <img
+            id="brand-mark"
+            class="wordmark"
+            src="/assets/brand/pyc-garba-jukebox-day.png"
+            alt="PYC ગરબા Juke Box"
+            width="1200"
+            height="513"
+            decoding="async"
+          />
+        </a>
+      </div>
+    <nav class="genres" aria-label="Genre">
+      <ol id="theme-list"></ol>
+    </nav>
+      <div class="meta">
+        <p class="clock" id="clock">-</p>
+        <p class="crowd"><span id="crowd">-</span> <span class="unit">in the circle</span></p>
+        <!-- The Meta Pixel above needs a way to its notice: PYC's privacy page
+             covers this site too. Set like the line above it, faint and small. -->
+        <p class="crowd"><a class="privacy-link" href="https://pycnavratri.com/privacy" target="_blank" rel="noopener">Privacy</a></p>
+      </div>
+    </header>
+
+
+    <div class="bottom">
+      <!-- The way to actually ask about the festival. Same number and the same
+           wa.me deep-link shape the main site uses for every CTA, so there is
+           one bot answering and not two. -->
+      <a
+        class="wa"
+        href="https://wa.me/919408908085?text=Hi%20PYC!%20Tell%20me%20about%20PYC%20Navratri%202026%20%F0%9F%99%8C"
+        target="_blank"
+        rel="noopener"
+        aria-label="Ask about PYC Navratri 2026 on WhatsApp"
+      >
+        <svg class="wa-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            fill="currentColor"
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.548 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"
+          />
+        </svg>
+        <span class="wa-label">Ask about<br />PYC Navratri</span>
+      </a>
+
+      <!-- Everything you hear comes out of a YouTube player, so YouTube's mark
+           belongs on the page. Their asset, unmodified, straight out of the
+           official logo package - which is also where the space around it comes
+           from: 1294x289 of ink inside a 1705x573 canvas, so the padding that
+           separates it from the words is YouTube's own clear space rather than
+           a gap of ours. Two files because a fixed-colour mark cannot take
+           currentColor the way the rest of the chrome does.
+           It links to whatever is playing, so the credit is also the way to
+           the source. -->
+      <a class="yt-credit" id="yt-credit" href="https://www.youtube.com" target="_blank" rel="noopener">
+        <span class="yt-by">Streaming via</span>
+        <img
+          id="yt-mark"
+          class="yt-mark"
+          src="/assets/brand/youtube-logo-on-light.png"
+          alt="YouTube"
+          width="1705"
+          height="573"
+          decoding="async"
+        />
+      </a>
+
+      <div class="dock">
+      <div class="now">
+        <div class="cover-wrap"><img id="cover" class="cover" alt="" width="52" height="52" /></div>
+        <div class="now-text">
+          <!-- The title is the way back to the source. app.js sets the href
+               alongside the text, and drops it again when there is no track,
+               so a link is never left pointing at nothing. -->
+          <p class="track"><a id="track" class="track-link" target="_blank" rel="noopener">-</a></p>
+          <p class="artist" id="artist">-</p>
+        </div>
+        <p class="time"><span id="elapsed">0:00</span><span class="slash">/</span><span id="total">-:-</span></p>
+      </div>
+
+      <div class="controls">
+        <button id="play" class="btn btn-play" type="button" aria-label="Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.2v13.6L19 12z" /></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg>
+        </button>
+
+        <!-- Plain labels and plain icons: the ordinary word for the action and
+             the ordinary mark for it. The block-print styling stays, because
+             that belongs to the cloth rather than to the wording. -->
+        <button id="next" class="btn btn-stamp" type="button">
+          <svg class="cut" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5.5 5.4 15 12l-9.5 6.6z" class="solid" />
+            <path d="M18.6 5.4v13.2" />
+          </svg>
+          <span lang="gu">આગળ</span><span class="gloss">next</span>
+        </button>
+
+        <button id="songs" class="btn btn-stamp" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="cut" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.6 6.5h14.8M4.6 12h14.8M4.6 17.5h9.4" />
+          </svg>
+          <span lang="gu">ગરબા</span><span class="gloss">songs</span>
+        </button>
+
+        <!-- Icon only: the dock has no room for a fourth word, and this one is
+             about the window rather than about the music. Hidden outright where
+             the browser has no element fullscreen, which is iPhone Safari. -->
+        <button id="fs" class="btn btn-stamp btn-cut-only" type="button" aria-label="Fullscreen">
+          <svg class="cut i-expand" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.4 4.6H4.6v4.8M14.6 4.6h4.8v4.8M14.6 19.4h4.8v-4.8M9.4 19.4H4.6v-4.8" />
+          </svg>
+          <svg class="cut i-contract" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.6 9.4h4.8V4.6M19.4 9.4h-4.8V4.6M19.4 14.6h-4.8v4.8M4.6 14.6h4.8v4.8" />
+          </svg>
+        </button>
+
+        <div class="beat" id="beat" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+      <div class="sheet-inner">
+        <div class="sheet-head">
+          <h2 id="sheet-title"><span lang="gu">ગરબા</span> <span class="gloss">pick one</span></h2>
+          <button id="sheet-close" class="btn btn-ghost btn-icon" type="button" aria-label="Close">✕</button>
+        </div>
+        <p class="sheet-note">
+          Pick one and it plays. The arrow beside it opens the video the audio
+          comes from, on YouTube.
+        </p>
+        <ul id="sheet-list" class="sheet-list"></ul>
+      </div>
+    </div>
+
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+
+    <noscript>
+      <p class="noscript">
+        PYC ગરબા Juke Box needs JavaScript. The page is drawn frame by frame
+        and the music comes from an embedded player.
+      </p>
+    </noscript>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
+

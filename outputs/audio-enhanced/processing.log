@@ -1,0 +1,152 @@
+Input #0, mp3, from 'C:\Users\ASUS\Downloads\Dandiya 2026 Marathi & Hindi Garba 2026 Nonstop Garba Dj Song Trending Songs Dj Maddy.mp3':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2mp41
+    encoder         : Lavf60.16.100
+  Duration: 00:30:09.84, start: 0.025057, bitrate: 135 kb/s
+  Stream #0:0: Audio: mp3 (mp3float), 44100 Hz, stereo, fltp, 135 kb/s
+      Metadata:
+        encoder         : Lavc60.31
+Stream mapping:
+  Stream #0:0 -> #0:0 (mp3 (mp3float) -> mp3 (libmp3lame))
+Press [q] to stop, [?] for help
+Output #0, mp3, to 'D:\Sai Vista Ganesh Festival\outputs\audio-enhanced\Dandiya-2026-Clarity-Enhanced.mp3':
+  Metadata:
+    TIT2            : Dandiya 2026 - Clarity Enhanced
+    TSSE            : Lavf61.7.100
+  Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 160 kb/s
+      Metadata:
+        encoder         : Lavc61.19.100 libmp3lame
+size=     200KiB time=00:00:10.18 bitrate= 160.5kbits/s speed=20.3x    
+size=     256KiB time=00:00:24.19 bitrate=  86.7kbits/s speed=23.6x    
+size=     512KiB time=00:00:38.87 bitrate= 107.9kbits/s speed=25.3x    
+size=    1024KiB time=00:00:54.57 bitrate= 153.7kbits/s speed=26.7x    
+size=    1280KiB time=00:01:10.19 bitrate= 149.4kbits/s speed=27.4x    
+size=    1536KiB time=00:01:25.18 bitrate= 147.7kbits/s speed=27.7x    
+size=    1792KiB time=00:01:40.38 bitrate= 146.2kbits/s speed=  28x    
+size=    2048KiB time=00:01:56.08 bitrate= 144.5kbits/s speed=28.3x    
+size=    2560KiB time=00:02:11.57 bitrate= 159.4kbits/s speed=28.5x    
+size=    2816KiB time=00:02:27.59 bitrate= 156.3kbits/s speed=28.7x    
+size=    3072KiB time=00:02:43.52 bitrate= 153.9kbits/s speed=28.9x    
+size=    3328KiB time=00:02:59.41 bitrate= 152.0kbits/s speed=29.1x    
+size=    3584KiB time=00:03:14.69 bitrate= 150.8kbits/s speed=29.1x    
+size=    4096KiB time=00:03:30.26 bitrate= 159.6kbits/s speed=29.2x    
+size=    4352KiB time=00:03:46.09 bitrate= 157.7kbits/s speed=29.3x    
+size=    4608KiB time=00:04:00.85 bitrate= 156.7kbits/s speed=29.2x    
+size=    4864KiB time=00:04:14.53 bitrate= 156.5kbits/s speed=29.1x    
+size=    5120KiB time=00:04:29.27 bitrate= 155.8kbits/s speed=  29x    
+size=    5376KiB time=00:04:43.69 bitrate= 155.2kbits/s speed=  29x    
+size=    5632KiB time=00:04:58.89 bitrate= 154.4kbits/s speed=  29x    
+size=    6144KiB time=00:05:14.77 bitrate= 159.9kbits/s speed=29.1x    
+size=    6400KiB time=00:05:30.76 bitrate= 158.5kbits/s speed=29.2x    
+size=    6656KiB time=00:05:46.04 bitrate= 157.6kbits/s speed=29.2x    
+size=    6912KiB time=00:06:01.37 bitrate= 156.7kbits/s speed=29.2x    
+size=    7168KiB time=00:06:16.89 bitrate= 155.8kbits/s speed=29.2x    
+size=    7424KiB time=00:06:31.78 bitrate= 155.2kbits/s speed=29.2x    
+size=    7936KiB time=00:06:46.51 bitrate= 159.9kbits/s speed=29.2x    
+size=    8192KiB time=00:07:01.17 bitrate= 159.3kbits/s speed=29.2x    
+size=    8448KiB time=00:07:15.77 bitrate= 158.8kbits/s speed=29.1x    
+size=    8704KiB time=00:07:30.58 bitrate= 158.2kbits/s speed=29.1x    
+size=    8960KiB time=00:07:45.16 bitrate= 157.8kbits/s speed=29.1x    
+size=    9216KiB time=00:08:00.81 bitrate= 157.0kbits/s speed=29.1x    
+size=    9472KiB time=00:08:16.17 bitrate= 156.4kbits/s speed=29.1x    
+size=    9984KiB time=00:08:31.19 bitrate= 160.0kbits/s speed=29.2x    
+size=   10240KiB time=00:08:47.02 bitrate= 159.2kbits/s speed=29.2x    
+size=   10496KiB time=00:09:02.69 bitrate= 158.4kbits/s speed=29.2x    
+size=   10752KiB time=00:09:18.47 bitrate= 157.7kbits/s speed=29.3x    
+size=   11008KiB time=00:09:34.27 bitrate= 157.0kbits/s speed=29.3x    
+size=   11520KiB time=00:09:50.18 bitrate= 159.9kbits/s speed=29.3x    
+size=   11776KiB time=00:10:06.06 bitrate= 159.2kbits/s speed=29.4x    
+size=   12032KiB time=00:10:21.87 bitrate= 158.5kbits/s speed=29.4x    
+size=   12288KiB time=00:10:37.88 bitrate= 157.8kbits/s speed=29.4x    
+size=   12544KiB time=00:10:53.48 bitrate= 157.3kbits/s speed=29.5x    
+size=   13056KiB time=00:11:08.68 bitrate= 159.9kbits/s speed=29.5x    
+size=   13312KiB time=00:11:23.57 bitrate= 159.5kbits/s speed=29.5x    
+size=   13568KiB time=00:11:38.93 bitrate= 159.0kbits/s speed=29.5x    
+size=   13824KiB time=00:11:54.76 bitrate= 158.4kbits/s speed=29.5x    
+size=   14080KiB time=00:12:10.67 bitrate= 157.9kbits/s speed=29.5x    
+size=   14336KiB time=00:12:25.87 bitrate= 157.5kbits/s speed=29.5x    
+size=   14848KiB time=00:12:42.28 bitrate= 159.6kbits/s speed=29.6x    
+size=   15104KiB time=00:12:58.18 bitrate= 159.0kbits/s speed=29.6x    
+size=   15360KiB time=00:13:13.88 bitrate= 158.5kbits/s speed=29.6x    
+size=   15616KiB time=00:13:29.84 bitrate= 158.0kbits/s speed=29.6x    
+size=   16128KiB time=00:13:45.78 bitrate= 160.0kbits/s speed=29.7x    
+size=   16384KiB time=00:14:01.77 bitrate= 159.4kbits/s speed=29.7x    
+size=   16640KiB time=00:14:17.78 bitrate= 158.9kbits/s speed=29.7x    
+size=   16896KiB time=00:14:33.58 bitrate= 158.4kbits/s speed=29.7x    
+size=   17152KiB time=00:14:48.97 bitrate= 158.1kbits/s speed=29.7x    
+size=   17664KiB time=00:15:04.88 bitrate= 159.9kbits/s speed=29.7x    
+size=   17920KiB time=00:15:20.19 bitrate= 159.5kbits/s speed=29.7x    
+size=   18176KiB time=00:15:35.60 bitrate= 159.1kbits/s speed=29.7x    
+size=   18432KiB time=00:15:50.75 bitrate= 158.8kbits/s speed=29.7x    
+size=   18688KiB time=00:16:06.37 bitrate= 158.4kbits/s speed=29.7x    
+size=   18944KiB time=00:16:21.91 bitrate= 158.0kbits/s speed=29.7x    
+size=   19456KiB time=00:16:37.48 bitrate= 159.8kbits/s speed=29.7x    
+size=   19712KiB time=00:16:52.87 bitrate= 159.4kbits/s speed=29.8x    
+size=   19968KiB time=00:17:08.88 bitrate= 159.0kbits/s speed=29.8x    
+size=   20224KiB time=00:17:24.79 bitrate= 158.6kbits/s speed=29.8x    
+size=   20480KiB time=00:17:40.67 bitrate= 158.2kbits/s speed=29.8x    
+size=   20992KiB time=00:17:56.97 bitrate= 159.7kbits/s speed=29.8x    
+size=   21248KiB time=00:18:11.78 bitrate= 159.4kbits/s speed=29.8x    
+size=   21504KiB time=00:18:27.48 bitrate= 159.1kbits/s speed=29.8x    
+size=   21760KiB time=00:18:42.84 bitrate= 158.8kbits/s speed=29.8x    
+size=   22016KiB time=00:18:57.94 bitrate= 158.5kbits/s speed=29.8x    
+size=   22272KiB time=00:19:13.07 bitrate= 158.2kbits/s speed=29.8x    
+size=   22784KiB time=00:19:27.88 bitrate= 159.8kbits/s speed=29.8x    
+size=   23040KiB time=00:19:42.27 bitrate= 159.6kbits/s speed=29.8x    
+size=   23296KiB time=00:19:58.05 bitrate= 159.3kbits/s speed=29.8x    
+size=   23552KiB time=00:20:13.57 bitrate= 159.0kbits/s speed=29.8x    
+size=   23808KiB time=00:20:28.67 bitrate= 158.7kbits/s speed=29.8x    
+size=   24064KiB time=00:20:44.31 bitrate= 158.4kbits/s speed=29.8x    
+size=   24576KiB time=00:20:59.78 bitrate= 159.8kbits/s speed=29.8x    
+size=   24832KiB time=00:21:15.27 bitrate= 159.5kbits/s speed=29.8x    
+size=   25088KiB time=00:21:30.71 bitrate= 159.2kbits/s speed=29.8x    
+size=   25344KiB time=00:21:45.88 bitrate= 159.0kbits/s speed=29.8x    
+size=   25600KiB time=00:22:01.84 bitrate= 158.7kbits/s speed=29.8x    
+size=   25856KiB time=00:22:16.68 bitrate= 158.5kbits/s speed=29.8x    
+size=   26368KiB time=00:22:31.28 bitrate= 159.9kbits/s speed=29.8x    
+size=   26624KiB time=00:22:46.10 bitrate= 159.7kbits/s speed=29.7x    
+size=   26880KiB time=00:23:01.27 bitrate= 159.4kbits/s speed=29.7x    
+size=   27136KiB time=00:23:16.87 bitrate= 159.1kbits/s speed=29.8x    
+size=   27392KiB time=00:23:32.62 bitrate= 158.8kbits/s speed=29.8x    
+size=   27648KiB time=00:23:48.58 bitrate= 158.5kbits/s speed=29.8x    
+size=   28160KiB time=00:24:04.67 bitrate= 159.7kbits/s speed=29.8x    
+size=   28416KiB time=00:24:19.88 bitrate= 159.5kbits/s speed=29.8x    
+size=   28672KiB time=00:24:35.78 bitrate= 159.2kbits/s speed=29.8x    
+size=   28928KiB time=00:24:51.14 bitrate= 158.9kbits/s speed=29.8x    
+size=   29184KiB time=00:25:06.40 bitrate= 158.7kbits/s speed=29.8x    
+size=   29696KiB time=00:25:21.89 bitrate= 159.8kbits/s speed=29.8x    
+size=   29952KiB time=00:25:36.57 bitrate= 159.7kbits/s speed=29.8x    
+size=   30208KiB time=00:25:50.29 bitrate= 159.6kbits/s speed=29.7x    
+size=   30464KiB time=00:26:06.01 bitrate= 159.4kbits/s speed=29.8x    
+size=   30720KiB time=00:26:21.27 bitrate= 159.1kbits/s speed=29.8x    
+size=   30976KiB time=00:26:36.44 bitrate= 158.9kbits/s speed=29.8x    
+size=   31232KiB time=00:26:51.91 bitrate= 158.7kbits/s speed=29.8x    
+size=   31744KiB time=00:27:07.66 bitrate= 159.8kbits/s speed=29.8x    
+size=   32000KiB time=00:27:23.39 bitrate= 159.5kbits/s speed=29.8x    
+size=   32256KiB time=00:27:39.37 bitrate= 159.2kbits/s speed=29.8x    
+size=   32512KiB time=00:27:55.46 bitrate= 159.0kbits/s speed=29.8x    
+size=   33024KiB time=00:28:11.09 bitrate= 160.0kbits/s speed=29.8x    
+size=   33280KiB time=00:28:26.37 bitrate= 159.8kbits/s speed=29.8x    
+size=   33536KiB time=00:28:42.07 bitrate= 159.5kbits/s speed=29.8x    
+size=   33792KiB time=00:28:57.77 bitrate= 159.3kbits/s speed=29.8x    
+size=   34048KiB time=00:29:13.44 bitrate= 159.1kbits/s speed=29.8x    
+size=   34304KiB time=00:29:28.62 bitrate= 158.9kbits/s speed=29.8x    
+size=   34816KiB time=00:29:44.08 bitrate= 159.9kbits/s speed=29.8x    
+size=   35072KiB time=00:29:59.89 bitrate= 159.6kbits/s speed=29.8x    
+[Parsed_loudnorm_4 @ 000001311f6b6b40] 
+{
+	"input_i" : "-6.01",
+	"input_tp" : "7.03",
+	"input_lra" : "2.10",
+	"input_thresh" : "-16.04",
+	"output_i" : "-15.00",
+	"output_tp" : "-2.00",
+	"output_lra" : "2.10",
+	"output_thresh" : "-25.02",
+	"normalization_type" : "dynamic",
+	"target_offset" : "0.00"
+}
+[out#0/mp3 @ 000001311f691a80] video:0KiB audio:35348KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.001682%
+size=   35349KiB time=00:30:09.90 bitrate= 160.0kbits/s speed=29.8x    

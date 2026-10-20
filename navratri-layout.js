@@ -44,12 +44,6 @@
     body.textContent = message.body;
     card.append(title, body);
     heading.after(card);
-    // Run after the other initial page handlers have finished setting navigation focus.
-    const openWelcome = () => setTimeout(() => {
-      const day = window.NavratriDays?.current();
-      if (day) { window.openNavratriDay(day); return; }
-    }, 0);
-    if (window.SaiVistaResidentReady) openWelcome();
-    else window.addEventListener('sai-vista-resident-ready', openWelcome, { once: true });
+
   });
 })();
