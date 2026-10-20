@@ -3,7 +3,7 @@
   const archive = document.getElementById('archive');
   const heading = document.createElement('h3');
   heading.textContent = 'Ganesh Festival · 14–25 September 2026';
-  archive.prepend(heading);
+  archive.querySelector('.section-heading').after(heading);
   for (const selector of ['.bappa-feature', '#registration', '#aarti', '#sponsors', '#wallpapers']) {
     const section = document.querySelector(selector);
     if (section) archive.append(section);

@@ -1,0 +1,28 @@
+✖ no unconnected save and no false success on failure; confirmed save returns reference (152.7401ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 625.2659
+
+✖ failing tests:
+
+test at community-season.test.cjs:31:1
+✖ no unconnected save and no false success on failure; confirmed save returns reference (152.7401ms)
+  AssertionError [ERR_ASSERTION]: reopening after success restores editable inputs
+  
+  true !== false
+  
+      at TestContext.<anonymous> (D:\Sai Vista Ganesh Festival\community-season.test.cjs:47:9)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

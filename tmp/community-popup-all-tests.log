@@ -1,0 +1,94 @@
+
+> test
+> node --test *.test.cjs
+
+PASS: Reel validation/canonicalization, duplicate prevention, consent, private pending entries, approval, video signatures, 25 MB boundary, and version discovery.
+✔ community-media.test.cjs (185.5519ms)
+✔ community home and archives preserve sections and reveal deep links (218.4834ms)
+✔ interest forms open in a labelled popup and close back to their trigger (125.8122ms)
+✔ no unconnected save and no false success on failure; confirmed save returns reference (110.518ms)
+✔ Navratri archive is a separate view and nested links select the right festival (104.7448ms)
+PASS: one uploader handles both payloads, previews and reset, photo/video size boundaries, unsupported files, and permission validation.
+✔ community-upload.test.cjs (176.0893ms)
+PASS: Deck B survives failed replacement and competing preload/cache eviction
+✔ deck-b-reliability.test.cjs (184.5339ms)
+PASS: old track continues during loading, two-deck overlap, failed switch preservation, pause and late-load cancellation.
+✔ dj-decks.test.cjs (186.0327ms)
+PASS: known-tempo BPM, silence rejection, phase sync, beat loops, normalization limits, staged decks and manual mix cleanup
+✔ dj-studio.test.cjs (192.2079ms)
+PASS: exact approved senders, authenticated replies, owner Sent verification, draft/quoted/expired rejection, single trigger, private review access, two notifications, first-decision wins, publish/reject, and retry idempotence.
+✔ email-approval.test.cjs (194.411ms)
+PASS: 11 event saves, validation, age limits, performance limits, wing/household duplicates, retries, deadlines, gift deduplication and issued flags, formula escaping.
+PASS: Mahaprasad saves without names/phone, retains household deduplication; other events still require names.
+PASS: cultural fund paid/unpaid/missing/ambiguous checks, server-side enforcement, fresh paid update, outage blocks new entries, saved retry is safe.
+PASS: cooking accepts no age/dish/ingredients; agreement remains required.
+PASS: Rangoli and Pooja Thali save without age or a children gift policy.
+PASS: browser and server use the collection endpoint, not the registration settings endpoint.
+PASS: closed Talent/Drawing, IST cutoff boundaries, server enforcement, obsolete deadline ignored, blood donation validation/history/duplicates and retries after closure.
+✔ event-registration.test.cjs (219.4465ms)
+PASS: filter dates/categories, complete event metadata, clean confirmation/WhatsApp details, expired notices and Hindi/Marathi active-event guideline coverage.
+✔ event-ux.test.cjs (177.7516ms)
+PASS: sample totals, reordered/moved headers, additions/deletions, refunds, paise precision, category reset, empty table, invalid amounts/dates and ambiguous tables.
+PASS: planned items, festival placeholders, summary exclusion, and missing amounts with paid dates.
+✔ expense-model.test.cjs (191.6501ms)
+PASS: India date rollover, next scheduled day, festival year/end, and registration badge boundaries.
+✔ festival-experience.test.cjs (221.0545ms)
+PASS: shared Garba transport, seeking, volume, supported speed, repeat, cues, timed loops and local-DJ handoff.
+✔ garba-dj-controls.test.cjs (164.6326ms)
+PASS: 88 songs, eight collections, filtering, audio-only controls, automatic next, playback handoff, offline message, file import and DJ navigation.
+✔ garba-special.test.cjs (164.4385ms)
+✔ private sheet routing, separate activities, duplicate protection and retry after uncertain save (8.842ms)
+✔ server rejects invalid payloads and escapes spreadsheet formula input (4.0627ms)
+PASS: morning India-time window, festival boundaries, missing image retry, daily deduplication and all 11 posters
+✔ morning-posters.test.cjs (166.3509ms)
+PASS: Tonight selects the correct day; readiness counts exact saved versions, lists missing songs and reports storage failures.
+✔ music-evening.test.cjs (183.9289ms)
+PASS: all nine dates/goddesses/assets, India-midnight boundaries, year/end isolation, readable theme contrast.
+✔ navratri-days.test.cjs (218.6014ms)
+PASS: Garba import, deduplication, offline DJ playback and refresh preservation.
+PASS: search, audio playback, seeking, presets, repeat-one, automatic crossfade-next and playback preserved on folder change.
+✔ navratri-player.test.cjs (251.3926ms)
+PASS: MP4 visibility/playback, extra folders, recursive discovery, group boundaries, external-file rejection and size limit.
+✔ navratri-songs.test.cjs (159.3454ms)
+PASS: shared photo service rejects missing consent, invalid JPEG and invalid captions; valid upload reaches storage; empty gallery is supported.
+✔ photo-gallery.test.cjs (184.9423ms)
+✔ complete UI: all views, expand/compact, minimisation and reopening retain controls (170.8756ms)
+✔ local controls: play, seek, reorder, EQ, mute, speed, repeat, automatic next and failed refresh (74.8814ms)
+✔ online Garba uses shared controls and cannot be overwritten by the paused local deck (53.8789ms)
+✔ offline readiness, storage failures, imported Garba and Tonight planned playback (57.0035ms)
+✔ advanced studio: staged deck, manual mixing, beat loops, effects and local recording (74.7742ms)
+✔ starting a staged DJ deck stops online Garba instead of playing both sources (43.5202ms)
+✔ rapid song selection, empty playlists, search, media controls and missing audio recover safely (49.5066ms)
+✔ live spectrum runs for local audio, pauses in background and leaves audio playing (30.7137ms)
+✔ Tonight stays in Daily songs and offline actions stay inside Offline (40.7232ms)
+✔ seek colours follow local playback, seeking, online playback and stop (48.4491ms)
+✔ saved audio unlocks sound before async loading and recovers interrupted output without pause/play (34.8521ms)
+✔ blocked sound recovery asks for a tap and does not retry in a loop (35.407ms)
+✔ expanded cue panel contains all eight working controls with Garba loaded first (32.5114ms)
+PASS: full/partial playlist totals, hour formatting and changed-file cache key
+✔ playlist-time.test.cjs (168.7289ms)
+PASS: form buttons, schedule links, general registration link and open form visibility across all IST deadline boundaries.
+✔ registration-visibility.test.cjs (169.6698ms)
+PASS: remembered flat validation and unavailable storage fallback
+✔ resident-memory.test.cjs (148.0679ms)
+PASS: fresh network response, offline cache, navigation fallback, no HTML for missing scripts, uncached update probes.
+PASS: unchanged release stays stable; stale release reloads once across page loads; edited forms and unavailable storage never auto-reload.
+✔ site-updates.test.cjs (521.7975ms)
+PASS: 40 MB chunked audio decode, invalid download rejection and base64 normalization
+✔ song-download.test.cjs (1102.6579ms)
+PASS: mini-player stopped, playing, paused, mixed, muted and outgoing-deck states
+✔ song-mini.test.cjs (138.9618ms)
+PASS: blocked storage recovery, saved-file lookup, local reads and clearing
+✔ song-offline.test.cjs (136.2123ms)
+PASS: popup minimisation preserves playback; cue jump and loop/reset
+✔ song-popup.test.cjs (131.6067ms)
+PASS: India-time cutoff, recipient routing, report window and repeat-send protection
+✔ visitor-logs.test.cjs (123.2235ms)
+ℹ tests 46
+ℹ suites 0
+ℹ pass 46
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1985.2621

@@ -1,0 +1,56 @@
+
+> test:player
+> node test-player.cjs
+
+Player regression: 16 syntax checks and 15 test files.
+PASS: Deck B survives failed replacement and competing preload/cache eviction
+✔ deck-b-reliability.test.cjs (159.0751ms)
+PASS: old track continues during loading, two-deck overlap, failed switch preservation, pause and late-load cancellation.
+✔ dj-decks.test.cjs (163.9882ms)
+PASS: known-tempo BPM, silence rejection, phase sync, beat loops, normalization limits, staged decks and manual mix cleanup
+✔ dj-studio.test.cjs (186.7585ms)
+PASS: shared Garba transport, seeking, volume, supported speed, repeat, cues, timed loops and local-DJ handoff.
+✔ garba-dj-controls.test.cjs (162.861ms)
+PASS: 88 songs, eight collections, filtering, audio-only controls, automatic next, playback handoff, offline message, file import and DJ navigation.
+✔ garba-special.test.cjs (183.8958ms)
+PASS: Tonight selects the correct day; readiness counts exact saved versions, lists missing songs and reports storage failures.
+✔ music-evening.test.cjs (171.7398ms)
+PASS: Garba import, deduplication, offline DJ playback and refresh preservation.
+PASS: search, audio playback, seeking, presets, repeat-one, automatic crossfade-next and playback preserved on folder change.
+✔ navratri-player.test.cjs (172.9078ms)
+PASS: MP4 visibility/playback, extra folders, recursive discovery, group boundaries, external-file rejection and size limit.
+✔ navratri-songs.test.cjs (159.1882ms)
+✔ complete UI: all views, expand/compact, minimisation and reopening retain controls (149.8243ms)
+✔ local controls: play, seek, reorder, EQ, mute, speed, repeat, automatic next and failed refresh (66.1962ms)
+✔ online Garba uses shared controls and cannot be overwritten by the paused local deck (67.3538ms)
+✔ offline readiness, storage failures, imported Garba and Tonight planned playback (55.5495ms)
+✔ advanced studio: staged deck, manual mixing, beat loops, effects and local recording (52.5783ms)
+✔ starting a staged DJ deck stops online Garba instead of playing both sources (59.7649ms)
+✔ rapid song selection, empty playlists, search, media controls and missing audio recover safely (41.582ms)
+✔ live spectrum runs for local audio, pauses in background and leaves audio playing (35.7757ms)
+✔ Tonight stays in Daily songs and offline actions stay inside Offline (29.5607ms)
+✔ seek colours follow local playback, seeking, online playback and stop (38.2015ms)
+✔ saved audio unlocks sound before async loading and recovers interrupted output without pause/play (33.6394ms)
+✔ blocked sound recovery asks for a tap and does not retry in a loop (33.2306ms)
+✔ expanded cue panel contains all eight working controls with Garba loaded first (58.0519ms)
+PASS: full/partial playlist totals, hour formatting and changed-file cache key
+✔ playlist-time.test.cjs (108.5145ms)
+PASS: fresh network response, offline cache, navigation fallback, no HTML for missing scripts, uncached update probes.
+PASS: unchanged release stays stable; stale release reloads once across page loads; edited forms and unavailable storage never auto-reload.
+✔ site-updates.test.cjs (555.8643ms)
+PASS: 40 MB chunked audio decode, invalid download rejection and base64 normalization
+✔ song-download.test.cjs (1139.3368ms)
+PASS: mini-player stopped, playing, paused, mixed, muted and outgoing-deck states
+✔ song-mini.test.cjs (126.856ms)
+PASS: blocked storage recovery, saved-file lookup, local reads and clearing
+✔ song-offline.test.cjs (106.7727ms)
+PASS: popup minimisation preserves playback; cue jump and loop/reset
+✔ song-popup.test.cjs (112.7543ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1843.7094

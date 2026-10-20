@@ -90,7 +90,7 @@ const EVENT_COLUMNS = ["Saved at", "Registration ID", "Participant key", "First 
 function eventJson(value) {return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);}
 function eventSettings() {
   const p=PropertiesService.getScriptProperties();
-  return {drawingMaxAge:Number(p.getProperty("DRAWING_MAX_AGE")||18), musicUrl:p.getProperty("TALENT_MUSIC_URL")||"", fancyDeadline:FestivalRegistration.deadline("fancy"), registrationRevision:"2026-09-17"};
+  return {drawingMaxAge:Number(p.getProperty("DRAWING_MAX_AGE")||18), musicUrl:p.getProperty("TALENT_MUSIC_URL")||"", fancyDeadline:FestivalRegistration.deadline("fancy"), registrationRevision:"2026-09-17", marathonInterest:true};
 }
 function eventBook() {
   const id=PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
@@ -128,7 +128,9 @@ function doPost(e) {
   try {
     const raw=e && e.parameter && e.parameter.payload;
     if(!raw||raw.length>20000)throw Error("Invalid registration payload.");
-    const d=JSON.parse(raw), config=eventSettings();
+    const d=JSON.parse(raw);
+    if(d.action === "marathon-interest") return saveMarathonInterest(d);
+    const config=eventSettings();
     const error=FestivalRegistration.validate(d,config);if(error)throw Error(error);
     lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error("Registrations are busy. Please retry shortly.");
     const book=eventBook(), definition=FestivalRegistration.events[d.event];
@@ -179,4 +181,42 @@ function refreshChildrenGifts() {
       else gifts.appendRow([...child.row, [...child.events].join(", "),"No", ""].map(cellSafe));
     }
   }finally{lock.releaseLock();}
+}
+
+// Marathon responses are isolated from historical festival registrations.
+function marathonBook() {
+  return SpreadsheetApp.openById("1RSS5k6ozgaUCKzGf8jveg6nXR4ZB4e905YNBdu6C5YY");
+}
+function marathonSheet(book, activity) {
+  const columns=["Submitted at", "Reference", "Name", "Wing & flat", "Interested participants", "Activity", "Interest only", "Payload"];
+  const sheet=book.getSheetByName(activity)||book.insertSheet(activity);
+  if(!sheet.getLastRow()) {sheet.appendRow(columns);sheet.setFrozenRows(1);sheet.getRange(1,1,1,columns.length).setFontWeight("bold");}
+  if(sheet.getRange(1,1,1,columns.length).getValues()[0].join("|")!==columns.join("|"))throw Error("Interest tab headers have changed. Please contact the committee.");
+  return sheet;
+}
+function setupMarathonInterest() {
+  const book=marathonBook();
+  ["Running","Walking"].forEach(activity=>marathonSheet(book,activity));
+}
+function saveMarathonInterest(d) {
+  let lock;
+  try {
+    if(!["Running","Walking"].includes(d.activity))throw Error("Choose running or walking.");
+    if(typeof d.requestId!=="string"||! /^[0-9a-f-]{36}$/i.test(d.requestId))throw Error("Invalid response reference.");
+    if(typeof d.name!=="string"||!d.name.trim()||d.name.trim().length>80||/[\r\n\t]/.test(d.name))throw Error("Enter a name of up to 80 characters.");
+    if(typeof d.flat!=="string"||! /^[A-F]-(?:[1-9]|1[0-3])0[1-4]$/.test(d.flat))throw Error("Enter a valid wing and flat.");
+    if(!Number.isInteger(d.count)||d.count<1||d.count>20)throw Error("Enter 1–20 interested participants.");
+    if(d.agreed!==true)throw Error("Please accept the interest-only notice.");
+    lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error("Responses are busy. Please retry shortly.");
+    const sheet=marathonSheet(marathonBook(),d.activity);
+    const rows=sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,8).getValues():[];
+    const payload=JSON.stringify({activity:d.activity,name:d.name.trim(),flat:d.flat,count:d.count,agreed:true});
+    const previous=rows.find(row=>row[1]===d.requestId);
+    if(previous){if(previous[7]!==cellSafe(payload))throw Error("This reference was already saved with different details.");return eventJson({status:"success",registrationId:d.requestId});}
+    if(rows.some(row=>row[3]===d.flat))throw Error("Your household already expressed interest in this activity. Contact the Cultural Committee for corrections.");
+    sheet.appendRow([new Date(),d.requestId,cellSafe(d.name.trim()),d.flat,d.count,d.activity,"Yes",cellSafe(payload)]);
+    SpreadsheetApp.flush();
+    return eventJson({status:"success",registrationId:d.requestId});
+  } catch(error) {return eventJson({status:"error",message:error.message||"Unable to save. Please retry."});}
+  finally {if(lock&&lock.hasLock())lock.releaseLock();}
 }

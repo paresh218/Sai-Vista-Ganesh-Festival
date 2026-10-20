@@ -40,16 +40,17 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
     if(priority){document.getElementById('priorityTitle').textContent=priority.title;document.getElementById('priorityBody').textContent=priority.body;const link=document.querySelector('#noticeBar a');link.href=priority.href||'#committeeUpdates';link.textContent=priority.action ? priority.action+' →' : 'View all notices →';}
   }
   renderAgenda();priorityNotice();setInterval(()=>{renderAgenda();priorityNotice();},60000);
-  const separate=new Set(['archive','resident-businesses']);
+  const separate=new Set(['archive','navratriArchive','resident-businesses']);
   const sections=[...document.querySelectorAll('main > section')];
   function route(scroll=true){
     const requested=location.hash.slice(1)||'home';
     const archived = new Set(['registration','schedule','aarti','wallpapers','sponsors','raasRangPreview']);
-    const id=archived.has(requested)?'archive':requested;
+    const inNavratri=document.getElementById(requested)?.closest('#navratriArchive');
+    const id=inNavratri?'navratriArchive':archived.has(requested)?'archive':requested;
     const selected=id==='mainContent'?(document.body.dataset.view||'main'):separate.has(id)?id:'main';
     document.body.dataset.view=selected;
     for(const section of sections)section.hidden=selected==='main'?separate.has(section.id):section.id!==selected;
-    for(const link of document.querySelectorAll('.mobile-nav a, #siteNav a')){
+    for(const link of document.querySelectorAll('.mobile-nav a, #siteNav a, .archive-switcher a')){
       const target=link.getAttribute('href')==='#schedule'?'#registration':link.getAttribute('href');
       if(target==='#'+id)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
     }
