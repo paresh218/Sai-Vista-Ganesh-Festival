@@ -20,7 +20,7 @@
   }
   document.addEventListener('input', event => { if (event.target.closest('form')) dirty = true; });
   document.addEventListener('change', event => { if (event.target.closest('form')) dirty = true; });
-  const busy = () => dirty || document.documentElement?.dataset?.galleryBusy==='true' || document.documentElement?.dataset?.galleryDownloading==='true' || document.querySelector('dialog[open], #formModal:not(.hidden), #upiPaymentModal:not(.hidden)');
+  const busy = () => dirty || document.documentElement?.dataset?.galleryLocalSaving==='true' || document.documentElement?.dataset?.galleryBusy==='true' || document.documentElement?.dataset?.galleryDownloading==='true' || document.querySelector('dialog[open], #formModal:not(.hidden), #upiPaymentModal:not(.hidden)');
   let banner;
   function applyUpdate() {
     if (!pending || reloading || !ready || document.visibilityState !== 'visible') return;

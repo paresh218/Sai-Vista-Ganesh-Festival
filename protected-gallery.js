@@ -7,6 +7,7 @@
   const say=message=>status.textContent=message;
   const residentFlat=()=>{try{return ResidentAccess.remembered(localStorage)||'';}catch(_){return '';}};
   const cache=window.SaiVistaGalleryCache,owner=()=>email+'|'+residentFlat();
+  const localSave=window.SaiVistaLocalGallery?.({api,cache,owner,getPhotos:()=>photos,getTotal:()=>total,notice:say});
   let resendAt=0,resendTimer,activeRequests=0,thumbObserver,prefetchTimer;const pendingMedia=new Map();const requestWaiters=[];
   async function slot(run){if(activeRequests>=2)await new Promise(resolve=>requestWaiters.push(resolve));else activeRequests++;document.documentElement.dataset.galleryBusy='true';try{return await run();}finally{const next=requestWaiters.shift();if(next)next();else activeRequests--;document.documentElement.dataset.galleryBusy=String(activeRequests>0);}}
   async function media(kind,photo,preload=false){const expected=token,scope=owner(),key=scope+'|'+kind+'|'+photo;if(pendingMedia.has(key))return pendingMedia.get(key);const task=(async()=>{const saved=await cache?.get(scope,kind,photo);if(saved){await api('gallery-cache',{photo,download:kind==='download',...(preload?{mode:'preload'}:{})});if(token!==expected)throw Error('Sign in again.');return saved;}const image=await api('gallery-'+kind,{photo,...(preload?{mode:'preload'}:{})});if(token!==expected)throw Error('Sign in again.');await cache?.put(scope,kind,photo,image);return image;})();pendingMedia.set(key,task);try{return await task;}finally{pendingMedia.delete(key);}}
@@ -21,12 +22,12 @@
   const setBusy=(form,busy)=>{for(const field of form.elements)field.disabled=busy;form.setAttribute('aria-busy',String(busy));};
   function remember(){try{localStorage.setItem('saiVistaPrivateGallery',JSON.stringify({token,email,flat:residentFlat(),expires}));}catch(_){/* A memory-only session still works when browser storage is blocked. */}}
   function clearImages(){thumbObserver?.disconnect();clearTimeout(prefetchTimer);urls.forEach(URL.revokeObjectURL);urls.clear();previewCache.clear();$('galleryGrid').replaceChildren();$('galleryPhoto').removeAttribute('src');}
-  function signedOut(){stopSlideshow();version++;viewVersion++;token='';email='';expires=0;clearImages();cache?.clear();try{localStorage.removeItem('saiVistaPrivateGallery');localStorage.removeItem('saiVistaGalleryCollection');}catch(_){}auth.hidden=false;otpForm.hidden=true;album.hidden=true;$('galleryLogout').hidden=true;$('galleryIdentity').textContent='Private access · verified email';}
-  async function api(action,fields={}){
+  function signedOut(){localSave?.cancel();stopSlideshow();version++;viewVersion++;token='';email='';expires=0;clearImages();cache?.clear();try{localStorage.removeItem('saiVistaPrivateGallery');localStorage.removeItem('saiVistaGalleryCollection');}catch(_){}auth.hidden=false;otpForm.hidden=true;album.hidden=true;$('galleryLogout').hidden=true;$('galleryIdentity').textContent='Private access · verified email';}
+  async function api(action,fields={},signal){
     if(!endpoint())throw Error('The private photo gallery is being connected. Please try again later.');
     const body=new URLSearchParams({payload:JSON.stringify({action,token,flat:residentFlat(),device:device(),requestId:crypto.randomUUID(),mode,...fields})});
-    return slot(async()=>{for(let attempt=0;attempt<3;attempt++){
-      let response,data;try{response=await fetch(endpoint(),{method:'POST',body,cache:'no-store',signal:AbortSignal.timeout(90000)});data=await response.json();}catch(error){if(attempt<2&&/^gallery-(page|thumbs|image|download|cache|status)$/.test(action)){await new Promise(r=>setTimeout(r,500*2**attempt+Math.random()*500));continue;}throw Error('The gallery is busy or offline. Please try again.');}
+    return slot(async()=>{for(let attempt=0;attempt<3;attempt++){signal?.throwIfAborted();
+      let response,data;try{response=await fetch(endpoint(),{method:'POST',body,cache:'no-store',signal:signal&&AbortSignal.any?AbortSignal.any([signal,AbortSignal.timeout(90000)]):signal||AbortSignal.timeout(90000)});data=await response.json();}catch(error){if(signal?.aborted)throw signal.reason||error;if(attempt<2&&/^gallery-(page|thumbs|image|download|cache|status)$/.test(action)){await new Promise(r=>setTimeout(r,500*2**attempt+Math.random()*500));continue;}throw Error('The gallery is busy or offline. Please try again.');}
       if(data.reauthenticate===true){signedOut();say(data.error||'Sign in again.');}
       if(!response.ok||data.ok!==true){if(attempt<2&&/^gallery-(page|thumbs|image|download|cache|status)$/.test(action)&&!data.reauthenticate&&(response.status===429||response.status>=500||/temporarily unavailable|Please try again shortly/i.test(data.error||''))){await new Promise(r=>setTimeout(r,500*2**attempt+Math.random()*500));continue;}throw Error(data.error||'Could not connect to the private gallery. Please try again.');}return data;
     }});
@@ -44,7 +45,7 @@
   });
   $('closePrivateGallery').addEventListener('click',()=>dialog.close());
   window.addEventListener('storage',event=>{if(event.key==='saiVistaResidentFlat'||(event.key==='saiVistaPrivateGallery'&&!event.newValue)){signedOut();if(dialog.open)dialog.close();}else if(event.key==='saiVistaPrivateGallery'){stopSlideshow();version++;viewVersion++;token='';email='';expires=0;clearImages();panels('auth');if(dialog.open)dialog.close();}});
-  dialog.addEventListener('close',()=>{window.dispatchEvent(new Event('sai-vista-gallery-closed'));clearInterval(resendTimer);stopSlideshow();version++;viewVersion++;clearImages();opener?.focus();});
+  dialog.addEventListener('close',()=>{localSave?.cancel();window.dispatchEvent(new Event('sai-vista-gallery-closed'));clearInterval(resendTimer);stopSlideshow();version++;viewVersion++;clearImages();opener?.focus();});
   $('galleryRequestForm').addEventListener('submit',async event=>{
     event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;
     setBusy(form,true);say('Sending your email verification code…');
