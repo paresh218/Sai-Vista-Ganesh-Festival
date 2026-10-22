@@ -21,7 +21,7 @@
     return slot(async()=>{for(let attempt=0;attempt<3;attempt++){
       let response,data;try{response=await fetch(endpoint(),{method:'POST',body,cache:'no-store',signal:AbortSignal.timeout(90000)});data=await response.json();}catch(error){if(attempt<2&&/^gallery-(page|thumbs|image|download|cache|status)$/.test(action)){await new Promise(r=>setTimeout(r,500*2**attempt+Math.random()*500));continue;}throw Error('The gallery is busy or offline. Please try again.');}
       if(data.reauthenticate===true){signedOut();say(data.error||'Sign in again.');}
-      if(!response.ok||data.ok!==true)throw Error(data.error||'Could not connect to the private gallery. Please try again.');return data;
+      if(!response.ok||data.ok!==true){if(attempt<2&&/^gallery-(page|thumbs|image|download|cache|status)$/.test(action)&&!data.reauthenticate&&(response.status===429||response.status>=500||/temporarily unavailable|Please try again shortly/i.test(data.error||''))){await new Promise(r=>setTimeout(r,500*2**attempt+Math.random()*500));continue;}throw Error(data.error||'Could not connect to the private gallery. Please try again.');}return data;
     }});
   }
   const report=(event,photo=photos[selected]?.id)=>{if(photo&&token)api('gallery-event',{event,photo}).catch(()=>say('Activity recording could not be confirmed. Please reconnect before continuing.'));};
