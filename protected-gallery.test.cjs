@@ -68,15 +68,18 @@ test('thumbnail batches fetch in parallel, cache private copies and reject unexp
  s.ctx.UrlFetchApp.fetchAll=()=>[{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://untrusted.example/private=s220'})}];assert.throws(()=>s.ctx.galleryImages([['other','secret']],320),/does not have a preview/);
 });
 
-test('prepared Sharp copies need one private media fetch, cache by variant ID and fall back safely',()=>{
- const s=service(),calls=[];s.ctx.ScriptApp={getOAuthToken:()=> 'private-oauth'};s.ctx.Utilities.base64Encode=()=> 'aW1hZ2U=';
- s.ctx.UrlFetchApp={fetchAll(requests){calls.push(requests);return requests.map(request=>({getResponseCode:()=>200,getBlob:()=>({getContentType:()=> 'image/webp',getBytes:()=>[1,2,3]})}));}};
+test('prepared Sharp copies work after UrlFetch quota exhaustion, cache by variant ID and fall back safely',()=>{
+ const s=service(),calls=[],reads=[];s.ctx.ScriptApp={getOAuthToken:()=> 'private-oauth'};s.ctx.Utilities.base64Encode=()=> 'aW1hZ2U=';
+ s.ctx.UrlFetchApp={fetchAll(){throw Error('Service invoked too many times for one day: urlfetch.');}};
+ s.ctx.DriveApp={getFileById(id){reads.push(id);if(id==='missing_prepared_id')throw Error('File not found');return {getBlob:()=>({getContentType:()=> 'image/webp',getBytes:()=>[1,2,3]})};}};
  const rows=[['one','source_drive_id','prepared_thumb_id','prepared_view_id','prepared_download_id']];
- assert.equal(s.ctx.galleryImages(rows,320)[0].mime,'image/webp');assert.equal(calls.length,1);assert.match(calls[0][0].url,/prepared_thumb_id\?alt=media$/);s.ctx.galleryImages(rows,320);assert.equal(calls.length,1);
- s.ctx.galleryImages(rows,1600);assert.equal(calls.length,2);assert.match(calls[1][0].url,/prepared_view_id\?alt=media$/);
- s.ctx.galleryImages([['one','source_drive_id','replacement_thumb_id']],320);assert.equal(calls.length,3);assert.match(calls[2][0].url,/replacement_thumb_id/);
+ assert.equal(s.ctx.galleryImages(rows,320)[0].mime,'image/webp');assert.deepEqual(reads,['prepared_thumb_id']);s.ctx.galleryImages(rows,320);assert.equal(reads.length,1);
+ s.ctx.galleryImages(rows,1600);assert.equal(reads.length,2);assert.equal(reads[1],'prepared_view_id');
+ s.ctx.galleryImages([['one','source_drive_id','replacement_thumb_id']],320);assert.equal(reads.length,3);assert.equal(reads[2],'replacement_thumb_id');
+ assert.throws(()=>s.ctx.galleryImages([['unprepared','source_drive_id']],320),/daily limit/);
+ const mixed=s.ctx.galleryImages([rows[0],['unprepared','source_drive_id']],320,true);assert.equal(mixed[0].mime,'image/webp');assert.match(mixed[1].error,/unavailable/);assert.doesNotMatch(JSON.stringify(mixed),/source_drive_id|private-oauth/);
  s.ctx.UrlFetchApp.fetchAll=requests=>{calls.push(requests);return requests.map(request=>request.url.includes('alt=media')?{getResponseCode:()=>404,getBlob:()=>({getContentType:()=> 'text/html',getBytes:()=>[1]})}:request.url.includes('fields=thumbnailLink')?{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://lh3.googleusercontent.com/private=s220'})}:{getResponseCode:()=>200,getBlob:()=>({getContentType:()=> 'image/jpeg',getBytes:()=>[1,2]})});};
- assert.equal(s.ctx.galleryImages([['fallback','source_drive_id','missing_prepared_id']],320)[0].mime,'image/jpeg');assert.equal(calls.length,6);
+ assert.equal(s.ctx.galleryImages([['fallback','source_drive_id','missing_prepared_id']],320)[0].mime,'image/jpeg');assert.equal(calls.length,2);
  assert.doesNotMatch(JSON.stringify(s.ctx.galleryImages(rows,1600)),/private-oauth|prepared_view_id|source_drive_id/);
 });
 

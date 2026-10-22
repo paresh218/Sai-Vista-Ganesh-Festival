@@ -148,17 +148,19 @@ function galleryVerify(d) {
     return {ok:true,token,email:otp.email,expires,flat:otp.flat,status:'APPROVED'};
   } finally {lock.releaseLock();}
 }
-function galleryImages(rows, size) {
-  const cache=CacheService.getScriptCache(),auth={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
+function galleryFetchAll(requests){try{return UrlFetchApp.fetchAll(requests);}catch(error){if(/too many times.*urlfetch/i.test(error.message))throw Error('The photo service has reached its daily limit. Prepared photos remain available; try this photo later.');throw error;}}
+function galleryImages(rows, size, partial=false) {
+  const cache=CacheService.getScriptCache();
   const images=new Map(),missing=[];
   const preparedColumn={320:2,1600:3,2560:4}[size];
   const cacheKey=row=>'gallery.image.'+row[0]+'.'+size+'.'+(row[preparedColumn]||'original');
   for(const row of rows){const saved=cache.get(cacheKey(row));if(saved)images.set(row[0],JSON.parse(saved));else missing.push(row);}
   const ready=missing.filter(row=>/^[A-Za-z0-9_-]{10,100}$/.test(row[preparedColumn]||''));
-  if(ready.length){const responses=UrlFetchApp.fetchAll(ready.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[preparedColumn])+'?alt=media',headers:auth,muteHttpExceptions:true})));responses.forEach((response,i)=>{const blob=response.getBlob(),bytes=blob.getBytes();if(response.getResponseCode()!==200||blob.getContentType()!=='image/webp'||!bytes.length||bytes.length>6000000)return;const row=ready[i],image={mime:'image/webp',base64:Utilities.base64Encode(bytes)},json=JSON.stringify(image);images.set(row[0],image);if(json.length<90000)cache.put(cacheKey(row),json,21600);});}
+  for(const row of ready){try{const blob=DriveApp.getFileById(row[preparedColumn]).getBlob(),bytes=blob.getBytes();if(blob.getContentType()!=='image/webp'||!bytes.length||bytes.length>6000000)continue;const image={mime:'image/webp',base64:Utilities.base64Encode(bytes)},json=JSON.stringify(image);images.set(row[0],image);if(json.length<90000)cache.put(cacheKey(row),json,21600);}catch(_){/* A missing prepared copy uses the original preview below. */}}
   for(let i=missing.length-1;i>=0;i--)if(images.has(missing[i][0]))missing.splice(i,1);
-  if(missing.length){
-    const metadata=UrlFetchApp.fetchAll(missing.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[1])+'?fields=thumbnailLink',headers:auth,muteHttpExceptions:true})));
+  if(missing.length){try{
+    const auth={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
+    const metadata=galleryFetchAll(missing.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[1])+'?fields=thumbnailLink',headers:auth,muteHttpExceptions:true})));
     const requests=metadata.map(response=>{
       if(response.getResponseCode()!==200)throw Error('This photo is temporarily unavailable.');
       const meta=JSON.parse(response.getContentText());
@@ -167,14 +169,14 @@ function galleryImages(rows, size) {
       if(!/=s\d+(?:-[a-z]+)?$/i.test(meta.thumbnailLink))throw Error('The photo preview format has changed. Please contact the committee.');
       return {url:meta.thumbnailLink.replace(/=s\d+(?:-[a-z]+)?$/i,'=s'+size),headers:auth,muteHttpExceptions:true};
     });
-    const responses=UrlFetchApp.fetchAll(requests);
+    const responses=galleryFetchAll(requests);
     responses.forEach((response,i)=>{
       const blob=response.getBlob(),bytes=blob.getBytes();
       if(response.getResponseCode()!==200||!/^image\/(jpeg|png|webp)$/.test(blob.getContentType())||bytes.length>6000000)throw Error('Could not load this photo. Please try again.');
       const image={mime:blob.getContentType(),base64:Utilities.base64Encode(bytes)},row=missing[i],json=JSON.stringify(image);
       images.set(row[0],image);if(json.length<90000)cache.put(cacheKey(row),json,300);
     });
-  }
+  }catch(error){if(!partial)throw error;for(const row of missing)if(!images.has(row[0]))images.set(row[0],{error:'This photo preview is unavailable. Try again later.'});}}
   return rows.map(row=>images.get(row[0]));
 }
 function galleryImage(row, size) {return galleryImages([row],size)[0];}
@@ -194,7 +196,7 @@ function galleryHandle(d) {
     if(d.action==='gallery-thumbs'){
       if(!Array.isArray(d.ids)||d.ids.length<1||d.ids.length>6||d.ids.some(id=>typeof id!=='string'||!photos.some(r=>r[0]===id)))throw Error('Invalid photo selection.');
       galleryAudit('thumbnails_served',session.email,d.ids.join(','),d);
-      const images=galleryImages(d.ids.map(id=>photos.find(r=>r[0]===id)),320);
+      const images=galleryImages(d.ids.map(id=>photos.find(r=>r[0]===id)),320,true);
       return {ok:true,images:d.ids.map((id,i)=>({id,...images[i]}))};
     }
     const row=photos.find(r=>r[0]===d.photo);if(!row)throw Error('This photo is unavailable.');
