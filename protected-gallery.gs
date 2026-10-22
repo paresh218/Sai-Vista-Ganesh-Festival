@@ -124,7 +124,7 @@ function galleryVerify(d) {
     let row=galleryAccess(otp.email);
     if(row&&['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is blocked. Please contact the committee.');
     if(!row){gallerySheet('Gallery access').appendRow([otp.email,gallerySafe(otp.name),otp.flat,'APPROVED',new Date(),'Automatic: email OTP verified']);}
-    else if(String(row[3]).toUpperCase()!=='APPROVED'){const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,4).setValue('APPROVED');}
+    else {const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,2,1,3).setValues([[gallerySafe(otp.name),otp.flat,'APPROVED']]);}
     const token=galleryRandom(),expires=Date.now()+90*86400000;
     props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires}));
     galleryAudit('email_verified',otp.email,'',d);

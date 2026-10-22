@@ -36,7 +36,7 @@
     if(token){say('Checking your private gallery access…');try{await openAlbum();}catch(error){signedOut();say(error.message);}}else{panels('auth');$('galleryEmail').focus();}
   });
   $('closePrivateGallery').addEventListener('click',()=>dialog.close());
-  window.addEventListener('storage',event=>{if(event.key==='saiVistaResidentFlat'||event.key==='saiVistaPrivateGallery'){signedOut();if(dialog.open)dialog.close();}});
+  window.addEventListener('storage',event=>{if(event.key==='saiVistaResidentFlat'||(event.key==='saiVistaPrivateGallery'&&!event.newValue)){signedOut();if(dialog.open)dialog.close();}else if(event.key==='saiVistaPrivateGallery'){stopSlideshow();version++;viewVersion++;token='';email='';expires=0;clearImages();panels('auth');if(dialog.open)dialog.close();}});
   dialog.addEventListener('close',()=>{clearInterval(resendTimer);stopSlideshow();version++;viewVersion++;clearImages();opener?.focus();});
   $('galleryRequestForm').addEventListener('submit',async event=>{
     event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;
@@ -65,9 +65,9 @@
       }
       say('Loading lightweight previews…');
       // Six images per request keeps initial payloads small and avoids fetching full-resolution originals.
-      const missing=[];await Promise.all(photos.map(async(photo,index)=>{const saved=await cache?.get(owner(),'thumb',photo.id);if(current!==version||!token)return;if(saved)$('galleryGrid').children[index].querySelector('img').src=imageUrl(saved);else missing.push(photo);}));
+      let cacheHits=0;const missing=[];await Promise.all(photos.map(async(photo,index)=>{const saved=await cache?.get(owner(),'thumb',photo.id);if(current!==version||!token)return;if(saved){cacheHits++;$('galleryGrid').children[index].querySelector('img').src=imageUrl(saved);}else missing.push(photo);}));
       let offset=0;const worker=async()=>{while(offset<missing.length){const batch=missing.slice(offset,offset+=6);if(current!==version||!token)return;const reply=await api('gallery-thumbs',{ids:batch.map(p=>p.id)});if(current!==version||!token)return;for(const item of reply.images){const i=photos.findIndex(p=>p.id===item.id);if(i>=0&&!item.error){$('galleryGrid').children[i].querySelector('img').src=imageUrl(item);await cache?.put(owner(),'thumb',item.id,item);}}}};await Promise.all([worker(),worker()]);
-      if(current===version)say('Choose a photo to view or download. Only watermarked downloads are offered.');
+      if(current===version){$('galleryGrid').dataset.cachedPhotos=String(cacheHits);say(cacheHits===photos.length&&photos.length?'Photos loaded from this browser. Choose one to view or download.':'Choose a photo to view or download. Only watermarked downloads are offered.');}
     }catch(error){if(current===version)say(error.message);}
   }
   async function openPhoto(index){
