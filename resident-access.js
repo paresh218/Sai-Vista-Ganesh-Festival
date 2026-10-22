@@ -82,7 +82,7 @@ if (typeof document !== 'undefined') (() => {
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
   setInterval(flush, 10000);
   const change = document.createElement('button'); change.type = 'button'; change.textContent = 'Change flat / forget this device'; change.className = 'btn btn-outline';
-  change.onclick = () => { try { storage.removeItem('saiVistaResidentFlat'); } catch (_) {} location.reload(); };
+  change.onclick = () => { try { storage.removeItem('saiVistaResidentFlat'); storage.removeItem('saiVistaPrivateGallery'); } catch (_) {} Promise.resolve(window.SaiVistaGalleryCache?.clear()).finally(()=>location.reload()); };
   document.querySelector('footer').append(change);
   const remembered = ResidentAccess.remembered(storage);
   if (remembered) enter(remembered); else gate.showModal();

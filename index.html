@@ -2,7 +2,7 @@
 <html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-10-22-private-navratri-gallery-1">
+  <meta name="site-release" content="2026-10-22-gallery-auto-otp-2">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista celebrations 2026 — Kojagiri on 25 October, marathon interest, festival archives, photos and accounts.">
   <meta name="theme-color" content="#641847">
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="garba-special.css?v=119">
     <link rel="stylesheet" href="player-modern.css?v=123">
   <link rel="stylesheet" href="community-season.css?v=4">
-  <link rel="stylesheet" href="protected-gallery.css?v=1">
+  <link rel="stylesheet" href="protected-gallery.css?v=2">
 </head>
 <body>
     <dialog id="residentGate" aria-labelledby="residentGateTitle">
@@ -638,11 +638,10 @@ https://saivistaculturalcommittee.in
         <p id="fullScreenCaption"></p>
     </dialog>
     <dialog id="privateGallery" class="private-gallery" aria-labelledby="privateGalleryTitle" aria-describedby="galleryIdentity">
-      <header class="private-gallery-header"><div><h2 id="privateGalleryTitle">Sai Vista Navratri 2026 · Photos</h2><small id="galleryIdentity">Private access · verified email and committee approval</small></div><button type="button" class="icon-btn" id="closePrivateGallery" aria-label="Close photo gallery">&times;</button></header>
+      <header class="private-gallery-header"><div><h2 id="privateGalleryTitle">Sai Vista Navratri 2026 · Photos</h2><small id="galleryIdentity">Private access · verified email</small></div><button type="button" class="icon-btn" id="closePrivateGallery" aria-label="Close photo gallery">&times;</button></header>
       <div class="private-gallery-body">
-        <div id="galleryAuth" class="gallery-auth-card"><h3>Your memories, shared privately.</h3><p>Verify your email with a one-time code, then wait for the Cultural Committee to approve access. Photo previews stay locked until both steps are complete.</p><form id="galleryRequestForm"><label for="galleryEmail">Email address</label><input id="galleryEmail" type="email" name="email" autocomplete="email" maxlength="254" required><label for="galleryName">Your name</label><input id="galleryName" name="name" autocomplete="name" maxlength="80" required><label for="galleryFlat">Wing &amp; flat</label><input id="galleryFlat" name="flat" placeholder="e.g. A-101" pattern="[A-Fa-f][ -]?(?:[1-9]|1[0-3])0[1-4]" maxlength="8" required title="Enter wing A–F and your flat, e.g. A-101"><p class="gallery-privacy">For security, the committee privately records your email, access attempts, photo requests, view mode, download requests, time and browser information for 90 days. Flat numbers are self-reported. IP addresses and hardware identifiers are not collected by this gallery.</p><label class="checkbox-row"><input id="galleryConsent" name="consent" type="checkbox" required><span>I agree to these private activity records and will use these community photos respectfully.</span></label><button class="btn btn-dark" type="submit">Email me a verification code</button></form></div>
-        <form id="galleryOtpForm" class="gallery-auth-card" hidden><h3>Check your email</h3><p>Enter the six-digit code. It expires in 10 minutes. Check your spam folder too.</p><label for="galleryCode">Verification code</label><input id="galleryCode" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required><button class="btn btn-dark" type="submit">Verify email</button><button class="btn btn-outline" id="galleryOtherEmail" type="button">Use another email / request another code</button></form>
-        <div id="galleryPending" class="gallery-auth-card" hidden><h3>Email verified. Approval pending.</h3><p>The Cultural Committee needs to approve <strong id="galleryPendingEmail"></strong> before the album unlocks. Please contact the committee if you need help.</p><button id="galleryCheckApproval" class="btn btn-dark" type="button">Check my approval</button></div>
+        <div id="galleryAuth" class="gallery-auth-card"><h3>Your memories, shared privately.</h3><p>Enter the code sent to your email to unlock the photos automatically. This browser remembers verification for 90 days, unless you sign out, change flat or clear browser data.</p><form id="galleryRequestForm"><label for="galleryEmail">Email address</label><input id="galleryEmail" type="email" name="email" autocomplete="email" maxlength="254" required><label for="galleryName">Your name</label><input id="galleryName" name="name" autocomplete="name" maxlength="80" required><label for="galleryFlat">Logged in flat</label><input id="galleryFlat" name="flat" placeholder="e.g. A-101" pattern="[A-Fa-f][ -]?(?:[1-9]|1[0-3])0[1-4]" maxlength="8" required title="Enter wing A–F and your flat, e.g. A-101"><p class="gallery-privacy">For security, the committee privately records your email, access attempts, photo requests, view mode, download requests, time and browser information for 90 days. Verified access is remembered on this browser. Photos may be cached here for up to seven days for faster repeat visits; sign out or choose “forget this device” on shared devices. Flat numbers are self-reported. IP addresses and hardware identifiers are not collected by this gallery.</p><label class="checkbox-row"><input id="galleryConsent" name="consent" type="checkbox" required><span>I agree to these private activity records and will use these community photos respectfully.</span></label><button class="btn btn-dark" type="submit">Email me a verification code</button></form></div>
+        <form id="galleryOtpForm" class="gallery-auth-card" hidden><h3>Check your email</h3><p>Enter the six-digit code. It expires in 10 minutes. Check your spam folder too.</p><label for="galleryCode">Verification code</label><input id="galleryCode" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required><button class="btn btn-dark" type="submit">Verify email</button><button class="btn btn-outline" id="galleryResend" type="button" disabled>Resend code in 30s</button><button class="btn btn-outline" id="galleryOtherEmail" type="button">Use another email</button></form>
         <div id="galleryAlbum" hidden><div class="gallery-toolbar"><div role="group" aria-label="Photo layout"><button type="button" id="galleryModegrid" aria-pressed="true">Grid</button><button type="button" id="galleryModelist" aria-pressed="false">List</button></div><button type="button" id="gallerySlideshow" aria-pressed="false">Start slideshow</button></div><div id="galleryGrid" class="private-gallery-grid" aria-label="Navratri photo thumbnails"></div><div id="galleryStage" hidden><div class="gallery-stage-controls"><button type="button" id="galleryBack">Back to album</button><button type="button" id="galleryPreviousPhoto" aria-label="Previous photo">← Previous</button><button type="button" id="galleryNextPhoto" aria-label="Next photo">Next →</button></div><div class="gallery-photo-frame"><img id="galleryPhoto" alt="Selected Navratri celebration photo" referrerpolicy="no-referrer"><span>Sai Vista Navratri 2026</span></div><div class="gallery-photo-actions"><span id="galleryPhotoLabel"></span><button type="button" class="btn btn-dark" id="galleryDownload" disabled>Download watermarked photo</button></div><p class="interest-note">High-quality download up to 2,560 pixels. Download requests are recorded; the browser controls where the file is saved.</p></div><div class="gallery-pager"><button type="button" id="galleryPreviousPage">Previous page</button><span id="galleryPageLabel" aria-live="polite"></span><button type="button" id="galleryNextPage">Next page</button></div></div>
         <p id="galleryStatus" role="status" aria-live="polite"></p><button id="galleryLogout" class="btn btn-outline" type="button" hidden>Sign out of photos</button>
       </div>
@@ -689,7 +688,9 @@ https://saivistaculturalcommittee.in
     <script src="site-updates.js"></script>
     <script src="site-data.js"></script>
     <script src="event-registration-config.js"></script>
-    <script src="protected-gallery.js?v=1"></script>
+    <script src="protected-gallery-config.js?v=2"></script>
+    <script src="protected-gallery-cache.js?v=2"></script>
+    <script src="protected-gallery.js?v=2"></script>
     <script src="community-season.js?v=3"></script>
     <script src="event-registration-model.js"></script>
     <script src="event-ux.js?v=7"></script>

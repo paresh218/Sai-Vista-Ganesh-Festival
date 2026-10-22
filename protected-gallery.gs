@@ -1,4 +1,4 @@
-// Private gallery helpers. Add as a separate .gs file in the existing event service.
+// Private gallery helpers. Deploy with protected-gallery-service.gs as the committee account.
 // Folder ID and audit workbook ID belong only in Script Properties, never public JS.
 const GalleryPolicy = (() => {
   const email = value => String(value || '').trim().toLowerCase();
@@ -27,7 +27,7 @@ function gallerySafe(value) {const s=String(value==null?'':value);return /^[=+@\
 function galleryRows(name) {const s=gallerySheet(name);return s.getLastRow()>1?s.getRange(2,1,s.getLastRow()-1,s.getLastColumn()).getValues():[];}
 function galleryAudit(event, email, photo, d) {
   const device=d && d.device || {};
-  gallerySheet('Gallery activity').appendRow([new Date(),event,email||'',photo||'',String(d && d.mode || '').slice(0,20),String(device.userAgent||'').slice(0,300),String(device.language||'').slice(0,30),String(device.viewport||'').slice(0,30),String(device.timezone||'').slice(0,80),String(d && d.requestId || '').slice(0,80)].map(v=>v instanceof Date?v:gallerySafe(v)));
+  gallerySheet('Gallery activity').appendRow([new Date(),event,email||'',photo||'',String(d && d.mode || '').slice(0,20),String(device.userAgent||'').slice(0,300),String(device.language||'').slice(0,30),String(device.viewport||'').slice(0,30),String(device.timezone||'').slice(0,80),String(d && d.requestId || '').slice(0,80),String(d && d.flat || '').slice(0,8)].map(v=>v instanceof Date?v:gallerySafe(v)));
 }
 function galleryAccess(email) {return galleryRows('Gallery access').find(row=>String(row[0]).toLowerCase()===email);}
 function galleryAuthFailure(message) {const error=Error(message);error.reauthenticate=true;throw error;}
@@ -38,26 +38,28 @@ function gallerySession(d, approved=true) {
   const session=JSON.parse(raw);
   if(session.expires<=Date.now()){galleryProps().deleteProperty(key);galleryAuthFailure('Your gallery session expired. Sign in again.');}
   const row=galleryAccess(session.email),status=row?String(row[3]).trim().toUpperCase():'PENDING';
+  if(session.flat!==d.flat)galleryAuthFailure('Sign in to verify this flat again.');
   if(status==='REVOKED'||status==='DENIED')galleryAuthFailure('Gallery access is not approved. Please contact the committee.');
-  if(approved&&status!=='APPROVED')throw Error('Your email is verified. Committee approval is still pending.');
+  if(approved&&status!=='APPROVED')galleryAuthFailure('Verify your email to unlock the photos.');
   return {...session,status};
 }
 function setupProtectedGallery() {
   const props=galleryProps();if(!props.getProperty('GALLERY_SECRET'))props.setProperty('GALLERY_SECRET',galleryRandom());
   const book=galleryBook(),definitions={
     'Gallery access':['Email','Name','Flat (self-reported)','Status','Requested at','Approved by / notes'],
-    'Gallery activity':['Time (IST)','Activity','Verified email / OTP recipient','Photo reference','View mode','Browser (self-reported)','Language','Viewport','Timezone (self-reported)','Request reference'],
+    'Gallery activity':['Time (IST)','Activity','Verified email / OTP recipient','Photo reference','View mode','Browser (self-reported)','Language','Viewport','Timezone (self-reported)','Request reference','Flat (self-reported)'],
     'Gallery photos':['Photo reference','Private Drive file ID','Name','MIME type','Enabled']
   };
   for(const [name,headers] of Object.entries(definitions)){
     const sheet=book.getSheetByName(name)||book.insertSheet(name);
     if(!sheet.getLastRow()){sheet.appendRow(headers);sheet.setFrozenRows(1);sheet.getRange(1,1,1,headers.length).setFontWeight('bold');}
+    if(name==='Gallery activity'&&sheet.getRange(1,1,1,headers.length-1).getValues()[0].join('|')===headers.slice(0,-1).join('|'))sheet.getRange(1,headers.length).setValue(headers[headers.length-1]);
     if(sheet.getRange(1,1,1,headers.length).getValues()[0].join('|')!==headers.join('|'))throw Error('Unexpected gallery sheet headers.');
   }
   const access=book.getSheetByName('Gallery access');
   const rule=SpreadsheetApp.newDataValidation().requireValueInList(['PENDING','APPROVED','DENIED','REVOKED'],true).setAllowInvalid(false).build();
   access.getRange(2,4,Math.max(999,access.getMaxRows()-1),1).setDataValidation(rule);
-  MailApp.getRemainingDailyQuota();
+
 }
 function indexProtectedGallery() {
   const folderId=galleryProps().getProperty('GALLERY_FOLDER_ID');if(!folderId)throw Error('Set the private source folder in Script Properties.');
@@ -77,27 +79,36 @@ function indexProtectedGallery() {
 }
 function galleryPhotos() {
   const cache=CacheService.getScriptCache(),saved=cache.get('gallery.photos.v1');if(saved)return JSON.parse(saved);
-  const rows=galleryRows('Gallery photos').filter(r=>r[4]==='YES');const json=JSON.stringify(rows);if(json.length<90000)cache.put('gallery.photos.v1',json,120);return rows;
+  const rows=galleryRows('Gallery photos').filter(r=>r[4]==='YES').map(r=>r.slice(0,2));const json=JSON.stringify(rows);if(json.length<90000)cache.put('gallery.photos.v1',json,21600);return rows;
 }
-function galleryOtp(d) {
+function galleryPrepareOtp(d) {
   GalleryPolicy.validateProfile(d);
+  if(Session.getEffectiveUser().getEmail()!=='saivistaculturalcommittee@gmail.com')throw Error('Email verification is not connected to the committee sender yet.');
   const email=GalleryPolicy.email(d.email),props=galleryProps(),lock=LockService.getScriptLock();
   if(!lock.tryLock(10000))throw Error('Please try again shortly.');
   try {
     const now=Date.now(),hour=Math.floor(now/3600000),day=Math.floor(now/86400000),key='gallery.rate.'+galleryId(email);
     const rate=JSON.parse(props.getProperty(key)||'{}');
-    if(rate.last&&now-rate.last<60000)throw Error('Wait a minute before requesting another code.');
-    if((rate.hour===hour&&rate.hourCount>=3)||(rate.day===day&&rate.dayCount>=5))throw Error('Too many code requests. Please try again later.');
+    if(rate.last&&now-rate.last<30000)throw Error('Wait 30 seconds before requesting another code.');
+    if((rate.hour===hour&&rate.hourCount>=10)||(rate.day===day&&rate.dayCount>=20))throw Error('Too many code requests. Please try again later.');
     const global=JSON.parse(props.getProperty('gallery.mailBudget')||'{}');
-    if((global.day===day&&global.count>=80)||MailApp.getRemainingDailyQuota()<10)throw Error('Email verification is temporarily at its daily limit. Please try again tomorrow or contact the committee.');
+    if(global.started&&now-global.started<86400000&&global.count>=450)throw Error('Email verification is temporarily at its daily limit. Please try again tomorrow or contact the committee.');
     props.setProperty(key,JSON.stringify({last:now,hour,hourCount:rate.hour===hour?rate.hourCount+1:1,day,dayCount:rate.day===day?rate.dayCount+1:1}));
-    props.setProperty('gallery.mailBudget',JSON.stringify({day,count:global.day===day?global.count+1:1}));
+    props.setProperty('gallery.mailBudget',JSON.stringify({started:global.started&&now-global.started<86400000?global.started:now,count:global.started&&now-global.started<86400000?global.count+1:1}));
     const code=String(parseInt(galleryHash(galleryRandom()).slice(0,8),16)%1000000).padStart(6,'0'),challenge=galleryRandom();
+    const latestKey='gallery.latest.'+galleryId(email),previous=props.getProperty(latestKey);if(previous)props.deleteProperty('gallery.otp.'+previous);props.setProperty(latestKey,galleryHash(challenge));
     props.setProperty('gallery.otp.'+galleryHash(challenge),JSON.stringify({email,name:d.name.trim(),flat:d.flat,hash:galleryId(challenge+'|'+code),expires:now+600000,attempts:0}));
-    galleryAudit('otp_requested',email,'',d);
-    MailApp.sendEmail({to:email,subject:'Sai Vista Navratri photos — your verification code',body:'Your Sai Vista Navratri 2026 gallery verification code is '+code+'.\n\nIt expires in 10 minutes. Do not share it. Email verification does not grant access until the Cultural Committee approves your request. If you did not request this code, ignore this email.',name:'Sai Vista Cultural Committee'});
-    return {ok:true,challenge,message:'Check your email for a six-digit code. It expires in 10 minutes.'};
+    return {email,code,challenge};
   } finally {lock.releaseLock();}
+}
+function galleryOtp(d) {
+  const {email,code,challenge}=galleryPrepareOtp(d);
+  galleryAudit('otp_requested',email,'',d);
+  const body='Your Sai Vista Navratri 2026 gallery verification code is '+code+'.\n\nIt expires in 10 minutes. Do not share it. Enter this code in the gallery to unlock the photos. If you did not request this code, ignore this email.';
+  const mime='From: Sai Vista Cultural Committee <saivistaculturalcommittee@gmail.com>\r\nTo: '+email+'\r\nSubject: Sai Vista Navratri photos - your verification code\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n'+body;
+  try{const sent=Gmail.Users.Messages.send({raw:Utilities.base64EncodeWebSafe(mime,Utilities.Charset.UTF_8)},'me');if(!sent.id)throw Error('No message reference');}
+  catch(error){console.error('Gallery OTP send failed.');throw Error('Email verification could not send the code. Please retry after 30 seconds. Google may have reached its sending limit.');}
+  return {ok:true,challenge,retryAfter:30,message:'Check your email for a six-digit code. It expires in 10 minutes.'};
 }
 function galleryVerify(d) {
   if(typeof d.challenge!=='string'||d.challenge.length>100||!/^\d{6}$/.test(d.code||''))throw Error('Enter the six-digit email code.');
@@ -111,12 +122,13 @@ function galleryVerify(d) {
     if(otp.hash!==galleryId(d.challenge+'|'+d.code)){galleryAudit('otp_failed',otp.email,'',d);throw Error('The code is incorrect. Please check your email.');}
     props.deleteProperty(key);
     let row=galleryAccess(otp.email);
-    if(!row){gallerySheet('Gallery access').appendRow([otp.email,gallerySafe(otp.name),otp.flat,'PENDING',new Date(),'']);row=[otp.email,otp.name,otp.flat,'PENDING'];}
-    if(['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is not approved. Please contact the committee.');
-    const token=galleryRandom(),expires=Date.now()+8*3600000;
-    props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,expires}));
+    if(row&&['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is blocked. Please contact the committee.');
+    if(!row){gallerySheet('Gallery access').appendRow([otp.email,gallerySafe(otp.name),otp.flat,'APPROVED',new Date(),'Automatic: email OTP verified']);}
+    else if(String(row[3]).toUpperCase()!=='APPROVED'){const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,4).setValue('APPROVED');}
+    const token=galleryRandom(),expires=Date.now()+90*86400000;
+    props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires}));
     galleryAudit('email_verified',otp.email,'',d);
-    return {ok:true,token,email:otp.email,expires,status:String(row[3]).toUpperCase()};
+    return {ok:true,token,email:otp.email,expires,flat:otp.flat,status:'APPROVED'};
   } finally {lock.releaseLock();}
 }
 function galleryImages(rows, size) {
@@ -149,13 +161,13 @@ function galleryHandle(d) {
     if(d.action==='gallery-otp')return galleryOtp(d);
     if(d.action==='gallery-verify')return galleryVerify(d);
     const session=gallerySession(d,d.action!=='gallery-status'&&d.action!=='gallery-logout');
-    if(d.action==='gallery-status')return {ok:true,email:session.email,status:session.status,expires:session.expires};
+    if(d.action==='gallery-status')return {ok:true,email:session.email,status:session.status,flat:session.flat,expires:session.expires};
     if(d.action==='gallery-logout'){galleryAudit('logout',session.email,'',d);galleryProps().deleteProperty('gallery.session.'+galleryHash(d.token));return {ok:true};}
     const photos=galleryPhotos();
     if(d.action==='gallery-page'){
       if(!Number.isInteger(d.page)||d.page<0||d.page>200)throw Error('Invalid gallery page.');
       const slice=photos.slice(d.page*24,(d.page+1)*24);galleryAudit('browse_page',session.email,'',d);
-      return {ok:true,total:photos.length,page:d.page,photos:slice.map((r,i)=>({id:r[0],number:d.page*24+i+1}))};
+      return {ok:true,email:session.email,flat:session.flat,expires:session.expires,total:photos.length,page:d.page,photos:slice.map((r,i)=>({id:r[0],number:d.page*24+i+1}))};
     }
     if(d.action==='gallery-thumbs'){
       if(!Array.isArray(d.ids)||d.ids.length<1||d.ids.length>6||d.ids.some(id=>typeof id!=='string'||!photos.some(r=>r[0]===id)))throw Error('Invalid photo selection.');
@@ -164,6 +176,7 @@ function galleryHandle(d) {
       return {ok:true,images:d.ids.map((id,i)=>({id,...images[i]}))};
     }
     const row=photos.find(r=>r[0]===d.photo);if(!row)throw Error('This photo is unavailable.');
+    if(d.action==='gallery-cache'){galleryAudit(d.download?'download_requested':'cached_photo_requested',session.email,row[0],d);return {ok:true};}
     if(d.action==='gallery-image'||d.action==='gallery-download'){
       galleryAudit(d.action==='gallery-download'?'download_requested':'photo_open_requested',session.email,row[0],d);
       return {ok:true,id:row[0],...galleryImage(row,d.action==='gallery-download'?2560:1600)};
