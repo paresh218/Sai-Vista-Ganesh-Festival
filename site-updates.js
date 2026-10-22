@@ -20,7 +20,7 @@
   }
   document.addEventListener('input', event => { if (event.target.closest('form')) dirty = true; });
   document.addEventListener('change', event => { if (event.target.closest('form')) dirty = true; });
-  const busy = () => dirty || document.querySelector('dialog[open], #formModal:not(.hidden), #upiPaymentModal:not(.hidden)');
+  const busy = () => dirty || document.documentElement?.dataset?.galleryBusy==='true' || document.documentElement?.dataset?.galleryDownloading==='true' || document.querySelector('dialog[open], #formModal:not(.hidden), #upiPaymentModal:not(.hidden)');
   let banner;
   function applyUpdate() {
     if (!pending || reloading || !ready || document.visibilityState !== 'visible') return;
@@ -57,7 +57,7 @@
     return { version: Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2,'0')).join(''), release: serverRelease };
   }
   async function check() {
-    if (!ready || checking || document.visibilityState !== 'visible' || !navigator.onLine) return;
+    if (!ready || checking || document.visibilityState !== 'visible' || !navigator.onLine || document.querySelector('#privateGallery[open]')) return;
     if (pending) { applyUpdate(); return; }
     checking = true;
     try {
@@ -83,5 +83,6 @@
   });
   document.addEventListener('visibilitychange', check);
   window.addEventListener('online', check);
+  window.addEventListener('sai-vista-gallery-closed', check);
   setInterval(check, 5 * 60 * 1000);
 })();

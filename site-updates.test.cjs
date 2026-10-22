@@ -21,10 +21,10 @@ async function request(mode='cors',cacheMode='default') {
 })().catch(error=>{console.error(error);process.exitCode=1;});
 
 // Regression: stable release metadata and a cross-reload guard prevent loops.
-async function pageTest({loaded='current',server='current',edited=false,storage=new Map(),blocked=false}={}) {
+async function pageTest({loaded='current',server='current',edited=false,storage=new Map(),blocked=false,galleryOpen=false,galleryBusy=false}={}) {
   const listeners={}; let reloads=0, notices=0;
-  const doc={visibilityState:'visible',addEventListener:(type,fn)=>listeners[type]=fn,
-    querySelector:selector=>selector.startsWith('meta')?{content:loaded}:null,
+  const doc={documentElement:{dataset:{galleryBusy:String(galleryBusy)}},visibilityState:'visible',addEventListener:(type,fn)=>listeners[type]=fn,
+    querySelector:selector=>selector.startsWith('meta')?{content:loaded}:(selector==='#privateGallery[open]'&&galleryOpen?{}:null),
     body:{append(el){assert.equal(el.className,'site-update-notice','Update notice needs a stable class for safe player positioning');notices++;}},createElement:()=>({setAttribute(){},style:{},append(){},addEventListener(){}})};
   const ctx={document:doc,location:{protocol:'https:',href:'https://example.test/index.html',origin:'https://example.test',reload(){reloads++;}},
     navigator:{onLine:true},window:{addEventListener(){}},URL,Date,AbortSignal,TextEncoder,crypto:require('node:crypto').webcrypto,
@@ -41,6 +41,8 @@ async function pageTest({loaded='current',server='current',edited=false,storage=
 }
 (async()=>{
   assert.deepEqual(await pageTest(),{reloads:0,notices:0});
+  assert.deepEqual(await pageTest({loaded:'old',galleryOpen:true}),{reloads:0,notices:0});
+  assert.deepEqual(await pageTest({loaded:'old',galleryBusy:true}),{reloads:0,notices:1});
   const storage=new Map();
   assert.deepEqual(await pageTest({loaded:'old',storage}),{reloads:1,notices:0});
   assert.deepEqual(await pageTest({loaded:'old',storage}),{reloads:0,notices:1});
