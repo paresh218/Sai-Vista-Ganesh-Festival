@@ -92,7 +92,7 @@ function galleryPhotos() {
 function indexPreparedGallery() {
   const folder=galleryProps().getProperty('GALLERY_PREPARED_FOLDER_ID');if(!folder)return;
   const files=DriveApp.getFolderById(folder).getFiles(),prepared={};
-  while(files.hasNext()){const file=files.next(),match=/^([A-Za-z0-9_-]{10,100})\.(320|1600|2560)\.webp$/.exec(file.getName());if(!match||file.getMimeType()!=='image/webp')continue;const key=match[1]+'.'+match[2];if(prepared[key])throw Error('Duplicate prepared photo.');prepared[key]=file.getId();}
+  while(files.hasNext()){const file=files.next(),match=/^([A-Za-z0-9_-]{10,100})\.(320|1600|2560)\.webp$/.exec(file.getName());if(!match||file.getMimeType()!=='image/webp')continue;const key=match[1]+'.'+match[2];if(prepared[key]){if(prepared[key]===file.getId())continue;const digest=blob=>Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,blob.getBytes()).join(',');if(digest(DriveApp.getFileById(prepared[key]).getBlob())!==digest(file.getBlob()))throw Error('Conflicting prepared photo.');continue;}prepared[key]=file.getId();}
   const sheet=gallerySheet('Gallery photos'),rows=galleryRows('Gallery photos');
   sheet.getRange(1,6,1,3).setValues([['Prepared 320','Prepared 1600','Prepared 2560']]);
   if(rows.length)sheet.getRange(2,6,rows.length,3).setValues(rows.map(row=>[320,1600,2560].map(size=>prepared[row[1]+'.'+size]||'')));
