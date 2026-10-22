@@ -64,6 +64,7 @@ function setupProtectedGallery() {
 function indexProtectedGallery() {
   const folderId=galleryProps().getProperty('GALLERY_FOLDER_ID');if(!folderId)throw Error('Set the private source folder in Script Properties.');
   const rows=[],walk=(folder,depth)=>{
+    if(folder.getId()===galleryProps().getProperty('GALLERY_PREPARED_FOLDER_ID'))return;
     if(depth>5)throw Error('Too many nested photo folders.');
     const files=folder.getFiles();while(files.hasNext()){
       const file=files.next(),mime=file.getMimeType();
@@ -72,14 +73,30 @@ function indexProtectedGallery() {
     const folders=folder.getFolders();while(folders.hasNext())walk(folders.next(),depth+1);
   };
   walk(DriveApp.getFolderById(folderId),0);rows.sort((a,b)=>a[2].localeCompare(b[2]));
-  const sheet=gallerySheet('Gallery photos');if(sheet.getLastRow()>1)sheet.getRange(2,1,sheet.getLastRow()-1,5).clearContent();
+  const sheet=gallerySheet('Gallery photos');if(sheet.getLastRow()>1)sheet.getRange(2,1,sheet.getLastRow()-1,8).clearContent();
   if(rows.length)sheet.getRange(2,1,rows.length,5).setValues(rows.map(row=>row.map(gallerySafe)));
   CacheService.getScriptCache().remove('gallery.photos.v1');
+  CacheService.getScriptCache().remove('gallery.photos.v2');
+  indexPreparedGallery();
   console.log('Indexed '+rows.length+' photos.');
 }
 function galleryPhotos() {
-  const cache=CacheService.getScriptCache(),saved=cache.get('gallery.photos.v1');if(saved)return JSON.parse(saved);
-  const rows=galleryRows('Gallery photos').filter(r=>r[4]==='YES').map(r=>r.slice(0,2));const json=JSON.stringify(rows);if(json.length<90000)cache.put('gallery.photos.v1',json,21600);return rows;
+  const cache=CacheService.getScriptCache(),saved=cache.get('gallery.photos.v2');
+  if(saved){const manifest=JSON.parse(saved);if(manifest.chunks>=0&&manifest.chunks<=50){const parts=[];for(let i=0;i<manifest.chunks;i++){const part=cache.get('gallery.photos.'+manifest.version+'.'+i);if(!part)break;parts.push(JSON.parse(part));}if(parts.length===manifest.chunks)return parts.flat();}}
+  const rows=galleryRows('Gallery photos').filter(r=>r[4]==='YES').map(r=>[r[0],r[1],r[5]||'',r[6]||'',r[7]||'']);
+  // Each CacheService value must stay below 100 KB; publish the manifest last.
+  const version=Utilities.getUuid(),parts=[];for(let i=0;i<rows.length;i+=100)parts.push(JSON.stringify(rows.slice(i,i+100)));
+  if(parts.length<=50&&parts.every(part=>part.length<90000)){parts.forEach((part,i)=>cache.put('gallery.photos.'+version+'.'+i,part,21600));cache.put('gallery.photos.v2',JSON.stringify({version,chunks:parts.length}),21600);}return rows;
+}
+// Optional private WebP copies prepared with Sharp; original photos remain the fallback.
+function indexPreparedGallery() {
+  const folder=galleryProps().getProperty('GALLERY_PREPARED_FOLDER_ID');if(!folder)return;
+  const files=DriveApp.getFolderById(folder).getFiles(),prepared={};
+  while(files.hasNext()){const file=files.next(),match=/^([A-Za-z0-9_-]{10,100})\.(320|1600|2560)\.webp$/.exec(file.getName());if(!match||file.getMimeType()!=='image/webp')continue;const key=match[1]+'.'+match[2];if(prepared[key])throw Error('Duplicate prepared photo.');prepared[key]=file.getId();}
+  const sheet=gallerySheet('Gallery photos'),rows=galleryRows('Gallery photos');
+  sheet.getRange(1,6,1,3).setValues([['Prepared 320','Prepared 1600','Prepared 2560']]);
+  if(rows.length)sheet.getRange(2,6,rows.length,3).setValues(rows.map(row=>[320,1600,2560].map(size=>prepared[row[1]+'.'+size]||'')));
+  const cache=CacheService.getScriptCache();cache.remove('gallery.photos.v1');cache.remove('gallery.photos.v2');
 }
 function galleryPrepareOtp(d) {
   GalleryPolicy.validateProfile(d);
@@ -134,7 +151,12 @@ function galleryVerify(d) {
 function galleryImages(rows, size) {
   const cache=CacheService.getScriptCache(),auth={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
   const images=new Map(),missing=[];
-  for(const row of rows){const saved=cache.get('gallery.image.'+row[0]+'.'+size);if(saved)images.set(row[0],JSON.parse(saved));else missing.push(row);}
+  const preparedColumn={320:2,1600:3,2560:4}[size];
+  const cacheKey=row=>'gallery.image.'+row[0]+'.'+size+'.'+(row[preparedColumn]||'original');
+  for(const row of rows){const saved=cache.get(cacheKey(row));if(saved)images.set(row[0],JSON.parse(saved));else missing.push(row);}
+  const ready=missing.filter(row=>/^[A-Za-z0-9_-]{10,100}$/.test(row[preparedColumn]||''));
+  if(ready.length){const responses=UrlFetchApp.fetchAll(ready.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[preparedColumn])+'?alt=media',headers:auth,muteHttpExceptions:true})));responses.forEach((response,i)=>{const blob=response.getBlob(),bytes=blob.getBytes();if(response.getResponseCode()!==200||blob.getContentType()!=='image/webp'||!bytes.length||bytes.length>6000000)return;const row=ready[i],image={mime:'image/webp',base64:Utilities.base64Encode(bytes)},json=JSON.stringify(image);images.set(row[0],image);if(json.length<90000)cache.put(cacheKey(row),json,21600);});}
+  for(let i=missing.length-1;i>=0;i--)if(images.has(missing[i][0]))missing.splice(i,1);
   if(missing.length){
     const metadata=UrlFetchApp.fetchAll(missing.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[1])+'?fields=thumbnailLink',headers:auth,muteHttpExceptions:true})));
     const requests=metadata.map(response=>{
@@ -150,7 +172,7 @@ function galleryImages(rows, size) {
       const blob=response.getBlob(),bytes=blob.getBytes();
       if(response.getResponseCode()!==200||!/^image\/(jpeg|png|webp)$/.test(blob.getContentType())||bytes.length>6000000)throw Error('Could not load this photo. Please try again.');
       const image={mime:blob.getContentType(),base64:Utilities.base64Encode(bytes)},row=missing[i],json=JSON.stringify(image);
-      images.set(row[0],image);if(json.length<90000)cache.put('gallery.image.'+row[0]+'.'+size,json,300);
+      images.set(row[0],image);if(json.length<90000)cache.put(cacheKey(row),json,300);
     });
   }
   return rows.map(row=>images.get(row[0]));

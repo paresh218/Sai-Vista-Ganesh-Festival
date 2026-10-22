@@ -68,6 +68,30 @@ test('thumbnail batches fetch in parallel, cache private copies and reject unexp
  s.ctx.UrlFetchApp.fetchAll=()=>[{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://untrusted.example/private=s220'})}];assert.throws(()=>s.ctx.galleryImages([['other','secret']],320),/does not have a preview/);
 });
 
+test('prepared Sharp copies need one private media fetch, cache by variant ID and fall back safely',()=>{
+ const s=service(),calls=[];s.ctx.ScriptApp={getOAuthToken:()=> 'private-oauth'};s.ctx.Utilities.base64Encode=()=> 'aW1hZ2U=';
+ s.ctx.UrlFetchApp={fetchAll(requests){calls.push(requests);return requests.map(request=>({getResponseCode:()=>200,getBlob:()=>({getContentType:()=> 'image/webp',getBytes:()=>[1,2,3]})}));}};
+ const rows=[['one','source_drive_id','prepared_thumb_id','prepared_view_id','prepared_download_id']];
+ assert.equal(s.ctx.galleryImages(rows,320)[0].mime,'image/webp');assert.equal(calls.length,1);assert.match(calls[0][0].url,/prepared_thumb_id\?alt=media$/);s.ctx.galleryImages(rows,320);assert.equal(calls.length,1);
+ s.ctx.galleryImages(rows,1600);assert.equal(calls.length,2);assert.match(calls[1][0].url,/prepared_view_id\?alt=media$/);
+ s.ctx.galleryImages([['one','source_drive_id','replacement_thumb_id']],320);assert.equal(calls.length,3);assert.match(calls[2][0].url,/replacement_thumb_id/);
+ s.ctx.UrlFetchApp.fetchAll=requests=>{calls.push(requests);return requests.map(request=>request.url.includes('alt=media')?{getResponseCode:()=>404,getBlob:()=>({getContentType:()=> 'text/html',getBytes:()=>[1]})}:request.url.includes('fields=thumbnailLink')?{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://lh3.googleusercontent.com/private=s220'})}:{getResponseCode:()=>200,getBlob:()=>({getContentType:()=> 'image/jpeg',getBytes:()=>[1,2]})});};
+ assert.equal(s.ctx.galleryImages([['fallback','source_drive_id','missing_prepared_id']],320)[0].mime,'image/jpeg');assert.equal(calls.length,6);
+ assert.doesNotMatch(JSON.stringify(s.ctx.galleryImages(rows,1600)),/private-oauth|prepared_view_id|source_drive_id/);
+});
+
+test('prepared copy indexing matches source IDs and never returns private Drive IDs in album metadata',()=>{
+ const s=service();s.props.GALLERY_PREPARED_FOLDER_ID='private-prepared-folder';const sheet=s.sheets.get('Gallery photos');sheet.rows.push(['reference','original_photo_id','private.jpg','image/jpeg','YES']);let files=[{getName:()=> 'original_photo_id.320.webp',getMimeType:()=> 'image/webp',getId:()=> 'prepared_thumb_id'},{getName:()=> 'unrelated.txt',getMimeType:()=> 'text/plain',getId:()=> 'ignored'}];s.ctx.DriveApp={getFolderById:()=>({getFiles:()=>{let i=0;return {hasNext:()=>i<files.length,next:()=>files[i++]};}})};
+ s.ctx.indexPreparedGallery();assert.equal(sheet.rows[1][5],'prepared_thumb_id');assert.equal(sheet.rows[1][6],'');assert.equal(sheet.rows[1][7],'');
+ const previous=JSON.stringify(sheet.rows);files=[files[0],files[0]];assert.throws(()=>s.ctx.indexPreparedGallery(),/Duplicate/);assert.equal(JSON.stringify(sheet.rows),previous);
+ const login=verified(s),reply=s.call({action:'gallery-page',token:login.token,page:0});assert.equal(reply.ok,true);assert.doesNotMatch(JSON.stringify(reply),/original_photo_id|prepared_thumb_id|private\.jpg/);
+});
+
+test('large prepared albums keep their index cached in bounded chunks and rebuild missing chunks',()=>{
+ const s=service(),stored=new Map();let reads=0;s.ctx.CacheService.getScriptCache=()=>({get:key=>stored.get(key)||null,put:(key,value)=>{assert.ok(Buffer.byteLength(value)<100000);stored.set(key,value);}});s.ctx.galleryRows=()=>{reads++;return Array.from({length:605},(_,i)=>['reference_'+i,'source_'+i,'photo.jpg','image/jpeg','YES','thumb_'+i,'view_'+i,'download_'+i]);};
+ assert.equal(s.ctx.galleryPhotos().length,605);assert.equal(s.ctx.galleryPhotos().length,605);assert.equal(reads,1);const manifest=JSON.parse(stored.get('gallery.photos.v2'));assert.equal(manifest.chunks,7);stored.delete('gallery.photos.'+manifest.version+'.3');assert.equal(s.ctx.galleryPhotos().length,605);assert.equal(reads,2);
+});
+
 test('OTP resend is allowed after 30 seconds, while guesses, replay and email quotas remain bounded',()=>{const s=service();const first=s.call(profile);assert.equal(first.ok,true);s.advance(29999);assert.equal(s.call(profile).ok,false);s.advance(1);assert.equal(s.call(profile).ok,true);const old=s.call({action:'gallery-verify',challenge:first.challenge,code:'999999'});assert.equal(old.ok,false);s.props['gallery.mailBudget']=JSON.stringify({started:Date.now(),count:450});s.advance(30000);assert.equal(s.call(profile).ok,false);});
 
 test('sender cannot silently fall back to a personal account and concurrent OTP mail does not hold the write lock',()=>{const s=service();s.ctx.Session.getEffectiveUser=()=>({getEmail:()=> 'other@example.org'});assert.equal(s.call(profile).ok,false);assert.equal(s.mails.length,0);const x=service();let held=false;x.ctx.LockService.getScriptLock=()=>({tryLock:()=>{if(held)return false;held=true;return true;},releaseLock:()=>{held=false;}});x.ctx.MailApp.sendEmail=()=>assert.equal(held,false);assert.equal(x.call(profile).ok,true);});
