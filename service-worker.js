@@ -1,7 +1,9 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v127";
+const CACHE_NAME = "sai-vista-ganpati-2026-v128";
 const APP_SHELL = [
   "./",
   "site-updates.js",
+  "protected-gallery.js?v=1",
+  "protected-gallery.css?v=1",
   "community-season.js?v=3",
   "community-season.css?v=4",
   "assets/sai-vista-marathon-coming-soon.webp",

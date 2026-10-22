@@ -129,6 +129,7 @@ function doPost(e) {
     const raw=e && e.parameter && e.parameter.payload;
     if(!raw||raw.length>20000)throw Error("Invalid registration payload.");
     const d=JSON.parse(raw);
+    if(typeof d.action === "string" && d.action.startsWith("gallery-")) return eventJson(galleryHandle(d));
     if(d.action === "marathon-interest") return saveMarathonInterest(d);
     const config=eventSettings();
     const error=FestivalRegistration.validate(d,config);if(error)throw Error(error);
