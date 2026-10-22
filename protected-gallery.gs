@@ -119,22 +119,31 @@ function galleryVerify(d) {
     return {ok:true,token,email:otp.email,expires,status:String(row[3]).toUpperCase()};
   } finally {lock.releaseLock();}
 }
-function galleryImage(row, size) {
-  const cache=CacheService.getScriptCache(),key='gallery.image.'+row[0]+'.'+size,saved=cache.get(key);if(saved)return JSON.parse(saved);
-  const auth={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
-  const metaResponse=UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[1])+'?fields=thumbnailLink',{headers:auth,muteHttpExceptions:true});
-  if(metaResponse.getResponseCode()!==200)throw Error('This photo is temporarily unavailable.');
-  const meta=JSON.parse(metaResponse.getContentText());
-  if(typeof meta.thumbnailLink!=='string'||!/^https:\/\/[a-z0-9.-]+\.googleusercontent\.com\//i.test(meta.thumbnailLink))throw Error('This photo does not have a preview yet.');
-  // shortcut: Drive's size suffix is used for display copies; fail closed if Google changes the thumbnail URL format.
-  if(!/=s\d+(?:-[a-z]+)?$/i.test(meta.thumbnailLink))throw Error('The photo preview format has changed. Please contact the committee.');
-  const url=meta.thumbnailLink.replace(/=s\d+(?:-[a-z]+)?$/i,'=s'+size);
-  const response=UrlFetchApp.fetch(url,{headers:auth,muteHttpExceptions:true});
-  const blob=response.getBlob(),bytes=blob.getBytes();
-  if(response.getResponseCode()!==200||!/^image\/(jpeg|png|webp)$/.test(blob.getContentType())||bytes.length>6000000)throw Error('Could not load this photo. Please try again.');
-  const image={mime:blob.getContentType(),base64:Utilities.base64Encode(bytes)};
-  const json=JSON.stringify(image);if(json.length<90000)cache.put(key,json,300);return image;
+function galleryImages(rows, size) {
+  const cache=CacheService.getScriptCache(),auth={Authorization:'Bearer '+ScriptApp.getOAuthToken()};
+  const images=new Map(),missing=[];
+  for(const row of rows){const saved=cache.get('gallery.image.'+row[0]+'.'+size);if(saved)images.set(row[0],JSON.parse(saved));else missing.push(row);}
+  if(missing.length){
+    const metadata=UrlFetchApp.fetchAll(missing.map(row=>({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(row[1])+'?fields=thumbnailLink',headers:auth,muteHttpExceptions:true})));
+    const requests=metadata.map(response=>{
+      if(response.getResponseCode()!==200)throw Error('This photo is temporarily unavailable.');
+      const meta=JSON.parse(response.getContentText());
+      if(typeof meta.thumbnailLink!=='string'||!/^https:\/\/[a-z0-9.-]+\.googleusercontent\.com\//i.test(meta.thumbnailLink))throw Error('This photo does not have a preview yet.');
+      // shortcut: Drive's size suffix is used for display copies; fail closed if Google changes the thumbnail URL format.
+      if(!/=s\d+(?:-[a-z]+)?$/i.test(meta.thumbnailLink))throw Error('The photo preview format has changed. Please contact the committee.');
+      return {url:meta.thumbnailLink.replace(/=s\d+(?:-[a-z]+)?$/i,'=s'+size),headers:auth,muteHttpExceptions:true};
+    });
+    const responses=UrlFetchApp.fetchAll(requests);
+    responses.forEach((response,i)=>{
+      const blob=response.getBlob(),bytes=blob.getBytes();
+      if(response.getResponseCode()!==200||!/^image\/(jpeg|png|webp)$/.test(blob.getContentType())||bytes.length>6000000)throw Error('Could not load this photo. Please try again.');
+      const image={mime:blob.getContentType(),base64:Utilities.base64Encode(bytes)},row=missing[i],json=JSON.stringify(image);
+      images.set(row[0],image);if(json.length<90000)cache.put('gallery.image.'+row[0]+'.'+size,json,300);
+    });
+  }
+  return rows.map(row=>images.get(row[0]));
 }
+function galleryImage(row, size) {return galleryImages([row],size)[0];}
 function galleryHandle(d) {
   try {
     if(d.action==='gallery-otp')return galleryOtp(d);
@@ -151,7 +160,8 @@ function galleryHandle(d) {
     if(d.action==='gallery-thumbs'){
       if(!Array.isArray(d.ids)||d.ids.length<1||d.ids.length>6||d.ids.some(id=>typeof id!=='string'||!photos.some(r=>r[0]===id)))throw Error('Invalid photo selection.');
       galleryAudit('thumbnails_served',session.email,d.ids.join(','),d);
-      return {ok:true,images:d.ids.map(id=>({id,...galleryImage(photos.find(r=>r[0]===id),320)}))};
+      const images=galleryImages(d.ids.map(id=>photos.find(r=>r[0]===id)),320);
+      return {ok:true,images:d.ids.map((id,i)=>({id,...images[i]}))};
     }
     const row=photos.find(r=>r[0]===d.photo);if(!row)throw Error('This photo is unavailable.');
     if(d.action==='gallery-image'||d.action==='gallery-download'){

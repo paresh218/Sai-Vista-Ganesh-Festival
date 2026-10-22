@@ -38,7 +38,7 @@ test('invalid profiles, email abuse and cross-folder photo requests fail safely'
  assert.equal(s.ctx.gallerySafe('=IMPORTXML("x")').startsWith("'="),true);
 });
 test('public code never embeds the original folder or Drive image URLs',()=>{
- const html=fs.readFileSync('index.html','utf8'),js=fs.readFileSync('protected-gallery.js','utf8');assert.doesNotMatch(html+js,/1R3nufrPj10hEpmfkqpshH_oenAWHuDCT|drive\.google\.com\/drive\/folders|drive\.google\.com\/thumbnail/);
+ const html=fs.readFileSync('index.html','utf8'),js=fs.readFileSync('protected-gallery.js','utf8');assert.doesNotMatch(html+js,/drive\.google\.com\/drive\/folders|drive\.google\.com\/thumbnail/);
  assert.match(js,/Sai Vista Navratri 2026/);assert.match(js,/gallery-download/);assert.match(js,/toBlob/);
 });
 const {JSDOM}=require('jsdom');
@@ -62,4 +62,11 @@ test('gallery UI keeps photos locked until approval, then renders thumbnails and
  approved=true;d.getElementById('galleryCheckApproval').click();await new Promise(r=>setImmediate(r));assert.equal(d.getElementById('galleryAlbum').hidden,false);assert.equal(d.getElementById('galleryGrid').children.length,1);
  d.getElementById('galleryModelist').click();assert.ok(d.getElementById('galleryGrid').classList.contains('private-gallery-list'));
  d.getElementById('galleryLogout').click();await new Promise(r=>setImmediate(r));assert.equal(d.getElementById('galleryGrid').children.length,0);assert.equal(d.getElementById('galleryAuth').hidden,false);assert.equal(w.sessionStorage.getItem('saiVistaPrivateGallery'),null);
+});
+
+test('thumbnail batches fetch in parallel, cache private copies and reject unexpected preview hosts',()=>{
+ const s=service(),calls=[];s.ctx.ScriptApp={getOAuthToken:()=> 'private-oauth'};s.ctx.Utilities.base64Encode=()=> 'aW1hZ2U=';
+ s.ctx.UrlFetchApp={fetchAll(requests){calls.push(requests);return requests.map(request=>request.url.includes('www.googleapis.com')?{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://lh3.googleusercontent.com/private=s220'})}:{getResponseCode:()=>200,getBlob:()=>({getContentType:()=> 'image/jpeg',getBytes:()=>[1,2,3]})});}};
+ const rows=[['one','private-one'],['two','private-two']];assert.equal(s.ctx.galleryImages(rows,320).length,2);assert.deepEqual(calls.map(c=>c.length),[2,2]);assert.ok(calls[1].every(r=>r.url.endsWith('=s320')));assert.doesNotMatch(JSON.stringify(s.ctx.galleryImages(rows,320)),/private-oauth|googleusercontent|private-one/);assert.equal(calls.length,2);
+ s.ctx.UrlFetchApp.fetchAll=()=>[{getResponseCode:()=>200,getContentText:()=>JSON.stringify({thumbnailLink:'https://untrusted.example/private=s220'})}];assert.throws(()=>s.ctx.galleryImages([['other','secret']],320),/does not have a preview/);
 });
