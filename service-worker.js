@@ -1,8 +1,8 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v138";
+const CACHE_NAME = "sai-vista-ganpati-2026-v139";
 const APP_SHELL = [
   "./",
   "site-updates.js",
-  "cultural-fund-reminder.js?v=1",
+  "cultural-fund-reminder.js?v=2",
   "cultural-fund-reminder.css?v=1",
   "assets/cultural-fund-meme.svg",
   "protected-gallery.js?v=6",
