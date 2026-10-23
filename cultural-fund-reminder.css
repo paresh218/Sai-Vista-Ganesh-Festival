@@ -1,0 +1,8 @@
+.fund-reminder{margin:auto;box-sizing:border-box;width:min(420px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;border:1px solid #ebcf9e;border-radius:24px;padding:24px;text-align:center;background:#fffaf1;color:#41291c;box-shadow:0 24px 90px #321c3050;font-family:inherit}
+.fund-reminder::backdrop{background:#29162c99;backdrop-filter:blur(3px)}
+.fund-reminder img{display:block;width:min(100%,300px);height:auto;margin:0 auto 14px;border-radius:16px}
+.fund-reminder h2{font-size:clamp(1.3rem,5vw,1.65rem);line-height:1.3;margin:8px 0 12px;color:#762c53}
+.fund-reminder p{font-size:.9rem;line-height:1.6;margin:10px 0}
+.fund-reminder .fund-note{font-size:.78rem;color:#6e625a}
+.fund-reminder button{min-height:44px;padding:10px 24px;border:0;border-radius:100px;background:#762c53;color:#fff;font:inherit;cursor:pointer}
+.fund-reminder button:focus-visible{outline:3px solid #a56b00;outline-offset:3px}

@@ -2,7 +2,7 @@
 <html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-10-22-gallery-sharp-drive-8">
+  <meta name="site-release" content="2026-10-23-cultural-fund-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista celebrations 2026 — Kojagiri on 25 October, marathon interest, festival archives, photos and accounts.">
   <meta name="theme-color" content="#641847">
@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="garba-special.css?v=119">
     <link rel="stylesheet" href="player-modern.css?v=123">
   <link rel="stylesheet" href="community-season.css?v=4">
+  <link rel="stylesheet" href="cultural-fund-reminder.css?v=1">
   <link rel="stylesheet" href="protected-gallery.css?v=4">
 </head>
 <body>
@@ -101,7 +102,7 @@
           <div class="kojagiri-date" aria-label="Sunday, 25 October 2026"><span>OCT 2026</span><strong>25</strong><span>SUNDAY</span></div>
           <div class="kojagiri-intro"><span class="eyebrow">UP NEXT · SAI VISTA</span><h1 id="kojagiriTitle">Kojagiri Celebration</h1><p>A moonlit evening of devotion &amp; togetherness.</p><time class="kojagiri-time" datetime="2026-10-25T18:00:00+05:30">6:00 PM onwards <span>· India time</span></time></div>
           <span class="kojagiri-moon" aria-hidden="true"></span>
-          <ol class="kojagiri-programme" aria-label="Evening programme"><li><span class="kojagiri-step" aria-hidden="true">01</span><div><strong>Kojagiri Celebration</strong><small>Celebrate with your Sai Vista family</small></div></li><li><span class="kojagiri-step" aria-hidden="true">02</span><div><strong>Hanuman Sundarkand Program</strong><small>Following the celebration</small></div></li><li><span class="kojagiri-step" aria-hidden="true">03</span><div><strong>Prasad</strong><small>Puri, bhaji &amp; milk · after the event</small></div></li></ol>
+          <ol class="kojagiri-programme" aria-label="Evening programme"><li><span class="kojagiri-step" aria-hidden="true">01</span><div><strong>Kojagiri Celebration</strong><small>Celebrate with your Sai Vista family</small></div></li><li><span class="kojagiri-step" aria-hidden="true">02</span><div><strong>Prasad</strong><small>Puri, bhaji &amp; milk · after the event</small></div></li></ol>
         </section>
         <section class="section community-thanks" aria-labelledby="navratriThanksTitle"><span class="eyebrow">WITH GRATITUDE · SAI VISTA CULTURAL COMMITTEE</span><h2 id="navratriThanksTitle">Thank you, Sai Vista family!</h2><p>Thank you, everyone, for the overwhelming response to our Navratri Celebration. Your enthusiasm, participation and support made every moment special. Heartfelt thanks to our residents, volunteers and coordinators for bringing our community together!</p><a class="text-link" href="#navratriArchive">Revisit Navratri 2026 →</a></section>
         <section id="marathonInterest" class="section marathon-banner" aria-labelledby="marathonTitle">
@@ -632,6 +633,14 @@ https://saivistaculturalcommittee.in
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home">Home</a><a href="#accounts">Accounts</a><a href="#archive">Archive</a><a href="#committeeUpdates">Updates</a></nav>
+    <dialog id="culturalFundReminder" class="fund-reminder" aria-labelledby="fundReminderTitle" aria-describedby="fundReminderMessage fundReminderCountdown">
+      <img src="assets/cultural-fund-meme.svg" width="600" height="340" alt="A cheerful piggy bank says: Cultural fund be like... Main bhi toh family hoon!">
+      <h2 id="fundReminderTitle">Please pay the cultural fund</h2>
+      <p id="fundReminderMessage">Your support brings Sai Vista celebrations to life. Please contact the cultural committee to contribute.</p>
+      <p class="fund-note">Already paid? Thank you! Please ask the committee to update the contribution sheet.</p>
+      <p id="fundReminderCountdown" role="status" aria-live="off">Closes automatically in 5 seconds</p>
+      <button id="fundReminderClose" type="button" autofocus>Got it!</button>
+    </dialog>
     <dialog id="communityPhotoViewer" class="photo-viewer" aria-label="Full-screen community photo">
         <button id="closeCommunityPhoto" class="photo-viewer-close" type="button" aria-label="Close full-screen photo" autofocus>×</button>
         <img id="fullScreenPhoto" alt="">
@@ -696,6 +705,7 @@ https://saivistaculturalcommittee.in
     <script src="protected-gallery.js?v=6"></script>
     <script src="community-season.js?v=3"></script>
     <script src="event-registration-model.js"></script>
+    <script src="cultural-fund-reminder.js?v=1"></script>
     <script src="event-ux.js?v=7"></script>
     <script src="festival-experience.js?v=8"></script>
     <script src="event-registration.js?v=7"></script>
