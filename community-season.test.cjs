@@ -12,7 +12,7 @@ function page(hash='') {
 }
 test('community home and archives preserve sections and reveal deep links',()=>{
  const dom=page('#navratriProgramme'),d=dom.window.document;
- assert.match(d.querySelector('#home').textContent,/Kojagiri Celebration/);
+ assert.match(d.querySelector('#home').textContent,/Thank you, Sai Vista family!/);
  for(const id of ['navratriHero','navratriProgramme','weekendMusic','navratriSongs','navratriDays','raasRangArchive']) assert.ok(d.querySelector('#navratriArchive').contains(d.getElementById(id)),id);
  assert.ok(d.querySelector('#navratriArchive details').open);
  assert.ok(d.querySelector('#archive').contains(d.getElementById('registration')));

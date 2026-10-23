@@ -125,7 +125,6 @@ window.SaiVistaContent.archivedUpdates.push(...[
 // Keep historical announcements with their festival; show current community news first.
 window.SaiVistaContent.navratriUpdates = window.SaiVistaContent.updates;
 window.SaiVistaContent.updates = [
- {date:"2026-10-20",category:"Upcoming celebration",id:"kojagiri-oct25-2026",title:"Kojagiri Celebration · Sunday, 25 October",body:"6:00 PM onwards: Kojagiri Celebration, followed by prasad (puri, bhaji & milk) after the event. All times are in India time.",href:"#home",action:"View the programme"},
  {date:"2026-10-20",category:"With gratitude",id:"navratri-thanks-2026",title:"Thank you for the overwhelming Navratri response!",body:"Heartfelt thanks to every resident, volunteer and coordinator for your enthusiasm, participation and support.",href:"#navratriArchive",action:"Visit Navratri 2026 Archival"},
  {date:"2026-10-20",category:"Interest only",id:"marathon-interest-dec2026",title:"Running or walking? Share your interest",body:"A community marathon may take place in early to mid December 2026. Separate running and walking interest forms are open. The event, date, route and distances are not confirmed.",href:"#marathonInterest",action:"Share your interest"}
 ];

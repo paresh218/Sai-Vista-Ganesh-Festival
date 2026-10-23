@@ -41,5 +41,5 @@ test('gallery, forms and hidden tabs are not interrupted; hidden tabs close the 
   await p.run(30000);assert.equal(p.dialog.open,true);Object.defineProperty(p.d,'hidden',{value:true,configurable:true});p.d.dispatchEvent(new p.w.Event('visibilitychange'));assert.equal(p.dialog.open,false);await p.run(30000);assert.equal(p.dialog.open,false);
 });
 test('removed programme is absent from the rendered site and archives',()=>{
-  const html=fs.readFileSync('index.html','utf8');assert.doesNotMatch(html,/sund[ae]rkand/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/sund[ae]rkand/i);const d=new JSDOM(html).window.document;assert.equal(d.querySelectorAll('.kojagiri-programme li').length,2);assert.match(d.querySelector('.kojagiri-programme li:last-child').textContent,/02Prasad/);
+  const html=fs.readFileSync('index.html','utf8');assert.doesNotMatch(html,/sund[ae]rkand/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/sund[ae]rkand/i);const d=new JSDOM(html).window.document;assert.equal(d.querySelectorAll('.kojagiri-programme').length,0);assert.doesNotMatch(html,/Kojagiri|2026-10-25|Puri, bhaji/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/Kojagiri|2026-10-25/i);
 });
