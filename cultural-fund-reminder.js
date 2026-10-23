@@ -93,7 +93,7 @@ if (typeof document !== 'undefined') (() => {
   }
   function start() {
     if (started) return;
-    started = true; check(); setInterval(tick, 10000);
+    started = true; check().then(() => { tick(); setInterval(tick, 10000); });
   }
   document.addEventListener('visibilitychange', () => { if (document.hidden) close(); });
   window.addEventListener('sai-vista-resident-ready', start);

@@ -5,7 +5,7 @@ The reminder uses the same live contribution-sheet endpoint as the existing paym
 - Match the remembered resident flat against one unique wing/flat row.
 - Only an explicit `No` triggers the reminder. `Yes`, missing/duplicate records, unexpected values and failed checks do not.
 - Check on entry and refresh at most once per minute while the page is visible. Sheet corrections take effect on the next successful refresh.
-- Every 10 seconds, show a native blocking dialog for eight seconds. Residents can dismiss it sooner with the button or Escape.
+- Immediately after login and a successful unpaid-status check, then every 10 seconds, show a native blocking dialog for eight seconds. Residents can dismiss it sooner with the button or Escape.
 - Play a quiet, locally generated eight-second cartoon sound after the browser has received a tap/click/key. Mute stops it immediately; closing or hiding the popup also stops all scheduled notes. Browser autoplay restrictions can prevent sound until interaction.
 - Skip reminders while another dialog/form is open or the page is hidden. Restore keyboard focus when closing.
 - Keep status in page memory only. Never store the payment response in local storage or the service-worker cache.

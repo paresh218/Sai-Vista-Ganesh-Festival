@@ -23,20 +23,20 @@ function page(t,paid='No',setup=()=>{}) {
   const run=async ms=>{for(const timer of timers.filter(x=>x.active&&x.ms===ms)){if(!timer.interval)timer.active=false;await timer.fn();}await settle();};
   return {w,d,dialog:d.getElementById('culturalFundReminder'),run,settle,calls:()=>calls,setReply:v=>reply=v,offline:()=>fail=true,advance:ms=>now+=ms};
 }
-test('unpaid resident gets a 10-second reminder, eight-second close and restored focus',async t=>{
-  const p=page(t);await p.settle();assert.equal(p.dialog.open,false);const trigger=p.d.getElementById('openPrivateGallery');trigger.focus();await p.run(10000);assert.equal(p.dialog.open,true);assert.match(p.d.getElementById('fundReminderCountdown').textContent,/8 seconds/);await p.run(1000);assert.match(p.d.getElementById('fundReminderCountdown').textContent,/7 seconds/);await p.run(8000);assert.equal(p.dialog.open,false);assert.equal(p.d.activeElement,trigger);
+test('unpaid resident gets an immediate login popup, 10-second reminders and eight-second close',async t=>{
+  const p=page(t);await p.settle();assert.equal(p.dialog.open,true,'show immediately after login payment check');await p.run(8000);const trigger=p.d.getElementById('openPrivateGallery');trigger.focus();await p.run(10000);assert.equal(p.dialog.open,true);assert.match(p.d.getElementById('fundReminderCountdown').textContent,/8 seconds/);await p.run(1000);assert.match(p.d.getElementById('fundReminderCountdown').textContent,/7 seconds/);await p.run(8000);assert.equal(p.dialog.open,false);assert.equal(p.d.activeElement,trigger);
   await p.run(10000);assert.equal(p.dialog.open,true);p.d.getElementById('fundReminderClose').click();assert.equal(p.dialog.open,false);await p.run(8000);assert.equal(p.dialog.open,false);assert.equal(p.calls(),1);
 });
 test('paid, unknown and offline residents never get the popup',async t=>{
   for(const value of ['Yes','']){const p=page(t,value);await p.settle();await p.run(10000);assert.equal(p.dialog.open,false);}
-  const p=page(t);await p.settle();p.offline();p.advance(60000);await p.run(10000);assert.equal(p.dialog.open,false);
+  const p=page(t);await p.settle();await p.run(8000);p.offline();p.advance(60000);await p.run(10000);assert.equal(p.dialog.open,false);
 });
 test('payment refresh stops reminders; a changed flat never inherits unpaid status',async t=>{
-  const p=page(t);await p.settle();p.setReply(payload('Yes'));p.advance(60000);await p.run(10000);assert.equal(p.dialog.open,false);assert.equal(p.calls(),2);
+  const p=page(t);await p.settle();await p.run(8000);p.setReply(payload('Yes'));p.advance(60000);await p.run(10000);assert.equal(p.dialog.open,false);assert.equal(p.calls(),2);
   p.w.localStorage.setItem('saiVistaResidentFlat','A-101');await p.run(10000);assert.equal(p.dialog.open,false);assert.equal(p.calls(),3);
 });
 test('gallery, forms and hidden tabs are not interrupted; hidden tabs close the popup',async t=>{
-  const p=page(t);await p.settle();const gallery=p.d.getElementById('privateGallery');gallery.open=true;await p.run(10000);assert.equal(p.dialog.open,false);gallery.open=false;
+  const p=page(t);await p.settle();await p.run(8000);const gallery=p.d.getElementById('privateGallery');gallery.open=true;await p.run(10000);assert.equal(p.dialog.open,false);gallery.open=false;
   const form=p.d.getElementById('formModal');form.classList.remove('hidden');await p.run(10000);assert.equal(p.dialog.open,false);form.classList.add('hidden');
   await p.run(10000);assert.equal(p.dialog.open,true);Object.defineProperty(p.d,'hidden',{value:true,configurable:true});p.d.dispatchEvent(new p.w.Event('visibilitychange'));assert.equal(p.dialog.open,false);await p.run(10000);assert.equal(p.dialog.open,false);
 });
@@ -56,4 +56,5 @@ test('sound waits for interaction, lasts eight seconds and stops on mute, close 
   const mute=p.d.getElementById('fundReminderSound');mute.click();assert.ok(notes.every(note=>note.cancelled));assert.equal(mute.getAttribute('aria-pressed'),'true');await p.run(8000);await p.run(10000);assert.equal(notes.length,16,'mute persists across reminders');
   mute.click();await p.settle();assert.equal(notes.length,32);p.d.getElementById('fundReminderClose').click();assert.ok(notes.every(note=>note.cancelled));
   await p.run(10000);assert.equal(notes.length,48);Object.defineProperty(p.d,'hidden',{value:true});p.d.dispatchEvent(new p.w.Event('visibilitychange'));assert.ok(notes.every(note=>note.cancelled));
+  const login=page(t,'No',w=>{w.AudioContext=Audio;w.SaiVistaResidentReady=false;});login.d.dispatchEvent(new login.w.Event('pointerdown'));login.w.SaiVistaResidentReady=true;login.w.dispatchEvent(new login.w.Event('sai-vista-resident-ready'));await login.settle();assert.equal(login.dialog.open,true);assert.equal(notes.length,64,'login interaction unlocks sound for the immediate popup');
 });
