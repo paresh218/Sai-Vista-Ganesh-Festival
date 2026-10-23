@@ -55,6 +55,7 @@
     trigger.addEventListener('click', async () => {
       opener = trigger;
       form.reset(); form.hidden = false;
+      try { form.elements.flat.value = typeof ResidentAccess === 'undefined' ? '' : ResidentAccess.remembered(window.localStorage) || ''; } catch (_) {}
       form.elements.name.setCustomValidity('');
       for (const input of form.querySelectorAll("input")) input.disabled = false;
       form.dataset.activity = trigger.dataset.interestOpen;

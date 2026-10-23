@@ -66,3 +66,10 @@ test('Navratri archive is a separate view and nested links select the right fest
  assert.equal(d.body.dataset.view,'navratriArchive');
  dom.window.close();
 });
+
+test('marathon promotion leads gratitude and prefills the logged-in flat in both forms',()=>{
+ const dom=page(),w=dom.window,d=w.document;w.ResidentAccess=require('./resident-access.js');w.localStorage.setItem('saiVistaResidentFlat','B-902');
+ const banner=d.getElementById('marathonInterest');assert.ok(banner.compareDocumentPosition(d.getElementById('home'))&w.Node.DOCUMENT_POSITION_FOLLOWING);assert.match(banner.textContent,/Sai Vista Marathon/);assert.match(banner.textContent,/tentative/);assert.equal(banner.querySelectorAll('.marathon-benefits li').length,3);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(banner.querySelector('.hero-actions').compareDocumentPosition(banner.querySelector('.interest-note'))&w.Node.DOCUMENT_POSITION_FOLLOWING);
+ for(const activity of ['Running','Walking']){d.querySelector('[data-interest-open="'+activity+'"]').click();assert.equal(d.getElementById('marathonFlat').value,'B-902');d.getElementById('closeMarathonInterest').click();}
+ w.close();
+});

@@ -1,4 +1,4 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v140";
+const CACHE_NAME = "sai-vista-ganpati-2026-v141";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -10,8 +10,8 @@ const APP_SHELL = [
   "protected-gallery-config.js?v=2",
   "protected-gallery-cache.js?v=3",
   "protected-gallery.css?v=4",
-  "community-season.js?v=3",
-  "community-season.css?v=5",
+  "community-season.js?v=4",
+  "community-season.css?v=6",
   "assets/sai-vista-marathon-coming-soon.webp",
   "index.html",
   "style.css?v=22",
@@ -56,7 +56,7 @@ const APP_SHELL = [
   "event-registration.js?v=7",
   "festival-experience.js?v=8",
   "event-ux.js?v=7",
-  "ux-translations.js?v=7",
+  "ux-translations.js?v=8",
   "assets/neeraj-funfair-qr.jpeg",
   "assets/artisanal-sweets.jpeg",
   "translations.js?v=8",

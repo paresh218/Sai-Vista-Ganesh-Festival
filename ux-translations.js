@@ -1,6 +1,19 @@
 // English source strings stay stable; resident-facing copy is translated in place.
 (() => {
   const rows=[
+    ["Marathon", "मैराथन", "मॅरेथॉन"],
+    ["DECEMBER 2026 · INTEREST OPEN", "दिसंबर 2026 · रुचि पंजीकरण खुला", "डिसेंबर 2026 · स्वारस्य नोंदणी सुरू"],
+    ["Sai Vista Marathon", "साई विस्टा मैराथन", "साई व्हिस्टा मॅरेथॉन"],
+    ["Run. Walk. Join the fun.", "दौड़ें। चलें। साथ आनंद लें।", "धावा. चाला. आनंदात सहभागी व्हा."],
+    ["Bring your family, meet your neighbours and help us plan our next community adventure.", "परिवार को साथ लाएँ, पड़ोसियों से मिलें और अगले सामुदायिक आयोजन की योजना में मदद करें।", "कुटुंबाला सोबत आणा, शेजाऱ्यांना भेटा आणि पुढील सामुदायिक उपक्रमाच्या नियोजनात मदत करा."],
+    ["All ages welcome", "हर उम्र का स्वागत", "सर्व वयोगटांचे स्वागत"],
+    ["Running & walking", "दौड़ना और चलना", "धावणे व चालणे"],
+    ["No payment now", "अभी कोई भुगतान नहीं", "सध्या कोणतेही शुल्क नाही"],
+    ["Register your interest for early to mid December. The event, date, distance and route are still tentative.", "दिसंबर की शुरुआत से मध्य तक के आयोजन के लिए रुचि दर्ज करें। आयोजन, तारीख, दूरी और मार्ग अभी तय नहीं हैं।", "डिसेंबरच्या सुरुवातीपासून मध्यापर्यंतच्या आयोजनासाठी स्वारस्य नोंदवा. आयोजन, तारीख, अंतर व मार्ग अद्याप निश्चित नाहीत."],
+    ["Register running interest", "दौड़ने की रुचि दर्ज करें", "धावण्यासाठी स्वारस्य नोंदवा"],
+    ["Register walking interest", "चलने की रुचि दर्ज करें", "चालण्यासाठी स्वारस्य नोंदवा"],
+    ["Interest only — no payment or confirmed event registration.", "केवल रुचि दर्ज करें — कोई भुगतान या आयोजन का पक्का पंजीकरण नहीं।", "केवळ स्वारस्य नोंदणी — कोणतेही शुल्क किंवा आयोजनाची निश्चित नोंदणी नाही."],
+
 ["Drawing Competition moved to Sunday, 20 September", "चित्रकला प्रतियोगिता अब रविवार, 20 सितंबर को", "चित्रकला स्पर्धा आता रविवार, 20 सप्टेंबरला"],
 ["Due to children’s school commitments, the Drawing Competition has moved to Sunday, 20 September 2026, 11:00 AM – 12:30 PM. For Pooja Thali Decoration, bring your completed thali to the Pandal at 6:00 PM on Sunday. All other event timings remain unchanged.", "बच्चों के स्कूल के कारण चित्रकला प्रतियोगिता अब रविवार, 20 सितंबर 2026 को सुबह 11:00 से दोपहर 12:30 बजे तक होगी। पूजा थाली सजावट के लिए रविवार शाम 6:00 बजे अपनी सजी हुई थाली पंडाल में लाएँ। अन्य सभी कार्यक्रमों का समय पहले जैसा रहेगा।", "मुलांच्या शाळेमुळे चित्रकला स्पर्धा आता रविवार, 20 सप्टेंबर 2026 रोजी सकाळी 11:00 ते दुपारी 12:30 या वेळेत होईल. पूजा थाळी सजावट स्पर्धेसाठी रविवारी संध्याकाळी 6:00 वाजता सजवलेली थाळी मंडपात आणा. इतर सर्व कार्यक्रमांच्या वेळा पूर्वीप्रमाणेच राहतील."],
 ["View updated schedule", "बदला हुआ कार्यक्रम देखें", "सुधारित वेळापत्रक पाहा"],
