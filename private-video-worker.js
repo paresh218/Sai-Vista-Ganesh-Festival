@@ -1,9 +1,10 @@
 // Keys and download grants live only in this worker's memory, never in caches.
-importScripts('private-video-core.js?v=1');
+importScripts('private-video-core.js?v=2');
 const videoGrants=new Map(),videoActive=new Map(),videoPrefix='/__private-video/';
 function videoNotify(grant,data){self.clients.get(grant.clientId).then(c=>c?.postMessage({type:'private-video-progress',id:grant.id,...data}));}
 self.addEventListener('message',event=>{
  const d=event.data;if(!d||!event.source?.id)return;
+ if(['private-video-pause','private-video-resume'].includes(d.type)){const active=videoActive.get(d.id),grant=videoGrants.get(d.id);if(grant?.clientId===event.source.id&&active){active.flow[d.type==='private-video-pause'?'pause':'resume']();}return;}
  if(d.type==='private-video-cancel'){const active=videoActive.get(d.id),grant=videoGrants.get(d.id);if(grant?.clientId===event.source.id){active?.abort();videoGrants.delete(d.id);}return;}
  if(d.type!=='private-video-grant')return;
  event.waitUntil((async()=>{try{
@@ -25,10 +26,10 @@ self.addEventListener('fetch',event=>{
   const v=grant.m.variants[grant.variant],range=event.request.headers.get('Range');let start=0,end=v.bytes-1;
   if(range){const match=/^bytes=(\d+)-(\d*)$/.exec(range);if(!match){finish();return new Response(null,{status:416});}start=Number(match[1]);end=match[2]?Math.min(Number(match[2]),end):end;if(start>end||start>=v.bytes){finish();return new Response(null,{status:416});}}
   let index=0,offset=0,delivered=0;while(offset+v.chunks[index].bytes<=start){offset+=v.chunks[index].bytes;index++;}
-  const abort=new AbortController();videoActive.set(grant.id,abort);
+  const abort=new AbortController();const flow=PrivateVideoCore.transfer(abort.signal);videoActive.set(grant.id,{abort:()=>abort.abort(),flow});
   const cleanup=()=>{videoActive.delete(grant.id);finish();};
   const stream=new ReadableStream({async pull(controller){try{
-   const plain=await PrivateVideoCore.chunk(grant.m,grant.variant,index,grant.k,abort.signal),from=Math.max(0,start-offset),to=Math.min(plain.length,end-offset+1),part=plain.subarray(from,to);controller.enqueue(part);delivered+=part.length;offset+=plain.length;index++;
+   await flow.wait();const plain=await PrivateVideoCore.chunk(grant.m,grant.variant,index,grant.k,abort.signal,attempt=>videoNotify(grant,{state:'retrying',attempt}));await flow.wait();const from=Math.max(0,start-offset),to=Math.min(plain.length,end-offset+1),part=plain.subarray(from,to);controller.enqueue(part);delivered+=part.length;offset+=plain.length;index++;
    videoNotify(grant,{received:delivered,total:end-start+1,state:'progress'});
    if(offset>end){controller.close();videoNotify(grant,{received:delivered,total:end-start+1,state:'complete'});cleanup();}
   }catch(_){abort.abort();controller.error(Error('Download interrupted. Please retry.'));videoNotify(grant,{state:'error'});cleanup();}},cancel(){abort.abort();videoNotify(grant,{state:'cancelled'});cleanup();}});

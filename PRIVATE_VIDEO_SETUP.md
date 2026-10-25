@@ -26,3 +26,10 @@ The existing free GitHub Pages host is used. Total published source assets remai
 Run `npm test` and `npm run test:player`. The video tests cover encryption round trips, distinct keys, unsafe manifests, private session checks, logging, client-bound downloads, exact streamed bytes, Range, cancellation, locked initial UI, verification reuse and the original-file memory guard.
 
 Before releasing, check the top card at 320/390/768/1024/1440 widths, email verification, preview playback, both downloads, cancellation and returned-file hashes. Test native download behaviour separately on physical Android/iPhone devices; desktop mocks do not prove mobile OS behaviour. Temporary setup helpers containing keys must be removed before creating the deployed Apps Script version.
+
+## Public glimpse and transfer controls (release 4)
+The 1.3 MB, 15-second glimpse is deliberately public at assets/navratri-2026-glimpse.mp4, loaded only on Play. Full-film keys still require the verified email and matching logged-in flat. Old encrypted previews remain for compatibility.
+
+Both download sizes stream independently per browser/grant. Pause stops before the next chunk is delivered (one in-flight chunk may finish); Resume continues the same stream. Cancel aborts pending work, including a paused stream. The smaller compatibility buffer has the same preparation controls. Once data reaches the browser, its Downloads panel owns saving. Keep the tab open; pauses do not survive browser closure.
+
+Each encrypted chunk uses up to five attempts, with 1/2/4/8-second backoff and a 45-second request timeout. Permanent HTTP client errors and authentication/decryption failures stop immediately. An extended outage still requires restarting; this is not persistent offline resume. Regression covers independent streams, owner-only pause/resume, exact resumed bytes, cancellation, and transient/permanent failures.
