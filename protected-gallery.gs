@@ -238,11 +238,13 @@ function installGalleryCleanup() {
 // Public responses contain counts and approved text only; identities remain private.
 function videoCommunitySheet(name,headers){const book=galleryBook();let sheet=book.getSheetByName(name);if(!sheet){sheet=book.insertSheet(name);sheet.appendRow(headers);sheet.setFrozenRows(1);}return sheet;}
 function videoCommunityRows(sheet){return sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,sheet.getLastColumn()).getValues():[];}
-function videoCommunity(){
- const cache=CacheService.getScriptCache(),saved=cache.get('video.community.v2');if(saved)return JSON.parse(saved);
+function videoCommunity(locked=false){
+ const cache=CacheService.getScriptCache(),saved=cache.get('video.community.v3');if(saved)return JSON.parse(saved);
  const book=galleryBook(),likes=book.getSheetByName('Video likes'),comments=book.getSheetByName('Video comments');
- const result={ok:true,likes:likes?videoCommunityRows(likes).filter(r=>r[1]===true).length:0,comments:comments?videoCommunityRows(comments).filter(r=>r[3]==='APPROVED').slice(-50).reverse().map(r=>({name:typeof r[6]==='string'&&r[6].trim()?r[6].replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,80):'Resident',text:String(r[2]).replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,300)})):[]};
- cache.put('video.community.v2',JSON.stringify(result),15);return result;
+ if(comments&&comments.getLastColumn()<8){const lock=locked?null:LockService.getScriptLock();if(lock&&!lock.tryLock(5000))throw Error('Please try again shortly.');try{if(comments.getLastColumn()<8)comments.getRange(1,8,1,1).setValues([['Pinned (YES / blank)']]);}finally{lock?.releaseLock();}}
+ const pinned=row=>row[7]===true||String(row[7]||'').trim().toUpperCase()==='YES';
+ const result={ok:true,likes:likes?videoCommunityRows(likes).filter(r=>r[1]===true).length:0,comments:comments?videoCommunityRows(comments).filter(r=>r[3]==='APPROVED').reverse().sort((a,b)=>Number(pinned(b))-Number(pinned(a))).slice(0,50).map(r=>({pinned:pinned(r),name:typeof r[6]==='string'&&r[6].trim()?r[6].replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,80):'Resident',text:String(r[2]).replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,300)})):[]};
+ cache.put('video.community.v3',JSON.stringify(result),15);return result;
 }
 function videoCommunityWrite(d,session){
  if(d.action==='gallery-video-like'&&typeof d.liked!=='boolean')throw Error('Choose Like or Unlike.');
@@ -256,13 +258,13 @@ function videoCommunityWrite(d,session){
   if(d.action==='gallery-video-like'){
    const sheet=videoCommunitySheet('Video likes',['Private resident reference','Liked','Updated at']),rows=videoCommunityRows(sheet),index=rows.findIndex(r=>r[0]===owner);
    if(index>=0)sheet.getRange(index+2,1,1,3).setValues([[owner,d.liked,now]]);else{if(rows.length>=5000)throw Error('Reaction limit reached. Please contact the committee.');sheet.appendRow([owner,d.liked,now]);}
-   CacheService.getScriptCache().remove('video.community.v2');return {...videoCommunity(),liked:d.liked};
+   CacheService.getScriptCache().remove('video.community.v3');return {...videoCommunity(true),liked:d.liked};
   }
-  const sheet=videoCommunitySheet('Video comments',['Comment reference','Private resident reference','Comment — review before approval','Status: PENDING / APPROVED / REJECTED','Submitted at','Request reference','Public display name (consented)']);if(sheet.getLastColumn()<7)sheet.getRange(1,7,1,1).setValues([['Public display name (consented)']]);const rows=videoCommunityRows(sheet),previous=rows.find(r=>r[5]===d.commentId);
+  const sheet=videoCommunitySheet('Video comments',['Comment reference','Private resident reference','Comment — review before approval','Status: PENDING / APPROVED / REJECTED','Submitted at','Request reference','Public display name (consented)','Pinned (YES / blank)']);if(sheet.getLastColumn()<8)sheet.getRange(1,7,1,2).setValues([['Public display name (consented)','Pinned (YES / blank)']]);const rows=videoCommunityRows(sheet),previous=rows.find(r=>r[5]===d.commentId);
   if(previous){if(previous[1]!==owner||String(previous[2]).replace(/^'(?=[=+@\-\t\r\n])/,'')!==comment||String(previous[6]||'').replace(/^'(?=[=+@\-\t\r\n])/,'')!==displayName)throw Error('This request reference has already been used.');return {ok:true,pending:true};}
   const recent=rows.filter(r=>r[1]===owner&&Date.now()-new Date(r[4]).getTime()<86400000);
   if(recent.length>=3||recent.some(r=>Date.now()-new Date(r[4]).getTime()<60000))throw Error('Please wait before commenting again. Limit: three comments per day.');
   if(rows.length>=10000)throw Error('Comment limit reached. Please contact the committee.');
-  sheet.appendRow([Utilities.getUuid(),owner,gallerySafe(comment),'PENDING',now,d.commentId,gallerySafe(displayName)]);return {ok:true,pending:true};
+  sheet.appendRow([Utilities.getUuid(),owner,gallerySafe(comment),'PENDING',now,d.commentId,gallerySafe(displayName),'']);return {ok:true,pending:true};
  }finally{lock.releaseLock();}
 }

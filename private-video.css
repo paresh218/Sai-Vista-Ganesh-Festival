@@ -12,3 +12,5 @@ main>.private-video-banner{display:grid;grid-template-columns:minmax(0,1.1fr) mi
 .video-community .video-comment{display:flex;gap:12px;align-items:flex-start;list-style:none;margin:16px 0}.video-comment>img{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:contain}.video-comment>div{min-width:0;flex:1}.video-comment strong{display:block;color:#641847;font-size:.88rem;overflow-wrap:anywhere}.video-comment p{margin:4px 0;font-size:.85rem;white-space:pre-wrap}.video-community:has(.video-comment) ol{padding-left:0}#videoCommentName{box-sizing:border-box;width:100%;min-height:44px;padding:10px;border:1px solid #a98b9a;border-radius:12px;font:inherit;font-size:16px}
 
 .video-community-tools .video-share-logo{width:20px;height:20px;flex:0 0 20px;margin-right:7px;vertical-align:middle}
+
+.video-comments-section{margin-top:16px}.video-comments-section h4{font-size:1rem;color:#641847;margin:12px 0}.video-comment-pin{display:block;color:#765218;font-size:.72rem;font-weight:600;margin-bottom:4px}#videoCommentsMore{margin:4px 0 12px}#videoCommunityStatus:empty{display:none}
