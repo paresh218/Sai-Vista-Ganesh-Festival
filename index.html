@@ -2,7 +2,7 @@
 <html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-10-26-private-video-4">
+  <meta name="site-release" content="2026-10-26-video-community-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista celebrations 2026 — marathon interest, festival archives, photos and accounts.">
   <meta name="theme-color" content="#641847">
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="community-season.css?v=6">
   <link rel="stylesheet" href="cultural-fund-reminder.css?v=1">
   <link rel="stylesheet" href="protected-gallery.css?v=4">
-  <link rel="stylesheet" href="private-video.css?v=2">
+  <link rel="stylesheet" href="private-video.css?v=3">
 </head>
 <body>
     <dialog id="residentGate" aria-labelledby="residentGateTitle">
@@ -105,6 +105,17 @@
             <small>Your verified photo-gallery email works here too. Your logged-in flat is used automatically. Full-film download requests are recorded privately. The glimpse is public.</small>
             <details><summary>Need the original quality?</summary><p>Original Full HD file: 505.8 MB. Use Wi-Fi and keep this tab open during download.</p><div class="private-video-actions"><button class="btn btn-outline" type="button" data-video-action="original">Prepare original download · 505.8 MB</button></div></details>
             <progress id="navratriVideoProgress" max="100" value="0" hidden aria-label="Video download progress"></progress><p id="navratriVideoStatus" class="private-video-status" role="status" aria-live="polite">Watch the glimpse freely. Verify your email to download the full film.</p><button id="navratriVideoPause" type="button" aria-pressed="false" hidden>Pause download</button><button id="navratriVideoCancel" type="button" hidden>Cancel download</button>
+            <div id="videoCommunity" class="video-community" aria-labelledby="videoCommunityTitle">
+              <h3 id="videoCommunityTitle">Celebrate together</h3>
+              <div class="video-community-tools"><button id="videoLike" type="button" aria-pressed="false">♡ Like</button><span><strong id="videoLikeCount">—</strong> likes</span><button id="videoCommunityRefresh" type="button">Refresh</button></div>
+              <details><summary>Comments · share a kind memory</summary><p>Everyone can read approved comments. Verify your email to like or comment. Keep comments respectful; no insults, personal details or targeting anyone. The committee reviews every comment before it appears. Your email and flat stay private.</p>
+                <ol id="videoComments" aria-label="Approved public comments"><li>Loading community memories…</li></ol>
+                <form id="videoCommentForm"><label for="videoComment">Your comment</label><textarea id="videoComment" maxlength="300" rows="3" required placeholder="What made this celebration special?"></textarea><label class="video-comment-consent"><input id="videoCommentConsent" type="checkbox" required> I agree to share this comment publicly after committee review.</label><button type="submit">Submit for review</button></form>
+              </details>
+              <p id="videoCommunityStatus" role="status" aria-live="polite">Loading community reactions…</p>
+              <div class="video-community-tools" aria-label="Share the public video page"><a id="videoShareWhatsApp" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a><a id="videoShareFacebook" target="_blank" rel="noopener noreferrer">Facebook ↗</a><button id="videoShareInstagram" type="button" aria-haspopup="dialog">Instagram ↗</button><button id="videoShareMore" type="button">More sharing options</button></div>
+              <small>Share the public page. Full-film downloads still require email verification.</small>
+            </div>
           </div>
         </section>
         <section id="navratriPhotoGallery" class="section private-gallery-banner" aria-labelledby="privateGalleryBannerTitle"><div><span class="eyebrow">NAVRATRI 2026 · OUR CELEBRATION, CAPTURED</span><h2 id="privateGalleryBannerTitle">The moments. The colours. Your memories.</h2><p>Explore our Navratri photo album, relive the celebrations and download your favourites with a Sai Vista watermark.</p></div><button id="openPrivateGallery" class="btn" type="button" aria-haspopup="dialog" aria-controls="privateGallery">Open photo gallery →</button></section>
@@ -708,9 +719,11 @@ https://saivistaculturalcommittee.in
     <script src="protected-gallery-config.js?v=2"></script>
     <script src="protected-gallery-cache.js?v=3"></script>
     <script src="protected-gallery-local.js?v=1"></script>
-    <script src="protected-gallery.js?v=7"></script>
+    <script src="protected-gallery.js?v=8"></script>
+    <dialog id="videoInstagramHelp" aria-labelledby="videoInstagramTitle"><h2 id="videoInstagramTitle">Share on Instagram</h2><p>Copy our public page link and add it using the Link sticker in your Instagram Story. You can also try More sharing options if Instagram is offered on your phone.</p><button id="videoCopyLink" type="button">Copy website link</button> <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Open Instagram ↗</a><p id="videoInstagramStatus" role="status"></p><button id="videoInstagramClose" type="button">Close</button></dialog>
+    <script src="video-community.js?v=1" defer></script>
     <script src="private-video-core.js?v=2"></script>
-    <script src="private-video.js?v=4"></script>
+    <script src="private-video.js?v=5"></script>
     <script src="community-season.js?v=4"></script>
     <script src="event-registration-model.js"></script>
     <script src="cultural-fund-reminder.js?v=4"></script>

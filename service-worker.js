@@ -1,16 +1,17 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v146";
+const CACHE_NAME = "sai-vista-ganpati-2026-v147";
 const APP_SHELL = [
   "./",
   "site-updates.js",
   "private-video-core.js?v=2",
-  "private-video.js?v=4",
-  "private-video.css?v=2",
+  "private-video.js?v=5",
+  "video-community.js?v=1",
+  "private-video.css?v=3",
   "private-video-worker.js?v=3",
   "cultural-fund-reminder.js?v=4",
   "cultural-fund-reminder.css?v=1",
   "assets/cultural-fund-meme.svg",
-  "protected-gallery.js?v=7",
+  "protected-gallery.js?v=8",
   "protected-gallery-local.js?v=1",
   "protected-gallery-config.js?v=2",
   "protected-gallery-cache.js?v=3",
