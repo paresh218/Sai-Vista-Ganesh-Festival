@@ -239,28 +239,30 @@ function installGalleryCleanup() {
 function videoCommunitySheet(name,headers){const book=galleryBook();let sheet=book.getSheetByName(name);if(!sheet){sheet=book.insertSheet(name);sheet.appendRow(headers);sheet.setFrozenRows(1);}return sheet;}
 function videoCommunityRows(sheet){return sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,sheet.getLastColumn()).getValues():[];}
 function videoCommunity(){
- const cache=CacheService.getScriptCache(),saved=cache.get('video.community.v1');if(saved)return JSON.parse(saved);
+ const cache=CacheService.getScriptCache(),saved=cache.get('video.community.v2');if(saved)return JSON.parse(saved);
  const book=galleryBook(),likes=book.getSheetByName('Video likes'),comments=book.getSheetByName('Video comments');
- const result={ok:true,likes:likes?videoCommunityRows(likes).filter(r=>r[1]===true).length:0,comments:comments?videoCommunityRows(comments).filter(r=>r[3]==='APPROVED').slice(-50).reverse().map(r=>({text:String(r[2]).replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,300)})):[]};
- cache.put('video.community.v1',JSON.stringify(result),15);return result;
+ const result={ok:true,likes:likes?videoCommunityRows(likes).filter(r=>r[1]===true).length:0,comments:comments?videoCommunityRows(comments).filter(r=>r[3]==='APPROVED').slice(-50).reverse().map(r=>({name:typeof r[6]==='string'&&r[6].trim()?r[6].replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,80):'Resident',text:String(r[2]).replace(/^'(?=[=+@\-\t\r\n])/,'').slice(0,300)})):[]};
+ cache.put('video.community.v2',JSON.stringify(result),15);return result;
 }
 function videoCommunityWrite(d,session){
  if(d.action==='gallery-video-like'&&typeof d.liked!=='boolean')throw Error('Choose Like or Unlike.');
  const comment=typeof d.comment==='string'?d.comment.trim():'';
  if(d.action==='gallery-video-comment'&&(!comment||comment.length>300||/[\x00-\x1f\x7f]/.test(comment)||d.consent!==true||! /^[a-zA-Z0-9-]{16,80}$/.test(d.commentId||'')))throw Error('Enter a comment of 1–300 characters and accept public sharing after review.');
+ const displayName=d.publicNameConsent===true&&typeof d.displayName==='string'?d.displayName.trim():'';
+ if(d.action==='gallery-video-comment'&&d.publicNameConsent===true&&(!displayName||displayName.length>80||/[\x00-\x1f\x7f@]/.test(displayName)))throw Error('Enter a public name of 1–80 characters, without an email address.');
  const lock=LockService.getScriptLock();if(!lock.tryLock(5000))throw Error('Please try again shortly.');
  try{
   const owner=galleryId('video-community|'+session.email),now=new Date();
   if(d.action==='gallery-video-like'){
    const sheet=videoCommunitySheet('Video likes',['Private resident reference','Liked','Updated at']),rows=videoCommunityRows(sheet),index=rows.findIndex(r=>r[0]===owner);
    if(index>=0)sheet.getRange(index+2,1,1,3).setValues([[owner,d.liked,now]]);else{if(rows.length>=5000)throw Error('Reaction limit reached. Please contact the committee.');sheet.appendRow([owner,d.liked,now]);}
-   CacheService.getScriptCache().remove('video.community.v1');return {...videoCommunity(),liked:d.liked};
+   CacheService.getScriptCache().remove('video.community.v2');return {...videoCommunity(),liked:d.liked};
   }
-  const sheet=videoCommunitySheet('Video comments',['Comment reference','Private resident reference','Comment — review before approval','Status: PENDING / APPROVED / REJECTED','Submitted at','Request reference']),rows=videoCommunityRows(sheet),previous=rows.find(r=>r[5]===d.commentId);
-  if(previous){if(previous[1]!==owner||String(previous[2]).replace(/^'(?=[=+@\-\t\r\n])/,'')!==comment)throw Error('This request reference has already been used.');return {ok:true,pending:true};}
+  const sheet=videoCommunitySheet('Video comments',['Comment reference','Private resident reference','Comment — review before approval','Status: PENDING / APPROVED / REJECTED','Submitted at','Request reference','Public display name (consented)']);if(sheet.getLastColumn()<7)sheet.getRange(1,7,1,1).setValues([['Public display name (consented)']]);const rows=videoCommunityRows(sheet),previous=rows.find(r=>r[5]===d.commentId);
+  if(previous){if(previous[1]!==owner||String(previous[2]).replace(/^'(?=[=+@\-\t\r\n])/,'')!==comment||String(previous[6]||'').replace(/^'(?=[=+@\-\t\r\n])/,'')!==displayName)throw Error('This request reference has already been used.');return {ok:true,pending:true};}
   const recent=rows.filter(r=>r[1]===owner&&Date.now()-new Date(r[4]).getTime()<86400000);
   if(recent.length>=3||recent.some(r=>Date.now()-new Date(r[4]).getTime()<60000))throw Error('Please wait before commenting again. Limit: three comments per day.');
   if(rows.length>=10000)throw Error('Comment limit reached. Please contact the committee.');
-  sheet.appendRow([Utilities.getUuid(),owner,gallerySafe(comment),'PENDING',now,d.commentId]);return {ok:true,pending:true};
+  sheet.appendRow([Utilities.getUuid(),owner,gallerySafe(comment),'PENDING',now,d.commentId,gallerySafe(displayName)]);return {ok:true,pending:true};
  }finally{lock.releaseLock();}
 }
