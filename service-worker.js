@@ -1,10 +1,10 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v147";
+const CACHE_NAME = "sai-vista-ganpati-2026-v148";
 const APP_SHELL = [
   "./",
   "site-updates.js",
   "private-video-core.js?v=2",
-  "private-video.js?v=5",
+  "private-video.js?v=6",
   "video-community.js?v=1",
   "private-video.css?v=3",
   "private-video-worker.js?v=3",
