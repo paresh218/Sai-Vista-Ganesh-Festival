@@ -80,6 +80,7 @@ if (typeof document !== 'undefined') (() => {
   }
   async function tick() {
     if (document.hidden || !window.SaiVistaResidentReady || !flat()) return;
+    const preview=document.getElementById('navratriVideoPlayer');if(preview&&!preview.paused&&!preview.ended)return;
     if (flat() !== currentFlat || Date.now() - checkedAt >= 60000) await check();
     if (checking || state !== 'pending' || document.hidden || flat() !== currentFlat) return;
     // Never interrupt another form, gallery, player popup or native dialog.

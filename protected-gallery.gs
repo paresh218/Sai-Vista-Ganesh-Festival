@@ -187,6 +187,13 @@ function galleryHandle(d) {
     const session=gallerySession(d,d.action!=='gallery-status'&&d.action!=='gallery-logout');
     if(d.action==='gallery-status')return {ok:true,email:session.email,status:session.status,flat:session.flat,expires:session.expires};
     if(d.action==='gallery-logout'){galleryAudit('logout',session.email,'',d);galleryProps().deleteProperty('gallery.session.'+galleryHash(d.token));return {ok:true};}
+    if(d.action==='gallery-video'){
+      if(!['preview','optimised','original'].includes(d.variant)||d.videoOperation!==(d.variant==='preview'?'preview':'download'))throw Error('Invalid video selection.');
+      const config=JSON.parse(galleryProps().getProperty('GALLERY_VIDEO_CONFIG')||'null');
+      if(!config||!/^([A-Za-z0-9+/]{43}=)$/.test(config.keys&&config.keys[d.variant])||! /^[a-f0-9]{64}$/.test(config.manifestSha256))throw Error('The private video is not connected yet.');
+      galleryAudit(d.variant==='preview'?'video_preview_requested':'video_download_requested',session.email,'dandiya-2026:'+d.variant,d);
+      return {ok:true,key:config.keys[d.variant],manifestSha256:config.manifestSha256,expires:Math.min(session.expires,Date.now()+3600000)};
+    }
     const photos=galleryPhotos();
     if(d.action==='gallery-page'){
       if(!Number.isInteger(d.page)||d.page<0||d.page>200)throw Error('Invalid gallery page.');

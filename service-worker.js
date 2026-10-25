@@ -1,11 +1,16 @@
-const CACHE_NAME = "sai-vista-ganpati-2026-v141";
+if(typeof importScripts==='function')importScripts('private-video-worker.js?v=2');
+const CACHE_NAME = "sai-vista-ganpati-2026-v143";
 const APP_SHELL = [
   "./",
   "site-updates.js",
-  "cultural-fund-reminder.js?v=3",
+  "private-video-core.js?v=1",
+  "private-video.js?v=1",
+  "private-video.css?v=1",
+  "private-video-worker.js?v=2",
+  "cultural-fund-reminder.js?v=4",
   "cultural-fund-reminder.css?v=1",
   "assets/cultural-fund-meme.svg",
-  "protected-gallery.js?v=6",
+  "protected-gallery.js?v=7",
   "protected-gallery-local.js?v=1",
   "protected-gallery-config.js?v=2",
   "protected-gallery-cache.js?v=3",
@@ -87,6 +92,7 @@ self.addEventListener("activate", (event) => {
 // Fresh files online; cached files are only an offline/error fallback.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
+  if(new URL(event.request.url).pathname.startsWith('/__private-video/')||new URL(event.request.url).pathname.startsWith('/assets/protected-video/'))return;
   // Let the browser handle video range requests and seeking directly.
   if (/\.(?:mp4|webm)$/i.test(new URL(event.request.url).pathname)) return;
   // Update probes must see the server, never a cached fallback.

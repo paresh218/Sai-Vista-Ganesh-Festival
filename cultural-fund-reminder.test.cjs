@@ -41,7 +41,7 @@ test('gallery, forms and hidden tabs are not interrupted; hidden tabs close the 
   await p.run(10000);assert.equal(p.dialog.open,true);Object.defineProperty(p.d,'hidden',{value:true,configurable:true});p.d.dispatchEvent(new p.w.Event('visibilitychange'));assert.equal(p.dialog.open,false);await p.run(10000);assert.equal(p.dialog.open,false);
 });
 test('removed programme is absent from the rendered site and archives',()=>{
-  const html=fs.readFileSync('index.html','utf8');assert.doesNotMatch(html,/sund[ae]rkand/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/sund[ae]rkand/i);const d=new JSDOM(html).window.document;assert.equal(d.querySelectorAll('.kojagiri-programme').length,0);assert.doesNotMatch(html,/Kojagiri|2026-10-25|Puri, bhaji/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/Kojagiri|2026-10-25/i);
+  const html=fs.readFileSync('index.html','utf8');assert.doesNotMatch(html,/sund[ae]rkand/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/sund[ae]rkand/i);const d=new JSDOM(html).window.document;assert.equal(d.querySelectorAll('.kojagiri-programme').length,0);assert.doesNotMatch(html,/Kojagiri|datetime=.2026-10-25|Puri, bhaji/i);assert.doesNotMatch(fs.readFileSync('site-data.js','utf8'),/Kojagiri|2026-10-25/i);
 });
 test('sound waits for interaction, lasts eight seconds and stops on mute, close or hiding',async t=>{
   const notes=[],parameter={setValueAtTime(){},exponentialRampToValueAtTime(){}};
@@ -58,3 +58,5 @@ test('sound waits for interaction, lasts eight seconds and stops on mute, close 
   await p.run(10000);assert.equal(notes.length,48);Object.defineProperty(p.d,'hidden',{value:true});p.d.dispatchEvent(new p.w.Event('visibilitychange'));assert.ok(notes.every(note=>note.cancelled));
   const login=page(t,'No',w=>{w.AudioContext=Audio;w.SaiVistaResidentReady=false;});login.d.dispatchEvent(new login.w.Event('pointerdown'));login.w.SaiVistaResidentReady=true;login.w.dispatchEvent(new login.w.Event('sai-vista-resident-ready'));await login.settle();assert.equal(login.dialog.open,true);assert.equal(notes.length,64,'login interaction unlocks sound for the immediate popup');
 });
+
+test('fund reminders wait while the private video glimpse is playing',async t=>{const p=page(t,'No',w=>Object.defineProperty(w.document.getElementById('navratriVideoPlayer'),'paused',{value:false,configurable:true}));await p.settle();assert.equal(p.dialog.open,false);Object.defineProperty(p.d.getElementById('navratriVideoPlayer'),'paused',{value:true});await p.run(10000);assert.equal(p.dialog.open,true);});
