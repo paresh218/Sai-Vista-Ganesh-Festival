@@ -38,6 +38,6 @@
  window.addEventListener('sai-vista-video-verified',()=>{const next=pending;pending=null;if(next)run(next.variant,next.trigger,next.compatibility);});
  navigator.serviceWorker?.addEventListener('message',event=>{const d=event.data;if(d?.type!=='private-video-progress'||d.id!==activeId)return;
   if(d.state==='progress'){clearTimeout(startupTimer);compat.hidden=true;progress.value=d.received/d.total*100;say('Downloading '+Math.round(progress.value)+'% · '+(d.received/1000000).toFixed(1)+' of '+(d.total/1000000).toFixed(1)+' MB');}
-  else{clearTimeout(startupTimer);compat.hidden=true;activeId='';lock(false);say(d.state==='complete'?'Video data delivered to your browser. Check Downloads for the saved file.':d.state==='cancelled'?'Download cancelled.':'Download interrupted. Please retry.');}
+  else{clearTimeout(startupTimer);compat.hidden=d.state==='complete';activeId='';lock(false);say(d.state==='complete'?'Video data delivered to your browser. Check Downloads for the saved file.':d.state==='cancelled'?'Download cancelled.':'Download interrupted. Please retry.');}
  });
 })();
