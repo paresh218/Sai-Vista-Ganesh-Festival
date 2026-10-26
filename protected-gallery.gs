@@ -40,7 +40,7 @@ function segregateGalleryActivity(){
  while(Date.now()-started<180000){const lock=LockService.getScriptLock();if(!lock.tryLock(10000))throw Error('Please try again shortly.');try{
   const cursor=Number(props.getProperty('gallery.activity.cursor')||1),last=source.getLastRow();if(cursor>=last){complete=true;props.setProperty('gallery.activity.migrated','YES');props.deleteProperty('gallery.activity.migrating');break;}
   const count=Math.min(500,last-cursor),rows=source.getRange(cursor+1,1,count,Math.min(11,source.getLastColumn())).getValues(),groups={};
-  rows.forEach((row,index)=>{const day=galleryActivityDay(row[0]),copy=Array.from({length:11},(_,i)=>i===0?Utilities.formatDate(new Date(row[0]),'Asia/Kolkata','yyyy-MM-dd HH:mm:ss'):gallerySafe(row[i]??''));copy.push(source.getSheetId()+':'+(cursor+1+index));(groups[day]||=[]).push(copy);});
+  rows.forEach((row,index)=>{const day=galleryActivityDay(row[0]),copy=Array.from({length:11},(_,i)=>i===0?Utilities.formatDate(new Date(row[0]),'Asia/Kolkata','yyyy-MM-dd HH:mm:ss'):gallerySafe(row[i]??''));copy.push(source.getSheetId()+':'+(cursor+1+index));if(!groups[day])groups[day]=[];groups[day].push(copy);});
   for(const [day,items] of Object.entries(groups)){const target=galleryActivitySheet(book,day),existing=new Set(target.getLastRow()>1?target.getRange(2,12,target.getLastRow()-1,1).getValues().map(r=>String(r[0])):[]);galleryActivityAppend(target,items.filter(row=>!existing.has(row[11])));}
   props.setProperty('gallery.activity.cursor',String(cursor+count));
  }finally{lock.releaseLock();}}
