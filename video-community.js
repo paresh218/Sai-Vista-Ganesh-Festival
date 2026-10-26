@@ -11,6 +11,7 @@
   catch(error){notice.textContent=error.message||'Could not save. Please retry.';if(/verify your email|sign in/i.test(error.message)){pending={kind,trigger};api().verify(trigger);}}
   finally{working=false;like.disabled=false;form.querySelector('button').disabled=false;}
  }
+ $('videoCommentJump').addEventListener('click',()=>{if(comments.length>1){showAll=true;renderComments();}$('videoCommentName').focus();});
  $('videoCommentsMore').addEventListener('click',()=>{showAll=!showAll;renderComments();});
  like.addEventListener('click',()=>submit('like',like));form.addEventListener('submit',e=>{e.preventDefault();submit('comment',form.querySelector('button'));});form.addEventListener('input',()=>commentId='');
  $('videoCommunityRefresh').addEventListener('click',refresh);
@@ -22,6 +23,6 @@
  const dialog=$('videoInstagramHelp');$('videoShareInstagram').addEventListener('click',()=>dialog.showModal());$('videoInstagramClose').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>$('videoShareInstagram').focus());
  $('videoCopyLink').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(url);$('videoInstagramStatus').textContent='Link copied. Paste it into a Link sticker in your Instagram Story.';}catch(_){$('videoInstagramStatus').textContent='Copy this link: '+url;}});
  $('videoShareMore').addEventListener('click',async()=>{try{if(!navigator.share)throw Error('Use the sharing links or copy the link for your app.');await navigator.share({title,text,url});}catch(error){if(error.name!=='AbortError')notice.textContent=error.message;}});
- if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();refresh();}},{rootMargin:'150px'});observer.observe(panel);}else refresh();
+ if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();refresh();}},{rootMargin:'150px'});observer.observe(like);}else refresh();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&loaded&&!working)refresh();});
 })();
