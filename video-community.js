@@ -1,7 +1,6 @@
 (() => {
  const $=id=>document.getElementById(id),panel=$('videoCommunity');if(!panel)return;
  const api=()=>window.SaiVistaVideoCommunity,notice=$('videoCommunityStatus'),like=$('videoLike'),form=$('videoCommentForm'),list=$('videoComments');
- const url='https://saivistaculturalcommittee.in/#navratriVideo',title='Sai Vista Navratri 2026',text='Relive our Sai Vista Dandiya celebration! Watch the glimpse and enjoy our community memories.';
  let liked=false,pending,commentId='',working=false,loaded=false,comments=[],showAll=false;
  function render(result){$('videoLikeCount').textContent=String(result.likes);if(typeof result.liked==='boolean'){liked=result.liked;like.setAttribute('aria-pressed',String(liked));like.textContent=liked?'♥ Liked':'♡ Like';}if(Array.isArray(result.comments))comments=result.comments;renderComments();}
  function renderComments(){const more=$('videoCommentsMore'),multiple=comments.length>1,visible=!multiple||showAll?comments:comments.filter(item=>item.pinned===true);more.hidden=!multiple;more.textContent=showAll?'Show pinned only':'View comments ('+comments.length+')';more.setAttribute('aria-expanded',String(showAll));list.hidden=comments.length>0&&!visible.length;list.replaceChildren();for(const item of visible){const li=document.createElement('li');li.className='video-comment';const avatar=document.createElement('img');avatar.src='assets/comment-robot.svg';avatar.alt='';avatar.width=40;avatar.height=40;const body=document.createElement('div'),name=document.createElement('strong'),message=document.createElement('p');name.textContent=item.name||'Resident';message.textContent=item.text;if(item.pinned===true){const badge=document.createElement('span');badge.className='video-comment-pin';badge.textContent='Pinned';body.append(badge);}body.append(name,message);li.append(avatar,body);list.append(li);}if(!comments.length){const li=document.createElement('li');li.textContent='Be the first to share a kind memory.';list.append(li);}}
@@ -18,11 +17,6 @@
  window.addEventListener('sai-vista-video-verified',()=>{const next=pending;pending=null;if(next)submit(next.kind,next.trigger);});
  window.addEventListener('sai-vista-private-signed-out',()=>{liked=false;like.textContent='♡ Like';like.setAttribute('aria-pressed','false');pending=null;commentId='';form.reset();});
  window.addEventListener('storage',e=>{if(e.key==='saiVistaResidentFlat'||e.key==='saiVistaPrivateGallery'){liked=false;like.textContent='♡ Like';like.setAttribute('aria-pressed','false');pending=null;form.reset();}});
- $('videoShareWhatsApp').href='https://wa.me/?text='+encodeURIComponent(text+' '+url);
- $('videoShareFacebook').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
- const dialog=$('videoInstagramHelp');$('videoShareInstagram').addEventListener('click',()=>dialog.showModal());$('videoInstagramClose').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>$('videoShareInstagram').focus());
- $('videoCopyLink').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(url);$('videoInstagramStatus').textContent='Link copied. Paste it into a Link sticker in your Instagram Story.';}catch(_){$('videoInstagramStatus').textContent='Copy this link: '+url;}});
- $('videoShareMore').addEventListener('click',async()=>{try{if(!navigator.share)throw Error('Use the sharing links or copy the link for your app.');await navigator.share({title,text,url});}catch(error){if(error.name!=='AbortError')notice.textContent=error.message;}});
  if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();refresh();}},{rootMargin:'150px'});observer.observe(like);}else refresh();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&loaded&&!working)refresh();});
 })();
