@@ -25,9 +25,26 @@ function galleryId(value) {return galleryHash(gallerySecret()+'|'+value);}
 function galleryRandom() {return Utilities.getUuid()+Utilities.getUuid();}
 function gallerySafe(value) {const s=String(value==null?'':value);return /^[=+@\-\t\r\n]/.test(s)?"'"+s:s;}
 function galleryRows(name) {const s=gallerySheet(name);return s.getLastRow()>1?s.getRange(2,1,s.getLastRow()-1,s.getLastColumn()).getValues():[];}
-function galleryAudit(event, email, photo, d) {
-  const device=d && d.device || {};
-  gallerySheet('Gallery activity').appendRow([new Date(),event,email||'',photo||'',String(d && d.mode || '').slice(0,20),String(device.userAgent||'').slice(0,300),String(device.language||'').slice(0,30),String(device.viewport||'').slice(0,30),String(device.timezone||'').slice(0,80),String(d && d.requestId || '').slice(0,80),String(d && d.flat || '').slice(0,8)].map(v=>v instanceof Date?v:gallerySafe(v)));
+function galleryActivityHeaders(){return ['Time (IST)','Activity','Verified email / OTP recipient','Photo reference','View mode','Browser (self-reported)','Language','Viewport','Timezone (self-reported)','Request reference','Flat (self-reported)','Legacy source row'];}
+function galleryActivityDay(value){const date=new Date(value);if(!Number.isFinite(date.getTime()))throw Error('Invalid activity timestamp.');return Utilities.formatDate(date,'Asia/Kolkata','yyyy-MM-dd');}
+function galleryActivitySheet(book,day){const name='Gallery activity '+day;let sheet=book.getSheetByName(name);if(!sheet){sheet=book.insertSheet(name);sheet.getRange(1,1,1,12).setValues([galleryActivityHeaders()]);sheet.setFrozenRows(1);if(sheet.getMaxColumns()>12)sheet.deleteColumns(13,sheet.getMaxColumns()-12);if(sheet.getMaxRows()>100)sheet.deleteRows(101,sheet.getMaxRows()-100);}return sheet;}
+function galleryActivityAppend(sheet,rows){if(!rows.length)return;const required=sheet.getLastRow()+rows.length;if(required>sheet.getMaxRows())sheet.insertRowsAfter(sheet.getMaxRows(),Math.max(100,required-sheet.getMaxRows()));sheet.getRange(sheet.getLastRow()+1,1,rows.length,12).setValues(rows);}
+function galleryAudit(event,email,photo,d,locked=false){
+ const now=new Date(),device=d&&d.device||{},row=[Utilities.formatDate(now,'Asia/Kolkata','yyyy-MM-dd HH:mm:ss'),event,email||'',photo||'',String(d&&d.mode||'').slice(0,20),String(device.userAgent||'').slice(0,300),String(device.language||'').slice(0,30),String(device.viewport||'').slice(0,30),String(device.timezone||'').slice(0,80),String(d&&d.requestId||'').slice(0,80),String(d&&d.flat||'').slice(0,8),''].map(gallerySafe);
+ const lock=locked?null:LockService.getScriptLock();if(lock&&!lock.tryLock(10000))throw Error('Please try again shortly.');try{galleryActivityAppend(galleryActivitySheet(galleryBook(),galleryActivityDay(now)),[row]);}finally{lock?.releaseLock();}
+}
+// Copy legacy rows; keep the original tab and resume safely after interrupted runs.
+function segregateGalleryActivity(){
+ const props=galleryProps(),book=galleryBook(),source=book.getSheetByName('Gallery activity');if(!source||props.getProperty('gallery.activity.migrated')==='YES'){console.log('Daily activity migration is complete.');return;}
+ props.setProperty('gallery.activity.migrating','YES');const started=Date.now();let complete=false;
+ while(Date.now()-started<180000){const lock=LockService.getScriptLock();if(!lock.tryLock(10000))throw Error('Please try again shortly.');try{
+  const cursor=Number(props.getProperty('gallery.activity.cursor')||1),last=source.getLastRow();if(cursor>=last){complete=true;props.setProperty('gallery.activity.migrated','YES');props.deleteProperty('gallery.activity.migrating');break;}
+  const count=Math.min(500,last-cursor),rows=source.getRange(cursor+1,1,count,Math.min(11,source.getLastColumn())).getValues(),groups={};
+  rows.forEach((row,index)=>{const day=galleryActivityDay(row[0]),copy=Array.from({length:11},(_,i)=>i===0?Utilities.formatDate(new Date(row[0]),'Asia/Kolkata','yyyy-MM-dd HH:mm:ss'):gallerySafe(row[i]??''));copy.push(source.getSheetId()+':'+(cursor+1+index));(groups[day]||=[]).push(copy);});
+  for(const [day,items] of Object.entries(groups)){const target=galleryActivitySheet(book,day),existing=new Set(target.getLastRow()>1?target.getRange(2,12,target.getLastRow()-1,1).getValues().map(r=>String(r[0])):[]);galleryActivityAppend(target,items.filter(row=>!existing.has(row[11])));}
+  props.setProperty('gallery.activity.cursor',String(cursor+count));
+ }finally{lock.releaseLock();}}
+ console.log(complete?'Daily activity migration is complete. Original logs retained.':'Migration paused safely. Run segregateGalleryActivity again to continue.');
 }
 function galleryAccess(email) {return galleryRows('Gallery access').find(row=>String(row[0]).toLowerCase()===email);}
 function galleryAuthFailure(message) {const error=Error(message);error.reauthenticate=true;throw error;}
@@ -136,7 +153,7 @@ function galleryVerify(d) {
     const otp=JSON.parse(raw);
     if(otp.expires<=Date.now()||otp.attempts>=5){props.deleteProperty(key);throw Error('This code expired or was already used. Request a new code.');}
     otp.attempts++;props.setProperty(key,JSON.stringify(otp));
-    if(otp.hash!==galleryId(d.challenge+'|'+d.code)){galleryAudit('otp_failed',otp.email,'',d);throw Error('The code is incorrect. Please check your email.');}
+    if(otp.hash!==galleryId(d.challenge+'|'+d.code)){galleryAudit('otp_failed',otp.email,'',d,true);throw Error('The code is incorrect. Please check your email.');}
     props.deleteProperty(key);
     let row=galleryAccess(otp.email);
     if(row&&['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is blocked. Please contact the committee.');
@@ -144,7 +161,7 @@ function galleryVerify(d) {
     else {const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,2,1,3).setValues([[gallerySafe(otp.name),otp.flat,'APPROVED']]);}
     const token=galleryRandom(),expires=Date.now()+90*86400000;
     props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires}));
-    galleryAudit('email_verified',otp.email,'',d);
+    galleryAudit('email_verified',otp.email,'',d,true);
     return {ok:true,token,email:otp.email,expires,flat:otp.flat,status:'APPROVED'};
   } finally {lock.releaseLock();}
 }
@@ -229,7 +246,8 @@ function cleanupProtectedGallery() {
   }
   const sheet=gallerySheet('Gallery activity'),rows=galleryRows('Gallery activity'),cutoff=now-90*86400000;
   let old=0;for(const row of rows){if(new Date(row[0]).getTime()<cutoff)old++;else break;}
-  if(old)sheet.deleteRows(2,old);
+  if(old&&props.getProperty('gallery.activity.migrating')!=='YES')sheet.deleteRows(2,old);
+  for(const daily of galleryBook().getSheets()){const match=/^Gallery activity (\d{4}-\d{2}-\d{2})$/.exec(daily.getName());if(match&&Date.parse(match[1]+'T00:00:00+05:30')+86400000<=cutoff&&daily.getLastRow()>1)daily.deleteRows(2,daily.getLastRow()-1);}
 }
 function installGalleryCleanup() {
   if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='cleanupProtectedGallery'))ScriptApp.newTrigger('cleanupProtectedGallery').timeBased().everyDays(1).atHour(3).create();
