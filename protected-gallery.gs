@@ -269,7 +269,7 @@ function videoCommunityWrite(d,session){
  if(d.action==='gallery-video-like'&&typeof d.liked!=='boolean')throw Error('Choose Like or Unlike.');
  const comment=typeof d.comment==='string'?d.comment.trim():'';
  if(d.action==='gallery-video-comment'&&(!comment||comment.length>300||/[\x00-\x1f\x7f]/.test(comment)||d.consent!==true||! /^[a-zA-Z0-9-]{16,80}$/.test(d.commentId||'')))throw Error('Enter a comment of 1–300 characters and accept public sharing after review.');
- const displayName=d.publicNameConsent===true&&typeof d.displayName==='string'?d.displayName.trim():'';
+ const displayName=d.publicNameConsent===true?(typeof d.displayName==='string'&&d.displayName.trim()?d.displayName.trim():'Anonymous'):'';
  if(d.action==='gallery-video-comment'&&d.publicNameConsent===true&&(!displayName||displayName.length>80||/[\x00-\x1f\x7f@]/.test(displayName)))throw Error('Enter a public name of 1–80 characters, without an email address.');
  const lock=LockService.getScriptLock();if(!lock.tryLock(5000))throw Error('Please try again shortly.');
  try{

@@ -2,7 +2,7 @@
  const $=id=>document.getElementById(id),section=$('navratriVideo');if(!section)return;
  const video=$('navratriVideoPlayer'),status=$('navratriVideoStatus'),ready=$('navratriVideoSave'),cancel=$('navratriVideoCancel'),compat=$('navratriVideoCompat'),progress=$('navratriVideoProgress'),pause=$('navratriVideoPause');
  let previewURL='',pending,activeId='',abort,version=0,busy=false,downloadFrame,downloadURL='',startupTimer,flow;
- const say=value=>status.textContent=value,core=window.PrivateVideoCore,access=()=>window.SaiVistaPrivateVideoAccess;
+ const say=value=>{status.textContent=value;$('videoDownloadState').hidden=!value;},core=window.PrivateVideoCore,access=()=>window.SaiVistaPrivateVideoAccess;
  function lock(value){busy=value;section.querySelectorAll('[data-video-action]').forEach(b=>b.disabled=value);document.documentElement.dataset.galleryDownloading=String(value);cancel.hidden=!value;if(!value){pause.hidden=true;pause.textContent='Pause download';pause.setAttribute('aria-pressed','false');}}
  function clear(){clearTimeout(startupTimer);compat.hidden=true;if(downloadURL)URL.revokeObjectURL(downloadURL);downloadURL='';version++;abort?.abort();if(activeId)navigator.serviceWorker?.controller?.postMessage({type:'private-video-cancel',id:activeId});activeId='';downloadFrame?.remove();video.pause();video.removeAttribute('src');video.load();video.hidden=true;$('navratriVideoCover').hidden=false;if(previewURL)URL.revokeObjectURL(previewURL);previewURL='';ready.hidden=true;ready.removeAttribute('href');progress.hidden=true;lock(false);}
  cancel.addEventListener('click',()=>{clear();say('Cancelled. You can restart the download when ready.');});
@@ -15,7 +15,7 @@
   return new Promise(resolve=>{const channel=new MessageChannel(),timer=setTimeout(()=>{channel.port1.close();resolve(null);},5000);channel.port1.onmessage=e=>{clearTimeout(timer);channel.port1.close();resolve(e.data.ok&&e.data.protocol===2?e.data.url:null);};navigator.serviceWorker.controller.postMessage({type:'private-video-grant',protocol:2,id,variant,...grant},[channel.port2]);});
  }
  async function run(variant,trigger,compatibility=false){
-  if(variant==='preview'){video.src='assets/navratri-2026-glimpse.mp4';video.hidden=false;$('navratriVideoCover').hidden=true;video.muted=true;video.play().catch(()=>{if(!busy)say('Tap Play to watch the public glimpse. Your browser paused automatic playback.');});if(!busy)say('Public 15-second glimpse. Verify your email only to download the complete film.');return;}
+  if(variant==='preview'){video.src='assets/navratri-2026-glimpse.mp4';video.hidden=false;$('navratriVideoCover').hidden=true;video.muted=true;video.play().catch(()=>{if(!busy)say('Tap Play to watch the public glimpse. Your browser paused automatic playback.');});if(!busy)say('');return;}
   if(busy)return;lock(true);abort=new AbortController();flow=core.transfer(abort.signal);const current=++version;ready.hidden=true;progress.hidden=false;progress.value=0;say('Checking your verified email and logged-in flat…');
   try{
    const {grant,m}=await verified(variant);if(current!==version)return;
@@ -28,6 +28,13 @@
     }
   }catch(error){if(current!==version&&!/verify your email|sign in/i.test(error.message))return;progress.hidden=true;lock(false);if(/verify your email|sign in/i.test(error.message)){pending={variant,trigger,compatibility};say('Verify your email in the secure popup to continue.');access().verify(trigger);}else say(error.message||'The video could not be loaded. Please retry.');}
  }
+ const menuButton=$('videoDownloadMenuButton'),menu=$('videoDownloadOptions');
+ function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false');}
+ menuButton.addEventListener('click',()=>{menu.hidden=!menu.hidden;menuButton.setAttribute('aria-expanded',String(!menu.hidden));});
+ menu.addEventListener('click',e=>{if(e.target.closest('[data-video-action]'))closeMenu();});
+ document.addEventListener('click',e=>{if(!e.target.closest('.video-download-control'))closeMenu();});
+ menuButton.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+ menu.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();menuButton.focus();}});
  // Respect reduced-motion and data-saving preferences; browsers may still block autoplay.
  if('IntersectionObserver' in window&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches&&!navigator.connection?.saveData){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting&&e.intersectionRatio>=0.35)){observer.disconnect();if(!video.getAttribute('src'))run('preview');}},{threshold:0.35});const begin=()=>{if(!document.documentElement.classList.contains('resident-locked'))observer.observe(video.parentElement);};window.addEventListener('sai-vista-resident-ready',begin,{once:true});begin();}
  section.querySelectorAll('[data-video-action]').forEach(button=>button.addEventListener('click',()=>run(button.dataset.videoAction,button)));
