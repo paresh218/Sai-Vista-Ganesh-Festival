@@ -126,5 +126,5 @@ window.SaiVistaContent.archivedUpdates.push(...[
 window.SaiVistaContent.navratriUpdates = window.SaiVistaContent.updates;
 window.SaiVistaContent.updates = [
  {date:"2026-10-20",category:"With gratitude",id:"navratri-thanks-2026",title:"Thank you for the overwhelming Navratri response!",body:"Heartfelt thanks to every resident, volunteer and coordinator for your enthusiasm, participation and support.",href:"#navratriArchive",action:"Visit Navratri 2026 Archival"},
- {date:"2026-10-20",category:"Interest only",id:"marathon-interest-dec2026",title:"Running or walking? Share your interest",body:"A community marathon may take place in early to mid December 2026. Separate running and walking interest forms are open. The event, date, route and distances are not confirmed.",href:"#marathonInterest",action:"Share your interest"}
+ {date:"2026-10-28",category:"Marathon 2026",id:"marathon-nov2026",title:"Sai Vista Marathon · 29 November, 6 AM",body:"Join our 3 km (₹149) or 5 km (₹199) community run, starting and finishing at Sai Vista Society. Ages 12+. Entry includes a T-shirt, medal, breakfast and e-certificate. Register by 26 November. Route shared soon. Payment and registration open soon; explore the form now.",href:"#marathonInterest",action:"Explore the marathon"}
 ];

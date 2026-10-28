@@ -19,40 +19,6 @@ test('community home and archives preserve sections and reveal deep links',()=>{
  assert.equal(d.querySelectorAll('#home').length,1);
  dom.window.close();
 });
-test('interest forms open in a labelled popup and close back to their trigger',()=>{
- const dom=page(),d=dom.window.document;
- const dialog=d.getElementById('marathonInterestDialog');assert.ok(dialog);
- assert.ok(d.getElementById(dialog.getAttribute('aria-labelledby')));
- const triggers=[...d.querySelectorAll('[data-interest-open]')];assert.equal(triggers.length,2);
- for(const trigger of triggers){trigger.click();assert.ok(dialog.open);assert.equal(dialog.querySelector('form').dataset.activity,trigger.dataset.interestOpen);d.getElementById('closeMarathonInterest').click();assert.equal(dialog.open,false);}
- assert.equal(d.querySelector('#marathonInterest form'),null,'long forms stay out of the banner');
- dom.window.close();
-});
-test('no unconnected save and no false success on failure; confirmed save returns reference',async(t)=>{
- const dom=page(),w=dom.window,d=w.document;
- t.after(()=>dom.window.close());
- let saved;
- w.fetch=async(url,options)=>{if(!options?.method)return {ok:true,json:async()=>({status:'success',service:'sai-vista-events-v1',config:{marathonInterest:true}})};saved=JSON.parse(options.body.get('payload'));return {ok:true,json:async()=>({status:'success',registrationId:saved.requestId})};};
- d.querySelector('[data-interest-open="Running"]').click();
- await new Promise(r=>setImmediate(r));
- const form=d.querySelector('#marathonInterestDialog form');
- form.elements.name.value='Test Resident';form.elements.flat.value='A-101';form.elements.count.value='2';form.elements.agreed.checked=true;
- assert.ok(form.checkValidity());
- form.elements.flat.value='Z-999';assert.equal(form.checkValidity(),false);form.elements.flat.value='A-101';
- form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));
- assert.equal(saved.activity,'Running');assert.equal(saved.flat,'A-101');assert.equal(saved.count,2);
- assert.match(d.querySelector('#marathonInterestStatus').textContent,/Saved/);
- assert.match(d.querySelector('#marathonInterestStatus').textContent,new RegExp(saved.requestId));
- d.getElementById('closeMarathonInterest').click();d.querySelector('[data-interest-open="Walking"]').click();await new Promise(r=>setImmediate(r));
- assert.equal(form.elements.name.disabled,false,'reopening after success restores editable inputs');
- form.elements.name.value='Test Resident';form.elements.flat.value='B-102';form.elements.agreed.checked=true;
- w.fetch=async()=>{throw Error('offline');};
- form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));
- assert.doesNotMatch(d.querySelector('#marathonInterestStatus').textContent,/Saved/);
- assert.match(d.querySelector('#marathonInterestStatus').textContent,/retry/i);
- dom.window.close();
-});
-
 test('Navratri archive is a separate view and nested links select the right festival',(t)=>{
  const dom=page(),w=dom.window,d=w.document;
  t.after(()=>dom.window.close());
@@ -67,9 +33,8 @@ test('Navratri archive is a separate view and nested links select the right fest
  dom.window.close();
 });
 
-test('marathon promotion leads gratitude and prefills the logged-in flat in both forms',()=>{
- const dom=page(),w=dom.window,d=w.document;w.ResidentAccess=require('./resident-access.js');w.localStorage.setItem('saiVistaResidentFlat','B-902');
- const banner=d.getElementById('marathonInterest');assert.ok(banner.compareDocumentPosition(d.getElementById('home'))&w.Node.DOCUMENT_POSITION_FOLLOWING);assert.match(banner.textContent,/Sai Vista Marathon/);assert.match(banner.textContent,/tentative/);assert.equal(banner.querySelectorAll('.marathon-benefits li').length,3);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(banner.querySelector('.hero-actions').compareDocumentPosition(banner.querySelector('.interest-note'))&w.Node.DOCUMENT_POSITION_FOLLOWING);
- for(const activity of ['Running','Walking']){d.querySelector('[data-interest-open="'+activity+'"]').click();assert.equal(d.getElementById('marathonFlat').value,'B-902');d.getElementById('closeMarathonInterest').click();}
+test('confirmed marathon replaces interest promotion and leads the main content',()=>{
+ const dom=page(),w=dom.window,d=w.document;
+ const banner=d.getElementById('marathonInterest');assert.equal(d.querySelector('main').firstElementChild,banner);assert.match(banner.textContent,/29 NOVEMBER 2026/);assert.match(banner.textContent,/Payment opens soon/);assert.equal(d.querySelectorAll('[data-interest-open]').length,0);assert.equal(d.getElementById('marathonInterestDialog'),null);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(d.getElementById('marathonEntryDialog'));
  w.close();
 });

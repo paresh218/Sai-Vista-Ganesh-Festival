@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sai Vista Cultural Committee//Marathon 2026//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:sai-vista-marathon-20261129@saivistaculturalcommittee.in
+DTSTAMP:20261028T000000Z
+DTSTART:20261129T003000Z
+SUMMARY:Sai Vista Marathon 2026
+LOCATION:Sai Vista Multipurpose Court
+DESCRIPTION:3 km or 5 km. Start and finish at Sai Vista Society. Route shared
+ soon. Includes T-shirt\, medal\, breakfast and e-certificate. Registration
+ closes 26 November 2026. Payment opens soon.
+URL:https://saivistaculturalcommittee.in/#marathonInterest
+END:VEVENT
+END:VCALENDAR
