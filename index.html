@@ -2,7 +2,7 @@
 <html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-10-28-marathon-entry-preview-1">
+  <meta name="site-release" content="2026-10-29-marathon-3d-2">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista celebrations 2026 — Sai Vista Marathon on 29 November, festival archives, photos and accounts.">
   <meta name="theme-color" content="#641847">
@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="player-modern.css?v=123">
   <link rel="stylesheet" href="community-season.css?v=6">
   <link rel="stylesheet" href="marathon-registration.css?v=1">
+  <link rel="stylesheet" href="marathon-3d.css?v=2">
   <link rel="stylesheet" href="cultural-fund-reminder.css?v=1">
   <link rel="stylesheet" href="protected-gallery.css?v=4">
   <link rel="stylesheet" href="private-video.css?v=11">
@@ -100,7 +101,7 @@
 
     <main id="mainContent" tabindex="-1">
         <section id="marathonInterest" class="section marathon-event" aria-labelledby="marathonTitle">
-          <div class="marathon-visual"><img src="assets/marathon-2026-hero.webp" width="1170" height="700" alt="Sai Vista runners approaching the marathon arch at sunrise" fetchpriority="high"><span class="marathon-edition">THE COMMUNITY RUN · 2026</span><div class="marathon-visual-caption">One community.<br>Every stride counts.</div></div>
+          <div class="marathon-visual"><img src="assets/marathon-2026-hero.webp" width="1170" height="700" alt="Sai Vista runners approaching the marathon arch at sunrise" fetchpriority="high"><div id="marathon3d" role="img" aria-label="3D illustration of Sai Vista runners starting on the society lawn, with balcony towers and START flags" aria-hidden="true"></div><button id="marathon3dPause" type="button" aria-pressed="false" hidden>Pause motion</button><span class="marathon-edition">THE COMMUNITY RUN · 2026</span><div class="marathon-scene-title" aria-hidden="true"><span>29 / 11 / 26</span><strong>Your society.<br>Your starting line.</strong></div><div class="marathon-visual-caption">One community.<br>Every stride counts.</div></div>
           <div class="marathon-event-copy"><span class="eyebrow">SUNDAY · 29 NOVEMBER 2026 · 6 AM</span><h1 id="marathonTitle">Sai Vista<br><em>Marathon.</em></h1><p class="marathon-intro">Lace up. Bring your people. Let’s run together.</p><p class="marathon-location">Sai Vista Multipurpose Court<br><small>Start &amp; finish at Sai Vista Society · Route shared soon</small></p>
             <div class="marathon-races" aria-label="Choose your distance"><button type="button" data-marathon-open="3K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>THE COMMUNITY STRIDE</span><strong>3 <small>km</small></strong><b>₹149 <span>/ person</span></b><span>View entry form →</span></button><button type="button" data-marathon-open="5K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>GO A LITTLE FURTHER</span><strong>5 <small>km</small></strong><b>₹199 <span>/ person</span></b><span>View entry form →</span></button></div>
             <ul class="marathon-perks" aria-label="Your entry includes"><li>T-shirt</li><li>Medal</li><li>Breakfast</li><li>E-certificate</li></ul>
@@ -743,6 +744,7 @@ https://saivistaculturalcommittee.in
     <script src="marathon-model.js?v=1" defer></script>
     <script src="marathon-registration-config.js?v=1" defer></script>
     <script src="marathon-registration.js?v=1" defer></script>
+    <script src="marathon-3d.js?v=2" defer></script>
     <script src="event-registration-model.js"></script>
     <script src="cultural-fund-reminder.js?v=4"></script>
     <script src="event-ux.js?v=7"></script>

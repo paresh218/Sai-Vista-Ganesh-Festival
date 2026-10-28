@@ -4,13 +4,16 @@
   "scripts": {
     "test": "node --test *.test.cjs",
     "test:player": "node test-player.cjs",
-    "gallery:prepare": "node tools/prepare-gallery.cjs"
+    "gallery:prepare": "node tools/prepare-gallery.cjs",
+    "build:marathon-3d": "esbuild tools/marathon-scene.mjs --bundle --minify --format=esm --target=es2020 --legal-comments=eof --outfile=assets/marathon-scene-v2.js"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "jsdom": "26.1.0",
     "sharp": "0.35.5"
   },
   "dependencies": {
-    "motion": "14.7.1"
+    "motion": "14.7.1",
+    "three": "0.186.1"
   }
 }
