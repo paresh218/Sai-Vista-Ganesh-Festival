@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v165";
+const CACHE_NAME = "sai-vista-ganpati-2026-v166";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -82,7 +82,7 @@ const APP_SHELL = [
   "assets/neeraj-funfair-qr.jpeg",
   "assets/artisanal-sweets.jpeg",
   "translations.js?v=8",
-  "script.js?v=24",
+  "script.js?v=25",
   "expense-model.js?v=13",
   "expense-dashboard.js?v=17",
   "manifest.webmanifest",
