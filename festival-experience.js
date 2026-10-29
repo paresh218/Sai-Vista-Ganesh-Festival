@@ -66,7 +66,8 @@ if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',()
   window.addEventListener('hashchange',()=>route());
   document.addEventListener('click',event=>{
     const link=event.target.closest('a[href^="#"]');
-    if(link && link.hash===location.hash)route();
+    if(link?.hash==='#home'){event.preventDefault();if(location.hash!=='#home')history.pushState(null,'','#home');route();}
+    else if(link && link.hash===location.hash)route();
   });
   const copyWallpaper=document.getElementById('copyWallpaperLink');
   copyWallpaper?.addEventListener('click',async()=>{

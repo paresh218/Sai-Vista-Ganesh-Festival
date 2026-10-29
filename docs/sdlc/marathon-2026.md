@@ -1,3 +1,5 @@
+> Historical placeholder-release record. Superseded by `marathon-manual-payment.md`; current closing date is 10 November 2026.
+
 # Sai Vista Marathon 2026 — release candidate
 
 Plan: requirements → design → implementation → tests/browser review → approval → deployment.

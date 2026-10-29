@@ -4,8 +4,8 @@
   "description": "Navratri 11\u201321 October 2026, community photos and festival accounts.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#fffaf5",
-  "theme_color": "#641847",
+  "background_color": "#f8f5f1",
+  "theme_color": "#302635",
   "icons": [
     {
       "src": "assets/sai-vista-pwa-icon-192.png",

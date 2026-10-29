@@ -6,12 +6,14 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:sai-vista-marathon-20261129@saivistaculturalcommittee.in
 DTSTAMP:20261028T000000Z
-DTSTART:20261129T003000Z
+DTSTART:20261129T001500Z
 SUMMARY:Sai Vista Marathon 2026
 LOCATION:Sai Vista Multipurpose Court
 DESCRIPTION:3 km or 5 km. Start and finish at Sai Vista Society. Route shared
  soon. Includes T-shirt\, medal\, breakfast and e-certificate. Registration
- closes 26 November 2026. Payment opens soon.
+ closes 10 November 2026. Report 5:45 AM. Warm-up 6 AM.
+ 5 km flag-off 6:30 AM. 3 km flag-off 6:40 AM. BIB confirmation follows
+ committee payment verification.
 URL:https://saivistaculturalcommittee.in/#marathonInterest
 END:VEVENT
 END:VCALENDAR

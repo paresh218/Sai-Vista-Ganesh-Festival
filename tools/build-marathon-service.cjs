@@ -1,0 +1,2 @@
+const fs=require('node:fs'),vm=require('node:vm');
+const code=['marathon-model.js','marathon-entry-service.gs'].map(path=>fs.readFileSync(path,'utf8')).join('\n');new vm.Script(code);fs.mkdirSync('tmp/marathon-deploy',{recursive:true});fs.writeFileSync('tmp/marathon-deploy/Code.gs',code);fs.copyFileSync('tools/marathon-appsscript.json','tmp/marathon-deploy/appsscript.json');console.log('Prepared syntax-checked Apps Script bundle in tmp/marathon-deploy; nothing deployed.');

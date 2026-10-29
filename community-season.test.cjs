@@ -35,6 +35,19 @@ test('Navratri archive is a separate view and nested links select the right fest
 
 test('confirmed marathon replaces interest promotion and leads the main content',()=>{
  const dom=page(),w=dom.window,d=w.document;
- const banner=d.getElementById('marathonInterest');assert.equal(d.querySelector('main').firstElementChild,banner);assert.match(banner.textContent,/29 NOVEMBER 2026/);assert.match(banner.textContent,/Payment opens soon/);assert.equal(d.querySelectorAll('[data-interest-open]').length,0);assert.equal(d.getElementById('marathonInterestDialog'),null);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(d.getElementById('marathonEntryDialog'));
+ const banner=d.getElementById('marathonInterest');assert.equal(d.querySelector('main').firstElementChild,banner);assert.match(banner.textContent,/29 NOVEMBER 2026/);assert.match(banner.textContent,/Pay, submit, get confirmed/);assert.equal(d.querySelectorAll('[data-interest-open]').length,0);assert.equal(d.getElementById('marathonInterestDialog'),null);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(d.getElementById('marathonEntryDialog'));
  w.close();
+});
+
+test('Home prevents the native thank-you anchor jump and restores the main view',(t)=>{
+ const dom=page('#navratriArchive'),w=dom.window,d=w.document;let top;
+ t.after(()=>dom.window.close());
+ w.scrollTo=options=>{top=options.top;};
+ w.eval(['event-registration-model.js','event-ux.js','festival-experience.js'].map(file=>fs.readFileSync(file,'utf8')).join('\n'));
+ d.dispatchEvent(new w.Event('DOMContentLoaded'));
+ const click=new w.MouseEvent('click',{bubbles:true,cancelable:true});
+ d.querySelector('#siteNav a[href="#home"]').dispatchEvent(click);
+ assert.equal(click.defaultPrevented,true);assert.equal(w.location.hash,'#home');
+ assert.equal(d.body.dataset.view,'main');assert.equal(top,0);assert.equal(d.getElementById('navratriArchive').hidden,true);
+ dom.window.close();
 });

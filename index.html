@@ -2,10 +2,10 @@
 <html lang="en" class="resident-locked">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-10-29-marathon-3d-2">
+  <meta name="site-release" content="2026-10-29-marathon-manual-payment-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista celebrations 2026 — Sai Vista Marathon on 29 November, festival archives, photos and accounts.">
-  <meta name="theme-color" content="#641847">
+  <meta name="theme-color" content="#302635">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Sai Vista Festivals">
@@ -15,7 +15,7 @@
   <title>Sai Vista Community Celebrations 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/work-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css?v=22">
   <link rel="stylesheet" href="mobile-components.css?v=1">
   <link rel="stylesheet" href="navratri.css">
@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="cultural-fund-reminder.css?v=1">
   <link rel="stylesheet" href="protected-gallery.css?v=4">
   <link rel="stylesheet" href="private-video.css?v=11">
+  <link rel="stylesheet" href="community-theme.css?v=4">
 </head>
 <body>
     <dialog id="residentGate" aria-labelledby="residentGateTitle">
@@ -61,14 +62,9 @@
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Open menu">
             <span></span><span></span><span></span>
         </button>
-        <nav id="siteNav">
-            <a href="#home">Home</a>
-            <a href="#communityPhotos">Share a moment</a>
-            <a href="#committeeUpdates">Updates</a>
-            <a href="#accounts">Accounts</a>
-            <a href="#suggestions">Suggestions</a>
-            <a href="#marathonInterest">Run &amp; walk</a><a href="#navratriArchive">Navratri archive</a><a href="#archive">Ganesh archive</a>
-
+        <nav id="siteNav" aria-label="Main navigation">
+            <a href="#home">Home</a><a href="#marathonInterest">Marathon</a><a href="#navratriVideo">Memories</a><a href="#accounts">Accounts</a>
+            <details class="site-more" id="siteMore"><summary>More <span aria-hidden="true">⌄</span></summary><div class="site-more-links"><a href="#navratriPhotoGallery">Photo gallery</a><a href="#communityPhotos">Share a moment</a><a href="#committeeUpdates">Committee updates</a><a href="#navratriArchive">Navratri 2026 archive</a><a href="#archive">Ganesh 2026 archive</a><a href="#resident-businesses">Community businesses</a><a href="#suggestions">Suggestions</a><a href="#contact">Contact the committee</a></div></details>
         </nav>
         <div class="language-switcher" role="group" aria-label="Language">
             <button type="button" data-language="en" aria-pressed="true">EN</button>
@@ -99,17 +95,18 @@
 
     <aside id="noticeBar" class="priority-notice" hidden aria-label="Priority announcement"><div><strong id="priorityTitle">Kurta: ₹50 refunded · Bill &amp; shop address</strong><p id="priorityBody">The final kurta price was ₹250. A ₹50 refund has been paid to everyone who paid ₹300. The bill and shop address are available in the archive for everyone’s reference.</p></div><a class="text-link" href="#archive">View bill &amp; shop details →</a></aside>
 
+    <div class="community-intro"><div><span class="community-wordmark">SAI VISTA CULTURAL COMMITTEE</span><h2>Your community, in one place.</h2><p>Show up. Join in. Make memories.</p></div><nav class="community-jumps" aria-label="Community highlights"><a href="#marathonInterest"><span>01</span> What’s next <b aria-hidden="true">↗</b></a><a href="#navratriVideo"><span>02</span> Our memories <b aria-hidden="true">↗</b></a><a href="#accounts"><span>03</span> Community accounts <b aria-hidden="true">↗</b></a></nav></div>
     <main id="mainContent" tabindex="-1">
         <section id="marathonInterest" class="section marathon-event" aria-labelledby="marathonTitle">
           <div class="marathon-visual"><img src="assets/marathon-2026-hero.webp" width="1170" height="700" alt="Sai Vista runners approaching the marathon arch at sunrise" fetchpriority="high"><div id="marathon3d" role="img" aria-label="3D illustration of Sai Vista runners starting on the society lawn, with balcony towers and START flags" aria-hidden="true"></div><button id="marathon3dPause" type="button" aria-pressed="false" hidden>Pause motion</button><span class="marathon-edition">THE COMMUNITY RUN · 2026</span><div class="marathon-scene-title" aria-hidden="true"><span>29 / 11 / 26</span><strong>Your society.<br>Your starting line.</strong></div><div class="marathon-visual-caption">One community.<br>Every stride counts.</div></div>
-          <div class="marathon-event-copy"><span class="eyebrow">SUNDAY · 29 NOVEMBER 2026 · 6 AM</span><h1 id="marathonTitle">Sai Vista<br><em>Marathon.</em></h1><p class="marathon-intro">Lace up. Bring your people. Let’s run together.</p><p class="marathon-location">Sai Vista Multipurpose Court<br><small>Start &amp; finish at Sai Vista Society · Route shared soon</small></p>
-            <div class="marathon-races" aria-label="Choose your distance"><button type="button" data-marathon-open="3K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>THE COMMUNITY STRIDE</span><strong>3 <small>km</small></strong><b>₹149 <span>/ person</span></b><span>View entry form →</span></button><button type="button" data-marathon-open="5K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>GO A LITTLE FURTHER</span><strong>5 <small>km</small></strong><b>₹199 <span>/ person</span></b><span>View entry form →</span></button></div>
+          <div class="marathon-event-copy"><span class="eyebrow">SUNDAY · 29 NOVEMBER 2026 · REPORT 5:45 AM</span><h1 id="marathonTitle">Sai Vista<br><em>Marathon.</em></h1><p class="marathon-intro">Lace up. Bring your people. Let’s run together.</p><p class="marathon-location">Sai Vista Multipurpose Court<br><small>Start &amp; finish at Sai Vista Society · Route shared soon</small></p>
+            <div class="marathon-races" aria-label="Choose your distance"><button type="button" data-marathon-open="3K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>THE COMMUNITY STRIDE</span><strong>3 <small>km</small></strong><b>₹149 <span>/ person</span></b><span>Register →</span></button><button type="button" data-marathon-open="5K" aria-haspopup="dialog" aria-controls="marathonEntryDialog"><span>GO A LITTLE FURTHER</span><strong>5 <small>km</small></strong><b>₹199 <span>/ person</span></b><span>Register →</span></button></div>
             <ul class="marathon-perks" aria-label="Your entry includes"><li>T-shirt</li><li>Medal</li><li>Breakfast</li><li>E-certificate</li></ul>
-            <p class="marathon-registration-notice"><strong>Payment opens soon.</strong> Explore the entry form now. No payment or registration is being accepted yet.</p><div class="marathon-links"><a href="assets/sai-vista-marathon-2026.ics" download>Add to calendar</a><a href="#marathonDetails">Event details &amp; poster ↓</a></div>
-            <small>Open to individuals, families and children aged 12+ · Register by 26 November 2026.</small>
+            <p class="marathon-registration-notice"><strong>Pay, submit, get confirmed.</strong> Attach your payment screenshot. Your BIB arrives by email after the committee verifies payment.</p><div class="marathon-links"><a href="assets/sai-vista-marathon-2026.ics" download>Add to calendar</a><a href="#marathonDetails">Event details &amp; poster ↓</a><a href="#marathonSchedule">Race-day schedule ↓</a></div>
+            <small>Open to individuals, families and children aged 12+ · Register by 10 November 2026.</small>
           </div>
         </section>
-        <section id="marathonDetails" class="section marathon-details" aria-labelledby="marathonDetailsTitle"><div><span class="eyebrow">GOOD TO KNOW</span><h2 id="marathonDetailsTitle">Your Sunday, with a little more energy.</h2><p>Choose 3 km or 5 km and join your neighbours for a vibrant community run. Your entry includes a T-shirt, medal, breakfast and e-certificate.</p><dl><dt>When</dt><dd>Sunday, 29 November 2026 · 6 AM</dd><dt>Where</dt><dd>Sai Vista Multipurpose Court. Start and finish at Sai Vista Society.</dd><dt>Route</dt><dd>Will be shared soon.</dd><dt>Who can join</dt><dd>Everyone aged 12+. Participants under 18 need parent or guardian consent.</dd><dt>Last date</dt><dd>26 November 2026 · 11:59 PM IST</dd></dl><p>Earlier interest responses are retained for planning. They are not confirmed entries. Each participant will need a separate entry when registration opens.</p><button class="btn btn-dark" type="button" data-marathon-open="3K" aria-haspopup="dialog" aria-controls="marathonEntryDialog">Explore the entry form</button></div><a class="marathon-poster" href="assets/marathon-2026-poster.webp" target="_blank" rel="noopener" aria-label="Open the Sai Vista Marathon event poster"><img src="assets/marathon-2026-poster.webp" width="1170" height="1470" loading="lazy" alt="Sai Vista Marathon poster: 29 November 2026, 6 AM, 3 km ₹149 and 5 km ₹199, T-shirt, medal, breakfast and e-certificate included"></a></section>
+        <section id="marathonDetails" class="section marathon-details" aria-labelledby="marathonDetailsTitle"><div><span class="eyebrow">GOOD TO KNOW</span><h2 id="marathonDetailsTitle">Your Sunday, with a little more energy.</h2><p>Choose 3 km or 5 km and join your neighbours for a vibrant community run. Your entry includes a T-shirt, medal, breakfast and e-certificate.</p><dl><dt>When</dt><dd>Sunday, 29 November 2026 · Reporting 5:45 AM</dd><dt>Where</dt><dd>Sai Vista Multipurpose Court. Start and finish at Sai Vista Society.</dd><dt>Route</dt><dd>Will be shared soon.</dd><dt>Who can join</dt><dd>Everyone aged 12+. Participants under 18 need parent or guardian consent.</dd><dt>Last date</dt><dd>10 November 2026 · 11:59 PM IST</dd></dl><p>Earlier interest responses are retained for planning. They are not confirmed entries. Each participant needs a separate entry and payment.</p><button class="btn btn-dark" type="button" data-marathon-open="3K" aria-haspopup="dialog" aria-controls="marathonEntryDialog">Register for the marathon</button></div><a class="marathon-poster" href="assets/marathon-2026-poster-v2.webp" target="_blank" rel="noopener" aria-label="Open the Sai Vista Marathon event poster"><img src="assets/marathon-2026-poster-v2.webp" width="1170" height="1470" loading="lazy" alt="Sai Vista Marathon poster: 29 November 2026, reporting 5:45 AM, 3 km ₹149 and 5 km ₹199, T-shirt, medal, breakfast and e-certificate included"></a><div id="marathonSchedule" class="marathon-schedule"><span class="eyebrow">RACE-DAY PLAN · ALL TIMES IST</span><h2>A great morning, planned together.</h2><div class="marathon-schedule-scroll" tabindex="0" role="region" aria-label="Race-day schedule for 5 km and 3 km"><table><thead><tr><th scope="col">Time</th><th scope="col">Activity</th><th scope="col">5 km</th><th scope="col">3 km</th></tr></thead><tbody id="marathonScheduleRows"></tbody></table></div><a class="text-link" href="assets/marathon-schedule.jpeg" target="_blank" rel="noopener">View schedule image ↗</a></div></section>
         <section id="navratriVideo" class="section private-video-banner" aria-labelledby="navratriVideoTitle">
           <div class="video-post-frame"><div class="video-post-heading"><span class="video-post-badge" aria-hidden="true">SV</span><div><strong>Sai Vista Cultural Committee</strong><small>Navratri 2026 · Our celebration</small></div></div>
           <div class="private-video-screen"><button id="navratriVideoCover" type="button" data-video-action="preview" class="private-video-cover" title="Play the public 15-second glimpse. No email needed."><span aria-hidden="true">▶</span><strong>SAI VISTA · NAVRATRI 2026</strong><small>Your community film · a glimpse for everyone<br>No email needed to watch this preview</small></button><video id="navratriVideoPlayer" controls playsinline preload="none" hidden aria-label="15-second Navratri video glimpse"></video></div>
@@ -656,7 +653,7 @@ https://saivistaculturalcommittee.in
         </div>
     </div>
 
-    <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home">Home</a><a href="#marathonInterest">Marathon</a><a href="#accounts">Accounts</a><a href="#archive">Archive</a><a href="#committeeUpdates">Updates</a></nav>
+    <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home">Home</a><a href="#marathonInterest">Marathon</a><a href="#navratriVideo">Memories</a><a href="#accounts">Accounts</a><a href="#navratriArchive">Archives</a></nav>
     <dialog id="culturalFundReminder" class="fund-reminder" aria-labelledby="fundReminderTitle" aria-describedby="fundReminderMessage fundReminderCountdown">
       <img src="assets/cultural-fund-meme.svg" width="600" height="340" alt="A cheerful piggy bank says: Cultural fund be like... Main bhi toh family hoon!">
       <h2 id="fundReminderTitle">Please pay the cultural fund</h2>
@@ -683,21 +680,21 @@ https://saivistaculturalcommittee.in
       </div>
     </dialog>
     <dialog id="marathonEntryDialog" class="marathon-entry-dialog" aria-labelledby="marathonEntryTitle" aria-describedby="marathonEntryNotice"><div class="marathon-entry-heading"><div><span class="eyebrow">SAI VISTA MARATHON · 29 NOV</span><h2 id="marathonEntryTitle">Your starting line.</h2></div><button id="marathonEntryClose" type="button" aria-label="Close marathon entry form">×</button></div>
-      <p id="marathonEntryNotice" class="marathon-registration-notice"><strong>Entry form preview · Payment opens soon.</strong> You can explore the form. Nothing is submitted or stored, and no BIB is reserved.</p>
-      <form id="marathonEntryForm"><div class="marathon-entry-grid">
-        <label>Distance<select name="race" required><option value="3K">3 km · ₹149</option><option value="5K">5 km · ₹199</option></select></label>
+      <p id="marathonEntryNotice" class="marathon-registration-notice"><strong>Payment screenshot required.</strong> Confirmation and BIB follow committee payment verification.</p>
+      <form id="marathonEntryForm"><section class="marathon-payment" aria-labelledby="marathonPaymentTitle"><div><p id="marathonPaymentAvailability" role="status">Registration is being connected. Please wait to pay.</p><span class="eyebrow">STEP 1 · PAYMENT</span><h3 id="marathonPaymentTitle">Pay the selected entry fee</h3><label>Distance<select name="race" required><option value="3K">3 km · ₹149</option><option value="5K">5 km · ₹199</option></select></label><strong id="marathonEntryFee">3 km · ₹149</strong><p>Pay to <b>PARESHKUMAR DASHRATH KALE</b><br><code>8149525915@ybl</code></p><a id="marathonPayLink" class="btn btn-dark" aria-disabled="true">Pay with a UPI app ↗</a><small>Use the UPI button on this phone, or open the QR to scan. Confirm the recipient and selected fee. One payment per participant.</small></div><a href="assets/marathon-phonepe-qr.jpeg" target="_blank" rel="noopener" aria-label="Open full-size PhonePe payment QR"><img src="assets/marathon-phonepe-qr.jpeg" width="743" height="1280" loading="lazy" alt="PhonePe payment QR for Pareshkumar Dashrath Kale, UPI 8149525915@ybl"><small>Open full-size QR ↗</small></a></section><h3>Step 2 · Your entry</h3><div class="marathon-entry-grid">
+
         <label>Full name<input name="name" autocomplete="name" maxlength="80" required></label>
         <label>Date of birth<input name="dob" type="date" min="1915-11-30" max="2014-11-29" required aria-describedby="marathonAgeHelp"><small id="marathonAgeHelp">Age 12+ on event day</small></label>
         <label>Email<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
         <label>Mobile number<input name="phone" type="tel" inputmode="tel" autocomplete="tel-national" pattern="[6-9][0-9]{9}" maxlength="10" required placeholder="10-digit Indian mobile"></label>
         <label>Sai Vista flat <span>(optional for visitors)</span><input name="flat" maxlength="8" placeholder="B-902" pattern="[A-Fa-f][ -]?(?:[1-9]|1[0-3])0[1-4]"></label>
-        <label>T-shirt size<select name="shirt" required><option value="">Choose size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
+        <label>Gender<select name="gender" required><option value="">Choose an option</option><option>Female</option><option>Male</option><option>Non-binary</option><option>Prefer not to say</option></select></label><label>T-shirt size<select name="shirt" required><option value="">Choose size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
         <label>Blood group<select name="bloodGroup" required><option value="">Choose blood group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option><option>Unknown</option></select><small>Choose Unknown if you are unsure.</small></label>
         <label>Emergency contact name<input name="emergencyName" autocomplete="off" maxlength="80" required></label>
         <label>Emergency contact mobile<input name="emergencyPhone" type="tel" inputmode="tel" autocomplete="off" pattern="[6-9][0-9]{9}" maxlength="10" required placeholder="Different from your mobile"></label>
-      </div><fieldset id="marathonGuardian" hidden><legend>For participants under 18</legend><label>Parent / guardian name<input name="guardian" maxlength="80" autocomplete="off"></label><label class="marathon-check"><input name="guardianConsent" type="checkbox"><span>I am the parent or guardian and consent to this participant joining the run.</span></label></fieldset>
-      <label class="marathon-check"><input name="agreed" type="checkbox" required><span>I understand this is a physical activity and will participate within my abilities. I agree to private use of my entry and emergency details by the committee for this event, and have permission to provide my emergency contact’s details.</span></label>
-      <div class="marathon-payment-placeholder"><span>PAYMENT · COMING SOON</span><strong id="marathonEntryFee">3 km · ₹149</strong><p>Payment verification will unlock final submission. No payment is requested in this preview.</p></div><button class="btn btn-dark" id="marathonEntrySubmit" type="submit" disabled>Registration opens after payment setup</button><p id="marathonEntryStatus" role="status" aria-live="polite"></p></form>
+      <label>Any medical discomfort or condition you want the organisers to know about?<select name="medical" required><option value="">Choose an option</option><option>No</option><option>Yes</option><option>Prefer not to say</option></select></label><label id="marathonMedicalNote" hidden>Medical note <span>(optional · committee only)</span><textarea name="medicalDetails" maxlength="500" rows="3" placeholder="Share only what organisers need to know"></textarea></label></div><fieldset id="marathonGuardian" hidden><legend>For participants under 18</legend><label>Parent / guardian name<input name="guardian" maxlength="80" autocomplete="off"></label><label class="marathon-check"><input name="guardianConsent" type="checkbox"><span>I am the parent or guardian and consent to this participant joining the run.</span></label></fieldset>
+      <label class="marathon-check"><input name="agreed" type="checkbox" required><span>I understand this is a physical activity and will participate within my abilities. I agree to private use of my entry, emergency details, optional medical note and payment screenshot by the committee for this event, and have permission to provide my emergency contact’s details.</span></label>
+      <fieldset class="marathon-proof"><legend>Step 3 · Payment evidence</legend><label>UPI transaction reference (UTR)<input name="paymentReference" inputmode="numeric" pattern="[0-9]{12}" maxlength="12" required aria-describedby="marathonUtrHelp"><small id="marathonUtrHelp">12 digits from the successful payment receipt. Please use a separate payment for each participant.</small></label><label>Payment screenshot<input type="file" name="paymentProof" accept="image/jpeg,image/png,image/webp" required aria-describedby="marathonProofHelp"><small id="marathonProofHelp">JPG, PNG or WebP · maximum 3 MB. Keep unrelated balances and account details out of the screenshot. A screenshot is evidence; the committee checks the actual payment.</small></label><label class="marathon-check"><input name="paymentDeclared" type="checkbox" required><span>I have successfully paid the selected entry fee and attached its receipt.</span></label></fieldset><button class="btn btn-dark" type="submit" id="marathonEntrySubmit" disabled>Registration setup in progress</button></form><div id="marathonEntrySuccess" class="marathon-entry-success" hidden><span class="eyebrow">ENTRY RECEIVED</span><h3>You’re on our list.</h3><p>Your entry is pending payment verification. Your confirmed BIB will arrive by email after the committee marks your payment as verified.</p><small>Entry reference</small><code id="marathonEntryReference"></code><a id="marathonUpdatesGroup" class="btn btn-dark" target="_blank" rel="noopener">Join the marathon WhatsApp group ↗</a><p>The WhatsApp group is optional. Joining makes your WhatsApp name and phone visible to other group members.</p></div><p id="marathonEntryStatus" role="status" aria-live="polite"></p>
     </dialog>
     <dialog id="navratriDayDialog" class="navratri-day-dialog" aria-labelledby="navratriDayTitle">
       <div class="day-dialog-header"><span id="navratriDayLabel"></span><button id="closeNavratriDay" type="button" aria-label="Close daily goddess">×</button></div>
@@ -728,7 +725,7 @@ https://saivistaculturalcommittee.in
     <script src="community-upload.js"></script>
     <script src="community-media.js"></script>
     <script src="site-updates.js"></script>
-    <script src="site-data.js?v=4"></script>
+    <script src="site-data.js?v=5"></script>
     <script src="event-registration-config.js"></script>
     <script src="protected-gallery-config.js?v=2"></script>
     <script src="protected-gallery-cache.js?v=3"></script>
@@ -741,19 +738,20 @@ https://saivistaculturalcommittee.in
     <script src="private-video.js?v=7"></script>
     <script src="community-season.js?v=5"></script>
     <script src="assets/vendor/motion-14.7.1.js" defer></script>
-    <script src="marathon-model.js?v=1" defer></script>
-    <script src="marathon-registration-config.js?v=1" defer></script>
-    <script src="marathon-registration.js?v=1" defer></script>
+    <script src="marathon-model.js?v=2" defer></script>
+    <script src="marathon-registration-config.js?v=2" defer></script>
+    <script src="marathon-registration.js?v=2" defer></script>
     <script src="marathon-3d.js?v=2" defer></script>
     <script src="event-registration-model.js"></script>
     <script src="cultural-fund-reminder.js?v=4"></script>
     <script src="event-ux.js?v=7"></script>
-    <script src="festival-experience.js?v=8"></script>
+    <script src="festival-experience.js?v=9"></script>
     <script src="event-registration.js?v=7"></script>
     <script src="translations.js?v=8"></script>
     <script src="ux-translations.js?v=8"></script>
     <script src="navratri-translations.js"></script>
     <script src="script.js?v=24"></script>
+    <script src="community-theme.js?v=1" defer></script>
     <script src="expense-model.js?v=13"></script>
     <script src="expense-dashboard.js?v=17"></script>
 </body>

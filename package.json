@@ -8,6 +8,7 @@
     "build:marathon-3d": "esbuild tools/marathon-scene.mjs --bundle --minify --format=esm --target=es2020 --legal-comments=eof --outfile=assets/marathon-scene-v2.js"
   },
   "devDependencies": {
+    "@21st-dev/cli": "1.18.0",
     "esbuild": "0.28.2",
     "jsdom": "26.1.0",
     "sharp": "0.35.5"
