@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v166";
+const CACHE_NAME = "sai-vista-ganpati-2026-v167";
 const APP_SHELL = [
   "./",
   "site-updates.js",
@@ -32,7 +32,7 @@ const APP_SHELL = [
   "assets/sai-vista-marathon-2026.ics",
   "community-season.css?v=6",
   "index.html",
-  "community-theme.css?v=4",
+  "community-theme.css?v=5",
   "community-theme.js?v=1",
   "assets/fonts/outfit-latin.woff2",
   "assets/fonts/work-sans-latin.woff2",
@@ -82,7 +82,7 @@ const APP_SHELL = [
   "assets/neeraj-funfair-qr.jpeg",
   "assets/artisanal-sweets.jpeg",
   "translations.js?v=8",
-  "script.js?v=25",
+  "script.js?v=26",
   "expense-model.js?v=13",
   "expense-dashboard.js?v=17",
   "manifest.webmanifest",

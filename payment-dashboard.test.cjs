@@ -20,9 +20,11 @@ function page(t,rows=fixtures){
 test('donor/surplus collections stay separate, total receipts reconcile and flat counts deduplicate tenant entries',t=>{
  const w=page(t),d=w.document,summary=d.querySelector('.collection-summary');
  assert.equal(summary.querySelectorAll('strong')[0].textContent,'2');
- assert.equal(summary.querySelectorAll('strong')[1].textContent,'₹9,600');
- assert.equal(summary.querySelectorAll('strong')[2].textContent,'₹2,500');
- assert.equal(summary.querySelectorAll('strong')[3].textContent,'50.0%');
+ assert.equal(summary.querySelectorAll('article')[1].querySelector('small').textContent,'Sponsorship amount');
+ assert.equal(summary.querySelectorAll('strong')[1].textContent,'₹5,000');
+ assert.equal(summary.querySelectorAll('strong')[2].textContent,'₹9,600');
+ assert.equal(summary.querySelectorAll('strong')[3].textContent,'₹2,500');
+ assert.equal(summary.querySelectorAll('strong')[4].textContent,'50.0%');
  const other=d.getElementById('otherContributionsTitle').closest('article');
  assert.match(other.textContent,/₹6,100/);assert.match(other.textContent,/₹3,500/);
  assert.equal(other.querySelectorAll('tbody tr').length,4);

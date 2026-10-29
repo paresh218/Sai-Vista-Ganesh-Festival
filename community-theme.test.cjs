@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('community-theme.css','utf8');
 function page(){const dom=new JSDOM(html,{url:'https://example.org',runScripts:'outside-only'});dom.window.eval(fs.readFileSync('community-theme.js','utf8'));return dom;}
 test('shared theme loads last, fonts are self-hosted, and all private feature anchors remain',()=>{
- const dom=page(),d=dom.window.document,styles=[...d.querySelectorAll('link[rel=stylesheet]')];assert.equal(styles.at(-1).getAttribute('href'),'community-theme.css?v=4');assert.equal(styles.some(link=>link.href.includes('fonts.googleapis.com')),false);
+ const dom=page(),d=dom.window.document,styles=[...d.querySelectorAll('link[rel=stylesheet]')];assert.equal(styles.at(-1).getAttribute('href'),'community-theme.css?v=5');assert.equal(styles.some(link=>link.href.includes('fonts.googleapis.com')),false);
  for(const id of ['marathonEntryForm','privateGallery','navratriVideoPlayer','videoCommentForm','galleryLocalSave','accounts','navratriSongs','residentGate'])assert.ok(d.getElementById(id),id);
  for(const file of ['outfit-latin.woff2','work-sans-latin.woff2'])assert.equal(fs.readFileSync('assets/fonts/'+file).subarray(0,4).toString(),'wOF2');
  assert.ok(fs.statSync('assets/fonts/outfit-latin.woff2').size+fs.statSync('assets/fonts/work-sans-latin.woff2').size<100000);dom.window.close();
