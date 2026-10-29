@@ -1,6 +1,6 @@
 // Standalone Apps Script. Paste marathon-model.js ABOVE this file. Run setupMarathonRegistration as the committee account.
 // Keep MARATHON_REGISTRATION_ENABLED unset until the reviewed release is approved and the end-to-end test passes.
-const MARATHON_COLUMNS=['Request ID','Created at','Distance','Fee INR','Name','DOB','Email','Mobile','Flat (self-reported)','Gender','T-shirt size','Blood group','Emergency name','Emergency mobile','Guardian','Guardian consent','Medical discomfort','Medical note (private)','Payment reference (UTR)','Payment screenshot (private)','Payment verified?','BIB','Email status','Email sent at','Payload digest','Verification recorded at'];
+const MARATHON_COLUMNS=['Request ID','Created at','Distance','Fee INR','Name','DOB','Email','Mobile','Flat (self-reported)','Gender','T-shirt size','Blood group','Emergency name','Emergency mobile','Guardian','Guardian consent','Medical discomfort','Medical note (private)','Payment reference (UTR)','Payment screenshot (private)','Payment verified?','BIB','Email status','Email sent at','Payload digest','Verification recorded at','Name on the BIB'];
 const MARATHON_GROUP='https://chat.whatsapp.com/HhO4yXkBBb171GuQevJrmk';
 function marathonProperties(){return PropertiesService.getScriptProperties();}
 function marathonSender(){if(Session.getEffectiveUser().getEmail().toLowerCase()!=='saivistaculturalcommittee@gmail.com')throw Error('Committee email service is not configured.');}
@@ -23,12 +23,14 @@ function marathonSafe(value){const s=String(value==null?'':value);return /^[=+@\
 function marathonSheet(){
   const id=marathonProperties().getProperty('MARATHON_SPREADSHEET_ID');if(!id)throw Error('Private registration storage is not configured.');
   const sheet=SpreadsheetApp.openById(id).getSheetByName('Marathon registrations 2026');
-  if(!sheet||sheet.getLastRow()<1||JSON.stringify(sheet.getRange(1,1,1,MARATHON_COLUMNS.length).getValues()[0])!==JSON.stringify(MARATHON_COLUMNS))throw Error('Registration sheet needs committee setup.');
+  if(!sheet||sheet.getLastRow()<1)throw Error('Registration sheet needs committee setup.');
+  const header=sheet.getRange(1,1,1,Math.min(sheet.getMaxColumns(),MARATHON_COLUMNS.length)).getValues()[0];
+  if(JSON.stringify(header)!==JSON.stringify(MARATHON_COLUMNS)&&!(header.length<=27&&!header[26]&&JSON.stringify(header.slice(0,26))===JSON.stringify(MARATHON_COLUMNS.slice(0,26))))throw Error('Registration sheet needs committee setup.');
   return sheet;
 }
 function marathonText(value){return String(value==null?'':value).replace(/^'/,'');}
 function marathonDob(value){return value&&typeof value.getTime==='function'?Utilities.formatDate(value,'Asia/Kolkata','yyyy-MM-dd'):marathonText(value);}
-function marathonRows(sheet){return sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,MARATHON_COLUMNS.length).getValues():[];}
+function marathonRows(sheet){return sheet.getLastRow()>1?sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(sheet.getMaxColumns(),MARATHON_COLUMNS.length)).getValues():[];}
 function marathonProofBytes(proof){
   const bytes=Utilities.base64Decode(proof.base64),b=bytes.map(function(n){return (n+256)%256;});
   const matches=proof.type==='image/jpeg'?b[0]===255&&b[1]===216&&b[2]===255:proof.type==='image/png'?b.slice(0,8).join(',')==='137,80,78,71,13,10,26,10':b.slice(0,4).join(',')==='82,73,70,70'&&b.slice(8,12).join(',')==='87,69,66,80';
@@ -36,14 +38,16 @@ function marathonProofBytes(proof){
 }
 function marathonSaveEntry(d){
   const props=marathonProperties();if(props.getProperty('MARATHON_REGISTRATION_ENABLED')!=='true')throw Error('Registration is not open yet. Please do not pay until it opens.');
+  // Previously cached forms have no print-name field; preserve their ability to submit.
+  if(d.bibName===undefined&&typeof d.name==='string')d.bibName=d.name.trim().slice(0,30);
   marathonSender();const issue=SaiVistaMarathon.validate(d)||SaiVistaMarathon.proofIssue(d);if(issue)throw Error(issue);
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(d.requestId||''))throw Error('Invalid entry reference.');
   const bytes=marathonProofBytes(d.proof),email=d.email.trim().toLowerCase();
-  const payload={race:d.race,name:d.name.trim(),dob:d.dob,email:email,phone:d.phone,flat:d.flat||'',gender:d.gender,shirt:d.shirt,bloodGroup:d.bloodGroup,emergencyName:d.emergencyName.trim(),emergencyPhone:d.emergencyPhone,guardian:SaiVistaMarathon.age(d.dob)<18?d.guardian.trim():'',guardianConsent:SaiVistaMarathon.age(d.dob)<18,medical:d.medical,medicalDetails:d.medical==='Yes'?(d.medicalDetails||'').trim():'',paymentReference:d.paymentReference,proofDigest:marathonDigest(d.proof.base64)};
+  const payload={race:d.race,name:d.name.trim(),bibName:d.bibName.trim(),dob:d.dob,email:email,phone:d.phone,flat:d.flat||'',gender:d.gender,shirt:d.shirt,bloodGroup:d.bloodGroup,emergencyName:d.emergencyName.trim(),emergencyPhone:d.emergencyPhone,guardian:SaiVistaMarathon.age(d.dob)<18?d.guardian.trim():'',guardianConsent:SaiVistaMarathon.age(d.dob)<18,medical:d.medical,medicalDetails:d.medical==='Yes'?(d.medicalDetails||'').trim():'',paymentReference:d.paymentReference,proofDigest:marathonDigest(d.proof.base64)};
   const digest=marathonDigest(JSON.stringify(payload)),lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Registrations are busy. Retry with the same details; do not pay again.');
   try{
     const sheet=marathonSheet(),rows=marathonRows(sheet),prior=rows.find(function(r){return r[0]===d.requestId;});
-    if(prior){if(prior[24]!==digest)throw Error('This reference belongs to different details. Restore the original details or contact the committee.');return {ok:true,reference:d.requestId,status:'pending-verification',groupUrl:MARATHON_GROUP};}
+    if(prior){const legacyPayload=Object.assign({},payload);delete legacyPayload.bibName;if(prior[24]!==digest&&(prior[26]||prior[24]!==marathonDigest(JSON.stringify(legacyPayload))))throw Error('This reference belongs to different details. Restore the original details or contact the committee.');return {ok:true,reference:d.requestId,status:'pending-verification',groupUrl:MARATHON_GROUP};}
     if(rows.some(function(r){return marathonText(r[18])===d.paymentReference;}))throw Error('This transaction reference has already been submitted. Contact the committee; do not pay again.');
     if(rows.some(function(r){return r[6]===email&&marathonDob(r[5])===d.dob&&r[4]===marathonSafe(payload.name);}))throw Error('This participant already has an entry. Contact the committee; do not pay again.');
     if(rows.length>=1000)throw Error('Online entry capacity is reached. Contact the committee before paying.');
@@ -53,7 +57,8 @@ function marathonSaveEntry(d){
     const extension={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[d.proof.type];
     const file=folder.createFile(Utilities.newBlob(bytes,d.proof.type,d.requestId+'.'+extension));
     try{
-      sheet.appendRow([d.requestId,new Date(),d.race,SaiVistaMarathon.event.fees[d.race],marathonSafe(payload.name),"'"+d.dob,email,d.phone,payload.flat,d.gender,d.shirt,d.bloodGroup,marathonSafe(payload.emergencyName),d.emergencyPhone,marathonSafe(payload.guardian),payload.guardianConsent,d.medical,marathonSafe(payload.medicalDetails),"'"+d.paymentReference,file.getUrl(),'','','','',digest,'']);
+      marathonUpgradeBibNameColumn(sheet);
+      sheet.appendRow([d.requestId,new Date(),d.race,SaiVistaMarathon.event.fees[d.race],marathonSafe(payload.name),"'"+d.dob,email,d.phone,payload.flat,d.gender,d.shirt,d.bloodGroup,marathonSafe(payload.emergencyName),d.emergencyPhone,marathonSafe(payload.guardian),payload.guardianConsent,d.medical,marathonSafe(payload.medicalDetails),"'"+d.paymentReference,file.getUrl(),'','','','',digest,'',marathonSafe(payload.bibName)]);
       SpreadsheetApp.flush();
     }catch(error){
       // An ambiguous sheet write may have succeeded; never destroy its attached proof.
@@ -64,7 +69,7 @@ function marathonSaveEntry(d){
   }finally{lock.releaseLock();}
 }
 function marathonEmail(row){
-  return 'Hello '+String(row[4]).replace(/^\'/,'')+',\n\nYour payment has been verified and your Sai Vista Marathon entry is confirmed.\n\nBIB: '+row[21]+'\nDistance: '+row[2]+'\nPaid: ₹'+row[3]+'\nDate: Sunday, 29 November 2026\nVenue: Sai Vista Multipurpose Court\nStart and finish: Sai Vista Society\nRoute: to be shared soon\n\nEVENT SCHEDULE (IST)\n'+SaiVistaMarathon.schedule.map(function(s){return s[0]+' — '+s[1]+' | '+(row[2]==='5K'?s[2]:s[3]);}).join('\n')+'\n\nYour entry includes a T-shirt, medal, breakfast and e-certificate. Keep this email for BIB check-in.\n\nJoin the updates group: '+MARATHON_GROUP+'\nhttps://saivistaculturalcommittee.in/#marathonSchedule\n\nSai Vista Cultural Committee';
+  return 'Hello '+String(row[4]).replace(/^\'/,'')+',\n\nYour payment has been verified and your Sai Vista Marathon entry is confirmed.\n\nBIB: '+row[21]+'\nName on the BIB: '+marathonText(row[26]||row[4])+'\nDistance: '+row[2]+'\nPaid: ₹'+row[3]+'\nDate: Sunday, 29 November 2026\nVenue: Sai Vista Multipurpose Court\nStart and finish: Sai Vista Society\nRoute: to be shared soon\n\nEVENT SCHEDULE (IST)\n'+SaiVistaMarathon.schedule.map(function(s){return s[0]+' — '+s[1]+' | '+(row[2]==='5K'?s[2]:s[3]);}).join('\n')+'\n\nYour entry includes a T-shirt, medal, breakfast and e-certificate. Keep this email for BIB check-in.\n\nJoin the updates group: '+MARATHON_GROUP+'\nhttps://saivistaculturalcommittee.in/#marathonSchedule\n\nSai Vista Cultural Committee';
 }
 // Installed edit trigger plus timed sweep cover single-cell edits, pasted Yes ranges and quota deferral.
 function marathonPaymentEdited(e){
@@ -82,8 +87,10 @@ function sendMarathonConfirmationEmails(){
       // Re-read the approval immediately before sending; a No/blank row never gets confirmation.
       if(String(sheet.getRange(i+2,21).getValues()[0][0]).trim().toLowerCase()!=='yes')continue;
       if(!row[21]){
-        const next=Math.max(Number(marathonProperties().getProperty('MARATHON_BIB_SEQUENCE')||0),...rows.map(function(r){return Number((String(r[21]).match(/-(\d+)$/)||[])[1]||0);}))+1;
-        marathonProperties().setProperty('MARATHON_BIB_SEQUENCE',String(next));row[21]='SV26-'+row[2]+'-'+String(next).padStart(4,'0');
+        const base=row[2]==='3K'?3000:5000,key='MARATHON_BIB_SEQUENCE_'+row[2];
+        const next=Math.max(base,Number(marathonProperties().getProperty(key)||base),...rows.map(function(r){const value=Number(r[21]);return Number.isInteger(value)&&value>base&&value<=base+999?value:base;}))+1;
+        if(!Number.isInteger(next)||next>base+999){sheet.getRange(i+2,23).setValue('REVIEW');continue;}
+        marathonProperties().setProperty(key,String(next));row[21]=String(next);
         sheet.getRange(i+2,22).setValue(row[21]);sheet.getRange(i+2,26).setValue(new Date());
       }
       sheet.getRange(i+2,23).setValue('SENDING');SpreadsheetApp.flush();
@@ -93,12 +100,21 @@ function sendMarathonConfirmationEmails(){
     }
   }finally{lock.releaseLock();}
 }
+// Append only: existing approval, BIB and email columns must never move.
+function marathonUpgradeBibNameColumn(sheet){
+  if(JSON.stringify(sheet.getRange(1,1,1,26).getValues()[0])!==JSON.stringify(MARATHON_COLUMNS.slice(0,26)))throw Error('Registration sheet headers need committee review.');
+  if(sheet.getMaxColumns()<27)sheet.insertColumnsAfter(sheet.getMaxColumns(),27-sheet.getMaxColumns());
+  const header=sheet.getRange(1,1,1,MARATHON_COLUMNS.length).getValues()[0];
+  if(JSON.stringify(header)===JSON.stringify(MARATHON_COLUMNS))return;
+  if(header[26]!==''||JSON.stringify(header.slice(0,26))!==JSON.stringify(MARATHON_COLUMNS.slice(0,26)))throw Error('Registration sheet headers need committee review.');
+  sheet.getRange(1,27).setValue(MARATHON_COLUMNS[26]);
+}
 function setupMarathonRegistration(){
   marathonSender();const props=marathonProperties(),lock=LockService.getScriptLock();lock.waitLock(15000);
   try{
     let id=props.getProperty('MARATHON_SPREADSHEET_ID');if(!id){id=SpreadsheetApp.create('Sai Vista Marathon 2026 — Private Registrations').getId();props.setProperty('MARATHON_SPREADSHEET_ID',id);}
-    const book=SpreadsheetApp.openById(id);let sheet=book.getSheetByName('Marathon registrations 2026');if(!sheet){sheet=book.insertSheet('Marathon registrations 2026');sheet.appendRow(MARATHON_COLUMNS);sheet.setFrozenRows(1);}
-    marathonSheet();sheet.getRange('S:S').setNumberFormat('@');sheet.getRange('U2:U1001').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Yes','No'],true).setAllowInvalid(false).build());
+    const book=SpreadsheetApp.openById(id);let sheet=book.getSheetByName('Marathon registrations 2026');if(!sheet){sheet=book.insertSheet('Marathon registrations 2026');if(sheet.getMaxColumns()<27)sheet.insertColumnsAfter(sheet.getMaxColumns(),27-sheet.getMaxColumns());sheet.appendRow(MARATHON_COLUMNS);sheet.setFrozenRows(1);}
+    marathonUpgradeBibNameColumn(sheet);marathonSheet();sheet.getRange('S:S').setNumberFormat('@');sheet.getRange('U2:U1001').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Yes','No'],true).setAllowInvalid(false).build());
     sheet.getRange(1,21).setNote('Leave blank initially. Mark Yes ONLY after checking the actual bank/UPI credit, amount and unused UTR. A screenshot is not payment confirmation. Yes queues a BIB confirmation email once.');
     sheet.getRange(1,23).setNote('SENT: delivered to mail service. SENDING or REVIEW: inspect committee Sent mail before clearing this cell to retry; keep the same BIB. Do not edit saved participant data while sending.');
     if(!props.getProperty('MARATHON_PROOF_FOLDER_ID')){const folder=DriveApp.createFolder('Sai Vista Marathon 2026 — Private Payment Proofs');folder.setSharing(DriveApp.Access.PRIVATE,DriveApp.Permission.VIEW);props.setProperty('MARATHON_PROOF_FOLDER_ID',folder.getId());}

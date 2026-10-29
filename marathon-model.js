@@ -20,6 +20,7 @@ const SaiVistaMarathon = (() => {
     if(now>=Date.parse(event.deadline))return 'Registration closed on 10 November 2026.';
     if(!Object.prototype.hasOwnProperty.call(event.fees,d.race))return 'Choose 3 km or 5 km.';
     if(typeof d.name!=='string'||d.name.trim().length<2||d.name.length>80||/[\u0000-\u001f]/.test(d.name))return 'Enter your full name (2–80 characters).';
+    if(typeof d.bibName!=='string'||!d.bibName.trim()||d.bibName.length>30||/[\u0000-\u001f\u007f]/.test(d.bibName))return 'Enter the name on your BIB (1–30 characters).';
     if(age(d.dob)<12||age(d.dob)>110)return 'Participants must be aged 12 or above on 29 November 2026.';
     if(typeof d.email!=='string'||!/^[a-z0-9][a-z0-9._%+-]*@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i.test(d.email)||d.email.length>254)return 'Enter a valid email address.';
     if(!/^[6-9]\d{9}$/.test(d.phone||''))return 'Enter a 10-digit Indian mobile number.';

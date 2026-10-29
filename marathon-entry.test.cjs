@@ -1,12 +1,12 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto'),{JSDOM}=require('jsdom');
 const M=require('./marathon-model.js');
 const bytes=Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),Buffer.alloc(24)]);
-const good={action:'marathon-entry',requestId:'12345678-1234-1234-1234-123456789012',race:'3K',name:'Test Runner',dob:'2000-05-01',email:'runner@example.org',phone:'9876543210',emergencyName:'Emergency Contact',emergencyPhone:'9876543211',bloodGroup:'O+',shirt:'M',flat:'B-902',gender:'Female',medical:'Yes',medicalDetails:'Private note',agreed:true,paymentDeclared:true,paymentReference:'012345678901',proof:{type:'image/png',base64:bytes.toString('base64')}};
-function service(){
+const good={action:'marathon-entry',requestId:'12345678-1234-1234-1234-123456789012',race:'3K',name:'Test Runner',bibName:'Runner',dob:'2000-05-01',email:'runner@example.org',phone:'9876543210',emergencyName:'Emergency Contact',emergencyPhone:'9876543211',bloodGroup:'O+',shirt:'M',flat:'B-902',gender:'Female',medical:'Yes',medicalDetails:'Private note',agreed:true,paymentDeclared:true,paymentReference:'012345678901',proof:{type:'image/png',base64:bytes.toString('base64')}};
+function service(source=fs.readFileSync('marathon-entry-service.gs','utf8')){
  const props=new Map([['MARATHON_SPREADSHEET_ID','private-test'],['MARATHON_PROOF_FOLDER_ID','proof-test']]),rows=[],sent=[],files=[],cache=new Map();let busy=false,mailFails=false,quota=100,access='PRIVATE';
- const sheet={getName:()=> 'Marathon registrations 2026',getLastRow:()=>rows.length,appendRow:r=>rows.push(r),getRange:(r,c,n=1,m=1)=>({getValues:()=>Array.from({length:n},(_,i)=>Array.from({length:m},(_,j)=>rows[r-1+i]?.[c-1+j]??'')),setValue:v=>{rows[r-1][c-1]=v;},setValues:values=>values.forEach((row,i)=>row.forEach((v,j)=>{rows[r-1+i][c-1+j]=v;}))})};
+ const sheet={getMaxColumns:()=>rows[0]?.length||26,insertColumnsAfter:(_,n)=>{for(const row of rows)row.push(...Array(n).fill(''));},getName:()=> 'Marathon registrations 2026',getLastRow:()=>rows.length,appendRow:r=>rows.push(r),getRange:(r,c,n=1,m=1)=>({getValues:()=>Array.from({length:n},(_,i)=>Array.from({length:m},(_,j)=>rows[r-1+i]?.[c-1+j]??'')),setValue:v=>{rows[r-1][c-1]=v;},setValues:values=>values.forEach((row,i)=>row.forEach((v,j)=>{rows[r-1+i][c-1+j]=v;}))})};
  const ctx={console:{error:()=>{}},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props.get(k),setProperty:(k,v)=>props.set(k,v)})},Session:{getEffectiveUser:()=>({getEmail:()=> 'saivistaculturalcommittee@gmail.com'})},LockService:{getScriptLock:()=>({tryLock:()=>!busy,releaseLock:()=>{}})},CacheService:{getScriptCache:()=>({get:k=>cache.get(k),put:(k,v)=>cache.set(k,v)})},SpreadsheetApp:{openById:()=>({getSheetByName:()=>sheet}),flush:()=>{}},DriveApp:{Access:{PRIVATE:'PRIVATE'},getFolderById:()=>({getSharingAccess:()=>access,createFile:blob=>{const f={blob,getUrl:()=> 'https://drive.google.com/private/test-'+files.length,setTrashed:v=>f.trashed=v};files.push(f);return f;}})},Utilities:{DigestAlgorithm:{SHA_256:'sha256'},Charset:{UTF_8:'utf8'},computeDigest:(_,s)=>[...crypto.createHash('sha256').update(s).digest()],base64Decode:s=>[...Buffer.from(s,'base64')],newBlob:(b,t,n)=>({bytes:b,type:t,name:n})},ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({setMimeType:()=>JSON.parse(s)})},MailApp:{getRemainingDailyQuota:()=>quota,sendEmail:mail=>{if(mailFails)throw Error('mail interrupted');sent.push(mail);}}};
- vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+fs.readFileSync('marathon-entry-service.gs','utf8'),ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
+ vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+source,ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
  return {ctx,rows,props,sent,files,sheet,enable:()=>props.set('MARATHON_REGISTRATION_ENABLED','true'),busy:v=>busy=v,mailFails:v=>mailFails=v,quota:v=>quota=v,access:v=>access=v};
 }
 test('10 November inclusive IST deadline, event-day age, gender, medical and guardian validation',()=>{
@@ -34,14 +34,14 @@ test('lock, private-folder access and committee sender guards precede any data w
 });
 test('only Yes approval sends a BIB once; schedule included, medical and emergency data excluded',()=>{
  const s=service();s.enable();s.ctx.marathonSaveEntry(good);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,0);s.rows[1][20]='No';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,0);
- s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);assert.equal(s.rows[1][21],'SV26-3K-0001');assert.equal(s.rows[1][22],'SENT');assert.match(s.sent[0].body,/06:40 AM.*Race start/);assert.match(s.sent[0].body,/07:40 AM/);assert.doesNotMatch(s.sent[0].body,/Private note|9876543211|O\+|B-902/);
+ s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);assert.equal(s.rows[1][21],'3001');assert.equal(s.rows[1][22],'SENT');assert.match(s.sent[0].body,/06:40 AM.*Race start/);assert.match(s.sent[0].body,/07:40 AM/);assert.doesNotMatch(s.sent[0].body,/Private note|9876543211|O\+|B-902/);
  s.ctx.sendMarathonConfirmationEmails();s.rows[1][20]='No';s.ctx.sendMarathonConfirmationEmails();s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);
 });
 test('quota defers; ambiguous email failure never auto-resends and retains BIB',()=>{
  const s=service();s.enable();s.ctx.marathonSaveEntry(good);s.rows[1][20]='Yes';s.quota(0);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'');assert.equal(s.sent.length,0);s.quota(100);s.mailFails(true);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][22],'REVIEW');const bib=s.rows[1][21];s.mailFails(false);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,0);s.rows[1][22]='QUEUED';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],bib);assert.equal(s.sent.length,1);
 });
 test('multiple approved entries allocate unique BIBs, formula cells escaped, public actions cannot approve',()=>{
- const s=service();s.enable();s.ctx.marathonSaveEntry({...good,name:'=Test Runner'});s.ctx.marathonSaveEntry({...good,requestId:'22345678-1234-1234-1234-123456789012',name:'Other Runner',email:'other@example.org',race:'5K',paymentReference:'123456789012'});assert.equal(s.rows[1][4],"'=Test Runner");s.rows[1][20]='Yes';s.rows[2][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'SV26-3K-0001');assert.equal(s.rows[2][21],'SV26-5K-0002');assert.equal(s.sent.length,2);assert.equal(s.ctx.doPost({parameter:{payload:JSON.stringify({action:'approve',requestId:good.requestId})}}).ok,false);
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good,name:'=Test Runner'});s.ctx.marathonSaveEntry({...good,requestId:'22345678-1234-1234-1234-123456789012',name:'Other Runner',email:'other@example.org',race:'5K',paymentReference:'123456789012'});assert.equal(s.rows[1][4],"'=Test Runner");s.rows[1][20]='Yes';s.rows[2][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'3001');assert.equal(s.rows[2][21],'5001');assert.equal(s.sent.length,2);assert.equal(s.ctx.doPost({parameter:{payload:JSON.stringify({action:'approve',requestId:good.requestId})}}).ok,false);
 });
 function page(enabled=false){
  const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://example.org/',runScripts:'outside-only'}),w=dom.window;
@@ -55,9 +55,9 @@ test('unconfigured form never transmits; screenshot and new fields required; no 
 });
 test('configured browser saves only valid proof and shows pending status and group after acknowledged save',async(t)=>{
  const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());let posted;w.fetch=async(url,options={})=>({json:async()=>{if(options.method==='POST'){posted=JSON.parse(options.body.get('payload'));return {ok:true,reference:posted.requestId,status:'pending-verification'};}return {ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true};}});
- d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');for(const key of ['name','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // JSDOM cannot populate a native file chooser's internal validity state.
+ d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // JSDOM cannot populate a native file chooser's internal validity state.
  f.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonEntrySubmit').disabled,false);
- f.dispatchEvent(new w.Event('submit',{cancelable:true}));for(let i=0;i<30&&!posted;i++)await new Promise(r=>setTimeout(r,10));assert.ok(posted.proof.base64);await new Promise(r=>setImmediate(r));assert.equal(d.getElementById('marathonEntrySuccess').hidden,false);assert.match(d.getElementById('marathonUpdatesGroup').href,/HhO4yXkBBb171GuQevJrmk/);assert.match(d.getElementById('marathonEntryStatus').textContent,/verify/);assert.equal(w.localStorage.length,0);
+ f.dispatchEvent(new w.Event('submit',{cancelable:true}));for(let i=0;i<30&&!posted;i++)await new Promise(r=>setTimeout(r,10));assert.ok(posted.proof.base64);assert.equal(posted.bibName,good.bibName);await new Promise(r=>setImmediate(r));assert.equal(d.getElementById('marathonEntrySuccess').hidden,false);assert.match(d.getElementById('marathonUpdatesGroup').href,/HhO4yXkBBb171GuQevJrmk/);assert.match(d.getElementById('marathonEntryStatus').textContent,/verify/);assert.equal(w.localStorage.length,0);
 });
 test('calendar begins at reporting time and no obsolete deadline appears in active marathon content',()=>{
  assert.match(fs.readFileSync('assets/sai-vista-marathon-2026.ics','utf8'),/DTSTART:20261129T001500Z/);for(const file of ['index.html','marathon-model.js','site-data.js','marathon-registration.js'])assert.doesNotMatch(fs.readFileSync(file,'utf8'),/26 November|26 NOVEMBER|2026-11-27/);assert.match(fs.readFileSync('marathon-registration.js','utf8'),/prefers-reduced-motion: reduce/);
@@ -67,7 +67,7 @@ test('network retry preserves request ID and evidence; group stays hidden until 
  const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());const posts=[];
  w.fetch=async(url,options={})=>{if(!options.method)return {json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true})};const payload=JSON.parse(options.body.get('payload'));posts.push(payload);if(posts.length===1)throw new w.TypeError('network interrupted');return {json:async()=>({ok:true,reference:payload.requestId,status:'pending-verification'})};};
  d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');
- for(const key of ['name','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;
+ for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;
  Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // Native file validity is covered in the browser, not JSDOM.
  f.dispatchEvent(new w.Event('submit',{cancelable:true}));for(let i=0;i<30&&posts.length<1;i++)await new Promise(r=>setTimeout(r,10));await new Promise(r=>setImmediate(r));
  assert.equal(d.getElementById('marathonEntrySuccess').hidden,true);assert.match(d.getElementById('marathonEntryStatus').textContent,/do not pay again/);assert.equal(f.elements.name.value,good.name);
@@ -83,6 +83,49 @@ test('approval edit trigger ignores unrelated columns, sheets and workbooks',()=
 });
 
 // Apps Script appendRow parses numeric-looking strings; force receipt references and DOB to text.
+test('BIB print name is required, bounded, safely saved and included in email and retry identity',()=>{
+ for(const bibName of [undefined,'','   ','x'.repeat(31),'Bad\nName'])assert.match(M.validate({...good,bibName}),/BIB/);
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good,bibName:'=Runner'});
+ assert.equal(s.rows[0][26],'Name on the BIB');assert.equal(s.rows[1][26],"'=Runner");
+ assert.throws(()=>s.ctx.marathonSaveEntry({...good,bibName:'Other'}),/different details/);
+ s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.match(s.sent[0].body,/Name on the BIB: =Runner/);
+ const dom=page();try{const field=dom.window.document.querySelector('[name="bibName"]');assert.equal(field.required,true);assert.equal(field.maxLength,30);assert.match(field.parentElement.textContent,/Name on the BIB/);}finally{dom.window.close();}
+});
+
+test('BIB counters are per distance, survive deleted rows, and never exceed four digits',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry(good);s.rows[1][20]='Yes';s.props.set('MARATHON_BIB_SEQUENCE_3K','3008');
+ s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'3009');
+ const full=service();full.enable();full.ctx.marathonSaveEntry(good);full.rows[1][20]='Yes';full.props.set('MARATHON_BIB_SEQUENCE_3K','3999');
+ full.ctx.sendMarathonConfirmationEmails();assert.equal(full.rows[1][21],'');assert.equal(full.rows[1][22],'REVIEW');assert.equal(full.sent.length,0);
+});
+
+test('existing numeric BIBs prevent collisions; already issued legacy BIBs are preserved',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry(good);s.rows[1][20]='Yes';
+ const older=[...s.rows[1]];older[0]='older';older[21]=3005;older[22]='SENT';s.rows.push(older);
+ const legacy=[...older];legacy[0]='legacy';legacy[21]='SV26-3K-0001';s.rows.push(legacy);
+ s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'3006');assert.equal(s.rows[3][21],'SV26-3K-0001');assert.equal(s.sent.length,1);
+});
+
+test('sheet upgrade appends AA idempotently without moving approval or overwriting headers',()=>{
+ const s=service();s.rows[0].pop();const before=[...s.rows[0]];
+ s.ctx.marathonUpgradeBibNameColumn(s.sheet);assert.deepEqual(s.rows[0].slice(0,26),before);assert.equal(s.rows[0][26],'Name on the BIB');assert.equal(s.rows[0][20],'Payment verified?');
+ s.ctx.marathonUpgradeBibNameColumn(s.sheet);assert.equal(s.rows[0].length,27);
+ s.rows[0][26]='Other data';assert.throws(()=>s.ctx.marathonUpgradeBibNameColumn(s.sheet),/review/);assert.equal(s.rows[0][26],'Other data');
+});
+
+test('rollout accepts old sheet and cached form without losing a registration or retry',()=>{
+ const s=service();s.enable();s.rows[0].pop();assert.equal(s.ctx.doGet().acceptingEntries,true);
+ const oldForm={...good};delete oldForm.bibName;s.ctx.marathonSaveEntry(oldForm);
+ assert.equal(s.rows[1][26],good.name);assert.equal(s.rows[0][26],'Name on the BIB');
+ // A response lost before this release must still acknowledge its original reference.
+ s.rows[1][26]='';
+ const oldSource=fs.readFileSync('marathon-entry-service.gs','utf8').replace('bibName:d.bibName.trim(),','');
+ const legacy=service(oldSource);legacy.enable();legacy.ctx.marathonSaveEntry({...good});
+ s.rows[1][24]=legacy.rows[1][24];
+ assert.equal(s.ctx.marathonSaveEntry({...good}).reference,good.requestId);assert.equal(s.rows.length,2);
+ assert.throws(()=>s.ctx.marathonSaveEntry({...good,name:'Changed'}),/different details/);
+});
+
 test('sheet writes preserve leading-zero transaction references and literal dates',()=>{
  const s=service();s.enable();s.ctx.marathonSaveEntry(good);
  assert.equal(s.rows[1][18],"'"+good.paymentReference);assert.equal(s.rows[1][5],"'"+good.dob);
