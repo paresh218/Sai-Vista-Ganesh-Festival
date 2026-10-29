@@ -37,6 +37,18 @@ test('only Yes approval sends a BIB once; schedule included, medical and emergen
  s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);assert.equal(s.rows[1][21],'3001');assert.equal(s.rows[1][22],'SENT');assert.match(s.sent[0].body,/06:40 AM.*Race start/);assert.match(s.sent[0].body,/07:40 AM/);assert.doesNotMatch(s.sent[0].body,/Private note|9876543211|O\+|B-902/);
  s.ctx.sendMarathonConfirmationEmails();s.rows[1][20]='No';s.ctx.sendMarathonConfirmationEmails();s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);
 });
+
+test('approved confirmation includes styled personalized HTML, poster, full schedule and safe action links',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good,bibName:'<Runner & Co>'});s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();
+ const mail=s.sent[0];assert.equal(mail.to,good.email);assert.match(mail.subject,/BIB 3001/);assert.ok(mail.body);assert.ok(mail.htmlBody);
+ const dom=new JSDOM(mail.htmlBody);try{const d=dom.window.document;assert.match(d.body.textContent,/3001/);assert.match(d.body.textContent,/<Runner & Co>/);assert.equal(d.querySelectorAll('script,iframe').length,0);
+ assert.ok(d.querySelector('meta[charset="UTF-8"]'));assert.ok(d.querySelector('img[alt]'));assert.equal(d.querySelectorAll('table[data-schedule] tbody tr').length,7);assert.match(d.body.textContent,/06:40 AM/);assert.match(d.body.textContent,/07:40 AM/);
+ const links=[...d.querySelectorAll('a')];assert.ok(links.some(a=>a.href.endsWith('sai-vista-marathon-2026.ics')));assert.ok(links.some(a=>a.href.includes('chat.whatsapp.com/')));assert.ok(links.some(a=>a.href.startsWith('https://wa.me/')));
+ const ack=links.find(a=>a.textContent.includes('Acknowledge'));assert.equal(new URL(ack.href).pathname,'saivistaculturalcommittee@gmail.com');assert.match(new URL(ack.href).searchParams.get('subject'),/3001/);
+ assert.doesNotMatch(d.body.textContent,/Private note|9876543211|O\+|B-902|Register now|registration pending/);
+ }finally{dom.window.close();}
+ s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);
+});
 test('quota defers; ambiguous email failure never auto-resends and retains BIB',()=>{
  const s=service();s.enable();s.ctx.marathonSaveEntry(good);s.rows[1][20]='Yes';s.quota(0);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'');assert.equal(s.sent.length,0);s.quota(100);s.mailFails(true);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][22],'REVIEW');const bib=s.rows[1][21];s.mailFails(false);s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,0);s.rows[1][22]='QUEUED';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],bib);assert.equal(s.sent.length,1);
 });
