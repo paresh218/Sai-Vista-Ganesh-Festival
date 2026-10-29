@@ -6,7 +6,8 @@
   function refresh(){
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
     document.getElementById('marathonGuardian').hidden=!minor;form.elements.guardian.required=minor;form.elements.guardianConsent.required=minor;
-    document.getElementById('marathonMedicalNote').hidden=form.elements.medical.value!=='Yes';
+    const medicalNoteRequired=form.elements.medical.value==='Yes';
+    document.getElementById('marathonMedicalNote').hidden=!medicalNoteRequired;form.elements.medicalDetails.required=medicalNoteRequired;
     document.getElementById('marathonEntryFee').textContent=form.elements.race.value==='5K'?'5 km · ₹199':'3 km · ₹149';
     const canPay=ready&&!closed()&&!busy&&!saved;
     document.getElementById('marathonPaymentAvailability').textContent=closed()?'Registration closed. Please do not pay.':ready?'Payment evidence will be checked by the committee.':'Registration is being connected. Please wait to pay.';

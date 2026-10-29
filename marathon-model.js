@@ -31,7 +31,8 @@ const SaiVistaMarathon = (() => {
     if(!event.genders.includes(d.gender))return 'Choose a gender option.';
     if(!event.medical.includes(d.medical))return 'Choose a medical discomfort option.';
     if(typeof (d.medicalDetails||'')!=='string'||(d.medicalDetails||'').length>500)return 'Keep the medical note within 500 characters.';
-    if(d.flat&&!/^[A-F]-(?:[1-9]|1[0-3])0[1-4]$/.test(d.flat))return 'Enter a Sai Vista flat such as B-902, or leave it blank.';
+    if(typeof d.flat!=='string'||(!/^[A-F]-(?:[1-9]|1[0-3])0[1-4]$/.test(d.flat)&&!/^VISITOR$/i.test(d.flat)))return 'Enter your Sai Vista flat such as B-902, or Visitor if you live outside the society.';
+    if(d.medical==='Yes'&&(!d.medicalDetails||d.medicalDetails.trim().length<2))return 'Add a brief medical note, or choose No / Prefer not to say.';
     if(d.agreed!==true)return 'Accept the participation and private-data notice.';
     if(age(d.dob)<18&&(typeof d.guardian!=='string'||d.guardian.trim().length<2||d.guardian.length>80||d.guardianConsent!==true))return 'A parent or guardian must give their name and consent for a participant under 18.';
     return '';

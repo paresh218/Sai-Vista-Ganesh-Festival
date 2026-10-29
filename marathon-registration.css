@@ -5,3 +5,7 @@ main>.marathon-event{--run-ink:#142c55;--run-orange:#ff6b16;display:grid;grid-te
 @media(max-width:900px){main>.marathon-event{grid-template-columns:minmax(0,1fr);border-radius:22px}.marathon-visual{min-height:320px;aspect-ratio:16/10}.marathon-visual img{object-position:center 40%}.marathon-visual-caption{font-size:32px;bottom:24px;left:24px}.marathon-edition{left:24px;top:20px}.marathon-event-copy{padding:24px}.marathon-details{grid-template-columns:1fr;gap:28px}.marathon-poster{max-width:480px;justify-self:center}}
 @media(max-width:480px){.marathon-entry-grid{grid-template-columns:1fr;gap:14px}.marathon-entry-dialog{padding:18px}.marathon-entry-heading{top:-18px}.marathon-entry-heading h2{font-size:25px}.marathon-event-copy{padding:22px 18px}.marathon-races{gap:10px}.marathon-races button{padding:15px 12px}.marathon-races button>span:first-child{font-size:8px}.marathon-races strong{font-size:42px}.marathon-visual{min-height:260px}.marathon-details dl{grid-template-columns:74px minmax(0,1fr);gap:12px}.marathon-event-copy h1{font-size:48px}}
 @media(prefers-reduced-motion:reduce){.marathon-event *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Text plus native required semantics supplement the red marker. */
+.marathon-entry-dialog .marathon-required{color:#b42318;font-weight:700}
+.marathon-entry-dialog .marathon-required-note{font-size:13px;margin:0 0 18px}
