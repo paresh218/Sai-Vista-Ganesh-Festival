@@ -21,14 +21,15 @@ if (typeof document !== 'undefined') (() => {
   const gate = document.getElementById('residentGate');
   const form = document.getElementById('residentGateForm');
   const flatInput = document.getElementById('residentFlat');
-  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is remembered on this browser and is not sent to a logging service. Resident access also checks your registered flat/email and a verification code.';
-  else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your entered flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Resident access also checks your registered flat/email and a verification code.';
+  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your verified resident access is remembered on this browser. Resident access also checks your registered flat/email and a verification code.';
+  else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your verified email, resident name, flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Resident access also checks your registered flat/email and a verification code.';
   window.SaiVistaGuest = true;
   const emailInput = document.getElementById('residentEmail');
   const otpForm = document.getElementById('residentOtpForm');
   const status = document.getElementById('residentGateStatus');
   let challenge = '', pendingFlat = '', requestVersion = 0, retryAt = 0;
-  let flat, queue = [], sending = false;
+  let flat, queue = [], sending = false, activityObserver, activityTimer;
+  const release=document.querySelector('meta[name="site-release"]').content;
   const sessionId = crypto.randomUUID();
   const device = { userAgent: navigator.userAgent.slice(0, 500), language: navigator.language, viewport: `${innerWidth}×${innerHeight}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
   function record(type, target) {
@@ -38,11 +39,13 @@ if (typeof document !== 'undefined') (() => {
     if (queue.length >= 10) flush();
   }
   async function flush() {
-    if (sending || !queue.length || !config.endpoint) return;
+    const identity=window.SaiVistaResidentSession;
+    if (sending || !queue.length || !config.endpoint || !identity || identity.flat!==flat) return;
     const batch = queue.slice(0, 20); sending = true;
     try {
-      const result = await fetch(config.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ flat, sessionId, device, events: batch }), keepalive: true, signal: AbortSignal.timeout(15000) });
-      const data = await result.json(); if (result.ok && data.ok) { const sent = new Set(batch.map(event => event.id)); queue = queue.filter(event => !sent.has(event.id)); }
+      const body=new URLSearchParams({payload:JSON.stringify({action:'gallery-site-events',token:identity.token,flat,sessionId,device,release,events:batch})});
+      const result = await fetch(config.endpoint, { method: 'POST', body, cache:'no-store', keepalive: true, signal: AbortSignal.timeout(30000) });
+      const data = await result.json(); if (result.ok && data.ok && Array.isArray(data.acknowledgedIds)) { const sent = new Set(data.acknowledgedIds.filter(id=>batch.some(event=>event.id===id))); queue = queue.filter(event => !sent.has(event.id)); }
     } catch (_) { /* Retry in-memory on the next interval; never save visit histories on a shared device. */ }
     finally { sending = false; }
   }
@@ -107,12 +110,13 @@ if (typeof document !== 'undefined') (() => {
     record('entry', 'site'); flush();
     // Log only meaningful named site sections, never form contents, captions or external URLs.
     const observed = new Set(), visible = new Set();
-    const observer = new IntersectionObserver(entries => {
+    activityObserver?.disconnect();clearInterval(activityTimer);
+    const observer = activityObserver = new IntersectionObserver(entries => {
       for (const entry of entries) {
         if (entry.isIntersecting) visible.add(entry.target); else visible.delete(entry.target);
       }
     }, { threshold: 0 });
-    setInterval(() => {
+    activityTimer=setInterval(() => {
       if (document.hidden || document.querySelector('dialog[open]')) return;
       for (const section of visible) {
         if (!observed.has(section.id) && !section.closest('[hidden]') && section.getClientRects().length) { observed.add(section.id); record('section', section.id); }
@@ -148,6 +152,7 @@ if (typeof document !== 'undefined') (() => {
   }
   window.addEventListener('sai-vista-private-signed-out',()=>{
     if(!window.SaiVistaResidentSession)return;
+    activityObserver?.disconnect();clearInterval(activityTimer);
     requestVersion++;window.SaiVistaResidentSession=null;window.SaiVistaResidentReady=false;window.SaiVistaGuest=true;flat=null;queue=[];
     document.documentElement.classList.add('guest-mode');form.hidden=false;otpForm.hidden=true;challenge='';
     document.getElementById('residentCode').value='';

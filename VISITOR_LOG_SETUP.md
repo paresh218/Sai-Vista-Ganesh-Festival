@@ -1,8 +1,36 @@
-# Required flat entry and private visit records
+# Verified resident visit records
 
-The required gate is ready in the local website. Every page load requires one flat-number entry (wing A–F, floor 1–13, unit 01–04). Continuing acknowledges the visible visit-record notice. A101, A-101 and A 101 are accepted. Examples: A-101, F-1304. It cannot be dismissed normally without completing those fields. No resident identity is stored between page loads.
+## Current logging flow
 
-This is a **self-reported flat entry gate, not authentication**. The static site files and existing public data endpoints remain accessible to someone bypassing JavaScript. Genuine resident-only protection would require authenticated hosting and protecting every data endpoint. An entered flat or IP cannot prove a person's identity.
+The website sends named visit events to the resident/gallery service using the current resident session token. The service verifies the session and current email/flat/reference permissions, then derives the email and resident name on the server. Browser-supplied email/name fields are ignored. Guests are not assigned resident identities or recorded by this authenticated logger.
+
+The private `SITE_VISIT_BOOK_ID` Script Property points to the existing visit-log workbook. New rows keep the original first 13 column positions, preserving history, 90-day cleanup and the existing daily report’s counts. Columns N:Q add Verified email, Resident name, Identity status and Site release. Historical flat-only rows remain unchanged with blank identity fields; never relabel them verified. Devices, action identifiers and client times remain browser-reported, not proof that the named person physically used a device.
+
+No session tokens, OTPs, form contents, captions, payment details or arbitrary URLs are stored in the visit rows. IP addresses are not collected by this flow. Times and dated tabs use Asia/Kolkata. The logger validates batch size (20), UUIDs, named identifiers, release format and event times; all sheet text is protected from formula injection. The service caps request bodies at 32 KB.
+
+The browser buffers at most 100 events in memory, retries failures using the same event IDs and removes only server-acknowledged IDs. The server deduplicates against 5,000 recent rows in the receive-day tab. Cross-day retries or retries beyond that window may duplicate entries; this is useful site analytics, not a guaranteed audit trail. Navigation shutdowns, blockers and offline use can lose records. Observer/timer cleanup stops recording after sign-out and prevents duplicated observers on re-entry.
+
+## Existing email list
+
+Continue using the user-linked workbook’s `Gallery access` tab (gid 735712086). Existing A:F values and email/flat bindings are preserved. Column G is the existing optional Resident approval override. H:J contain First resident verification (IST), Last resident activity (IST), Resident verification. Metadata is updated in place for the normalized existing email; a login does not append a duplicate email row. First verification is set only by a successful resident OTP; previously issued sessions can update Last activity without inventing a historical first-verification time. The list was checked before migration: 67 email rows, no duplicate normalized addresses.
+
+`setupResidentContactColumns` adds only the G:J headers, rejecting conflicting headings. It does not change the private roster or approve residents. Updates are made under the gallery service’s script lock.
+
+## Deploying updates
+
+1. Build `node tools/build-resident-service.cjs`; this now includes resident-logging.gs.
+2. Back up the existing project, then set private `SITE_VISIT_BOOK_ID` to the existing private visit-log workbook ID. Keep `GALLERY_BOOK_ID` and the resident reference unchanged. The committee account needs access to both workbooks.
+3. Run `setupResidentContactColumns` once. Verify the header cells and unchanged email count. Update the existing gallery deployment version while retaining its URL.
+4. Publish the versioned resident-access-config.js and resident-access.js with the release/cache marker. Do not send browser events to the old flat-only logging endpoint.
+5. Check a real signed-in visit: N:Q in the private daily tab and H:J on the existing email row. Do not fabricate verification timestamps or send OTP mail merely to test logging. Unregistered requests must be rejected without writing rows.
+
+The old visit-logger project and existing daily email/cleanup triggers remain available for historical records and reports. New rows use the same private log workbook and original column positions. The old endpoint can only write the legacy 13-column unverified format; it cannot populate verified identity columns. Keep the private sheet restricted. No new report recipients, bulk emails or additional paid services are introduced.
+
+## Deployment verification — 1 November 2026
+
+Backend version 15 is configured against the existing visit-log workbook and email source. Header migration preserved all 67 email rows. New G:J headers were verified by readback and native Sheets inspection; existing profile data and approvals were not changed. Automated checks: 186 site tests and 27 player checks passed. No OTP or report email was sent as part of these checks.
+
+## Historical setup notes
 
 ## Private Google Sheet
 

@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v174";
+const CACHE_NAME = "sai-vista-ganpati-2026-v175";
 const APP_SHELL = [
   "./",
   "advertising-config.js?v=3",
@@ -47,8 +47,8 @@ const APP_SHELL = [
   "style.css?v=22",
   "mobile-components.css?v=1",
   "site-data.js?v=6",
-  "resident-access-config.js",
-  "resident-access.js?v=4",
+  "resident-access-config.js?v=2",
+  "resident-access.js?v=5",
   "resident-access.css?v=3",
   "responsive-refinement.css",
   "navratri.css",

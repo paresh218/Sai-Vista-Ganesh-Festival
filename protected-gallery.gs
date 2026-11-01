@@ -190,6 +190,7 @@ function galleryVerify(d) {
     if(row&&['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is blocked. Please contact the committee.');
     if(!row){gallerySheet('Gallery access').appendRow([otp.email,gallerySafe(otp.name),otp.flat,'APPROVED',new Date(),'Automatic: email OTP verified']);}
     else {const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,2,1,3).setValues([[gallerySafe(galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID')?row[1]:otp.name),otp.flat,'APPROVED']]);}
+    if(otp.residentVerified)residentContactActivity({email:otp.email,flat:otp.flat},new Date(),true);
     const token=galleryRandom(),expires=Date.now()+90*86400000;
     props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires,residentVerified:otp.residentVerified===true}));
     galleryAudit('email_verified',otp.email,'',d,true);
@@ -235,6 +236,7 @@ function galleryHandle(d) {
     if(d.action==='gallery-otp')return galleryOtp(d);
     if(d.action==='gallery-verify')return galleryVerify(d);
     const session=gallerySession(d,d.action!=='gallery-status'&&d.action!=='gallery-logout');
+    if(d.action==='gallery-site-events')return residentSiteEvents(session,d);
     if(d.action==='gallery-resident-status'){if(session.residentVerified!==true)galleryAuthFailure('Sign in to verify your resident email again.');return {ok:true,email:session.email,flat:session.flat,expires:session.expires,residentVerified:true};}
     if(d.action==='gallery-video-reaction'){const sheet=galleryBook().getSheetByName('Video likes');return {ok:true,liked:sheet?videoCommunityRows(sheet).some(r=>r[0]===galleryId('video-community|'+session.email)&&r[1]===true):false};}
     if(['gallery-video-like','gallery-video-comment'].includes(d.action))return videoCommunityWrite(d,session);

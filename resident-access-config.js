@@ -1,6 +1,5 @@
-// Use the Cloudflare Worker URL for verified IP capture, or the logging Apps Script
-// URL without IP capture. Never put the Worker-to-Sheets secret in this file.
+// Verified visit events use the resident/gallery service. The server supplies identity.
 window.SaiVistaVisitConfig = {
-  endpoint: 'https://script.google.com/macros/s/AKfycbwPYEg58HXbItU2zmROKSWUtSylNkUQh_52qjKkh49qyB6cXr38gfh28tekGrwSRPD5/exec',
+  endpoint: 'https://script.google.com/macros/s/AKfycbxXf8vcp2d6xxsMx_11VM_7PRTNVNunsH8Eb9ArTFf_Fc3rQyH0KbMPY0IwDHnfmhtaeA/exec',
   capturesIp: false
 };

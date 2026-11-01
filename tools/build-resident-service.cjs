@@ -1,5 +1,5 @@
 const fs=require('node:fs'),vm=require('node:vm');
-const code=['protected-gallery.gs','protected-gallery-service.gs'].map(path=>fs.readFileSync(path,'utf8')).join('\n');
+const code=['protected-gallery.gs','resident-logging.gs','protected-gallery-service.gs'].map(path=>fs.readFileSync(path,'utf8')).join('\n');
 new vm.Script(code);
 fs.mkdirSync('tmp/resident-deploy',{recursive:true});
 fs.writeFileSync('tmp/resident-deploy/Code.gs',code);
