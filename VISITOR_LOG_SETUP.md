@@ -18,10 +18,10 @@ Continue using the user-linked workbook’s `Gallery access` tab (gid 735712086)
 
 ## Deploying updates
 
-1. Build `node tools/build-resident-service.cjs`; this now includes resident-logging.gs.
+1. Build `node tools/build-resident-client.cjs` and `node tools/build-resident-service.cjs`; this now includes resident-logging.gs.
 2. Back up the existing project, then set private `SITE_VISIT_BOOK_ID` to the existing private visit-log workbook ID. Keep `GALLERY_BOOK_ID` and the resident reference unchanged. The committee account needs access to both workbooks.
 3. Run `setupResidentContactColumns` once. Verify the header cells and unchanged email count. Update the existing gallery deployment version while retaining its URL.
-4. Publish the versioned resident-access-config.js and resident-access.js with the release/cache marker. Do not send browser events to the old flat-only logging endpoint.
+4. Publish assets/resident-access-v5.js, built from resident-access-config.js and resident-access.js, with the release/cache marker. Increase the asset filename for later runtime releases; the public CDN can keep stale copies of unchanged asset paths despite changed query strings. Do not send browser events to the old flat-only logging endpoint.
 5. Check a real signed-in visit: N:Q in the private daily tab and H:J on the existing email row. Do not fabricate verification timestamps or send OTP mail merely to test logging. Unregistered requests must be rejected without writing rows.
 
 The old visit-logger project and existing daily email/cleanup triggers remain available for historical records and reports. New rows use the same private log workbook and original column positions. The old endpoint can only write the legacy 13-column unverified format; it cannot populate verified identity columns. Keep the private sheet restricted. No new report recipients, bulk emails or additional paid services are introduced.
