@@ -9,13 +9,17 @@ This release is published through the repository’s GitHub Pages deployment. No
 3. Submit `https://saivistaculturalcommittee.in/sitemap.xml`. Inspect the homepage and request indexing. Hash sections are parts of the homepage, not separate sitemap pages.
 4. Check indexing and search impressions for “Sai Vista” and “Sai Vista Cultural Committee”. Keep event content current, and link the website from genuine community channels. Do not buy links or stuff keywords.
 
+## Publisher connection
+
+Committee account `saivistaculturalcommittee@gmail.com` now has publisher ID `pub-4904533433490567`. Google supplied the ownership meta tag and ads.txt record, which are included in this release. Ads remain disabled pending Google approval, account information and consent setup. No earnings are active merely because the account exists.
+
 ## AdSense application (owner action)
 
 1. The owner creates an account at https://adsense.google.com/start/ with their Google account, actual payee details and country, then adds `https://saivistaculturalcommittee.in/`.
 2. Review the public site and all linked content, including media rights, downloadable music, community submissions and personal information. Publish only material the committee has permission to distribute. Confirm privacy disclosures match the actual services. These changes do not certify AdSense eligibility or legal compliance.
 3. Use the exact verification meta tag provided by AdSense in the homepage head. This verifies ownership without enabling ad requests before consent. Share that tag with the site maintainer; never share Google passwords, payment details or identity documents in chat.
 4. Request site review in AdSense. Only Google can approve it; watch the account for review feedback. Complete identity, tax and payment steps directly in Google when requested.
-5. Once the site is Ready, create a responsive display ad unit. Put the committee-owned `ca-pub-` ID and 10-digit slot ID into `advertising-config.js`. Add the exact ads.txt record Google supplies to a root `ads.txt`; no fake publisher entry has been created.
+5. Once the site is Ready, create a responsive display ad unit. Put the committee-owned `ca-pub-` ID and 10-digit slot ID into `advertising-config.js`. Add the exact ads.txt record Google supplies to a root `ads.txt`; the real Google-supplied record is now published.
 6. Set up a consent platform appropriate to the visitors. Personalised ads in the EEA, UK and Switzerland require a Google-certified CMP integrated with TCF. The current loader intentionally does nothing until a configured consent platform dispatches `new CustomEvent('sai-vista-ad-consent', {detail: {advertisingAllowed: true}})` for the current visit. This event is an integration hook, not a consent platform. Do not dispatch it unconditionally. Connect revocation/settings controls and reload without approval after withdrawal. Test acceptance, rejection, withdrawal and revisits before enabling ads.
 7. Set `enabled: true` only after approval, consent integration and review. Keep Auto ads disabled: use the labelled public manual placement, excluding accounts, payment forms, private media and dialogs. Do not pass flats, names, emails or event/payment details to advertising services. Update the privacy page’s disabled-ad statement when activating.
 8. Test the actual consent and ad flow. Do not click your own ads or ask residents to click. Revenue depends on eligible traffic and advertising demand.

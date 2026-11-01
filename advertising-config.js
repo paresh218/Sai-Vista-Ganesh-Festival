@@ -1,6 +1,6 @@
-// Populate only with the committee-owned AdSense account after site approval.
+// Committee publisher account. Ads stay disabled until approval and consent setup.
 window.SaiVistaAdvertising = {
   enabled: false,
-  publisherId: '',
+  publisherId: 'ca-pub-4904533433490567',
   slotId: ''
 };
