@@ -45,6 +45,8 @@
     } catch(e) {console.error('Expense dashboard:', e); failure=data?'Refresh failed. Showing the last successful snapshot; figures may be outdated.':'Live expenses unavailable. No totals are shown until the sheet can be read and validated.'; failure += ' ' + (e.name === 'AbortError' ? 'The request timed out; try Refresh expenses.' : e instanceof TypeError ? 'The browser could not connect to the expense service.' : e.message);}
     finally {clearTimeout(timer);busy=false;render();}
   }
-  refresh();setInterval(()=>{if(!document.hidden) refresh();},60000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden) refresh();});
+  const memberRefresh=()=>{if(window.SaiVistaGuest!==true)refresh();};
+  window.addEventListener("sai-vista-resident-ready",memberRefresh);
+  memberRefresh();setInterval(()=>{if(!document.hidden) memberRefresh();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden) memberRefresh();});
 })();

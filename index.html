@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="resident-locked">
+<html lang="en" class="guest-mode">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-11-01-marathon-route-1">
+  <meta name="site-release" content="2026-11-01-resident-otp-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sai Vista celebrations 2026 — Sai Vista Marathon on 29 November, festival archives, photos and accounts.">
+  <meta name="description" content="Sai Vista Cultural Committee: community celebrations, Sai Vista Marathon on 29 November 2026, Ganesh Festival and Navratri memories. Guests welcome.">
   <meta name="theme-color" content="#302635">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,7 +12,19 @@
   <link rel="icon" href="assets/sai-vista-logo.png" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/sai-vista-pwa-icon.png">
-  <title>Sai Vista Community Celebrations 2026</title>
+  <title>Sai Vista Cultural Committee | Events, Marathon &amp; Festivals</title>
+  <link rel="canonical" href="https://saivistaculturalcommittee.in/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Sai Vista Cultural Committee">
+  <meta property="og:title" content="Sai Vista Cultural Committee | Events &amp; Festivals">
+  <meta property="og:description" content="Explore Sai Vista community celebrations, the 2026 marathon and festival memories. Guests welcome.">
+  <meta property="og:url" content="https://saivistaculturalcommittee.in/">
+  <meta property="og:image" content="https://saivistaculturalcommittee.in/assets/marathon-2026-hero.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Sai Vista Cultural Committee">
+  <meta name="twitter:description" content="Community events, marathon and festival memories. Guests welcome.">
+  <meta name="twitter:image" content="https://saivistaculturalcommittee.in/assets/marathon-2026-hero.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="assets/fonts/work-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -21,7 +33,7 @@
   <link rel="stylesheet" href="navratri.css">
   <link rel="stylesheet" href="navratri-songs.css">
   <style>html.resident-locked body> :not(#residentGate):not(script):not(noscript){visibility:hidden!important}html.resident-locked{overflow:hidden}</style>
-  <link rel="stylesheet" href="resident-access.css">
+  <link rel="stylesheet" href="resident-access.css?v=3">
   <link rel="stylesheet" href="responsive-refinement.css">
     <link rel="stylesheet" href="garba-special.css?v=119">
     <link rel="stylesheet" href="player-modern.css?v=123">
@@ -33,16 +45,19 @@
   <link rel="stylesheet" href="protected-gallery.css?v=4">
   <link rel="stylesheet" href="private-video.css?v=11">
   <link rel="stylesheet" href="community-theme.css?v=5">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://saivistaculturalcommittee.in/#organization", "name": "Sai Vista Cultural Committee", "url": "https://saivistaculturalcommittee.in/", "logo": "https://saivistaculturalcommittee.in/assets/sai-vista-logo.png"}, {"@type": "WebSite", "@id": "https://saivistaculturalcommittee.in/#website", "url": "https://saivistaculturalcommittee.in/", "name": "Sai Vista Cultural Committee", "alternateName": "Sai Vista", "publisher": {"@id": "https://saivistaculturalcommittee.in/#organization"}, "inLanguage": "en-IN"}]}</script>
+  <script defer src="advertising-config.js?v=1"></script>
+  <script defer src="advertising.js?v=1"></script>
 </head>
 <body>
     <dialog id="residentGate" aria-labelledby="residentGateTitle">
-      <span class="eyebrow">WELCOME TO SAI VISTA</span><h1 id="residentGateTitle">Enter your flat</h1><p>One quick step to join the celebration.</p><p>Your flat is remembered on this browser. Use “Change flat / forget this device” at the bottom of the site to clear it.</p>
+      <span class="eyebrow">WELCOME TO SAI VISTA</span><h2 id="residentGateTitle">Resident access</h2><p>Live at Sai Vista? Verify your flat and registered email below. Visiting friends or exploring the site? Choose “Continue as guest”.</p><p>Verified access is remembered on this browser for 90 days. Use “Change flat / forget this device” at the bottom of the site to clear it.</p>
       <form id="residentGateForm"><label for="residentFlat">Your own flat number</label><input id="residentFlat" name="residentFlat" type="text" placeholder="e.g. A-101" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" aria-describedby="residentFlatHelp residentGateStatus" required><p id="residentFlatHelp">A101, A-101 or A 101 all work.<br>Wings A–F · Floors 1–13 · Flats 01–04.</p><p id="residentFlatPreview" aria-live="polite"></p>
-        <div class="resident-privacy"><strong>Visit records</strong><p id="residentLoggingNotice">When logging is enabled, the committee records your entered flat, sections viewed, selected actions, date/time, browser/device details and IP address. These private records are kept for 90 days. Your entered flat is self-reported, not verified residency.</p></div>
-        <p class="resident-confirm">By continuing, you confirm this is your own flat and acknowledge the visit-record notice above.</p><button type="submit">Continue →</button><p id="residentGateStatus" role="status"></p>
-      </form>
+        <label for="residentEmail">Registered email address</label><input id="residentEmail" type="email" maxlength="254" autocomplete="email" required><p>Use the email already registered for your flat. If a partial or family name needs review, contact the committee.</p><div class="resident-privacy"><strong>Visit records</strong><p id="residentLoggingNotice">When logging is enabled, the committee records your entered flat, sections viewed, selected actions, date/time, browser/device details and IP address. These private records are kept for 90 days. Resident access also checks your registered flat/email and a verification code.</p></div>
+        <p class="resident-confirm">By continuing, you confirm this is your own flat and acknowledge the visit-record notice above.</p><button type="submit">Send verification code</button>
+      </form><form id="residentOtpForm" hidden><label for="residentCode">Email verification code</label><input id="residentCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required><button type="submit">Verify and continue</button><button id="residentResend" type="button">Resend code</button><button id="residentOtherEmail" type="button">Change email or flat</button></form><p id="residentGateStatus" role="status"></p><button id="residentGuest" type="button">Continue as guest</button>
     </dialog>
-    <noscript><p>JavaScript is required to enter your flat and open this website.</p></noscript>
+    <noscript><p>Welcome to Sai Vista Cultural Committee. Browse public events and festival memories. JavaScript is needed for registration and resident features.</p></noscript>
 
     <a class="skip-link" href="#mainContent">Skip to main content</a>
 
@@ -96,7 +111,7 @@
 
     <aside id="noticeBar" class="priority-notice" hidden aria-label="Priority announcement"><div><strong id="priorityTitle">Kurta: ₹50 refunded · Bill &amp; shop address</strong><p id="priorityBody">The final kurta price was ₹250. A ₹50 refund has been paid to everyone who paid ₹300. The bill and shop address are available in the archive for everyone’s reference.</p></div><a class="text-link" href="#archive">View bill &amp; shop details →</a></aside>
 
-    <div class="community-intro"><div><span class="community-wordmark">SAI VISTA CULTURAL COMMITTEE</span><h2>Your community, in one place.</h2><p>Show up. Join in. Make memories.</p></div><nav class="community-jumps" aria-label="Community highlights"><a href="#marathonInterest"><span>01</span> What’s next <b aria-hidden="true">↗</b></a><a href="#navratriVideo"><span>02</span> Our memories <b aria-hidden="true">↗</b></a><a href="#accounts"><span>03</span> Community accounts <b aria-hidden="true">↗</b></a></nav></div>
+    <div class="community-intro"><div><span class="community-wordmark">SAI VISTA CULTURAL COMMITTEE</span><h2>Your community, in one place.</h2><p>Sai Vista Cultural Committee brings neighbours, families and guests together for community events, the Sai Vista Marathon, Ganesh Festival and Navratri celebrations. Browse upcoming events and public memories, or enter resident access for community accounts and private albums.</p></div><nav class="community-jumps" aria-label="Community highlights"><a href="#marathonInterest"><span>01</span> What’s next <b aria-hidden="true">↗</b></a><a href="#navratriVideo"><span>02</span> Our memories <b aria-hidden="true">↗</b></a><a href="#accounts"><span>03</span> Community accounts <b aria-hidden="true">↗</b></a></nav></div>
     <main id="mainContent" tabindex="-1">
         <section id="marathonInterest" class="section marathon-event" aria-labelledby="marathonTitle">
           <div class="marathon-visual"><img src="assets/marathon-2026-hero.webp" width="1170" height="700" alt="Sai Vista runners approaching the marathon arch at sunrise" fetchpriority="high"><div id="marathon3d" role="img" aria-label="3D illustration of Sai Vista runners starting on the society lawn, with balcony towers and START flags" aria-hidden="true"></div><button id="marathon3dPause" type="button" aria-pressed="false" hidden>Pause motion</button><span class="marathon-edition">THE COMMUNITY RUN · 2026</span><div class="marathon-scene-title" aria-hidden="true"><span>29 / 11 / 26</span><strong>Your society.<br>Your starting line.</strong></div><div class="marathon-visual-caption">One community.<br>Every stride counts.</div></div>
@@ -623,13 +638,14 @@ https://saivistaculturalcommittee.in
         <section class="section more-links"><h2>More from Sai Vista</h2><div><a href="#resident-businesses">Community businesses →</a><a href="#archive">Ganesh Festival 2026 Archival →</a><a href="#wallpapers">Bappa wallpapers →</a><a href="#suggestions">Suggestions →</a><a href="#contact">Contact coordinators →</a></div></section>
     </main>
 
+    <aside id="publicAdvertisement" class="section" aria-label="Advertisement" hidden><small>Advertisement</small></aside>
     <footer>
         <div class="footer-left">
             <strong>Sai Vista Community Celebrations 2026</strong>
             <span>© 2026 Sai Vista Cultural Committee</span>
             <span id="siteViewCounter" class="site-view-counter" aria-live="polite" hidden>Page views: —</span>
         </div>
-        <div class="footer-right">
+        <div class="footer-right"><a href="about.html">About</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <button id="residentLogin" type="button" class="btn btn-outline">Resident access</button>
             <a href="#contact">Contact Us</a>
             <span>Website managed by Paresh Kale · <a href="tel:+918149525915">81495 25915</a></span>
         </div>
@@ -678,7 +694,7 @@ https://saivistaculturalcommittee.in
         <div id="galleryAuth" class="gallery-auth-card"><h3>Your memories, shared privately.</h3><p>Enter the code sent to your email to unlock private community memories automatically. This browser remembers verification for 90 days, unless you sign out, change flat or clear browser data.</p><form id="galleryRequestForm"><label for="galleryEmail">Email address</label><input id="galleryEmail" type="email" name="email" autocomplete="email" maxlength="254" required><label for="galleryName">Your name</label><input id="galleryName" name="name" autocomplete="name" maxlength="80" required><label for="galleryFlat">Logged in flat</label><input id="galleryFlat" name="flat" placeholder="e.g. A-101" pattern="[A-Fa-f][ -]?(?:[1-9]|1[0-3])0[1-4]" maxlength="8" required title="Enter wing A–F and your flat, e.g. A-101"><p class="gallery-privacy">For security, the committee privately records your email, access attempts, photo and video requests, view mode, download requests, time and browser information for 90 days. Verified access is remembered on this browser. Photos may be cached here for up to seven days for faster repeat visits; sign out or choose “forget this device” on shared devices. Flat numbers are self-reported. IP addresses and hardware identifiers are not collected by this gallery.</p><label class="checkbox-row"><input id="galleryConsent" name="consent" type="checkbox" required><span>I agree to these private activity records and will use these community photos respectfully.</span></label><button class="btn btn-dark" type="submit">Email me a verification code</button></form></div>
         <form id="galleryOtpForm" class="gallery-auth-card" hidden><h3>Check your email</h3><p>Enter the six-digit code. It expires in 10 minutes. Check your spam folder too.</p><label for="galleryCode">Verification code</label><input id="galleryCode" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required><button class="btn btn-dark" type="submit">Verify email</button><button class="btn btn-outline" id="galleryResend" type="button" disabled>Resend code in 30s</button><button class="btn btn-outline" id="galleryOtherEmail" type="button">Use another email</button></form>
         <div id="galleryAlbum" hidden><div class="gallery-toolbar"><div role="group" aria-label="Photo layout"><button type="button" id="galleryModegrid" aria-pressed="true">Grid</button><button type="button" id="galleryModelist" aria-pressed="false">List</button></div><button type="button" id="gallerySaveLocal" aria-haspopup="dialog">Save for faster browsing</button><button type="button" id="galleryFavouritesButton" aria-expanded="false" aria-controls="galleryFavourites">♥ Favourites</button><button type="button" id="gallerySlideshow" aria-pressed="false">Start slideshow</button></div><form id="galleryGoForm" class="gallery-go-form"><label for="galleryGoPage">Go to page</label><input id="galleryGoPage" type="number" inputmode="numeric" min="1" step="1" value="1" required><span id="galleryPageCount"></span><button type="submit">Go</button></form><section id="galleryFavourites" class="gallery-favourites" hidden aria-label="Your saved favourites"><h3>Your favourites</h3><p>Saved on this browser. Open a favourite to view or download it.</p><div id="galleryFavouritesList"></div></section><div id="galleryGrid" class="private-gallery-grid" aria-label="Navratri photo thumbnails"></div><div id="galleryStage" hidden><div class="gallery-stage-controls"><button type="button" id="galleryBack">Back to album</button><button type="button" id="galleryPreviousPhoto" aria-label="Previous photo">← Previous</button><button type="button" id="galleryNextPhoto" aria-label="Next photo">Next →</button></div><div class="gallery-photo-frame"><img id="galleryPhoto" alt="Selected Navratri celebration photo" referrerpolicy="no-referrer"><span>Sai Vista Navratri 2026</span></div><div class="gallery-photo-actions"><span id="galleryPhotoLabel"></span><button type="button" id="galleryFavourite" class="btn btn-outline" aria-pressed="false">♡ Save favourite</button><button type="button" class="btn btn-dark" id="galleryDownload" disabled>Download watermarked photo</button></div><p class="interest-note">High-quality download up to 2,560 pixels. Download requests are recorded; the browser controls where the file is saved.</p></div><div class="gallery-pager"><button type="button" id="galleryPreviousPage">Previous page</button><span id="galleryPageLabel" aria-live="polite"></span><button type="button" id="galleryNextPage">Next page</button></div></div>
-        <p id="galleryStatus" role="status" aria-live="polite"></p><button id="galleryLogout" class="btn btn-outline" type="button" hidden>Sign out of photos</button>
+        <p id="galleryStatus" role="status" aria-live="polite"></p><button id="galleryLogout" class="btn btn-outline" type="button" hidden>Sign out of resident access</button>
       </div>
     </dialog>
     <dialog id="marathonEntryDialog" class="marathon-entry-dialog" aria-labelledby="marathonEntryTitle" aria-describedby="marathonEntryNotice"><div class="marathon-entry-heading"><div><span class="eyebrow">SAI VISTA MARATHON · 29 NOV</span><h2 id="marathonEntryTitle">Your starting line.</h2></div><button id="marathonEntryClose" type="button" aria-label="Close marathon entry form">×</button></div>
@@ -705,7 +721,8 @@ https://saivistaculturalcommittee.in
       <div class="day-dialog-copy"><p id="navratriDayDate"></p><h2 id="navratriDayTitle" tabindex="-1"></h2><p id="navratriDayColour"></p><p>Celebrate with your Sai Vista family. Wear a touch of the day’s colour and share your festival moments.</p><small>Devotional illustration</small><button id="continueNavratriDay" class="btn btn-dark" type="button">Continue to the celebration →</button></div>
     </dialog>
     <script src="resident-access-config.js"></script>
-    <script src="resident-access.js"></script>
+    <script src="protected-gallery-config.js?v=2"></script>
+    <script src="resident-access.js?v=4"></script>
     <script src="navratri-days.js"></script>
     <script src="navratri-songs-config.js"></script>
     <script src="dj-decks.js"></script>
@@ -730,10 +747,9 @@ https://saivistaculturalcommittee.in
     <script src="site-updates.js"></script>
     <script src="site-data.js?v=6"></script>
     <script src="event-registration-config.js"></script>
-    <script src="protected-gallery-config.js?v=2"></script>
     <script src="protected-gallery-cache.js?v=3"></script>
     <script src="protected-gallery-local.js?v=1"></script>
-    <script src="protected-gallery.js?v=8"></script>
+    <script src="protected-gallery.js?v=9"></script>
     <dialog id="videoInstagramHelp" aria-labelledby="videoInstagramTitle"><div class="video-share-heading"><h2 id="videoInstagramTitle">Share video</h2><button id="videoInstagramClose" type="button" title="Cancel preparation and close">Close</button></div><p>Share the 15-second clip as a video file. Choose your app in the device share sheet.</p><p id="videoShareFilename"></p><progress id="videoShareProgress" max="100" hidden aria-label="Preparing video for sharing"></progress><div class="video-file-share-actions"><button id="videoShareFile" type="button" disabled>Share video</button><a id="videoShareSave" href="assets/navratri-2026-glimpse.mp4" download="Sai-Vista-Navratri-2026-glimpse.mp4">Save clip · 1.3 MB</a><button id="videoShareRetry" type="button" hidden>Retry preparing clip</button></div><label for="videoShareLocalFile">Or choose a downloaded full video</label><input id="videoShareLocalFile" type="file" accept="video/mp4,video/webm,video/quicktime"><small>Download the full film using ↓ Download first. If your app rejects its size, attach the smaller Full HD copy from inside the app.</small><p id="videoInstagramStatus" role="status" aria-live="polite"></p></dialog>
     <script src="video-community.js?v=6" defer></script>
     <script src="video-sharing.js?v=1" defer></script>
@@ -751,12 +767,12 @@ https://saivistaculturalcommittee.in
     <script src="event-ux.js?v=7"></script>
     <script src="festival-experience.js?v=9"></script>
     <script src="event-registration.js?v=7"></script>
-    <script src="translations.js?v=8"></script>
+    <script src="translations.js?v=9"></script>
     <script src="ux-translations.js?v=8"></script>
     <script src="navratri-translations.js"></script>
-    <script src="script.js?v=27"></script>
+    <script src="script.js?v=28"></script>
     <script src="community-theme.js?v=1" defer></script>
     <script src="expense-model.js?v=13"></script>
-    <script src="expense-dashboard.js?v=17"></script>
+    <script src="expense-dashboard.js?v=18"></script>
 </body>
 </html>

@@ -21,8 +21,13 @@ if (typeof document !== 'undefined') (() => {
   const gate = document.getElementById('residentGate');
   const form = document.getElementById('residentGateForm');
   const flatInput = document.getElementById('residentFlat');
-  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is remembered on this browser and is not sent to a logging service. Your entered flat is self-reported, not verified residency.';
-  else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your entered flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Your entered flat is self-reported, not verified residency.';
+  if (!config.endpoint) document.getElementById('residentLoggingNotice').textContent = 'Visit logging is not connected yet. Your flat is remembered on this browser and is not sent to a logging service. Resident access also checks your registered flat/email and a verification code.';
+  else if (!config.capturesIp) document.getElementById('residentLoggingNotice').textContent = 'The committee records your entered flat, sections viewed, selected actions, date/time and browser/device details in private records kept for 90 days. IP addresses are not collected with this connection. Resident access also checks your registered flat/email and a verification code.';
+  window.SaiVistaGuest = true;
+  const emailInput = document.getElementById('residentEmail');
+  const otpForm = document.getElementById('residentOtpForm');
+  const status = document.getElementById('residentGateStatus');
+  let challenge = '', pendingFlat = '', requestVersion = 0, retryAt = 0;
   let flat, queue = [], sending = false;
   const sessionId = crypto.randomUUID();
   const device = { userAgent: navigator.userAgent.slice(0, 500), language: navigator.language, viewport: `${innerWidth}×${innerHeight}`, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone };
@@ -47,14 +52,57 @@ if (typeof document !== 'undefined') (() => {
     document.getElementById('residentFlatPreview').textContent = ResidentAccess.parse(flatInput.value) || '';
   });
   gate.addEventListener('cancel', event => event.preventDefault());
-  gate.addEventListener('close', () => { if (!flat) gate.showModal(); });
-  form.addEventListener('submit', event => {
-    event.preventDefault(); const value = ResidentAccess.parse(flatInput.value);
-    if (!value) { document.getElementById('residentGateStatus').textContent = 'Enter your flat like A-101 or F-1304. Wings A–F, floors 1–13, flats 01–04.'; flatInput.setAttribute('aria-invalid', 'true'); flatInput.focus(); return; }
-    enter(value);
+  document.getElementById('residentLogin').onclick = () => gate.showModal();
+  document.getElementById('residentGuest').onclick = () => {
+    requestVersion++; gate.close();
+  };
+  const authEndpoint = () => window.SaiVistaGalleryConfig?.endpoint;
+  async function authenticate(action, fields) {
+    if(!authEndpoint())throw Error('Resident verification is being connected. Please continue as guest for now.');
+    const body=new URLSearchParams({payload:JSON.stringify({action,...fields,requestId:crypto.randomUUID(),device})});
+    const response=await fetch(authEndpoint(),{method:'POST',body,cache:'no-store',signal:AbortSignal.timeout(30000)});
+    const result=await response.json();
+    if(!response.ok||result.ok!==true)throw Error(result.error||'Resident verification is unavailable. Please try again or continue as guest.');
+    return result;
+  }
+  function saveSession(result) {
+    if(result.residentVerified!==true||!ResidentAccess.parse(result.flat)||typeof result.token!=='string'||!result.token||typeof result.email!=='string'||!Number.isFinite(result.expires)||result.expires<=Date.now())throw Error('Verify your registered resident email before continuing.');
+    const saved={token:result.token,email:result.email,flat:result.flat,expires:result.expires};
+    window.SaiVistaResidentSession=saved;
+    try { storage.setItem('saiVistaResidentSession',JSON.stringify(saved)); storage.setItem('saiVistaPrivateGallery',JSON.stringify(saved)); } catch (_) { const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent='Verified for this visit. This browser cannot remember access; verification will be needed next time.';document.querySelector('footer').append(notice); }
+    enter(result.flat);
+  }
+  async function sendCode() {
+    const value=ResidentAccess.parse(flatInput.value);
+    if(!value){status.textContent='Enter your flat like A-101 or F-1304.';flatInput.focus();return;}
+    if(!emailInput.reportValidity())return;
+    if(Date.now()<retryAt){status.textContent='Wait 30 seconds before requesting another code.';return;}
+    const version=++requestVersion;
+    form.querySelector('button[type="submit"]').disabled=true;
+    status.textContent='Checking your registered email and sending a code…';
+    try {
+      const result=await authenticate('gallery-resident-otp',{flat:value,email:emailInput.value.trim(),consent:true});
+      if(version!==requestVersion)return;
+      if(typeof result.challenge!=='string'||!result.challenge)throw Error('Resident verification is unavailable. Please try again.');
+      pendingFlat=value;challenge=result.challenge;retryAt=Date.now()+30000;
+      form.hidden=true;otpForm.hidden=false;status.textContent='Enter the six-digit code sent to your registered email. It expires in 10 minutes.';
+      document.getElementById('residentCode').focus();
+    } catch(error){if(version===requestVersion)status.textContent=error.message;}
+    finally{form.querySelector('button[type="submit"]').disabled=false;}
+  }
+  form.addEventListener('submit',event=>{event.preventDefault();sendCode();});
+  document.getElementById('residentResend').onclick=sendCode;
+  document.getElementById('residentOtherEmail').onclick=()=>{requestVersion++;form.hidden=false;otpForm.hidden=true;challenge='';status.textContent='';emailInput.focus();};
+  otpForm.addEventListener('submit',async event=>{
+    event.preventDefault();if(!otpForm.reportValidity())return;
+    const version=++requestVersion,button=otpForm.querySelector('button[type="submit"]');button.disabled=true;status.textContent='Verifying your code…';
+    try{const result=await authenticate('gallery-verify',{challenge,code:document.getElementById('residentCode').value,flat:pendingFlat});if(version===requestVersion){if(result.flat!==pendingFlat)throw Error('Verify your registered flat again.');saveSession(result);}}
+    catch(error){if(version===requestVersion)status.textContent=error.message;}
+    finally{button.disabled=false;}
   });
   function enter(value) {
-    flat = value; ResidentAccess.remember(storage, value); window.SaiVistaResidentReady = true;
+    status.textContent='';
+    flat = value; window.SaiVistaGuest = false; document.documentElement.classList.remove('guest-mode'); ResidentAccess.remember(storage, value); window.SaiVistaResidentReady = true;
     document.documentElement.classList.remove('resident-locked'); gate.close();
     record('entry', 'site'); flush();
     // Log only meaningful named site sections, never form contents, captions or external URLs.
@@ -82,9 +130,29 @@ if (typeof document !== 'undefined') (() => {
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
   setInterval(flush, 10000);
   const change = document.createElement('button'); change.type = 'button'; change.textContent = 'Change flat / forget this device'; change.className = 'btn btn-outline';
-  change.onclick = () => { try { storage.removeItem('saiVistaResidentFlat'); storage.removeItem('saiVistaPrivateGallery'); storage.removeItem('saiVistaGalleryCollection'); } catch (_) {} Promise.resolve(window.SaiVistaGalleryCache?.clear()).finally(()=>location.reload()); };
+  change.onclick = () => { try { storage.removeItem('saiVistaResidentSession'); storage.removeItem('saiVistaResidentFlat'); storage.removeItem('saiVistaPrivateGallery'); storage.removeItem('saiVistaGalleryCollection'); } catch (_) {} Promise.resolve(window.SaiVistaGalleryCache?.clear()).finally(()=>location.reload()); };
   document.querySelector('footer').append(change);
-  const remembered = ResidentAccess.remembered(storage);
-  if (remembered) enter(remembered); else gate.showModal();
-  document.addEventListener('DOMContentLoaded', () => setTimeout(() => { if (!flat) flatInput.focus(); }, 0));
+  document.addEventListener('click', event => {
+    if (!window.SaiVistaGuest) return;
+    const target = event.target.closest('[data-resident-only], #openPrivateGallery, [data-video-action="optimised"], [data-video-action="original"], a[href="#accounts"],a[href="#paymentDashboard"],a[href="#expenseDashboard"], a[href="#navratriPhotoGallery"], a[href="#communityPhotos"]');
+    if (target) { event.preventDefault(); event.stopImmediatePropagation(); }
+  }, true);
+  gate.showModal();
+  let saved;
+  try { saved=JSON.parse(storage.getItem('saiVistaResidentSession')||'null'); } catch (_) {}
+  if(saved&&ResidentAccess.parse(saved.flat)&&typeof saved.token==='string'&&saved.expires>Date.now()){
+    const version=requestVersion;status.textContent='Checking your remembered resident access…';
+    authenticate('gallery-resident-status',{flat:saved.flat,token:saved.token}).then(result=>{
+      if(version===requestVersion){if(result.flat!==saved.flat||result.email!==saved.email)throw Error('Verify your registered resident email again.');saveSession({...result,token:saved.token});}
+    }).catch(error=>{if(version===requestVersion){status.textContent=error.message;try{storage.removeItem('saiVistaResidentSession');}catch(_) {}}});
+  }
+  window.addEventListener('sai-vista-private-signed-out',()=>{
+    if(!window.SaiVistaResidentSession)return;
+    requestVersion++;window.SaiVistaResidentSession=null;window.SaiVistaResidentReady=false;window.SaiVistaGuest=true;flat=null;queue=[];
+    document.documentElement.classList.add('guest-mode');form.hidden=false;otpForm.hidden=true;challenge='';
+    document.getElementById('residentCode').value='';
+    try{storage.removeItem('saiVistaResidentSession');storage.removeItem('saiVistaResidentFlat');}catch(_){}
+  });
+  window.addEventListener('storage',event=>{if(event.key===null||event.key==='saiVistaResidentSession'||event.key==='saiVistaResidentFlat')location.reload();});
+  document.addEventListener('DOMContentLoaded', () => setTimeout(() => { if (gate.open && !flat) flatInput.focus(); }, 0));
 })();

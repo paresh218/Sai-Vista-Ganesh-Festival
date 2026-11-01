@@ -1,5 +1,7 @@
 # Verified-email Navratri gallery
 
+**Resident verification update:** When `RESIDENT_REFERENCE_BOOK_ID` is configured, the existing approved email/flat mapping and private owner-reference checks are mandatory, including on older gallery OTP/session routes. The main resident gate requires this configuration. See [RESIDENT_VERIFICATION_SETUP.md](RESIDENT_VERIFICATION_SETUP.md) before deploying; the legacy automatic gallery-registration behavior described below applies only without that property.
+
 The gallery runs in its own **Sai Vista Private Photo Gallery** Apps Script project, owned and deployed by **saivistaculturalcommittee@gmail.com**. Registration forms retain their separate endpoint. The sender guard fails closed if someone deploys the gallery under another account.
 
 ## Visitor flow

@@ -46,7 +46,7 @@ function segregateGalleryActivity(){
  }finally{lock.releaseLock();}}
  console.log(complete?'Daily activity migration is complete. Original logs retained.':'Migration paused safely. Run segregateGalleryActivity again to continue.');
 }
-function galleryAccess(email) {return galleryRows('Gallery access').find(row=>String(row[0]).toLowerCase()===email);}
+function galleryAccess(email) {return galleryRows('Gallery access').find(row=>GalleryPolicy.email(row[0])===email);}
 function galleryAuthFailure(message) {const error=Error(message);error.reauthenticate=true;throw error;}
 function gallerySession(d, approved=true) {
   if(typeof d.token!=='string'||d.token.length>100)galleryAuthFailure('Sign in to the gallery again.');
@@ -57,6 +57,7 @@ function gallerySession(d, approved=true) {
   const row=galleryAccess(session.email),status=row?String(row[3]).trim().toUpperCase():'PENDING';
   if(session.flat!==d.flat)galleryAuthFailure('Sign in to verify this flat again.');
   if(status==='REVOKED'||status==='DENIED')galleryAuthFailure('Gallery access is not approved. Please contact the committee.');
+  if(session.residentVerified||galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID'))residentDirectory(session.email,session.flat);
   if(approved&&status!=='APPROVED')galleryAuthFailure('Verify your email to unlock the photos.');
   return {...session,status};
 }
@@ -115,8 +116,36 @@ function indexPreparedGallery() {
   if(rows.length)sheet.getRange(2,6,rows.length,3).setValues(rows.map(row=>[320,1600,2560].map(size=>prepared[row[1]+'.'+size]||'')));
   const cache=CacheService.getScriptCache();cache.remove('gallery.photos.v1');cache.remove('gallery.photos.v2');
 }
+// Email/flat bindings come from existing private gallery records; names are cross-checked privately.
+function residentDirectory(email,flat) {
+  const profile=galleryAccess(email);
+  if(!profile||String(profile[2]).trim().toUpperCase()!==flat||String(profile[3]).trim().toUpperCase()!=='APPROVED')throw Error('Please use the email registered for your flat, or contact the committee.');
+  if(String(profile[6]||'').trim().toUpperCase()==='REVOKED')throw Error('Please contact the committee to restore resident access.');
+  const id=galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID');
+  if(!id)throw Error('Please contact the committee to connect resident verification.');
+  const sheet=SpreadsheetApp.openById(id).getSheetById(0);
+  if(!sheet||sheet.getLastRow()<2)throw Error('Please contact the committee to check the resident reference.');
+  const headers=sheet.getRange(1,1,1,5).getValues()[0].map(value=>String(value).trim());
+  if(headers[1]!=='Owners Name'||headers[3]!=='Wing'||headers[4]!=='Flat Number')throw Error('Please contact the committee to check the resident reference columns.');
+  const rows=sheet.getRange(2,2,sheet.getLastRow()-1,4).getValues();
+  const owners=rows.filter(row=>String(row[2]).trim().toUpperCase()+'-'+String(row[3]).trim()===flat);
+  if(!owners.length)throw Error('Please contact the committee to confirm your flat in the resident reference.');
+  // Partial and family names are supporting evidence only; never match a different flat by name.
+  const tokens=value=>String(value||'').normalize('NFKD').toLowerCase().replace(/[^\p{L}\p{N} ]/gu,' ').split(/\s+/).filter(word=>word.length>=3&&!['mrs','miss','shri','smt','mr','dr'].includes(word));
+  const supplied=tokens(profile[1]);
+  const nameMatch=owners.some(row=>tokens(row[0]).some(word=>supplied.includes(word)));
+  if(!nameMatch&&String(profile[6]||'').trim().toUpperCase()!=='APPROVED')throw Error('Please contact the committee to confirm a partial or family name for this email and flat.');
+  return profile;
+}
+function residentOtp(d) {
+  const email=GalleryPolicy.email(d.email);
+  if(!/^[A-F]-(?:[1-9]|1[0-3])0[1-4]$/.test(d.flat||'')||email.length>254||!/^\S+@\S+\.\S+$/.test(email))throw Error('Enter your registered email and a valid flat.');
+  const profile=residentDirectory(email,d.flat);
+  return galleryOtp({...d,email,name:String(profile[1]),consent:d.consent,action:'gallery-resident-otp'});
+}
 function galleryPrepareOtp(d) {
   GalleryPolicy.validateProfile(d);
+  if(galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID'))residentDirectory(GalleryPolicy.email(d.email),d.flat);
   if(Session.getEffectiveUser().getEmail()!=='saivistaculturalcommittee@gmail.com')throw Error('Email verification is not connected to the committee sender yet.');
   const email=GalleryPolicy.email(d.email),props=galleryProps(),lock=LockService.getScriptLock();
   if(!lock.tryLock(10000))throw Error('Please try again shortly.');
@@ -131,15 +160,16 @@ function galleryPrepareOtp(d) {
     props.setProperty('gallery.mailBudget',JSON.stringify({started:global.started&&now-global.started<86400000?global.started:now,count:global.started&&now-global.started<86400000?global.count+1:1}));
     const code=String(parseInt(galleryHash(galleryRandom()).slice(0,8),16)%1000000).padStart(6,'0'),challenge=galleryRandom();
     const latestKey='gallery.latest.'+galleryId(email),previous=props.getProperty(latestKey);if(previous)props.deleteProperty('gallery.otp.'+previous);props.setProperty(latestKey,galleryHash(challenge));
-    props.setProperty('gallery.otp.'+galleryHash(challenge),JSON.stringify({email,name:d.name.trim(),flat:d.flat,hash:galleryId(challenge+'|'+code),expires:now+600000,attempts:0}));
+    props.setProperty('gallery.otp.'+galleryHash(challenge),JSON.stringify({email,name:d.name.trim(),flat:d.flat,residentVerified:d.action==='gallery-resident-otp',hash:galleryId(challenge+'|'+code),expires:now+600000,attempts:0}));
     return {email,code,challenge};
   } finally {lock.releaseLock();}
 }
 function galleryOtp(d) {
   const {email,code,challenge}=galleryPrepareOtp(d);
   galleryAudit('otp_requested',email,'',d);
-  const body='Your Sai Vista Navratri 2026 gallery verification code is '+code+'.\n\nIt expires in 10 minutes. Do not share it. Enter this code in the gallery to unlock the photos. If you did not request this code, ignore this email.';
-  const mime='From: Sai Vista Cultural Committee <saivistaculturalcommittee@gmail.com>\r\nTo: '+email+'\r\nSubject: Sai Vista Navratri photos - your verification code\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n'+body;
+  const resident=d.action==='gallery-resident-otp';
+  const body='Your Sai Vista '+(resident?'resident access':'Navratri 2026 gallery')+' verification code is '+code+'.\n\nIt expires in 10 minutes. Do not share it. '+(resident?'Enter this code on the Sai Vista website to verify your registered flat and email.':'Enter this code in the gallery to unlock the photos.')+' If you did not request this code, ignore this email.';
+  const mime='From: Sai Vista Cultural Committee <saivistaculturalcommittee@gmail.com>\r\nTo: '+email+'\r\nSubject: Sai Vista '+(resident?'resident access':'Navratri photos')+' - your verification code\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n'+body;
   try{const sent=Gmail.Users.Messages.send({raw:Utilities.base64EncodeWebSafe(mime,Utilities.Charset.UTF_8)},'me');if(!sent.id)throw Error('No message reference');}
   catch(error){console.error('Gallery OTP send failed.');throw Error('Email verification could not send the code. Please retry after 30 seconds. Google may have reached its sending limit.');}
   return {ok:true,challenge,retryAfter:30,message:'Check your email for a six-digit code. It expires in 10 minutes.'};
@@ -155,14 +185,15 @@ function galleryVerify(d) {
     otp.attempts++;props.setProperty(key,JSON.stringify(otp));
     if(otp.hash!==galleryId(d.challenge+'|'+d.code)){galleryAudit('otp_failed',otp.email,'',d,true);throw Error('The code is incorrect. Please check your email.');}
     props.deleteProperty(key);
+    if(otp.residentVerified||galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID'))residentDirectory(otp.email,otp.flat);
     let row=galleryAccess(otp.email);
     if(row&&['DENIED','REVOKED'].includes(String(row[3]).toUpperCase()))throw Error('Gallery access is blocked. Please contact the committee.');
     if(!row){gallerySheet('Gallery access').appendRow([otp.email,gallerySafe(otp.name),otp.flat,'APPROVED',new Date(),'Automatic: email OTP verified']);}
-    else {const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,2,1,3).setValues([[gallerySafe(otp.name),otp.flat,'APPROVED']]);}
+    else {const rows=galleryRows('Gallery access'),index=rows.findIndex(r=>String(r[0]).toLowerCase()===otp.email);gallerySheet('Gallery access').getRange(index+2,2,1,3).setValues([[gallerySafe(galleryProps().getProperty('RESIDENT_REFERENCE_BOOK_ID')?row[1]:otp.name),otp.flat,'APPROVED']]);}
     const token=galleryRandom(),expires=Date.now()+90*86400000;
-    props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires}));
+    props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify({email:otp.email,flat:otp.flat,expires,residentVerified:otp.residentVerified===true}));
     galleryAudit('email_verified',otp.email,'',d,true);
-    return {ok:true,token,email:otp.email,expires,flat:otp.flat,status:'APPROVED'};
+    return {ok:true,token,email:otp.email,expires,flat:otp.flat,status:'APPROVED',residentVerified:otp.residentVerified===true};
   } finally {lock.releaseLock();}
 }
 function galleryFetchAll(requests){try{return UrlFetchApp.fetchAll(requests);}catch(error){if(/too many times.*urlfetch/i.test(error.message))throw Error('The photo service has reached its daily limit. Prepared photos remain available; try this photo later.');throw error;}}
@@ -199,10 +230,12 @@ function galleryImages(rows, size, partial=false) {
 function galleryImage(row, size) {return galleryImages([row],size)[0];}
 function galleryHandle(d) {
   try {
+    if(d.action==='gallery-resident-otp')return residentOtp(d);
     if(d.action==='gallery-video-community')return videoCommunity();
     if(d.action==='gallery-otp')return galleryOtp(d);
     if(d.action==='gallery-verify')return galleryVerify(d);
     const session=gallerySession(d,d.action!=='gallery-status'&&d.action!=='gallery-logout');
+    if(d.action==='gallery-resident-status'){if(session.residentVerified!==true)galleryAuthFailure('Sign in to verify your resident email again.');return {ok:true,email:session.email,flat:session.flat,expires:session.expires,residentVerified:true};}
     if(d.action==='gallery-video-reaction'){const sheet=galleryBook().getSheetByName('Video likes');return {ok:true,liked:sheet?videoCommunityRows(sheet).some(r=>r[0]===galleryId('video-community|'+session.email)&&r[1]===true):false};}
     if(['gallery-video-like','gallery-video-comment'].includes(d.action))return videoCommunityWrite(d,session);
     if(d.action==='gallery-status')return {ok:true,email:session.email,status:session.status,flat:session.flat,expires:session.expires};

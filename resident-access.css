@@ -1,5 +1,5 @@
 #residentGate{box-sizing:border-box;width:min(480px,calc(100vw - 24px));max-height:calc(100dvh - 24px);margin:auto;overflow:auto;padding:28px;border:1px solid #d8b98b;border-radius:22px;background:#fffaf5;color:#352033}
-#residentGate::backdrop{background:#241525}#residentGate h1{font-size:1.7rem;line-height:1.25;margin:12px 0}#residentGate p{font-size:.88rem;line-height:1.6}
+#residentGate::backdrop{background:#241525}#residentGate h2{font-size:1.7rem;line-height:1.25;margin:12px 0}#residentGate p{font-size:.88rem;line-height:1.6}
 #residentGateForm{display:grid;gap:14px}#residentGateForm label{display:grid;gap:6px;font-size:.9rem;font-weight:500}#residentGate input[type="text"]{width:100%;min-height:46px;padding:10px;font:inherit;font-size:16px;border:1px solid #bca3b4;border-radius:10px;background:white;color:#352033}
 #residentGate .resident-confirm{display:flex;align-items:flex-start;gap:10px;font-size:.85rem}#residentConfirm{width:20px;height:20px;flex-shrink:0}#residentGate button{padding:14px;border:0;border-radius:24px;background:#641847;color:white;font:inherit;font-weight:600;cursor:pointer}
 .resident-privacy{padding:14px;background:#f2eaf0;border-radius:12px}.resident-privacy p{margin:8px 0 0}#residentFlatPreview{margin:0;font-weight:600}#residentGateStatus:empty{display:none}#residentGate :focus-visible{outline:3px solid #a56a10;outline-offset:3px}
@@ -8,8 +8,16 @@
 #residentFlat{text-transform:uppercase;letter-spacing:.06em}#residentFlatHelp{margin:0;color:#685464}#residentFlatPreview:empty{display:none}#residentGateStatus{color:#9a1839}#residentGate .resident-confirm{margin:0;font-size:.78rem}
 
 #residentGate{border-color:var(--day-accent,#641847);background:#fffdfb;box-shadow:0 24px 80px #24152525;padding:clamp(20px,5vw,32px)}
-#residentGate h1{color:var(--day-accent,#641847);letter-spacing:-.03em}
+#residentGate h2{color:var(--day-accent,#641847);letter-spacing:-.03em}
 #residentGate input[type="text"]{box-sizing:border-box;font-size:20px;min-height:54px;border-radius:12px}
 #residentGate button{min-height:50px;border-radius:12px;background:var(--day-accent,#641847)}
 #residentGate .resident-privacy{background:var(--day-pale,#f8edf4)}
 #residentGateForm{gap:12px}#residentGate .resident-confirm{color:#655b63;line-height:1.6}
+
+/* Guest visibility is a browsing preference, not proof of residency. Private media still requires email verification. */
+html.guest-mode :is(#accounts,#navratriPhotoGallery,#communityPhotos,#privateGallery,#galleryLocalSave,#videoDownloadState,.video-download-control,[data-resident-only],a[href="#accounts"],a[href="#paymentDashboard"],a[href="#expenseDashboard"],a[href="#navratriPhotoGallery"],a[href="#communityPhotos"]){display:none!important}
+#residentGuest{width:100%;margin-top:12px}footer a{margin-inline:6px}
+
+html:not(.guest-mode) #residentLogin{display:none}
+
+#residentGate input[type="email"],#residentCode{box-sizing:border-box;width:100%;min-height:48px;padding:10px;font:inherit;font-size:16px;border:1px solid #bca3b4;border-radius:12px;background:white;color:#352033}#residentOtpForm:not([hidden]){display:grid;gap:12px}#residentGate [hidden]{display:none!important}
