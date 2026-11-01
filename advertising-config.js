@@ -2,5 +2,5 @@
 window.SaiVistaAdvertising = {
   enabled: false,
   publisherId: 'ca-pub-4904533433490567',
-  slotId: ''
+  slotId: '9499978194'
 };

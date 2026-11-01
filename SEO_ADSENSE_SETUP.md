@@ -11,7 +11,7 @@ This release is published through the repository’s GitHub Pages deployment. No
 
 ## Publisher connection
 
-Committee account `saivistaculturalcommittee@gmail.com` now has publisher ID `pub-4904533433490567`. Google supplied the ownership meta tag and ads.txt record, which are included in this release. Ads remain disabled pending Google approval, account information and consent setup. No earnings are active merely because the account exists.
+Committee account `saivistaculturalcommittee@gmail.com` now has publisher ID `pub-4904533433490567`. Google supplied the ownership meta tag and ads.txt record, which are included in this release. Google verified site ownership and accepted the review request on 1 November 2026; status: Getting ready / Review requested. Responsive display unit “Sai Vista — Public footer” has slot ID `9499978194`, now configured. Ads remain disabled pending Google approval, account information and consent setup. Auto ads remains OFF. No earnings are active merely because the account exists.
 
 ## AdSense application (owner action)
 
