@@ -51,5 +51,6 @@ ctx.Utilities.base64Decode = () => ({ length: 25000001 });
 assert.equal(ctx.mediaSubmit({ ...video, requestId: '42345678-1234-1234-1234-123456789012' }).ok, false);
 ctx.Utilities.base64Decode = () => ({ length: 25000000, slice: () => [102, 116, 121, 112] });
 assert.equal(ctx.mediaSubmit({ ...video, requestId: '42345678-1234-1234-1234-123456789012' }).ok, true);
-assert.equal(ctx.doGet({ parameter: { action: 'media' } }).mediaVersion, 2);
+assert.equal(ctx.doGet({ parameter: { action: 'media' } }).ok,false);
+assert.equal(ctx.photoRead({ parameter: { action: 'media' } }).mediaVersion, 2);
 console.log('PASS: Reel validation/canonicalization, duplicate prevention, consent, private pending entries, approval, video signatures, 25 MB boundary, and version discovery.');

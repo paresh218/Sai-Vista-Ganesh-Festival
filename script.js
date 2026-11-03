@@ -421,7 +421,7 @@ function initPaymentDashboard() {
   const dashboard = document.getElementById("paymentDashboard");
   if (!dashboard) return;
   if (window.SaiVistaGuest === true) { window.addEventListener("sai-vista-resident-ready", initPaymentDashboard, { once: true }); return; }
-  fetch(PAYMENT_DASHBOARD_URL + "?action=payments", { cache: "no-store" })
+  window.SaiVistaFinanceRequest(PAYMENT_DASHBOARD_URL + "?action=payments", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error("Could not load payment data");
       return response.json();

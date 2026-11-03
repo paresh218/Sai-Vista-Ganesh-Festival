@@ -20,6 +20,7 @@ assert.equal(created, 0);
 assert.equal(submit(valid).ok, true);
 assert.equal(created, 1);
 assert.equal(caption, valid.caption);
-assert.equal(context.doGet().photos.length, 0);
+assert.equal(context.doGet().ok,false);
+assert.equal(context.photoRead().photos.length, 0);
 assert.ok(released > 0);
 console.log('PASS: shared photo service rejects missing consent, invalid JPEG and invalid captions; valid upload reaches storage; empty gallery is supported.');

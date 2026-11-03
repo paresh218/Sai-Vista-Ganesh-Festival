@@ -2,7 +2,11 @@
 // This endpoint exposes only the five expense fields and Total Collection.
 const EXPENSE_YEAR = 2026; // Used only for text dates that omit the year.
 function doGet() {
+  return expenseJson({ok:false,error:'Only verified residents can view restricted data.'});
+}
+function doPost(event) {
   try {
+    financeResidentRequest(event);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     if (!ss) throw new Error('Bind this script to the accounts spreadsheet.');
     const wanted = ['festival', 'expense', 'item', 'amount', 'paid on'];

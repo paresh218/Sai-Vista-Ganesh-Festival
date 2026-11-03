@@ -14,7 +14,7 @@
     const el = document.createElement(tag); if (text) el.textContent = text; if (className) el.className = className; return el;
   }
   async function request(options, url = endpoint) {
-    const response = await fetch(url, { ...options, signal: AbortSignal.timeout(180000) });
+    const response = await (options.method==='POST'?fetch:window.SaiVistaFinanceRequest)(url, { ...options, signal: AbortSignal.timeout(180000) });
     if (!response.ok) throw Error('The media service could not be reached. Please try again.');
     const result = await response.json();
     if (!result.ok) throw Error(result.error || 'Submission failed. Please try again.');
@@ -63,6 +63,7 @@
     }
   }
   async function refresh() {
+    if(window.SaiVistaResidentSession?.residentVerified!==true)return;
     if (!endpoint) { status.textContent = 'Community videos are coming soon.'; return; }
     refreshButton.disabled = true;
     try {
@@ -101,5 +102,6 @@
     });
   }
   refreshButton.onclick = refresh;
+  window.addEventListener('sai-vista-resident-ready',refresh);
   refresh();
 })();

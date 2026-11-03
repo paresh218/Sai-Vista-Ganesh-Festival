@@ -38,7 +38,7 @@
     busy=true;render();
     const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),20000);
     try {
-      const response=await fetch(`${URL}?action=expenses&_=${Date.now()}`,{cache:'no-store',signal:controller.signal});
+      const response=await window.SaiVistaFinanceRequest(`${URL}?action=expenses&_=${Date.now()}`,{cache:'no-store',signal:controller.signal});
       if(!response.ok) throw Error('Expense service failed');
       const next=ExpenseModel.parse(await response.json());
       data=next;updated=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})+' IST';failure='';

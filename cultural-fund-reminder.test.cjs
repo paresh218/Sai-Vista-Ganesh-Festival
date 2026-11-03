@@ -18,7 +18,7 @@ function page(t,paid='No',setup=()=>{}) {
   w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
   w.ResidentAccess=ResidentAccess;w.FestivalRegistration={collectionUrl:'https://example.org/payments'};w.SaiVistaResidentReady=true;w.localStorage.setItem('saiVistaResidentFlat','B-902');
   w.fetch=async(_url,options)=>{calls++;assert.equal(options.cache,'no-store');if(fail)throw Error('offline');return {ok:true,json:async()=>reply};};
-  setup(w);w.eval(fs.readFileSync('cultural-fund-reminder.js','utf8'));
+  w.SaiVistaResidentSession={residentVerified:true,token:'test-resident-session',flat:'B-902'};w.eval(fs.readFileSync('finance-access.js','utf8'));setup(w);w.eval(fs.readFileSync('cultural-fund-reminder.js','utf8'));
   const settle=async()=>{for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));};
   const run=async ms=>{for(const timer of timers.filter(x=>x.active&&x.ms===ms)){if(!timer.interval)timer.active=false;await timer.fn();}await settle();};
   return {w,d,dialog:d.getElementById('culturalFundReminder'),run,settle,calls:()=>calls,setReply:v=>reply=v,offline:()=>fail=true,advance:ms=>now+=ms};

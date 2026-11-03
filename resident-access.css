@@ -14,10 +14,12 @@
 #residentGate .resident-privacy{background:var(--day-pale,#f8edf4)}
 #residentGateForm{gap:12px}#residentGate .resident-confirm{color:#655b63;line-height:1.6}
 
-/* Guest visibility is a browsing preference, not proof of residency. Private media still requires email verification. */
+/* Signed-in visitors remain public-only. The backend also checks residency before returning private data. */
 html.guest-mode :is(#accounts,#navratriPhotoGallery,#communityPhotos,#privateGallery,#galleryLocalSave,#videoDownloadState,.video-download-control,[data-resident-only],a[href="#accounts"],a[href="#paymentDashboard"],a[href="#expenseDashboard"],a[href="#navratriPhotoGallery"],a[href="#communityPhotos"]){display:none!important}
-#residentGuest{width:100%;margin-top:12px}footer a{margin-inline:6px}
+footer a{margin-inline:6px}
 
 html:not(.guest-mode) #residentLogin{display:none}
 
 #residentGate input[type="email"],#residentCode{box-sizing:border-box;width:100%;min-height:48px;padding:10px;font:inherit;font-size:16px;border:1px solid #bca3b4;border-radius:12px;background:white;color:#352033}#residentOtpForm:not([hidden]){display:grid;gap:12px}#residentGate [hidden]{display:none!important}
+#residentAccessBanner:not([hidden]){padding:12px 24px;background:var(--day-pale,#f8edf4);color:#352033;font-size:14px;line-height:1.6;text-align:center}#residentAccessNotice{margin:0}#residentReviewCheck{margin-top:8px;min-height:44px}
+#residentSocialMount{max-width:100%;min-width:0;margin:16px 0}#residentSocialBack,#residentEmailFallback{width:100%;margin-top:12px}

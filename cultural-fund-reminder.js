@@ -71,7 +71,7 @@ if (typeof document !== 'undefined') (() => {
     checking = true; state = 'unknown';
     const requestedFlat = flat(); currentFlat = requestedFlat;
     try {
-      const response = await fetch(FestivalRegistration.collectionUrl, {cache:'no-store', signal:AbortSignal.timeout(15000)});
+      const response = await window.SaiVistaFinanceRequest(FestivalRegistration.collectionUrl, {cache:'no-store', signal:AbortSignal.timeout(15000)});
       if (!response.ok) throw Error('Payment check unavailable');
       const payload = await response.json();
       if (flat() === requestedFlat) state = CulturalFundReminder.status(payload, requestedFlat);

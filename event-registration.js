@@ -161,7 +161,7 @@
           fundDescription.textContent="Please wait while we verify your household’s payment. This may take a few seconds.";
           fundDialog.setAttribute("aria-busy","true");fundDialog.showModal();
           try {
-            const response=await fetch(M.collectionUrl,{cache:"no-store",signal:AbortSignal.timeout(45000)});
+            const response=await window.SaiVistaFinanceRequest(M.collectionUrl,{cache:"no-store",signal:AbortSignal.timeout(45000)});
             if(!response.ok)throw Error("Unavailable");
             const result=M.culturalFundStatus(await response.json(),wing.value,flat.value);
             if(version!==fundCheckVersion||current!=="funfair"||!dialog.open)return;
@@ -254,7 +254,7 @@
       pending=true;submit.disabled=true;status.textContent="Saving your registration…";
       for(const node of form.elements)node.disabled=true;
       try {
-        const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({payload:JSON.stringify(data)}),signal:AbortSignal.timeout(60000)});
+        const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({payload:JSON.stringify({...data,...(current==='funfair'?{residentToken:window.SaiVistaResidentSession?.token}:{})})}),signal:AbortSignal.timeout(60000)});
         const result=await response.json();
         if(!response.ok||result.status!=="success"||result.registrationId!==requestId)throw Error(result.message||"Registration could not be confirmed. Retry with the same details.");
         const recipient=current==="blood"?"Sameer Gandhi":current==="funfair"?"Neeraj Upadhyay":"Priyank";

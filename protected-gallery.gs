@@ -54,6 +54,14 @@ function gallerySession(d, approved=true) {
   if(!raw)galleryAuthFailure('Sign in to the gallery again.');
   const session=JSON.parse(raw);
   if(session.expires<=Date.now()){galleryProps().deleteProperty(key);galleryAuthFailure('Your gallery session expired. Sign in again.');}
+  if(session.flat!==d.flat)galleryAuthFailure('Sign in to verify this flat again.');
+  if(session.provider==='clerk')residentClerkSession(session);
+  if(session.provider==='clerk'){
+    const verified=!!session.flat&&residentClerkResident(session.email,session.flat);
+    if(session.residentVerified!==verified){session.residentVerified=verified;galleryProps().setProperty(key,JSON.stringify(session));}
+    if(approved&&!verified)galleryAuthFailure('Only verified residents can view restricted data. Your signed-in public access remains available.');
+    return {...session,status:verified?'APPROVED':'PUBLIC',authenticated:true,reviewPending:!!session.flat&&!verified};
+  }
   const row=galleryAccess(session.email),status=row?String(row[3]).trim().toUpperCase():'PENDING';
   if(session.flat!==d.flat)galleryAuthFailure('Sign in to verify this flat again.');
   if(status==='REVOKED'||status==='DENIED')galleryAuthFailure('Gallery access is not approved. Please contact the committee.');
@@ -231,17 +239,19 @@ function galleryImages(rows, size, partial=false) {
 function galleryImage(row, size) {return galleryImages([row],size)[0];}
 function galleryHandle(d) {
   try {
+    if(d.action==='gallery-resident-clerk')return residentClerkLogin(d);
     if(d.action==='gallery-resident-otp')return residentOtp(d);
     if(d.action==='gallery-video-community')return videoCommunity();
     if(d.action==='gallery-otp')return galleryOtp(d);
     if(d.action==='gallery-verify')return galleryVerify(d);
-    const session=gallerySession(d,d.action!=='gallery-status'&&d.action!=='gallery-logout');
+    const session=gallerySession(d,!['gallery-status','gallery-logout','gallery-resident-status','gallery-site-events'].includes(d.action));
+    if(d.action==='gallery-finance-access'){if(session.residentVerified!==true)galleryAuthFailure('Only verified residents can view restricted data.');return {ok:true,residentVerified:true};}
     if(d.action==='gallery-site-events')return residentSiteEvents(session,d);
-    if(d.action==='gallery-resident-status'){if(session.residentVerified!==true)galleryAuthFailure('Sign in to verify your resident email again.');return {ok:true,email:session.email,flat:session.flat,expires:session.expires,residentVerified:true};}
+    if(d.action==='gallery-resident-status'){if(session.residentVerified!==true&&session.provider!=='clerk')galleryAuthFailure('Sign in to verify your resident email again.');return {ok:true,email:session.email,flat:session.flat,expires:session.expires,residentVerified:session.residentVerified===true,...(session.provider==='clerk'?{provider:'clerk',authenticated:true,reviewPending:session.reviewPending}:{})};}
     if(d.action==='gallery-video-reaction'){const sheet=galleryBook().getSheetByName('Video likes');return {ok:true,liked:sheet?videoCommunityRows(sheet).some(r=>r[0]===galleryId('video-community|'+session.email)&&r[1]===true):false};}
     if(['gallery-video-like','gallery-video-comment'].includes(d.action))return videoCommunityWrite(d,session);
     if(d.action==='gallery-status')return {ok:true,email:session.email,status:session.status,flat:session.flat,expires:session.expires};
-    if(d.action==='gallery-logout'){galleryAudit('logout',session.email,'',d);galleryProps().deleteProperty('gallery.session.'+galleryHash(d.token));return {ok:true};}
+    if(d.action==='gallery-logout'){galleryAudit('logout',session.email,'',d);galleryProps().deleteProperty('gallery.session.'+galleryHash(d.token));if(session.provider==='clerk')residentClerkApi('sessions/'+encodeURIComponent(session.clerkSession)+'/revoke','post');return {ok:true};}
     if(d.action==='gallery-video'){
       if(!['preview','optimised','original'].includes(d.variant)||d.videoOperation!==(d.variant==='preview'?'preview':'download'))throw Error('Invalid video selection.');
       const config=JSON.parse(galleryProps().getProperty('GALLERY_VIDEO_CONFIG')||'null');

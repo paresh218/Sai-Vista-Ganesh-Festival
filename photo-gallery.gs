@@ -8,6 +8,9 @@ function photoFolder() {
   return DriveApp.getFolderById(id);
 }
 function doGet(e) {
+  return photoJson({ok:false,error:'Only verified residents can view restricted data.'});
+}
+function photoRead(e) {
   if (e && e.parameter && e.parameter.action === 'media') return mediaList();
   try {
     const files = photoFolder().getFiles(), entries = [];
@@ -22,6 +25,7 @@ function doGet(e) {
 function doPost(e) {
   const lock = LockService.getScriptLock();
   try {
+    if(['photos','media'].includes(e?.parameter?.action)){financeResidentRequest(e);return photoRead(e);}
     if (e && e.postData && e.postData.contents.length <= 33400000 && /"action"\s*:\s*"submitMedia"/.test(e.postData.contents.slice(0, 200))) return mediaSubmit(JSON.parse(e.postData.contents));
     if (!e || !e.postData || e.postData.contents.length > 1450000) throw new Error('Invalid upload size.');
     const data = JSON.parse(e.postData.contents);

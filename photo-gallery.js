@@ -89,7 +89,7 @@
   document.getElementById('nextPhoto').onclick = () => { index++; show(); };
   setInterval(() => { if (!paused && !viewer.open && !document.hidden && photos.length > 1) { index++; show(); } }, 6000);
   async function request(options) {
-    const response = await fetch(endpoint, { ...options, signal: AbortSignal.timeout(45000) });
+    const response = await window.SaiVistaFinanceRequest(endpoint+'?action=photos', { ...options, signal: AbortSignal.timeout(45000) });
     if (!response.ok) throw Error('Photo service unavailable. Please try again.');
     const result = await response.json();
     if (!result.ok) throw Error(result.error || 'Photo service unavailable.');
@@ -101,7 +101,8 @@
     show();
   }
   if (!endpoint) { status.textContent = 'Community photos are coming soon.'; return; }
-  const loadPhotos = () => refresh().then(() => { status.textContent = photos.length ? '' : 'Your community gallery is waiting for its first photo.'; }).catch(error => { status.textContent = error.message; });
+  const loadPhotos = () => {if(window.SaiVistaResidentSession?.residentVerified!==true)return;return refresh().then(() => { status.textContent = photos.length ? '' : 'Your community gallery is waiting for its first photo.'; }).catch(error => { status.textContent = error.message; });};
   window.addEventListener('sai-vista-photo-uploaded', loadPhotos);
+  window.addEventListener('sai-vista-resident-ready',loadPhotos);
   loadPhotos();
 })();

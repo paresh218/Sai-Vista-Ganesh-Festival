@@ -116,9 +116,9 @@ function doGet() {
   catch(error){return eventJson({status:"error",message:error.message});}
 }
 function cellSafe(value) {const s=String(value??"");return /^[=+@\-\t\r\n]/.test(s)?"'"+s:s;}
-function verifyCulturalFund(wing,flat) {
+function verifyCulturalFund(wing,flat,residentToken) {
   try {
-    const response=UrlFetchApp.fetch(FestivalRegistration.collectionUrl, {muteHttpExceptions:true,headers:{"Cache-Control":"no-cache"}});
+    const response=UrlFetchApp.fetch(FestivalRegistration.collectionUrl, {method:'post',payload:{payload:JSON.stringify({token:residentToken,flat:wing+'-'+flat})},muteHttpExceptions:true,headers:{"Cache-Control":"no-cache"}});
     if(response.getResponseCode()!==200)throw Error("Collection unavailable");
     return FestivalRegistration.culturalFundStatus(JSON.parse(response.getContentText()),wing,flat);
   }catch(_){return {paid:false,message:"We could not verify the cultural fund payment right now. Please try again shortly."};}
@@ -129,6 +129,7 @@ function doPost(e) {
     const raw=e && e.parameter && e.parameter.payload;
     if(!raw||raw.length>20000)throw Error("Invalid registration payload.");
     const d=JSON.parse(raw);
+    const residentToken=d.residentToken;delete d.residentToken;
     if(typeof d.action === "string" && d.action.startsWith("gallery-")) return eventJson({ok:false,reauthenticate:true,error:'The gallery has moved. Please refresh the website to verify your email.'});
     if(d.action === "marathon-interest") return saveMarathonInterest(d);
     const config=eventSettings();
@@ -142,7 +143,7 @@ function doPost(e) {
       if(previous[10]!==JSON.stringify(d))throw Error("This reference was already saved with different details. Reopen the form for a new entry.");
       return eventJson({status:"success",registrationId:d.requestId});
     }
-    if(d.event==="funfair") {const fund=verifyCulturalFund(d.wing,d.flatNo);if(!fund.paid)throw Error(fund.message);}
+    if(d.event==="funfair") {const fund=verifyCulturalFund(d.wing,d.flatNo,residentToken);if(!fund.paid)throw Error(fund.message);}
     if(FestivalRegistration.registrationStatus(d.event).closed)throw Error(definition.title+" nominations are closed.");
     const key=FestivalRegistration.identity(d);
     if(d.event==="bollywood" && rows.some(row=>row[5]===d.wing))throw Error("This wing already has a Bollywood Night entry. Contact Priyank to update it.");

@@ -12,6 +12,13 @@ function service(startTime=Date.now()){
  return {ctx,props,sheets,mails,audit:()=>[...sheets.entries()].filter(([name])=>/^Gallery activity \d/.test(name)).flatMap(([,sheet])=>sheet.rows.slice(1)),advance:ms=>time+=ms,call:d=>ctx.galleryHandle({flat:'A-101',...d}),code:()=>mails.at(-1).body.match(/code is (\d{6})/)[1]};
 }
 const profile={action:'gallery-otp',email:'Resident@example.com',name:'Test Resident',flat:'A-101',consent:true};
+test('provider sessions recheck Clerk before private routes and revoke on logout',()=>{
+ const s=service(),login=verified(s),key='gallery.session.'+s.ctx.galleryHash(login.token);s.props[key]=JSON.stringify({...JSON.parse(s.props[key]),provider:'clerk',clerkSession:'sess_test',clerkUser:'user_test'});
+ let checks=0,revokes=0;s.ctx.residentClerkResident=()=>true;s.ctx.residentClerkSession=()=>{checks++;};s.ctx.residentClerkApi=(path,method)=>{assert.equal(path,'sessions/sess_test/revoke');assert.equal(method,'post');revokes++;};
+ assert.equal(s.call({action:'gallery-status',token:login.token}).ok,true);assert.equal(checks,1);
+ s.ctx.residentClerkSession=()=>s.ctx.galleryAuthFailure('Revoked');for(const action of ['gallery-status','gallery-page','gallery-cache','gallery-video','gallery-site-events'])assert.equal(s.call({action,token:login.token}).reauthenticate,true);
+ s.ctx.residentClerkSession=()=>{};assert.equal(s.call({action:'gallery-logout',token:login.token}).ok,true);assert.equal(revokes,1);assert.equal(s.props[key],undefined);
+});
 function verified(s){const req=s.call(profile);assert.equal(req.ok,true);const data=s.call({action:'gallery-verify',challenge:req.challenge,code:s.code()});assert.equal(data.ok,true);return {...data,challenge:req.challenge};}
 test('correct OTP grants automatic access; unverified, wrong-flat and revoked sessions remain locked',()=>{
  const s=service();assert.equal(s.call({action:'gallery-page',token:'fake',page:0}).ok,false);
