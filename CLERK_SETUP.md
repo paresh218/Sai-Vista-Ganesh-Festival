@@ -7,7 +7,7 @@ Website: https://saivistaculturalcommittee.in/.
 ## Free plan
 
 Hobby is currently $0, with no card required, up to 50,000 monthly retained users
-and three social connections. Google, Facebook and LinkedIn use those three slots.
+and three social connections. Google is active; Facebook and LinkedIn are staged.
 Phone/SMS is excluded from Hobby and remains off. Sessions have a fixed seven-day
 lifetime. Recheck https://clerk.com/pricing before changing billing or features.
 
@@ -34,9 +34,9 @@ The frontend uses `enabled: true`. Deployment checks:
    asset filename/release/cache markers if previously published, run the site and
    player checks, publish and verify GitHub Pages and the served files.
 
-The existing email verification remains available until cutover and as a fallback.
+The production login uses Google OAuth without a site OTP step. Legacy OTP backend handlers remain for existing gallery sessions; the Google login does not expose them.
 Social sign-in does not import or upload the committee's resident directory into
-Clerk. Everyone can sign in; non-residents leave the flat blank. There is no guest
+Clerk. Google sign-in comes first. The server finds the saved flat from the verified email. Only new emails are asked for their flat, with an “I am not a resident” option. The chosen flat is saved for later logins. There is no guest
 bypass. Accounts, member payments, downloads and photo galleries require resident
 verification on the server. Approved email/flat pairings are checked against the
 private resident reference; names alone do not establish identity.
@@ -48,15 +48,16 @@ visitor can choose **Check verification** without signing in again. An existing
 REVOKED/DENIED access record is not restored by an older approval. Review notes
 belong in column H. Never approve a stranger merely because they know a flat.
 
-Google is configured for production. Facebook and LinkedIn remain **Setup required**
-until their owner creates developer apps and supplies credentials. Prepare both
+Google is configured for production. Facebook and LinkedIn are disabled in
+production, as approved, until their owner creates developer apps and supplies
+credentials. Their configuration and development connections remain. Prepare both
 with website https://saivistaculturalcommittee.in/, privacy page /privacy.html,
 terms page /terms.html and callback
 https://clerk.saivistaculturalcommittee.in/v1/oauth_callback. Use only basic
 profile/email scopes. Provider identity checks and terms require owner participation.
 Do not add placeholder credentials or a paid plan.
 
-Backend releases: resident verifier v16, payments v3, expenses v3, registration v13,
+Backend releases: resident verifier v17, payments v3, expenses v3, registration v13,
 community gallery v6/v7 across all five active endpoints. Legacy public gallery
 GET reads are denied; feeds use authenticated POST. Payment and expense source
 Sheets are Restricted. Registration tokens are removed before response storage.
@@ -90,3 +91,17 @@ These CNAME records are specific to this production instance:
 | clk2._domainkey | dkim2.no9j4fg6cicu.clerk.services |
 
 Keep the existing GitHub Pages root/www records, nameservers and DMARC record.
+
+## Deployment verification (3 November 2026)
+
+All 201 site tests and 27 player checks passed locally. GitHub's Player regression
+job passed. Pages deployed successfully on its second attempt after a server 500.
+Live release: `2026-11-03-social-login-2`; service-worker cache: `v178`.
+The login dialog had no horizontal overflow at 320, 390, 768, 1024 and 1440 pixels.
+A real committee Google account completed production OAuth with no flat and
+received public access only. Accounts, payments, expenses and both galleries were
+hidden. All five active gallery endpoints rejected fresh anonymous requests;
+the main gallery endpoint also rejected an invalid-token POST.
+An actual registered resident's positive-access flow, approval email delivery,
+physical-phone playback and OS sleep remain unverified. No fake resident request
+or test review email was created.

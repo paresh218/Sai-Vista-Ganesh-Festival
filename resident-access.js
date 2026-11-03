@@ -30,15 +30,17 @@ if (typeof document !== 'undefined') (() => {
   const socialPanel=document.getElementById('residentSocialPanel'),emailFallback=document.getElementById('residentEmailFallback');
   let useSocial=window.SaiVistaSocialConfig?.enabled===true;
   if(useSocial){
-    document.getElementById('residentEmailFields').hidden=true;emailInput.required=false;emailFallback.hidden=false;
+    document.getElementById('residentEmailFields').hidden=true;emailInput.required=false;emailFallback.hidden=true;
+    document.getElementById('residentFlatFields').hidden=true;
     flatInput.required=false;
     form.querySelector('button[type="submit"]').textContent='Sign in / create account';
-    document.getElementById('residentRememberNotice').textContent='Sign-in stays active for up to seven days. Residents: enter your own flat and use your registered email. Other visitors: leave the flat blank. Only verified residents can view restricted data.';
+    document.getElementById('residentRememberNotice').textContent='Sign in with Google. Your saved flat is checked automatically. New emails enter a flat once, or choose “I am not a resident”. Sign-in stays active for up to seven days. No email code is needed.';
     document.getElementById('residentLoggingNotice').textContent=document.getElementById('residentLoggingNotice').textContent.replace('and a verification code','and a verified sign-in');
   }
   function emailMode(){requestVersion++;useSocial=false;window.SaiVistaSocialAuth?.clear();socialPanel.hidden=true;emailFallback.hidden=true;form.hidden=false;otpForm.hidden=true;document.getElementById('residentEmailFields').hidden=false;emailInput.required=true;flatInput.required=true;form.querySelector('button[type="submit"]').textContent='Send verification code';status.textContent='Email verification is available for registered residents. Social sign-in is available to everyone.';emailInput.focus();}
   emailFallback.onclick=emailMode;
-  document.getElementById('residentSocialBack').onclick=emailMode;
+  document.getElementById('residentSocialBack').onclick=async()=>{window.SaiVistaSocialAuth?.clear();await window.SaiVistaSocialAuth?.signOut();location.reload();};
+  document.getElementById('residentNonResident').onclick=()=>socialLogin('',true);
   let challenge = '', pendingFlat = '', requestVersion = 0, retryAt = 0;
   let flat, queue = [], sending = false, activityObserver, activityTimer;
   const release=document.querySelector('meta[name="site-release"]').content;
@@ -67,7 +69,7 @@ if (typeof document !== 'undefined') (() => {
     document.getElementById('residentFlatPreview').textContent = ResidentAccess.parse(flatInput.value) || '';
   });
   gate.addEventListener('cancel', event => event.preventDefault());
-  document.getElementById('residentLogin').onclick = () => {requestVersion++;gate.showModal();};
+  document.getElementById('residentLogin').onclick = () => {requestVersion++;gate.showModal();if(useSocial){form.hidden=false;socialPanel.hidden=true;document.getElementById('residentFlatFields').hidden=false;flatInput.required=true;form.querySelector('button[type="submit"]').textContent='Save flat and continue';}};
   const authEndpoint = () => window.SaiVistaGalleryConfig?.endpoint;
   async function authenticate(action, fields) {
     if(!authEndpoint())throw Error('Sign-in is being connected. Please try again shortly.');
@@ -110,7 +112,7 @@ if (typeof document !== 'undefined') (() => {
     } catch(error){if(version===requestVersion)status.textContent=error.message;}
     finally{form.querySelector('button[type="submit"]').disabled=false;}
   }
-  async function socialLogin(value){
+  async function socialLogin(value,publicVisitor=false){
     if(value&&!ResidentAccess.parse(value)){status.textContent='Enter your flat like A-101 or F-1304, or leave it blank if you are not a resident.';flatInput.focus();return;}
     const version=++requestVersion;status.textContent='Connecting secure sign-in…';form.hidden=true;socialPanel.hidden=false;emailFallback.hidden=true;
     try{
@@ -118,10 +120,12 @@ if (typeof document !== 'undefined') (() => {
       if(version!==requestVersion)return;
       if(!clerkToken){status.textContent='Choose a sign-in account below.';return;}
       status.textContent='Checking your registered email and flat…';
-      const result=await authenticate('gallery-resident-clerk',{flat:value,clerkToken,consent:true});
+      const result=await authenticate('gallery-resident-clerk',{flat:value,clerkToken,consent:true,publicVisitor});
       if(version!==requestVersion)return;
-      if(result.flat!==value||result.provider!=='clerk')throw Error('Verify your registered flat again.');
+      if(result.provider!=='clerk')throw Error('Verify your Google sign-in again.');
+      if(result.needsFlat===true){window.SaiVistaSocialAuth.clear();socialPanel.hidden=true;form.hidden=false;document.getElementById('residentFlatFields').hidden=false;flatInput.required=true;document.getElementById('residentNonResident').hidden=false;form.querySelector('button[type="submit"]').textContent='Save flat and continue';status.textContent='Signed in as '+result.email+'. Enter your own flat once, or choose “I am not a resident”.';flatInput.focus();return;}
       window.SaiVistaSocialAuth.clear();socialPanel.hidden=true;form.hidden=false;
+      document.getElementById('residentNonResident').hidden=true;
       if(new URLSearchParams(location.search).get('resident-sign-in')==='1')history.replaceState(null,'',location.pathname+location.hash);
       saveSession(result);
     }catch(error){if(version===requestVersion)status.textContent=error.message;}
@@ -185,6 +189,7 @@ if (typeof document !== 'undefined') (() => {
       if(version===requestVersion){if(result.flat!==saved.flat||result.email!==saved.email)throw Error('Verify your registered resident email again.');saveSession({...result,token:saved.token});}
     }).catch(error=>{if(version===requestVersion){status.textContent=error.message;try{storage.removeItem('saiVistaResidentSession');}catch(_) {}}});
   }
+  else if(useSocial)socialLogin('');
   window.addEventListener('sai-vista-private-signed-out',()=>{
     if(!window.SaiVistaAuthSession)return;
     activityObserver?.disconnect();clearInterval(activityTimer);

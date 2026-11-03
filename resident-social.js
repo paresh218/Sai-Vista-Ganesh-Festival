@@ -6,14 +6,14 @@
   function script(src, key) {
     return new Promise((resolve,reject)=>{
       const el=document.createElement('script');el.src=src;el.async=true;el.crossOrigin='anonymous';
-      const timeout=setTimeout(()=>{el.remove();reject(Error('Social sign-in timed out. Please try again or use email verification.'));},30000);
+      const timeout=setTimeout(()=>{el.remove();reject(Error('Social sign-in timed out. Please try Google sign-in again.'));},30000);
       if(key)el.setAttribute('data-clerk-publishable-key',key);
-      el.onload=()=>{clearTimeout(timeout);resolve();};el.onerror=()=>{clearTimeout(timeout);el.remove();reject(Error('Social sign-in could not load. Use email verification or try again.'));};
+      el.onload=()=>{clearTimeout(timeout);resolve();};el.onerror=()=>{clearTimeout(timeout);el.remove();reject(Error('Social sign-in could not load. Please try Google sign-in again.'));};
       document.head.append(el);
     });
   }
   async function load() {
-    if(!config().enabled||!/^pk_live_[A-Za-z0-9]+={0,2}$/.test(config().publishableKey)||config().frontendApi!=='https://clerk.saivistaculturalcommittee.in')throw Error('Social sign-in is not connected yet. Use email verification.');
+    if(!config().enabled||!/^pk_live_[A-Za-z0-9]+={0,2}$/.test(config().publishableKey)||config().frontendApi!=='https://clerk.saivistaculturalcommittee.in')throw Error('Social sign-in is not connected yet. Please try again shortly.');
     if(!loading)loading=(async()=>{
       await script(config().frontendApi+'/npm/@clerk/ui@1/dist/ui.browser.js');
       await script(config().frontendApi+'/npm/@clerk/clerk-js@6/dist/clerk.browser.js',config().publishableKey);
@@ -27,7 +27,7 @@
     async start(flat) {
       const current=++generation;
       // Store only the chosen flat and a short-lived continuation, never identity or a provider token.
-      try{sessionStorage.setItem(pendingKey,JSON.stringify({flat,expires:Date.now()+600000}));}catch(_){throw Error('Allow this browser’s session storage for social sign-in, or use email verification.');}
+      try{sessionStorage.setItem(pendingKey,JSON.stringify({flat,expires:Date.now()+600000}));}catch(_){throw Error('Allow this browser’s session storage for social sign-in, and try Google sign-in again.');}
       const api=await load();
       if(current!==generation)return null;
       if(api.session)return api.session.getToken();

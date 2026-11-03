@@ -1,7 +1,7 @@
 // Clerk credentials stay in Script Properties. Browser identity fields are never trusted.
 function residentClerkConfig() {
   const issuer=galleryProps().getProperty('CLERK_ISSUER'),secret=galleryProps().getProperty('CLERK_SECRET_KEY');
-  if(!/^https:\/\/[a-z0-9.-]+$/.test(issuer||'')||!/^sk_(live|test)_/.test(secret||''))throw Error('Google sign-in is not connected yet. Please use email verification.');
+  if(!/^https:\/\/[a-z0-9.-]+$/.test(issuer||'')||!/^sk_(live|test)_/.test(secret||''))throw Error('Google sign-in is not connected yet. Please try again shortly.');
   return {issuer,secret};
 }
 function residentClerkApi(path,method='get') {
@@ -49,18 +49,23 @@ function residentClerkLogin(d) {
   if(!lock.tryLock(10000))throw Error('Please try again shortly.');
   try {
     const name=String(user.full_name||[user.first_name,user.last_name].filter(Boolean).join(' ')||'Signed-in visitor').replace(/[\r\n\t]/g,' ').slice(0,80);
-    residentClerkContact(email,name,d.flat);
-    const verified=!!d.flat&&residentClerkResident(email,d.flat,true);
-    if(d.flat&&!verified)residentReviewRequest(email,name,d.flat);
-    const token=galleryRandom(),session={...identity,provider:'clerk',email,flat:d.flat,expires,residentVerified:verified};
+    const profile=galleryAccess(email),savedFlat=String(profile?.[2]||'').trim().toUpperCase();
+    const flat=/^[A-F]-(?:[1-9]|1[0-3])0[1-4]$/.test(savedFlat)?savedFlat:d.flat;
+    if(!profile&&!flat&&d.publicVisitor!==true)return {ok:true,provider:'clerk',email,needsFlat:true};
+    residentClerkContact(email,name,flat);
+    const verified=!!flat&&residentClerkResident(email,flat,true);
+    if(flat&&!verified)residentReviewRequest(email,name,flat);
+    const token=galleryRandom(),session={...identity,provider:'clerk',email,flat,expires,residentVerified:verified};
     if(verified)residentContactActivity(session,new Date(),true);
     galleryAudit('social_email_verified',email,'',{...d,clerkToken:undefined},true);
     props.setProperty('gallery.session.'+galleryHash(token),JSON.stringify(session));
-    return {ok:true,token,email,flat:d.flat,expires,status:verified?'APPROVED':'PUBLIC',authenticated:true,residentVerified:verified,reviewPending:!!d.flat&&!verified,provider:'clerk'};
+    return {ok:true,token,email,flat,expires,status:verified?'APPROVED':'PUBLIC',authenticated:true,residentVerified:verified,reviewPending:!!flat&&!verified,provider:'clerk'};
   } finally {lock.releaseLock();}
 }
 function residentClerkContact(email,name,flat) {
-  if(!galleryAccess(email))gallerySheet('Gallery access').appendRow([gallerySafe(email),gallerySafe(name),flat,'PENDING',new Date(),'Social sign-in; resident access requires directory match or committee approval.']);
+  const profile=galleryAccess(email);
+  if(!profile)gallerySheet('Gallery access').appendRow([gallerySafe(email),gallerySafe(name),flat,'PENDING',new Date(),'Social sign-in; resident access requires directory match or committee approval.']);
+  else if(flat&&!profile[2]){const index=galleryRows('Gallery access').findIndex(row=>GalleryPolicy.email(row[0])===email);if(index>=0)gallerySheet('Gallery access').getRange(index+2,3,1,1).setValues([[flat]]);}
 }
 function residentReviewSheet(create=false) {
   const book=galleryBook();let sheet=book.getSheetByName('Resident requests');
