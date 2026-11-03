@@ -105,3 +105,8 @@ the main gallery endpoint also rejected an invalid-token POST.
 An actual registered resident's positive-access flow, approval email delivery,
 physical-phone playback and OS sleep remain unverified. No fake resident request
 or test review email was created.
+
+
+## Alternative email and login feedback
+
+Google OAuth still needs no site OTP. The production "Use another email (verification code)" option restores the registered-resident email/flat OTP route for Outlook, Yahoo and other providers. A full-screen modal blocks duplicate interaction during login validation and code requests, closes on errors/timeouts, and honours reduced motion. Remembered sessions remain checked server-side.

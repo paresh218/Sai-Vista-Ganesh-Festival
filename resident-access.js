@@ -27,18 +27,26 @@ if (typeof document !== 'undefined') (() => {
   const emailInput = document.getElementById('residentEmail');
   const otpForm = document.getElementById('residentOtpForm');
   const status = document.getElementById('residentGateStatus');
+  const validation=document.getElementById('residentValidation');
+  let validations=0;
+  validation.addEventListener('cancel',event=>event.preventDefault());
+  function validating(active,action){
+    if(active){if(validations++===0){document.getElementById('residentValidationMessage').textContent=action==='gallery-resident-otp'?'Sending your verification code…':'Validating your data for login…';validation.showModal();}}
+    else if(validations>0&&--validations===0)validation.close();
+  }
   const socialPanel=document.getElementById('residentSocialPanel'),emailFallback=document.getElementById('residentEmailFallback');
   let useSocial=window.SaiVistaSocialConfig?.enabled===true;
   if(useSocial){
-    document.getElementById('residentEmailFields').hidden=true;emailInput.required=false;emailFallback.hidden=true;
+    document.getElementById('residentEmailFields').hidden=true;emailInput.required=false;emailFallback.hidden=false;
     document.getElementById('residentFlatFields').hidden=true;
     flatInput.required=false;
     form.querySelector('button[type="submit"]').textContent='Sign in / create account';
-    document.getElementById('residentRememberNotice').textContent='Sign in with Google. Your saved flat is checked automatically. New emails enter a flat once, or choose “I am not a resident”. Sign-in stays active for up to seven days. No email code is needed.';
+    document.getElementById('residentRememberNotice').textContent='Google sign-in checks your saved flat automatically and needs no email code. New emails enter a flat once. No Google account? Use your registered email and a verification code instead.';
     document.getElementById('residentLoggingNotice').textContent=document.getElementById('residentLoggingNotice').textContent.replace('and a verification code','and a verified sign-in');
   }
-  function emailMode(){requestVersion++;useSocial=false;window.SaiVistaSocialAuth?.clear();socialPanel.hidden=true;emailFallback.hidden=true;form.hidden=false;otpForm.hidden=true;document.getElementById('residentEmailFields').hidden=false;emailInput.required=true;flatInput.required=true;form.querySelector('button[type="submit"]').textContent='Send verification code';status.textContent='Email verification is available for registered residents. Social sign-in is available to everyone.';emailInput.focus();}
+  function emailMode(){requestVersion++;useSocial=false;window.SaiVistaSocialAuth?.clear();socialPanel.hidden=true;emailFallback.hidden=true;form.hidden=false;otpForm.hidden=true;document.getElementById('residentNonResident').hidden=true;document.getElementById('residentFlatFields').hidden=false;document.getElementById('residentEmailFields').hidden=false;emailInput.required=true;flatInput.required=true;document.getElementById('residentFlatHelp').textContent='Enter your own flat, for example A-101. Use the email registered for that flat.';form.querySelector('button[type="submit"]').textContent='Send verification code';document.getElementById('residentRememberNotice').textContent='Use the email registered for your flat, including Outlook, Yahoo or another provider. Verified access is remembered on this browser. Only verified residents can view restricted data.';status.textContent='Enter your flat and registered email. We will email a six-digit verification code.';document.getElementById('residentGoogleOption').hidden=false;emailInput.focus();}
   emailFallback.onclick=emailMode;
+  document.getElementById('residentGoogleOption').onclick=()=>{requestVersion++;useSocial=true;form.hidden=true;otpForm.hidden=true;emailInput.required=false;flatInput.required=false;document.getElementById('residentGoogleOption').hidden=true;document.getElementById('residentEmailFields').hidden=true;document.getElementById('residentFlatFields').hidden=true;document.getElementById('residentRememberNotice').textContent='Google sign-in checks your saved flat automatically and needs no email code. Use another email below if you prefer a verification code.';socialLogin('');};
   document.getElementById('residentSocialBack').onclick=async()=>{window.SaiVistaSocialAuth?.clear();await window.SaiVistaSocialAuth?.signOut();location.reload();};
   document.getElementById('residentNonResident').onclick=()=>socialLogin('',true);
   let challenge = '', pendingFlat = '', requestVersion = 0, retryAt = 0;
@@ -73,11 +81,15 @@ if (typeof document !== 'undefined') (() => {
   const authEndpoint = () => window.SaiVistaGalleryConfig?.endpoint;
   async function authenticate(action, fields) {
     if(!authEndpoint())throw Error('Sign-in is being connected. Please try again shortly.');
+    const showValidation=['gallery-resident-otp','gallery-verify','gallery-resident-clerk','gallery-resident-status'].includes(action);
+    if(showValidation)validating(true,action);
+    try {
     const body=new URLSearchParams({payload:JSON.stringify({action,...fields,requestId:crypto.randomUUID(),device})});
     const response=await fetch(authEndpoint(),{method:'POST',body,cache:'no-store',signal:AbortSignal.timeout(30000)});
     const result=await response.json();
     if(!response.ok||result.ok!==true)throw Error(result.error||'Sign-in is unavailable. Please try again.');
     return result;
+    } finally {if(showValidation)validating(false);}
   }
   function saveSession(result) {
     const resident=result.residentVerified===true;
@@ -86,6 +98,7 @@ if (typeof document !== 'undefined') (() => {
     window.SaiVistaAuthSession=saved;window.SaiVistaResidentSession=resident?saved:null;
     try { storage.setItem('saiVistaResidentSession',JSON.stringify(saved)); if(resident)storage.setItem('saiVistaPrivateGallery',JSON.stringify(saved));else{storage.removeItem('saiVistaPrivateGallery');storage.removeItem('saiVistaResidentFlat');} } catch (_) { const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent='Verified for this visit. This browser cannot remember access; verification will be needed next time.';document.querySelector('footer').append(notice); }
     enter(result.flat,resident);
+    emailFallback.hidden=true;
     document.getElementById('residentAccessBanner').hidden=false;document.getElementById('residentReviewCheck').hidden=!result.reviewPending;
     const notice=document.getElementById('residentAccessNotice');notice.textContent=resident?'Verified resident access. Only verified residents can view restricted data.':result.reviewPending?'Signed in. Resident verification is pending with Paresh. Only verified residents can view accounts, member payments, downloads and the photo gallery. Check verification here after approval.':'Signed in. Only verified residents can view accounts, member payments, downloads and the photo gallery. Residents can choose “Resident access” to request verification.';
   }
@@ -114,7 +127,7 @@ if (typeof document !== 'undefined') (() => {
   }
   async function socialLogin(value,publicVisitor=false){
     if(value&&!ResidentAccess.parse(value)){status.textContent='Enter your flat like A-101 or F-1304, or leave it blank if you are not a resident.';flatInput.focus();return;}
-    const version=++requestVersion;status.textContent='Connecting secure sign-in…';form.hidden=true;socialPanel.hidden=false;emailFallback.hidden=true;
+    const version=++requestVersion;status.textContent='Connecting secure sign-in…';form.hidden=true;socialPanel.hidden=false;emailFallback.hidden=false;
     try{
       const clerkToken=await window.SaiVistaSocialAuth.start(value);
       if(version!==requestVersion)return;
