@@ -188,3 +188,18 @@ test('screenshot-only entries need no transaction reference and preserve duplica
  assert.throws(()=>s.ctx.marathonSaveEntry({...first,requestId:'22345678-1234-1234-1234-123456789012'}),/already has an entry/);
  s.ctx.marathonSaveEntry({...first,requestId:'22345678-1234-1234-1234-123456789012',name:'Second Runner',email:'second@example.org'});assert.equal(s.rows.length,3);assert.equal(s.sent.length,0);
 });
+
+test('saving blocks interaction through upload and response, prevents duplicate submit, then releases on success or failure',async t=>{
+ for(const outcome of ['success','failure']){
+  const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());let finish,posted,posts=0;
+  w.fetch=async(_url,options={})=>{if(!options.method)return {json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true})};posts++;posted=JSON.parse(options.body.get('payload'));return new Promise((resolve,reject)=>finish=()=>outcome==='success'?resolve({json:async()=>({ok:true,reference:posted.requestId,status:'pending-verification'})}):reject(new w.TypeError('offline')));};
+  d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');
+  for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical'])f.elements[key].value=good[key];f.elements.medicalDetails.value=good.medicalDetails;f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;
+  Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true;f.dispatchEvent(new w.Event('change'));f.dispatchEvent(new w.Event('submit',{cancelable:true}));
+  const blocker=d.getElementById('marathonSaving');assert.equal(blocker.open,true);assert.equal(d.getElementById('marathonEntryClose').disabled,true);assert.equal(d.getElementById('marathonEntryDialog').getAttribute('aria-busy'),'true');
+  const escape=new w.Event('cancel',{cancelable:true});blocker.dispatchEvent(escape);assert.equal(escape.defaultPrevented,true);f.dispatchEvent(new w.Event('submit',{cancelable:true}));
+  for(let i=0;i<30&&!finish;i++)await new Promise(r=>setTimeout(r,10));assert.equal(posts,1);assert.equal(blocker.open,true);finish();for(let i=0;i<8;i++)await new Promise(r=>setImmediate(r));
+  assert.equal(blocker.open,false);assert.equal(d.getElementById('marathonEntryClose').disabled,false);assert.equal(d.getElementById('marathonEntryDialog').hasAttribute('aria-busy'),false);
+  if(outcome==='success'){assert.equal(d.activeElement,d.getElementById('marathonEntrySuccess'));assert.equal(f.hidden,true);}else{assert.equal(f.hidden,false);assert.equal(f.elements.name.value,good.name);assert.match(d.getElementById('marathonEntryStatus').textContent,/do not pay again/);}
+ }
+});

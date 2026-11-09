@@ -2,6 +2,8 @@
   const dialog=document.getElementById('marathonEntryDialog'),form=document.getElementById('marathonEntryForm');if(!dialog||!form)return;
   const config=window.SaiVistaMarathonConfig||{},status=document.getElementById('marathonEntryStatus'),submit=document.getElementById('marathonEntrySubmit'),close=document.getElementById('marathonEntryClose'),pay=document.getElementById('marathonPayLink'),success=document.getElementById('marathonEntrySuccess');
   let opener,ready=false,busy=false,requestId='',saved=false,checking=false;
+  const saving=document.getElementById('marathonSaving');
+  saving.addEventListener('cancel',event=>event.preventDefault());
   const closed=()=>Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
   function refresh(){
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
@@ -45,6 +47,7 @@
     if(SaiVistaMarathon.age(data.dob)>=18){data.guardian='';data.guardianConsent=false;}
     busy=true;close.disabled=true;dialog.setAttribute('aria-busy','true');refresh();status.textContent='Uploading payment evidence and saving your entry. Keep this window open…';
     try{
+      saving.showModal();
       data.proof=await readProof(file);const proofIssue=SaiVistaMarathon.proofIssue(data);if(proofIssue)throw Error(proofIssue);
       data.action='marathon-entry';data.requestId=requestId;
       const response=await fetch(config.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify(data)}),signal:AbortSignal.timeout(90000)});
@@ -52,9 +55,9 @@
       if(result.reference!==requestId||result.status!=='pending-verification')throw Error('Could not confirm the saved reference. Retry with the same details; do not pay again.');
       saved=true;form.hidden=true;success.hidden=false;document.getElementById('marathonEntryReference').textContent=requestId;
       const group=document.getElementById('marathonUpdatesGroup');group.href='https://chat.whatsapp.com/HhO4yXkBBb171GuQevJrmk';
-      status.textContent='Entry received. The committee will verify the payment before sending your BIB confirmation email.';success.tabIndex=-1;success.focus();
+      status.textContent='Entry received. The committee will verify the payment before sending your BIB confirmation email.';success.tabIndex=-1;
     }catch(error){status.textContent=(error.name==='TimeoutError'||error.name==='TypeError')?'Connection interrupted. Your entry may have been saved. Retry with the same details and screenshot; do not pay again.':error.message;}
-    finally{busy=false;close.disabled=false;dialog.removeAttribute('aria-busy');refresh();}
+    finally{if(saving.open)saving.close();busy=false;close.disabled=false;dialog.removeAttribute('aria-busy');refresh();if(saved)success.focus();}
   });
   const rows=document.getElementById('marathonScheduleRows');if(rows)for(const item of SaiVistaMarathon.schedule){const tr=document.createElement('tr');item.forEach((value,index)=>{const cell=document.createElement(index===0?'th':'td');if(index===0)cell.scope='row';cell.textContent=value;tr.append(cell);});rows.append(tr);}
   const banner=document.getElementById('marathonInterest');

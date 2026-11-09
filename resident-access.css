@@ -24,8 +24,8 @@ html:not(.guest-mode) #residentLogin{display:none}
 #residentAccessBanner:not([hidden]){padding:12px 24px;background:var(--day-pale,#f8edf4);color:#352033;font-size:14px;line-height:1.6;text-align:center}#residentAccessNotice{margin:0}#residentReviewCheck{margin-top:8px;min-height:44px}
 #residentSocialMount{max-width:100%;min-width:0;margin:16px 0}#residentSocialBack,#residentEmailFallback{width:100%;margin-top:12px}
 
-#residentValidation{inset:0;margin:0;box-sizing:border-box;width:100vw;max-width:none;height:100dvh;max-height:none;border:0;padding:24px;background:#24152599;color:#352033}
-#residentValidation[open]{display:grid;place-items:center}#residentValidation::backdrop{background:#24152555}
+:is(#residentValidation,#marathonSaving){inset:0;margin:0;box-sizing:border-box;width:100vw;max-width:none;height:100dvh;max-height:none;border:0;padding:24px;background:#24152599;color:#352033}
+:is(#residentValidation,#marathonSaving)[open]{display:grid;place-items:center}:is(#residentValidation,#marathonSaving)::backdrop{background:#24152555}
 .resident-validation-card{box-sizing:border-box;width:min(100%,400px);padding:32px 24px;text-align:center;background:#fffdfb;border-radius:20px;box-shadow:0 24px 80px #24152540}
 .resident-validation-card h2{font-size:1.35rem;line-height:1.4;margin:20px 0 12px}.resident-validation-card p{margin:0;line-height:1.6}
 .resident-validation-spinner{display:inline-block;width:42px;height:42px;border:4px solid #eadde6;border-top-color:var(--day-accent,#641847);border-radius:50%;animation:resident-validation-spin 1s linear infinite}

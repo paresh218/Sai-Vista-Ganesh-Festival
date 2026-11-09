@@ -2,7 +2,7 @@
 <html lang="en" class="guest-mode">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-11-09-marathon-family-1">
+  <meta name="site-release" content="2026-11-09-marathon-saving-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Cultural Committee: community celebrations, Sai Vista Marathon on 29 November 2026, Ganesh Festival and Navratri memories. Guests welcome.">
   <meta name="theme-color" content="#302635">
@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="navratri.css">
   <link rel="stylesheet" href="navratri-songs.css">
   <style>html.resident-locked body> :not(#residentGate):not(script):not(noscript){visibility:hidden!important}html.resident-locked{overflow:hidden}</style>
-  <link rel="stylesheet" href="resident-access.css?v=5">
+  <link rel="stylesheet" href="resident-access.css?v=6">
   <link rel="stylesheet" href="responsive-refinement.css">
     <link rel="stylesheet" href="garba-special.css?v=119">
     <link rel="stylesheet" href="player-modern.css?v=123">
@@ -700,6 +700,7 @@ https://saivistaculturalcommittee.in
         <p id="galleryStatus" role="status" aria-live="polite"></p><button id="galleryLogout" class="btn btn-outline" type="button" hidden>Sign out of resident access</button>
       </div>
     </dialog>
+    <dialog id="marathonSaving" aria-labelledby="marathonSavingTitle" aria-describedby="marathonSavingHelp" aria-busy="true"><div class="resident-validation-card"><span class="resident-validation-spinner" aria-hidden="true"></span><h2 id="marathonSavingTitle" role="status" aria-live="polite">Saving your registration…</h2><p id="marathonSavingHelp">Uploading your payment screenshot and saving your entry. Please keep this page open and do not submit again.</p></div></dialog>
     <dialog id="marathonEntryDialog" class="marathon-entry-dialog" aria-labelledby="marathonEntryTitle" aria-describedby="marathonEntryNotice"><div class="marathon-entry-heading"><div><span class="eyebrow">SAI VISTA MARATHON · 29 NOV</span><h2 id="marathonEntryTitle">Your starting line.</h2></div><button id="marathonEntryClose" type="button" aria-label="Close marathon entry form">×</button></div>
       <p id="marathonEntryNotice" class="marathon-registration-notice"><strong>Payment screenshot required.</strong> Confirmation and BIB follow committee payment verification.</p>
       <form id="marathonEntryForm"><p class="marathon-required-note"><span class="marathon-required" aria-hidden="true">*</span> All shown fields are required.</p><section class="marathon-payment" aria-labelledby="marathonPaymentTitle"><div><p id="marathonPaymentAvailability" role="status">Registration is being connected. Please wait to pay.</p><span class="eyebrow">STEP 1 · PAYMENT</span><h3 id="marathonPaymentTitle">Pay the selected entry fee</h3><label><span>Distance <span class="marathon-required" aria-hidden="true">*</span></span><select name="race" required><option value="3K">3 km · ₹149</option><option value="5K">5 km · ₹199</option></select></label><strong id="marathonEntryFee">3 km · ₹149</strong><p>Pay to <b>PARESHKUMAR DASHRATH KALE</b><br><code>8149525915@ybl</code></p><a id="marathonPayLink" class="btn btn-dark" aria-disabled="true">Pay with a UPI app ↗</a><small>Use the UPI button on this phone, or open the QR to scan. Confirm the recipient and selected fee. One payment per participant.</small></div><a href="assets/marathon-phonepe-qr.jpeg" target="_blank" rel="noopener" aria-label="Open full-size PhonePe payment QR"><img src="assets/marathon-phonepe-qr.jpeg" width="743" height="1280" loading="lazy" alt="PhonePe payment QR for Pareshkumar Dashrath Kale, UPI 8149525915@ybl"><small>Open full-size QR ↗</small></a></section><h3>Step 2 · Your entry</h3><div class="marathon-entry-grid">
@@ -761,7 +762,7 @@ https://saivistaculturalcommittee.in
     <script src="assets/vendor/motion-14.7.1.js" defer></script>
     <script src="assets/marathon-model-v5.js" defer></script>
     <script src="marathon-registration-config.js?v=2" defer></script>
-    <script src="assets/marathon-registration-v4.js" defer></script>
+    <script src="assets/marathon-registration-v5.js" defer></script>
     <script src="marathon-3d.js?v=2" defer></script>
     <script src="marathon-route.js?v=1" defer></script>
     <script src="event-registration-model.js"></script>
