@@ -67,7 +67,7 @@ test('unconfigured form never transmits; screenshot and new fields required; no 
 });
 test('configured browser saves only valid proof and shows pending status and group after acknowledged save',async(t)=>{
  const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());let posted;w.fetch=async(url,options={})=>({json:async()=>{if(options.method==='POST'){posted=JSON.parse(options.body.get('payload'));return {ok:true,reference:posted.requestId,status:'pending-verification'};}return {ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true};}});
- d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.medicalDetails.value=good.medicalDetails;f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // JSDOM cannot populate a native file chooser's internal validity state.
+ d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical'])f.elements[key].value=good[key];f.elements.medicalDetails.value=good.medicalDetails;f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // JSDOM cannot populate a native file chooser's internal validity state.
  f.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonEntrySubmit').disabled,false);
  f.dispatchEvent(new w.Event('submit',{cancelable:true}));for(let i=0;i<30&&!posted;i++)await new Promise(r=>setTimeout(r,10));assert.ok(posted.proof.base64);assert.equal(posted.bibName,good.bibName);await new Promise(r=>setImmediate(r));assert.equal(d.getElementById('marathonEntrySuccess').hidden,false);assert.match(d.getElementById('marathonUpdatesGroup').href,/HhO4yXkBBb171GuQevJrmk/);assert.match(d.getElementById('marathonEntryStatus').textContent,/verify/);assert.equal(w.localStorage.length,0);
 });
@@ -79,7 +79,7 @@ test('network retry preserves request ID and evidence; group stays hidden until 
  const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());const posts=[];
  w.fetch=async(url,options={})=>{if(!options.method)return {json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true})};const payload=JSON.parse(options.body.get('payload'));posts.push(payload);if(posts.length===1)throw new w.TypeError('network interrupted');return {json:async()=>({ok:true,reference:payload.requestId,status:'pending-verification'})};};
  d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));const f=d.getElementById('marathonEntryForm');
- for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical','paymentReference'])f.elements[key].value=good[key];f.elements.medicalDetails.value=good.medicalDetails;f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;
+ for(const key of ['name','bibName','dob','email','phone','emergencyName','emergencyPhone','bloodGroup','shirt','flat','gender','medical'])f.elements[key].value=good[key];f.elements.medicalDetails.value=good.medicalDetails;f.elements.agreed.checked=true;f.elements.paymentDeclared.checked=true;
  Object.defineProperty(f.elements.paymentProof,'files',{value:[new w.File([bytes],'receipt.png',{type:'image/png'})]});f.reportValidity=()=>true; // Native file validity is covered in the browser, not JSDOM.
  f.dispatchEvent(new w.Event('submit',{cancelable:true}));for(let i=0;i<30&&posts.length<1;i++)await new Promise(r=>setTimeout(r,10));await new Promise(r=>setImmediate(r));
  assert.equal(d.getElementById('marathonEntrySuccess').hidden,true);assert.match(d.getElementById('marathonEntryStatus').textContent,/do not pay again/);assert.equal(f.elements.name.value,good.name);
@@ -118,10 +118,10 @@ test('existing numeric BIBs prevent collisions; already issued legacy BIBs are p
  s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'3006');assert.equal(s.rows[3][21],'SV26-3K-0001');assert.equal(s.sent.length,1);
 });
 
-test('sheet upgrade appends AA idempotently without moving approval or overwriting headers',()=>{
- const s=service();s.rows[0].pop();const before=[...s.rows[0]];
+test('sheet upgrade appends BIB and accompaniment columns idempotently without moving approval or overwriting headers',()=>{
+ const s=service();s.rows[0].splice(26);const before=[...s.rows[0]];
  s.ctx.marathonUpgradeBibNameColumn(s.sheet);assert.deepEqual(s.rows[0].slice(0,26),before);assert.equal(s.rows[0][26],'Name on the BIB');assert.equal(s.rows[0][20],'Payment verified?');
- s.ctx.marathonUpgradeBibNameColumn(s.sheet);assert.equal(s.rows[0].length,27);
+ s.ctx.marathonUpgradeBibNameColumn(s.sheet);assert.equal(s.rows[0].length,28);
  s.rows[0][26]='Other data';assert.throws(()=>s.ctx.marathonUpgradeBibNameColumn(s.sheet),/review/);assert.equal(s.rows[0][26],'Other data');
 });
 
@@ -149,7 +149,7 @@ test('all displayed entry fields are required, labelled with stars, and conditio
  const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());
  d.querySelector('[data-marathon-open="5K"]').click();const f=d.getElementById('marathonEntryForm');
  assert.match(d.querySelector('.marathon-required-note').textContent,/All shown fields are required/);
- const conditional=new Set(['guardian','guardianConsent','medicalDetails']);
+ const conditional=new Set(['guardian','guardianConsent','medicalDetails','parentAccompanied']);
  for(const input of f.querySelectorAll('input,select,textarea')){
    assert.equal(input.required,!conditional.has(input.name),input.name);
    assert.ok(input.closest('label').querySelector('.marathon-required'),input.name+' marker');
@@ -157,7 +157,7 @@ test('all displayed entry fields are required, labelled with stars, and conditio
  assert.equal(f.elements.flat.validity.valueMissing,true);
  f.elements.flat.value='Visitor';assert.equal(f.elements.flat.validity.valid,true);
  f.elements.dob.value='2010-01-01';f.elements.medical.value='Yes';f.dispatchEvent(new w.Event('change'));
- for(const key of conditional)assert.equal(f.elements[key].required,true,key);
+ for(const key of ['guardian','guardianConsent','medicalDetails'])assert.equal(f.elements[key].required,true,key);assert.equal(f.elements.parentAccompanied.required,false);
  assert.equal(d.getElementById('marathonMedicalNote').hidden,false);
  f.elements.dob.value='2000-01-01';f.elements.medical.value='Prefer not to say';f.dispatchEvent(new w.Event('change'));
  for(const key of conditional)assert.equal(f.elements[key].required,false,key);
@@ -171,4 +171,20 @@ test('shared/server validation rejects omitted flat and medical note while suppo
  for(const medical of ['No','Prefer not to say'])assert.equal(M.validate({...good,medical,medicalDetails:''}),'');
  const s=service();s.enable();assert.throws(()=>s.ctx.marathonSaveEntry({...good,flat:''}),/flat/);
  assert.throws(()=>s.ctx.marathonSaveEntry({...good,medicalDetails:''}),/medical note/);assert.equal(s.rows.length,1);assert.equal(s.files.length,0);
+});
+
+
+test('all ages accepted; ages 12 and under require parent accompaniment in browser and server',t=>{
+ const child={...good,dob:'2018-05-01',guardian:'Test Parent',guardianConsent:true};
+ assert.match(M.validate(child),/parent must accompany/);assert.equal(M.validate({...child,parentAccompanied:true}),'');
+ assert.match(M.validate({...child,dob:'2014-11-29'}),/parent must accompany/);assert.equal(M.validate({...child,dob:'2013-11-29'}),'');
+ assert.equal(M.validate({...good,dob:'1900-01-01'}),'');assert.match(M.validate({...good,dob:'2026-11-30'}),/date of birth/);
+ const server=service();server.enable();assert.throws(()=>server.ctx.marathonSaveEntry(child),/parent must accompany/);assert.equal(server.rows.length,1);server.ctx.marathonSaveEntry({...child,parentAccompanied:true,paymentReference:''});assert.equal(server.rows[1][27],true);assert.equal(server.rows[1][18],'');
+ const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());d.querySelector('[data-marathon-open="3K"]').click();const f=d.getElementById('marathonEntryForm');assert.equal(f.elements.paymentReference,undefined);assert.equal(f.elements.dob.min,'');assert.equal(f.elements.dob.max,'2026-11-29');
+ f.elements.dob.value=child.dob;f.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParentAccompanied').hidden,false);assert.equal(f.elements.parentAccompanied.required,true);f.elements.parentAccompanied.checked=true;f.elements.dob.value=good.dob;f.dispatchEvent(new w.Event('change'));assert.equal(f.elements.parentAccompanied.required,false);assert.equal(f.elements.parentAccompanied.checked,false);
+});
+test('screenshot-only entries need no transaction reference and preserve duplicate participant protection',()=>{
+ const s=service();s.enable();const first={...good};delete first.paymentReference;s.ctx.marathonSaveEntry(first);assert.equal(s.rows[1][18],'');assert.equal(s.ctx.marathonSaveEntry(first).reference,first.requestId);
+ assert.throws(()=>s.ctx.marathonSaveEntry({...first,requestId:'22345678-1234-1234-1234-123456789012'}),/already has an entry/);
+ s.ctx.marathonSaveEntry({...first,requestId:'22345678-1234-1234-1234-123456789012',name:'Second Runner',email:'second@example.org'});assert.equal(s.rows.length,3);assert.equal(s.sent.length,0);
 });

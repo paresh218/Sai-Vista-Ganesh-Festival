@@ -6,6 +6,7 @@
   function refresh(){
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
     document.getElementById('marathonGuardian').hidden=!minor;form.elements.guardian.required=minor;form.elements.guardianConsent.required=minor;
+    const accompanied=age>=0&&age<=12;document.getElementById('marathonParentAccompanied').hidden=!accompanied;form.elements.parentAccompanied.required=accompanied;if(!accompanied)form.elements.parentAccompanied.checked=false;
     const medicalNoteRequired=form.elements.medical.value==='Yes';
     document.getElementById('marathonMedicalNote').hidden=!medicalNoteRequired;form.elements.medicalDetails.required=medicalNoteRequired;
     document.getElementById('marathonEntryFee').textContent=form.elements.race.value==='5K'?'5 km · ₹199':'3 km · ₹149';
@@ -19,7 +20,7 @@
   async function readiness(){
     if(ready||checking||!config.registrationEnabled||!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(config.endpoint||''))return;
     checking=true;status.textContent='Checking registration availability…';
-    try{const response=await fetch(config.endpoint,{cache:'no-store',signal:AbortSignal.timeout(30000)}),data=await response.json();ready=data.ok===true&&data.service==='sai-vista-marathon-2026-manual-v1'&&data.acceptingEntries===true;status.textContent=ready?'Pay the correct fee, then attach your screenshot and transaction reference.':'Registration is unavailable. Please do not pay yet.';}
+    try{const response=await fetch(config.endpoint,{cache:'no-store',signal:AbortSignal.timeout(30000)}),data=await response.json();ready=data.ok===true&&data.service==='sai-vista-marathon-2026-manual-v1'&&data.acceptingEntries===true;status.textContent=ready?'Pay the correct fee, then attach your screenshot.':'Registration is unavailable. Please do not pay yet.';}
     catch(_){status.textContent='Cannot reach registration right now. Please do not pay yet. Reopen this form to retry.';}
     finally{checking=false;refresh();}
   }
@@ -38,7 +39,7 @@
     if(!ready||closed()){status.textContent=closed()?'Registration closed on 10 November 2026.':'Registration setup is pending. No details have been submitted. Please do not pay yet.';refresh();return;}
     if(!form.reportValidity())return;
     const file=form.elements.paymentProof.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>3145728){status.textContent='Attach a JPG, PNG or WebP payment screenshot up to 3 MB.';return;}
-    const data=Object.fromEntries(new FormData(form));delete data.paymentProof;data.flat=(typeof ResidentAccess==='undefined'?data.flat:ResidentAccess.parse(data.flat))||data.flat.trim().toUpperCase();data.agreed=form.elements.agreed.checked;data.guardianConsent=form.elements.guardianConsent.checked;data.paymentDeclared=form.elements.paymentDeclared.checked;
+    const data=Object.fromEntries(new FormData(form));delete data.paymentProof;data.flat=(typeof ResidentAccess==='undefined'?data.flat:ResidentAccess.parse(data.flat))||data.flat.trim().toUpperCase();data.agreed=form.elements.agreed.checked;data.guardianConsent=form.elements.guardianConsent.checked;data.paymentDeclared=form.elements.paymentDeclared.checked;data.parentAccompanied=form.elements.parentAccompanied.checked;
     const issue=SaiVistaMarathon.validate(data);if(issue){status.textContent=issue;return;}
     if(data.medical!=='Yes')data.medicalDetails='';
     if(SaiVistaMarathon.age(data.dob)>=18){data.guardian='';data.guardianConsent=false;}

@@ -21,7 +21,8 @@ const SaiVistaMarathon = (() => {
     if(!Object.prototype.hasOwnProperty.call(event.fees,d.race))return 'Choose 3 km or 5 km.';
     if(typeof d.name!=='string'||d.name.trim().length<2||d.name.length>80||/[\u0000-\u001f]/.test(d.name))return 'Enter your full name (2–80 characters).';
     if(typeof d.bibName!=='string'||!d.bibName.trim()||d.bibName.length>30||/[\u0000-\u001f\u007f]/.test(d.bibName))return 'Enter the name on your BIB (1–30 characters).';
-    if(age(d.dob)<12||age(d.dob)>110)return 'Participants must be aged 12 or above on 29 November 2026.';
+    if(age(d.dob)<0||d.dob>event.date)return 'Enter a valid date of birth on or before 29 November 2026.';
+    if(age(d.dob)<=12&&d.parentAccompanied!==true)return 'A parent must accompany participants aged 12 and under throughout the run.';
     if(typeof d.email!=='string'||!/^[a-z0-9][a-z0-9._%+-]*@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i.test(d.email)||d.email.length>254)return 'Enter a valid email address.';
     if(!/^[6-9]\d{9}$/.test(d.phone||''))return 'Enter a 10-digit Indian mobile number.';
     if(!/^[6-9]\d{9}$/.test(d.emergencyPhone||'')||d.phone===d.emergencyPhone)return 'Enter a different emergency contact mobile number.';
@@ -40,7 +41,7 @@ const SaiVistaMarathon = (() => {
   function paymentLink(race){return 'upi://pay?pa='+encodeURIComponent(event.upi)+'&pn='+encodeURIComponent('PARESHKUMAR DASHRATH KALE')+'&am='+event.fees[race]+'&cu=INR&tn='+encodeURIComponent('Sai Vista Marathon '+race);}
   function proofIssue(d){
     if(d.paymentDeclared!==true)return 'Confirm that you completed the payment.';
-    if(!/^\d{12}$/.test(d.paymentReference||''))return 'Enter the 12-digit UPI transaction reference (UTR).';
+    if(d.paymentReference&&!/^\d{12}$/.test(d.paymentReference))return 'Enter the 12-digit UPI transaction reference (UTR).';
     if(!d.proof||!['image/jpeg','image/png','image/webp'].includes(d.proof.type)||typeof d.proof.base64!=='string'||d.proof.base64.length<16||d.proof.base64.length>4194304||!/^[A-Za-z0-9+/]+={0,2}$/.test(d.proof.base64))return 'Attach a JPG, PNG or WebP payment screenshot (up to 3 MB).';
     return '';
   }
