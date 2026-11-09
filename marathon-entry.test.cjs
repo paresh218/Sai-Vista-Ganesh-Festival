@@ -203,3 +203,8 @@ test('saving blocks interaction through upload and response, prevents duplicate 
   if(outcome==='success'){assert.equal(d.activeElement,d.getElementById('marathonEntrySuccess'));assert.equal(f.hidden,true);}else{assert.equal(f.hidden,false);assert.equal(f.elements.name.value,good.name);assert.match(d.getElementById('marathonEntryStatus').textContent,/do not pay again/);}
  }
 });
+
+test('verified screenshot-only entries send confirmation once without a UTR, and historical reference formatting does not block approved entries',()=>{
+ const s=service();s.enable();const entry={...good};delete entry.paymentReference;s.ctx.marathonSaveEntry(entry);s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);assert.equal(s.rows[1][22],'SENT');s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);
+ const invalid=service();invalid.enable();invalid.ctx.marathonSaveEntry(entry);invalid.rows[1][18]='bad-reference';invalid.rows[1][20]='Yes';invalid.ctx.sendMarathonConfirmationEmails();assert.equal(invalid.rows[1][22],'SENT');assert.equal(invalid.sent.length,1);assert.equal(invalid.rows[1][18],'bad-reference');
+});

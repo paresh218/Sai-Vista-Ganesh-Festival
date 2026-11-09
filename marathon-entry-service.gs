@@ -94,7 +94,8 @@ function sendMarathonConfirmationEmails(){
     const sheet=marathonSheet(),rows=marathonRows(sheet);let quota=Math.min(MailApp.getRemainingDailyQuota(),20);
     for(let i=0;i<rows.length&&quota>0;i++){
       const row=rows[i];if(String(row[20]).trim().toLowerCase()!=='yes'||!['','QUEUED'].includes(row[22]))continue;
-      if(!row[0]||!row[19]||!/^\d{12}$/.test(marathonText(row[18]))||!['3K','5K'].includes(row[2])||Number(row[3])!==SaiVistaMarathon.event.fees[row[2]]||!/^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test(row[6])){sheet.getRange(i+2,23).setValue('REVIEW');continue;}
+      // Payment references are optional; committee approval and a screenshot remain mandatory.
+      if(!row[0]||!row[19]||!['3K','5K'].includes(row[2])||Number(row[3])!==SaiVistaMarathon.event.fees[row[2]]||!/^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test(row[6])){sheet.getRange(i+2,23).setValue('REVIEW');continue;}
       // Re-read the approval immediately before sending; a No/blank row never gets confirmation.
       if(String(sheet.getRange(i+2,21).getValues()[0][0]).trim().toLowerCase()!=='yes')continue;
       if(!row[21]){
