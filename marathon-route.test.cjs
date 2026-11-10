@@ -26,7 +26,8 @@ test('route uses latest original asset, offers image access without JavaScript a
   assert.match(s.path.getAttribute('d'),/801 1310/);
   assert.ok(s.path.getAttribute('d').endsWith('266 290'));
   assert.equal(s.w.document.querySelector('[data-route-race="5"]').getAttribute('aria-pressed'),'true');
-  const image=s.w.document.querySelector('.marathon-route-original img');
+  assert.equal(s.w.document.querySelector('.marathon-route-original'),null);
+  const image=s.w.document.querySelector('.marathon-route-map img');
   assert.equal(image.getAttribute('src'),'assets/marathon-route-2026.jpeg');
   assert.ok(s.w.document.querySelector('#marathonRoute a[download]'));
   assert.equal(require('node:crypto').createHash('sha256').update(fs.readFileSync(image.getAttribute('src'))).digest('hex'),'d50ef91e565d289a734ca597875d67954313f2b28e551d3f094f629bc13a0daa');
