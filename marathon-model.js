@@ -1,6 +1,6 @@
 /* Shared browser / Apps Script rules. Dates use India time and event-day age. */
 const SaiVistaMarathon = (() => {
-  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-11T00:00:00+05:30', upi:'8149525915@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
+  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-11T00:00:00+05:30', upi:'8149525915@ybl', secondaryUpi:'dashrathkale2261@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
   const schedule = Object.freeze([
     ['05:45 AM','Reporting time','Arrival & BIB check-in','Arrival & BIB check-in'],
     ['06:00 AM','Zumba & warm-up','Group warm-up session','Group warm-up session'],
@@ -38,7 +38,7 @@ const SaiVistaMarathon = (() => {
     if(age(d.dob)<18&&(typeof d.guardian!=='string'||d.guardian.trim().length<2||d.guardian.length>80||d.guardianConsent!==true))return 'A parent or guardian must give their name and consent for a participant under 18.';
     return '';
   }
-  function paymentLink(race){return 'upi://pay?pa='+encodeURIComponent(event.upi)+'&pn='+encodeURIComponent('PARESHKUMAR DASHRATH KALE')+'&am='+event.fees[race]+'&cu=INR&tn='+encodeURIComponent('Sai Vista Marathon '+race);}
+  function paymentLink(race,option=1){return 'upi://pay?pa='+encodeURIComponent(option===2?event.secondaryUpi:event.upi)+'&pn='+encodeURIComponent(option===2?'DASHRATH DIGAMBAR KALE':'PARESHKUMAR DASHRATH KALE')+'&am='+event.fees[race]+'&cu=INR&tn='+encodeURIComponent('Sai Vista Marathon '+race);}
   function proofIssue(d){
     if(d.paymentDeclared!==true)return 'Confirm that you completed the payment.';
     if(d.paymentReference&&!/^\d{12}$/.test(d.paymentReference))return 'Enter the 12-digit UPI transaction reference (UTR).';

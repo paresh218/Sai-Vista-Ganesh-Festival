@@ -208,3 +208,13 @@ test('verified screenshot-only entries send confirmation once without a UTR, and
  const s=service();s.enable();const entry={...good};delete entry.paymentReference;s.ctx.marathonSaveEntry(entry);s.rows[1][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);assert.equal(s.rows[1][22],'SENT');s.ctx.sendMarathonConfirmationEmails();assert.equal(s.sent.length,1);
  const invalid=service();invalid.enable();invalid.ctx.marathonSaveEntry(entry);invalid.rows[1][18]='bad-reference';invalid.rows[1][20]='Yes';invalid.ctx.sendMarathonConfirmationEmails();assert.equal(invalid.rows[1][22],'SENT');assert.equal(invalid.sent.length,1);assert.equal(invalid.rows[1][18],'bad-reference');
 });
+
+test('backup UPI keeps the race fee, uses the approved ybl address and stays disabled until readiness',async t=>{
+ for(const race of ['3K','5K']){
+  const link=new URL(M.paymentLink(race,2));assert.equal(link.searchParams.get('pa'),'dashrathkale2261@ybl');assert.equal(link.searchParams.get('pn'),'DASHRATH DIGAMBAR KALE');assert.equal(link.searchParams.get('am'),String(M.event.fees[race]));assert.equal(link.searchParams.get('cu'),'INR');assert.equal(new URL(M.paymentLink(race)).searchParams.get('pa'),'8149525915@ybl');
+ }
+ const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());let ready;
+ w.fetch=()=>new Promise(resolve=>ready=()=>resolve({json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true})}));
+ d.querySelector('[data-marathon-open="3K"]').click();const backup=d.getElementById('marathonPayBackupLink');assert.equal(backup.hasAttribute('href'),false);assert.equal(backup.getAttribute('aria-disabled'),'true');ready();await new Promise(r=>setImmediate(r));assert.equal(new URL(backup.href).searchParams.get('am'),'149');
+ const form=d.getElementById('marathonEntryForm');form.elements.race.value='5K';form.dispatchEvent(new w.Event('change'));assert.equal(new URL(backup.href).searchParams.get('am'),'199');assert.equal(d.getElementById('marathonBackupFee').textContent,'5 km · ₹199');assert.equal(d.querySelector('.marathon-payment-help a').getAttribute('href'),'tel:+918149525915');assert.match(d.querySelector('.marathon-payment-backup summary').textContent,/Option 1 is not working/);assert.ok(fs.existsSync('assets/marathon-secondary-upi-qr.png'));
+});

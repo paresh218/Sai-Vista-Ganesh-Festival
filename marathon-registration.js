@@ -1,6 +1,6 @@
 (() => {
   const dialog=document.getElementById('marathonEntryDialog'),form=document.getElementById('marathonEntryForm');if(!dialog||!form)return;
-  const config=window.SaiVistaMarathonConfig||{},status=document.getElementById('marathonEntryStatus'),submit=document.getElementById('marathonEntrySubmit'),close=document.getElementById('marathonEntryClose'),pay=document.getElementById('marathonPayLink'),success=document.getElementById('marathonEntrySuccess');
+  const config=window.SaiVistaMarathonConfig||{},status=document.getElementById('marathonEntryStatus'),submit=document.getElementById('marathonEntrySubmit'),close=document.getElementById('marathonEntryClose'),pay=document.getElementById('marathonPayLink'),payBackup=document.getElementById('marathonPayBackupLink'),success=document.getElementById('marathonEntrySuccess');
   let opener,ready=false,busy=false,requestId='',saved=false,checking=false;
   const saving=document.getElementById('marathonSaving');
   saving.addEventListener('cancel',event=>event.preventDefault());
@@ -11,10 +11,11 @@
     const accompanied=age>=0&&age<=12;document.getElementById('marathonParentAccompanied').hidden=!accompanied;form.elements.parentAccompanied.required=accompanied;if(!accompanied)form.elements.parentAccompanied.checked=false;
     const medicalNoteRequired=form.elements.medical.value==='Yes';
     document.getElementById('marathonMedicalNote').hidden=!medicalNoteRequired;form.elements.medicalDetails.required=medicalNoteRequired;
-    document.getElementById('marathonEntryFee').textContent=form.elements.race.value==='5K'?'5 km · ₹199':'3 km · ₹149';
+    const feeLabel=form.elements.race.value==='5K'?'5 km · ₹199':'3 km · ₹149';
+    document.getElementById('marathonEntryFee').textContent=feeLabel;document.getElementById('marathonBackupFee').textContent=feeLabel;
     const canPay=ready&&!closed()&&!busy&&!saved;
     document.getElementById('marathonPaymentAvailability').textContent=closed()?'Registration closed. Please do not pay.':ready?'Payment evidence will be checked by the committee.':'Registration is being connected. Please wait to pay.';
-    if(canPay){pay.href=SaiVistaMarathon.paymentLink(form.elements.race.value);pay.removeAttribute('aria-disabled');}else{pay.removeAttribute('href');pay.setAttribute('aria-disabled','true');}
+    for(const [link,option] of [[pay,1],[payBackup,2]]){if(canPay){link.href=SaiVistaMarathon.paymentLink(form.elements.race.value,option);link.removeAttribute('aria-disabled');}else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');}}
     const proof=form.elements.paymentProof.files[0];submit.disabled=!canPay||!proof||!form.elements.paymentDeclared.checked;
     submit.textContent=busy?'Saving your entry…':closed()?'Registration closed':!ready?'Registration setup in progress':saved?'Entry submitted':'Submit for payment verification';
     if(closed())status.textContent='Registration closed on 10 November 2026.';
