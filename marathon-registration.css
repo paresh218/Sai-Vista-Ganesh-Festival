@@ -12,3 +12,5 @@ main>.marathon-event{--run-ink:#142c55;--run-orange:#ff6b16;display:grid;grid-te
 
 .marathon-payment-backup{margin:22px 0}.marathon-payment-backup>summary{padding:14px 18px;border:1px solid var(--line,#d7c5b3);border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;line-height:1.6;color:var(--ink,#142c55)}
 .marathon-payment-backup .marathon-payment{margin:12px 0 0}.marathon-payment h4{font-size:15px;margin:0 0 12px}.marathon-payment-help{font-size:14px;line-height:1.6}.marathon-payment-help a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}.marathon-payment code{overflow-wrap:anywhere}
+
+.marathon-participants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.marathon-participants>div{display:flex;flex-direction:column;gap:6px;padding:14px 16px;background:var(--surface-soft,#f8f5f1);border:1px solid var(--line,#d7c5b3);border-radius:12px}.marathon-participants span{font-size:13px;line-height:1.5}.marathon-participants strong{font-size:30px;line-height:1.2;font-variant-numeric:tabular-nums}.marathon-count-status{font-size:13px;line-height:1.6;margin:10px 0}

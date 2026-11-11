@@ -5,10 +5,16 @@ const MARATHON_GROUP='https://chat.whatsapp.com/HhO4yXkBBb171GuQevJrmk';
 function marathonProperties(){return PropertiesService.getScriptProperties();}
 function marathonSender(){if(Session.getEffectiveUser().getEmail().toLowerCase()!=='saivistaculturalcommittee@gmail.com')throw Error('Committee email service is not configured.');}
 function marathonJson(value){return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);}
+function marathonCounts(rows){
+  const counts={'3K':0,'5K':0};
+  rows.forEach(function(row){if(row[0]&&Object.prototype.hasOwnProperty.call(counts,row[2]))counts[row[2]]++;});
+  return { '3K':counts['3K'],'5K':counts['5K'],total:counts['3K']+counts['5K'],limit:200 };
+}
 function doGet(){
-  let ready=false;
-  try{if(marathonProperties().getProperty('MARATHON_REGISTRATION_ENABLED')==='true'){marathonSender();marathonSheet();ready=DriveApp.getFolderById(marathonProperties().getProperty('MARATHON_PROOF_FOLDER_ID')).getSharingAccess()===DriveApp.Access.PRIVATE;}}catch(_){ready=false;}
-  return marathonJson({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:ready&&Date.now()<Date.parse(SaiVistaMarathon.event.deadline),payment:'committee-verification',deadline:SaiVistaMarathon.event.deadline});
+  let ready=false,counts=null;
+  try{if(marathonProperties().getProperty('MARATHON_REGISTRATION_ENABLED')==='true'){marathonSender();const sheet=marathonSheet();ready=DriveApp.getFolderById(marathonProperties().getProperty('MARATHON_PROOF_FOLDER_ID')).getSharingAccess()===DriveApp.Access.PRIVATE;if(ready)counts=marathonCounts(marathonRows(sheet));}}catch(_){ready=false;counts=null;}
+  const closedReason=counts&&counts.total>=counts.limit?'capacity':Date.now()>=Date.parse(SaiVistaMarathon.event.deadline)?'deadline':ready?'':'unavailable';
+  return marathonJson({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:ready&&!closedReason,payment:'committee-verification',deadline:SaiVistaMarathon.event.deadline,counts:counts,closedReason:closedReason});
 }
 function doPost(e){
   try{
@@ -49,9 +55,10 @@ function marathonSaveEntry(d){
   try{
     const sheet=marathonSheet(),rows=marathonRows(sheet),prior=rows.find(function(r){return r[0]===d.requestId;});
     if(prior){const legacyPayload=Object.assign({},payload);delete legacyPayload.bibName;if(prior[24]!==digest&&(prior[26]||prior[24]!==marathonDigest(JSON.stringify(legacyPayload))))throw Error('This reference belongs to different details. Restore the original details or contact the committee.');return {ok:true,reference:d.requestId,status:'pending-verification',groupUrl:MARATHON_GROUP};}
+    if(Date.now()>=Date.parse(SaiVistaMarathon.event.deadline))throw Error('Registration closed on 14 November 2026.');
     if(d.paymentReference&&rows.some(function(r){return marathonText(r[18])===d.paymentReference;}))throw Error('This transaction reference has already been submitted. Contact the committee; do not pay again.');
     if(rows.some(function(r){return r[6]===email&&marathonDob(r[5])===d.dob&&r[4]===marathonSafe(payload.name);}))throw Error('This participant already has an entry. Contact the committee; do not pay again.');
-    if(rows.length>=1000)throw Error('Online entry capacity is reached. Contact the committee before paying.');
+    if(marathonCounts(rows).total>=200)throw Error('Registration closed: all 200 participant places are filled. If you have already paid, contact Paresh on 8149525915; do not pay again.');
     const cache=CacheService.getScriptCache(),rateKey='entry-'+marathonDigest(email);if(cache.get(rateKey))throw Error('Please wait one minute before registering another participant with this email.');
     const folderId=props.getProperty('MARATHON_PROOF_FOLDER_ID');if(!folderId)throw Error('Private payment storage is not configured.');
     const folder=DriveApp.getFolderById(folderId);if(folder.getSharingAccess()!==DriveApp.Access.PRIVATE)throw Error('Private payment storage needs committee attention.');

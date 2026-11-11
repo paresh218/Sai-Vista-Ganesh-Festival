@@ -218,3 +218,32 @@ test('backup UPI keeps the race fee, uses the approved ybl address and stays dis
  d.querySelector('[data-marathon-open="3K"]').click();const backup=d.getElementById('marathonPayBackupLink');assert.equal(backup.hasAttribute('href'),false);assert.equal(backup.getAttribute('aria-disabled'),'true');ready();await new Promise(r=>setImmediate(r));assert.equal(new URL(backup.href).searchParams.get('am'),'149');
  const form=d.getElementById('marathonEntryForm');form.elements.race.value='5K';form.dispatchEvent(new w.Event('change'));assert.equal(new URL(backup.href).searchParams.get('am'),'199');assert.equal(d.getElementById('marathonBackupFee').textContent,'5 km · ₹199');assert.equal(d.querySelector('.marathon-payment-help a').getAttribute('href'),'tel:+918149525915');assert.match(d.querySelector('.marathon-payment-backup summary').textContent,/Option 1 is not working/);assert.ok(fs.existsSync('assets/marathon-secondary-upi-qr.png'));
 });
+
+
+test('combined submitted count closes at exactly 200 and rejects further saves without losing idempotent retries',()=>{
+ const s=service();s.enable();
+ for(let i=0;i<199;i++){const row=Array(28).fill('');row[0]='existing-'+i;row[2]=i<120?'3K':'5K';row[6]='private@example.org';row[20]=i%2?'Yes':'';s.rows.push(row);}
+ const before=s.ctx.doGet();assert.equal(before.acceptingEntries,true);assert.deepEqual(JSON.parse(JSON.stringify(before.counts)),{'3K':120,'5K':79,total:199,limit:200});assert.doesNotMatch(JSON.stringify(before),/private@example/);
+ const entry={...good,paymentReference:''};assert.equal(s.ctx.marathonSaveEntry(entry).ok,true);
+ const full=s.ctx.doGet();assert.equal(full.acceptingEntries,false);assert.equal(full.closedReason,'capacity');assert.equal(full.counts.total,200);assert.equal(full.counts['3K'],121);
+ assert.equal(s.ctx.marathonSaveEntry(entry).ok,true);
+ assert.throws(()=>s.ctx.marathonSaveEntry({...entry,requestId:'22345678-1234-1234-1234-123456789012',name:'Another Runner',email:'other@example.org',race:'5K'}),/all 200 participant places/);
+ assert.equal(s.rows.length,201);assert.equal(s.files.length,1);
+});
+
+test('readiness counts only valid submitted race rows and closes at the IST deadline below capacity',()=>{
+ const s=service();s.enable();s.rows.push(['','', '3K'],['invalid-race','','10K']);
+ assert.equal(s.ctx.doGet().counts.total,0);
+ vm.runInContext('Date.now=()=>Date.parse("2026-11-15T00:00:00+05:30")',s.ctx);
+ const result=s.ctx.doGet();assert.equal(result.acceptingEntries,false);assert.equal(result.closedReason,'deadline');
+});
+
+test('public counters show each distance and a full-capacity response disables both UPI links',async t=>{
+ const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());
+ w.fetch=async()=>({json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:true,counts:{'3K':100,'5K':99,total:199,limit:200},closedReason:''})});
+ d.querySelector('[data-marathon-open="3K"]').click();await new Promise(r=>setImmediate(r));
+ assert.equal(d.querySelector('[data-marathon-count="3K"]').textContent,'100');assert.equal(d.querySelector('[data-marathon-count="5K"]').textContent,'99');assert.match(d.getElementById('marathonCountStatus').textContent,/199 of 200/);assert.equal(d.getElementById('marathonPayLink').hasAttribute('href'),true);
+ d.getElementById('marathonEntryClose').click();w.fetch=async()=>({json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:false,counts:{'3K':100,'5K':100,total:200,limit:200},closedReason:'capacity'})});
+ d.querySelector('[data-marathon-open="5K"]').click();await new Promise(r=>setImmediate(r));
+ assert.match(d.getElementById('marathonCapacityNotice').textContent,/all 200/);assert.equal(d.getElementById('marathonPayLink').hasAttribute('href'),false);assert.equal(d.getElementById('marathonPayBackupLink').hasAttribute('href'),false);assert.equal(d.getElementById('marathonEntrySubmit').disabled,true);
+});
