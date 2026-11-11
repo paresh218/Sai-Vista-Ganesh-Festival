@@ -247,3 +247,43 @@ test('public counters show each distance and a full-capacity response disables b
  d.querySelector('[data-marathon-open="5K"]').click();await new Promise(r=>setImmediate(r));
  assert.match(d.getElementById('marathonCapacityNotice').textContent,/all 200/);assert.equal(d.getElementById('marathonPayLink').hasAttribute('href'),false);assert.equal(d.getElementById('marathonPayBackupLink').hasAttribute('href'),false);assert.equal(d.getElementById('marathonEntrySubmit').disabled,true);
 });
+
+function accountAuth(s,email='runner@example.org'){
+ s.ctx.UrlFetchApp={fetch:(_url,options)=>{const d=JSON.parse(options.payload.payload);assert.equal(d.action,'gallery-resident-status');assert.equal(d.token,'valid-session');return {getResponseCode:()=>200,getContentText:()=>JSON.stringify({ok:true,email,flat:'B-902',residentVerified:true,expires:Date.now()+60000})};}};
+ return {token:'valid-session',flat:'B-902'};
+}
+test('private marathon entries use server-verified email, omit sensitive fields and deny another account by reference',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good});const auth=accountAuth(s);
+ const own=s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth});assert.equal(own.entries.length,1);assert.equal(own.entries[0].name,good.name);
+ assert.deepEqual(Object.keys(own.entries[0]).sort(),['reference','name','race','bibName','shirt','bib','status','revision'].sort());assert.doesNotMatch(JSON.stringify(own),/runner@example|Private note|9876543210|private\/test/);
+ accountAuth(s,'someoneelse@example.org');assert.equal(s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries.length,0);
+ assert.throws(()=>s.ctx.marathonAccountRequest({action:'marathon-edit-entry',...auth,reference:good.requestId,bibName:'Stolen',shirt:'S',revision:own.entries[0].revision}),/not available/);
+ assert.equal(s.rows[1][26],good.bibName);assert.equal(s.rows[1][10],good.shirt);
+});
+test('private marathon edits change only shirt and BIB name, reject other fields and stale concurrent saves',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good});const auth=accountAuth(s),entry=s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries[0];const original=[...s.rows[1]];
+ const request={action:'marathon-edit-entry',...auth,reference:good.requestId,revision:entry.revision,bibName:'New BIB Name',shirt:'XL'};
+ for(const key of ['email','race','bib','fee','paymentVerified','name','dob'])assert.throws(()=>s.ctx.marathonAccountRequest({...request,[key]:'forged'}),/Only T-shirt/);
+ const result=s.ctx.marathonAccountRequest(request);assert.equal(result.entry.bibName,'New BIB Name');assert.equal(result.entry.shirt,'XL');
+ for(let i=0;i<original.length;i++)if(![10,26].includes(i))assert.deepEqual(s.rows[1][i],original[i]);
+ assert.throws(()=>s.ctx.marathonAccountRequest(request),/entry changed/);
+ assert.throws(()=>s.ctx.marathonAccountRequest({...request,revision:result.entry.revision,bibName:' '.repeat(4)}),/BIB name/);assert.throws(()=>s.ctx.marathonAccountRequest({...request,shirt:'XXXL'}),/valid T-shirt/);
+});
+test('private marathon account fails closed on forged, revoked, expired or mismatched sessions',()=>{
+ const s=service();s.enable();const auth=accountAuth(s);
+ assert.throws(()=>s.ctx.marathonAccountRequest({action:'marathon-my-entries',token:'forged',flat:auth.flat}));
+ for(const response of [{ok:false},{ok:true,email:good.email,flat:'B-902',residentVerified:true,expires:Date.now()-1},{ok:true,email:good.email,flat:'A-101',residentVerified:true,expires:Date.now()+60000},{ok:true,email:good.email,flat:'B-902',residentVerified:false,expires:Date.now()+60000}]){
+ s.ctx.UrlFetchApp={fetch:()=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify(response)})};assert.throws(()=>s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}),/sign in again/);
+ }
+ const response=s.ctx.doPost({parameter:{payload:JSON.stringify({action:'marathon-my-entries',...auth})}});assert.equal(response.ok,false);assert.equal(response.entries,undefined);
+});
+test('private entries grid clears immediately at sign-out and ignores a late response',async t=>{
+ const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());let finish;
+ w.SaiVistaAuthSession={token:'valid-session',flat:'B-902',expires:Date.now()+60000};w.fetch=()=>new Promise(resolve=>finish=()=>resolve({json:async()=>({ok:true,entries:[{reference:good.requestId,name:'Private Runner',race:'3K',bibName:'Runner',shirt:'M',status:'Awaiting payment verification',revision:'revision'}]})}));
+ w.SaiVistaMarathon=M;w.eval(fs.readFileSync('marathon-account.js','utf8'));w.dispatchEvent(new w.Event('sai-vista-auth-cleared'));finish();await new Promise(r=>setImmediate(r));assert.equal(d.querySelectorAll('.marathon-my-entry').length,0);assert.match(d.getElementById('marathonMyEntriesStatus').textContent,/Sign in/);
+});
+test('private entry grid edits only the two allowed fields and sends the session rather than an email',async t=>{
+ const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());const entry={reference:good.requestId,name:'Private Runner',race:'3K',bibName:'Runner',shirt:'M',status:'Awaiting payment verification',revision:'revision'};let posted;
+ w.SaiVistaAuthSession={token:'valid-session',flat:'B-902',expires:Date.now()+60000};w.fetch=async(_url,options)=>{const payload=JSON.parse(options.body.get('payload'));if(payload.action==='marathon-edit-entry')posted=payload;return {json:async()=>posted?{ok:true,entry:{...entry,bibName:payload.bibName,shirt:payload.shirt}}:{ok:true,entries:[entry]}};};
+ w.SaiVistaMarathon=M;w.eval(fs.readFileSync('marathon-account.js','utf8'));await new Promise(r=>setImmediate(r));const card=d.querySelector('.marathon-my-entry');assert.ok(card);assert.equal(card.querySelectorAll('input,select').length,2);card.querySelector('input').value='New Print';card.querySelector('select').value='L';card.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.deepEqual(Object.keys(posted).sort(),['action','reference','revision','bibName','shirt','token','flat'].sort());assert.equal(posted.bibName,'New Print');assert.equal(posted.shirt,'L');assert.match(card.querySelector('[role=status]').textContent,/saved/);
+});

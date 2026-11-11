@@ -98,6 +98,7 @@ if (typeof document !== 'undefined') (() => {
     window.SaiVistaAuthSession=saved;window.SaiVistaResidentSession=resident?saved:null;
     try { storage.setItem('saiVistaResidentSession',JSON.stringify(saved)); if(resident)storage.setItem('saiVistaPrivateGallery',JSON.stringify(saved));else{storage.removeItem('saiVistaPrivateGallery');storage.removeItem('saiVistaResidentFlat');} } catch (_) { const notice=document.createElement('p');notice.setAttribute('role','status');notice.textContent='Verified for this visit. This browser cannot remember access; verification will be needed next time.';document.querySelector('footer').append(notice); }
     enter(result.flat,resident);
+    window.dispatchEvent(new Event('sai-vista-auth-ready'));
     emailFallback.hidden=true;
     document.getElementById('residentAccessBanner').hidden=false;document.getElementById('residentReviewCheck').hidden=!result.reviewPending;
     const notice=document.getElementById('residentAccessNotice');notice.textContent=resident?'Verified resident access. Only verified residents can view restricted data.':result.reviewPending?'Signed in. Resident verification is pending with Paresh. Only verified residents can view accounts, member payments, downloads and the photo gallery. Check verification here after approval.':'Signed in. Only verified residents can view accounts, member payments, downloads and the photo gallery. Residents can choose “Resident access” to request verification.';
@@ -184,7 +185,7 @@ if (typeof document !== 'undefined') (() => {
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
   setInterval(flush, 10000);
   const change = document.createElement('button'); change.type = 'button'; change.textContent = 'Sign out / forget this device'; change.className = 'btn btn-outline';
-  change.onclick = async () => {change.disabled=true;const identity=window.SaiVistaAuthSession;try{if(identity)await authenticate('gallery-logout',{token:identity.token,flat:identity.flat});}catch(_){/* Always forget this browser, even if the server is offline. */}finally{window.SaiVistaSocialAuth?.clear();try{await window.SaiVistaSocialAuth?.signOut();}catch(_){}try { storage.removeItem('saiVistaResidentSession'); storage.removeItem('saiVistaResidentFlat'); storage.removeItem('saiVistaPrivateGallery'); storage.removeItem('saiVistaGalleryCollection'); } catch (_) {} Promise.resolve(window.SaiVistaGalleryCache?.clear()).finally(()=>location.reload());}};
+  change.onclick = async () => {window.dispatchEvent(new Event('sai-vista-auth-cleared'));change.disabled=true;const identity=window.SaiVistaAuthSession;try{if(identity)await authenticate('gallery-logout',{token:identity.token,flat:identity.flat});}catch(_){/* Always forget this browser, even if the server is offline. */}finally{window.SaiVistaSocialAuth?.clear();try{await window.SaiVistaSocialAuth?.signOut();}catch(_){}try { storage.removeItem('saiVistaResidentSession'); storage.removeItem('saiVistaResidentFlat'); storage.removeItem('saiVistaPrivateGallery'); storage.removeItem('saiVistaGalleryCollection'); } catch (_) {} Promise.resolve(window.SaiVistaGalleryCache?.clear()).finally(()=>location.reload());}};
   document.querySelector('footer').append(change);
   document.addEventListener('click', event => {
     if (!window.SaiVistaGuest) return;
@@ -206,7 +207,7 @@ if (typeof document !== 'undefined') (() => {
   window.addEventListener('sai-vista-private-signed-out',()=>{
     if(!window.SaiVistaAuthSession)return;
     activityObserver?.disconnect();clearInterval(activityTimer);
-    requestVersion++;window.SaiVistaAuthSession=null;window.SaiVistaResidentSession=null;window.SaiVistaResidentReady=false;window.SaiVistaGuest=true;flat=null;queue=[];
+    window.dispatchEvent(new Event('sai-vista-auth-cleared'));requestVersion++;window.SaiVistaAuthSession=null;window.SaiVistaResidentSession=null;window.SaiVistaResidentReady=false;window.SaiVistaGuest=true;flat=null;queue=[];
     document.documentElement.classList.add('guest-mode');form.hidden=false;otpForm.hidden=true;challenge='';
     document.getElementById('residentCode').value='';
     try{storage.removeItem('saiVistaResidentSession');storage.removeItem('saiVistaResidentFlat');}catch(_){}

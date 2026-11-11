@@ -20,9 +20,38 @@ function doPost(e){
   try{
     const raw=e&&e.parameter&&e.parameter.payload;
     if(!raw||raw.length>4210000)throw Error('Invalid entry request.');
-    const data=JSON.parse(raw);if(data.action!=='marathon-entry')throw Error('Unknown entry action.');
+    const data=JSON.parse(raw);
+    if(['marathon-my-entries','marathon-edit-entry'].includes(data.action)){if(raw.length>4096)throw Error('Invalid account request.');return marathonJson(marathonAccountRequest(data));}
+    if(data.action!=='marathon-entry')throw Error('Unknown entry action.');
     return marathonJson(marathonSaveEntry(data));
   }catch(error){console.error('Marathon entry rejected.');return marathonJson({ok:false,error:error.message});}
+}
+function marathonAccountIdentity(data){
+  if(typeof data.token!=='string'||!data.token||data.token.length>100||typeof data.flat!=='string'||data.flat.length>10)throw Error('Please sign in again to view your entries.');
+  const response=UrlFetchApp.fetch('https://script.google.com/macros/s/AKfycbxXf8vcp2d6xxsMx_11VM_7PRTNVNunsH8Eb9ArTFf_Fc3rQyH0KbMPY0IwDHnfmhtaeA/exec',{method:'post',payload:{payload:JSON.stringify({action:'gallery-resident-status',token:data.token,flat:data.flat})},muteHttpExceptions:true});
+  const result=JSON.parse(response.getContentText());
+  if(response.getResponseCode()!==200||result.ok!==true||!(result.residentVerified===true||result.provider==='clerk'&&result.authenticated===true)||result.flat!==data.flat||!Number.isFinite(result.expires)||result.expires<=Date.now()||typeof result.email!=='string'||!/^[^\s@,]+@[^\s@,]+\.[^\s@,]+$/.test(result.email))throw Error('Please sign in again to view your entries.');
+  return result.email.trim().toLowerCase();
+}
+function marathonAccountEntry(row){
+  const bibName=marathonText(row[26]||row[4]),shirt=marathonText(row[10]);
+  return {reference:row[0],name:marathonText(row[4]),race:row[2],bibName:bibName,shirt:shirt,bib:marathonText(row[21]),status:String(row[20]).trim().toLowerCase()==='yes'?'Payment verified':'Awaiting payment verification',revision:marathonDigest(JSON.stringify([bibName,shirt]))};
+}
+function marathonAccountRequest(data){
+  const allowed=data.action==='marathon-my-entries'?['action','token','flat']:['action','token','flat','reference','bibName','shirt','revision'];
+  if(Object.keys(data).some(function(key){return !allowed.includes(key);}))throw Error('Only T-shirt size and BIB name can be edited.');
+  const email=marathonAccountIdentity(data);
+  if(data.action==='marathon-my-entries')return {ok:true,entries:marathonRows(marathonSheet()).filter(function(row){return row[0]&&['3K','5K'].includes(row[2])&&marathonText(row[6]).trim().toLowerCase()===email;}).map(marathonAccountEntry)};
+  if(typeof data.reference!=='string'||data.reference.length>100||typeof data.bibName!=='string'||!data.bibName.trim()||data.bibName.length>30||/[\u0000-\u001f\u007f]/.test(data.bibName)||!SaiVistaMarathon.event.sizes.includes(data.shirt)||typeof data.revision!=='string')throw Error('Enter a BIB name (1–30 characters) and choose a valid T-shirt size.');
+  const lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Entries are busy. Please try again.');
+  try{
+    const sheet=marathonSheet(),rows=marathonRows(sheet),index=rows.findIndex(function(row){return row[0]===data.reference&&marathonText(row[6]).trim().toLowerCase()===email;});
+    if(index<0)throw Error('Entry not available for this signed-in account.');
+    const row=rows[index];if(marathonAccountEntry(row).revision!==data.revision)throw Error('This entry changed. Refresh your entries before saving again.');
+    marathonUpgradeBibNameColumn(sheet);
+    sheet.getRange(index+2,11).setValue(marathonSafe(data.shirt));sheet.getRange(index+2,27).setValue(marathonSafe(data.bibName.trim()));SpreadsheetApp.flush();
+    row[10]=data.shirt;row[26]=marathonSafe(data.bibName.trim());return {ok:true,entry:marathonAccountEntry(row)};
+  }finally{lock.releaseLock();}
 }
 function marathonDigest(text){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,text,Utilities.Charset.UTF_8).map(function(b){return ('0'+((b+256)%256).toString(16)).slice(-2);}).join('');}
 function marathonSafe(value){const s=String(value==null?'':value);return /^[=+@\-\t\r\n]/.test(s)?"'"+s:s;}

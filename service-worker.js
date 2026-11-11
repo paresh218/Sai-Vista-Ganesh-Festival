@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v186";
+const CACHE_NAME = "sai-vista-ganpati-2026-v187";
 const APP_SHELL = [
   "./",
   "advertising-config.js?v=3",
@@ -24,7 +24,7 @@ const APP_SHELL = [
   "protected-gallery-cache.js?v=3",
   "protected-gallery.css?v=4",
   "community-season.js?v=5",
-  "marathon-registration.css?v=4",
+  "marathon-registration.css?v=5",
   "marathon-3d.css?v=2",
   "marathon-route.css?v=2",
   "marathon-route.js?v=1",
@@ -33,6 +33,7 @@ const APP_SHELL = [
   "assets/marathon-model-v7.js",
   "marathon-registration-config.js?v=2",
   "assets/marathon-registration-v8.js",
+  "assets/marathon-account-v1.js",
   "assets/marathon-phonepe-qr.jpeg",
   "assets/marathon-secondary-upi-qr.png",
   "assets/marathon-schedule.jpeg",
@@ -48,7 +49,7 @@ const APP_SHELL = [
   "style.css?v=22",
   "mobile-components.css?v=1",
   "site-data.js?v=8",
-  "assets/resident-access-v8.js",
+  "assets/resident-access-v9.js",
   "resident-access.css?v=6",
   "responsive-refinement.css",
   "navratri.css",
