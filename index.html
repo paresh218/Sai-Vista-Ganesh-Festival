@@ -2,7 +2,7 @@
 <html lang="en" class="guest-mode">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-11-11-marathon-my-entries-1">
+  <meta name="site-release" content="2026-11-11-marathon-entry-grid-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Sai Vista Cultural Committee: community celebrations, Sai Vista Marathon on 29 November 2026, Ganesh Festival and Navratri memories. Guests welcome.">
   <meta name="theme-color" content="#302635">
@@ -38,7 +38,7 @@
     <link rel="stylesheet" href="garba-special.css?v=119">
     <link rel="stylesheet" href="player-modern.css?v=123">
   <link rel="stylesheet" href="community-season.css?v=6">
-  <link rel="stylesheet" href="marathon-registration.css?v=5">
+  <link rel="stylesheet" href="marathon-registration.css?v=6">
   <link rel="stylesheet" href="marathon-3d.css?v=2">
   <link rel="stylesheet" href="marathon-route.css?v=2">
   <link rel="stylesheet" href="cultural-fund-reminder.css?v=1">
@@ -702,6 +702,7 @@ https://saivistaculturalcommittee.in
         <p id="galleryStatus" role="status" aria-live="polite"></p><button id="galleryLogout" class="btn btn-outline" type="button" hidden>Sign out of resident access</button>
       </div>
     </dialog>
+    <dialog id="marathonAccountSaving" aria-labelledby="marathonAccountSavingTitle" aria-describedby="marathonAccountSavingHelp"><div class="resident-validation-card"><span class="resident-validation-spinner" aria-hidden="true"></span><h2 id="marathonAccountSavingTitle">Saving your changes…</h2><p id="marathonAccountSavingHelp">Please wait while your changes are saved.</p><button id="marathonAccountSavingDone" class="btn btn-dark" type="button" hidden>Back to my entries</button></div></dialog>
     <dialog id="marathonSaving" aria-labelledby="marathonSavingTitle" aria-describedby="marathonSavingHelp" aria-busy="true"><div class="resident-validation-card"><span class="resident-validation-spinner" aria-hidden="true"></span><h2 id="marathonSavingTitle" role="status" aria-live="polite">Saving your registration…</h2><p id="marathonSavingHelp">Uploading your payment screenshot and saving your entry. Please keep this page open and do not submit again.</p></div></dialog>
     <dialog id="marathonEntryDialog" class="marathon-entry-dialog" aria-labelledby="marathonEntryTitle" aria-describedby="marathonEntryNotice"><div class="marathon-entry-heading"><div><span class="eyebrow">SAI VISTA MARATHON · 29 NOV</span><h2 id="marathonEntryTitle">Your starting line.</h2></div><button id="marathonEntryClose" type="button" aria-label="Close marathon entry form">×</button></div>
       <p id="marathonEntryNotice" class="marathon-registration-notice"><strong>Payment screenshot required.</strong> Confirmation and BIB follow committee payment verification.</p>
@@ -765,7 +766,7 @@ https://saivistaculturalcommittee.in
     <script src="assets/marathon-model-v7.js" defer></script>
     <script src="marathon-registration-config.js?v=2" defer></script>
     <script src="assets/marathon-registration-v8.js" defer></script>
-    <script src="assets/marathon-account-v1.js" defer></script>
+    <script src="assets/marathon-account-v2.js" defer></script>
     <script src="marathon-3d.js?v=2" defer></script>
     <script src="marathon-route.js?v=1" defer></script>
     <script src="event-registration-model.js"></script>

@@ -35,7 +35,7 @@ function marathonAccountIdentity(data){
 }
 function marathonAccountEntry(row){
   const bibName=marathonText(row[26]||row[4]),shirt=marathonText(row[10]);
-  return {reference:row[0],name:marathonText(row[4]),race:row[2],bibName:bibName,shirt:shirt,bib:marathonText(row[21]),status:String(row[20]).trim().toLowerCase()==='yes'?'Payment verified':'Awaiting payment verification',revision:marathonDigest(JSON.stringify([bibName,shirt]))};
+  return {reference:row[0],name:marathonText(row[4]),race:row[2],bibName:bibName,shirt:shirt,bib:marathonText(row[21]),status:String(row[20]).trim().toLowerCase()==='yes'?'Payment verified':'Awaiting payment verification',revision:marathonDigest(JSON.stringify([bibName,shirt])),details:{fee:row[3],dob:marathonDob(row[5]),email:marathonText(row[6]),phone:marathonText(row[7]),flat:marathonText(row[8]),gender:marathonText(row[9]),bloodGroup:marathonText(row[11]),emergencyName:marathonText(row[12]),emergencyPhone:marathonText(row[13]),guardian:marathonText(row[14]),guardianConsent:row[15]===true,medical:marathonText(row[16]),medicalDetails:marathonText(row[17]),paymentReference:marathonText(row[18]),screenshotReceived:!!row[19],parentAccompanied:row[27]===true}};
 }
 function marathonAccountRequest(data){
   const allowed=data.action==='marathon-my-entries'?['action','token','flat']:['action','token','flat','reference','bibName','shirt','revision'];
