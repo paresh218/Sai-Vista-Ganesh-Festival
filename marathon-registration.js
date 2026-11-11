@@ -5,8 +5,9 @@
   const saving=document.getElementById('marathonSaving');
   saving.addEventListener('cancel',event=>event.preventDefault());
   const closed=()=>capacityClosed||Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
-  const closureMessage=()=>capacityClosed?'Registration closed: all 200 participant places are filled.':'Registration closed on 14 November 2026.';
+  const closureMessage=()=>capacityClosed?'Registration closed: all 200 participant places are filled.':'Registration closed on 14 November 2026 at 5:00 PM IST.';
   function refresh(){
+    document.querySelectorAll('[data-marathon-open]').forEach(button=>button.disabled=closed());
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
     document.getElementById('marathonGuardian').hidden=!minor;form.elements.guardian.required=minor;form.elements.guardianConsent.required=minor;
     const accompanied=age>=0&&age<=12;document.getElementById('marathonParentAccompanied').hidden=!accompanied;form.elements.parentAccompanied.required=accompanied;if(!accompanied)form.elements.parentAccompanied.checked=false;
@@ -33,7 +34,7 @@
       }else{document.getElementById('marathonCountStatus').textContent='Participant counts are temporarily unavailable.';}
       capacityClosed=data.closedReason==='capacity'||!!counts&&counts.total>=200;
       ready=data.acceptingEntries===true&&!capacityClosed;
-      document.getElementById('marathonCapacityNotice').textContent=closed()?closureMessage():'Registration closes at 200 total participants or 14 November 2026, 11:59 PM IST, whichever comes first.';
+      document.getElementById('marathonCapacityNotice').textContent=closed()?closureMessage():'Registration closes at 200 total participants or 14 November 2026, 5:00 PM IST, whichever comes first.';
       if(dialog.open&&!saved&&!preserveStatus)status.textContent=ready?'Pay the correct fee, then attach your screenshot.':'Registration is unavailable. Please do not pay yet.';
     }
     catch(_){document.getElementById('marathonCountStatus').textContent='Cannot refresh participant counts right now. Please try again shortly.';if(dialog.open&&!saved&&!preserveStatus)status.textContent='Cannot reach registration right now. Please do not pay yet. Reopen this form to retry.';}
@@ -75,6 +76,7 @@
   const rows=document.getElementById('marathonScheduleRows');if(rows)for(const item of SaiVistaMarathon.schedule){const tr=document.createElement('tr');item.forEach((value,index)=>{const cell=document.createElement(index===0?'th':'td');if(index===0)cell.scope='row';cell.textContent=value;tr.append(cell);});rows.append(tr);}
   const banner=document.getElementById('marathonInterest');
   readiness();setInterval(()=>{if(!document.hidden)readiness();},60000);
+  setTimeout(()=>{refresh();document.getElementById('marathonCapacityNotice').textContent=closureMessage();},Math.max(0,Date.parse(SaiVistaMarathon.event.deadline)-Date.now()));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)readiness();});
   if(window.Motion&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){window.Motion.animate(banner.querySelector('.marathon-visual img'),{scale:[1.035,1]},{duration:1.1,ease:'easeOut'});observer.disconnect();}},{threshold:.1});observer.observe(banner);}
 })();

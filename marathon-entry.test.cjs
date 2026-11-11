@@ -9,8 +9,8 @@ function service(source=fs.readFileSync('marathon-entry-service.gs','utf8')){
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+source,ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
  return {ctx,rows,props,sent,files,sheet,enable:()=>props.set('MARATHON_REGISTRATION_ENABLED','true'),busy:v=>busy=v,mailFails:v=>mailFails=v,quota:v=>quota=v,access:v=>access=v};
 }
-test('14 November inclusive IST deadline, event-day age, gender, medical and guardian validation',()=>{
- assert.equal(M.validate(good,Date.parse('2026-11-11T12:00:00+05:30')),'');assert.equal(M.validate(good,Date.parse('2026-11-14T23:59:59+05:30')),'');assert.match(M.validate(good,Date.parse('2026-11-15T00:00:00+05:30')),/closed on 14 November/);
+test('14 November 5 PM IST deadline, event-day age, gender, medical and guardian validation',()=>{
+ assert.equal(M.validate(good,Date.parse('2026-11-11T12:00:00+05:30')),'');assert.equal(M.validate(good,Date.parse('2026-11-14T16:59:59+05:30')),'');assert.match(M.validate(good,Date.parse('2026-11-14T17:00:00+05:30')),/closed on 14 November/);
  assert.equal(M.age('2014-11-29'),12);assert.equal(M.age('2014-11-30'),11);assert.equal(M.age('2014-02-30'),-1);
  for(const [key,value] of [['race','10K'],['dob','2015-01-01'],['email','bad'],['email','=bad@example.org'],['phone','123'],['emergencyPhone',good.phone],['bloodGroup','Z+'],['shirt','XXXL'],['flat','Z-999'],['gender',''],['medical',''],['medicalDetails','a'.repeat(501)],['agreed',false]])assert.ok(M.validate({...good,[key]:value}),key);
  assert.match(M.validate({...good,dob:'2010-01-01'}),/guardian/);assert.equal(M.validate({...good,dob:'2010-01-01',guardian:'Test Parent',guardianConsent:true}),'');
@@ -234,7 +234,7 @@ test('combined submitted count closes at exactly 200 and rejects further saves w
 test('readiness counts only valid submitted race rows and closes at the IST deadline below capacity',()=>{
  const s=service();s.enable();s.rows.push(['','', '3K'],['invalid-race','','10K']);
  assert.equal(s.ctx.doGet().counts.total,0);
- vm.runInContext('Date.now=()=>Date.parse("2026-11-15T00:00:00+05:30")',s.ctx);
+ vm.runInContext('Date.now=()=>Date.parse("2026-11-14T17:00:00+05:30")',s.ctx);
  const result=s.ctx.doGet();assert.equal(result.acceptingEntries,false);assert.equal(result.closedReason,'deadline');
 });
 
@@ -249,7 +249,7 @@ test('public counters show each distance and a full-capacity response disables b
 });
 
 function accountAuth(s,email='runner@example.org'){
- s.ctx.UrlFetchApp={fetch:(_url,options)=>{const d=JSON.parse(options.payload.payload);assert.equal(d.action,'gallery-resident-status');assert.equal(d.token,'valid-session');return {getResponseCode:()=>200,getContentText:()=>JSON.stringify({ok:true,email,flat:'B-902',residentVerified:true,expires:Date.now()+60000})};}};
+ s.ctx.UrlFetchApp={fetch:(_url,options)=>{const d=JSON.parse(options.payload.payload);assert.equal(d.action,'gallery-resident-status');assert.equal(d.token,'valid-session');return {getResponseCode:()=>200,getContentText:()=>JSON.stringify({ok:true,email,flat:'B-902',residentVerified:true,expires:vm.runInContext('Date.now()',s.ctx)+60000})};}};
  return {token:'valid-session',flat:'B-902'};
 }
 test('private marathon entries use server-verified email, return own registration data and deny another account by reference',()=>{
@@ -289,4 +289,23 @@ test('multiple entries remain read-only until Edit, block duplicate saves, then 
  d.querySelector('.marathon-my-entry button').click();const row=d.querySelector('.marathon-my-entry');assert.equal(row.querySelectorAll('input,select').length,2);row.querySelector('input').value='New Print';row.querySelector('select').value='L';row.querySelector('form').dispatchEvent(new w.Event('submit',{cancelable:true}));row.querySelector('form').dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(posts,1);const blocker=d.getElementById('marathonAccountSaving');assert.equal(blocker.open,true);assert.equal(d.getElementById('marathonAccountSavingDone').hidden,true);const cancel=new w.Event('cancel',{cancelable:true});blocker.dispatchEvent(cancel);assert.equal(cancel.defaultPrevented,true);
  finish();await new Promise(r=>setImmediate(r));assert.deepEqual(Object.keys(posted).sort(),['action','reference','revision','bibName','shirt','token','flat'].sort());assert.equal(d.querySelectorAll('.marathon-my-entry').length,2);assert.equal(d.querySelector('.marathon-my-entry [data-label="Name on the BIB"]').textContent,'New Print');assert.equal(d.querySelector('.marathon-my-entry [data-label="T-shirt size"]').textContent,'L');assert.equal(d.querySelectorAll('#marathonMyEntriesGrid input').length,0);assert.equal(d.getElementById('marathonAccountSavingTitle').textContent,'Changes saved');assert.equal(d.getElementById('marathonAccountSavingDone').hidden,false);d.getElementById('marathonAccountSavingDone').click();assert.equal(blocker.open,false);
  w.fetch=async(_url,options)=>{const payload=JSON.parse(options.body.get('payload'));return {json:async()=>payload.action==='marathon-edit-entry'?{ok:false,error:'This entry changed.'}:{ok:true,entries:[{...entries[0],bibName:'Saved Elsewhere',shirt:'XL'},entries[1]]}};};d.querySelector('.marathon-my-entry button').click();d.querySelector('.marathon-my-entry form').dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.match(d.getElementById('marathonAccountSavingTitle').textContent,/Could not confirm/);assert.match(d.getElementById('marathonAccountSavingHelp').textContent,/latest saved data/);assert.equal(d.querySelector('.marathon-my-entry [data-label="Name on the BIB"]').textContent,'Saved Elsewhere');assert.equal(d.querySelector('.marathon-my-entry [data-label="T-shirt size"]').textContent,'XL');
+});
+
+test('participant edits close exactly at 5 PM IST while own entries remain viewable',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good});const auth=accountAuth(s);let entry=s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries[0];
+ vm.runInContext('Date.now=()=>Date.parse("2026-11-14T16:59:59+05:30")',s.ctx);
+ const edit={action:'marathon-edit-entry',...auth,reference:good.requestId,revision:entry.revision,bibName:'Before cutoff',shirt:'L'};entry=s.ctx.marathonAccountRequest(edit).entry;assert.equal(entry.shirt,'L');
+ const before=[...s.rows[1]];vm.runInContext('Date.now=()=>Date.parse("2026-11-14T17:00:00+05:30")',s.ctx);
+ assert.throws(()=>s.ctx.marathonAccountRequest({...edit,revision:entry.revision,bibName:'Too late',shirt:'XL'}),/Editing closed/);assert.equal(JSON.stringify(s.rows[1]),JSON.stringify(before));assert.equal(s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries.length,1);assert.equal(s.ctx.doGet().acceptingEntries,false);
+});
+test('edit deadline is checked again after waiting for the script lock',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good});const auth=accountAuth(s),entry=s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries[0],before=[...s.rows[1]];
+ vm.runInContext('Date.now=()=>Date.parse("2026-11-14T16:59:59+05:30")',s.ctx);
+ s.ctx.LockService={getScriptLock:()=>({tryLock:()=>{vm.runInContext('Date.now=()=>Date.parse("2026-11-14T17:00:00+05:30")',s.ctx);return true;},releaseLock:()=>{}})};
+ assert.throws(()=>s.ctx.marathonAccountRequest({action:'marathon-edit-entry',...auth,reference:good.requestId,revision:entry.revision,bibName:'Too late',shirt:'XL'}),/Editing closed/);assert.equal(JSON.stringify(s.rows[1]),JSON.stringify(before));
+});
+test('an open edit becomes read-only at 5 PM and a stale save cannot send a request',async t=>{
+ const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());let timer,posts=0;const nativeTimeout=w.setTimeout.bind(w);w.setTimeout=(fn,delay,...args)=>{if(delay===1000){timer=fn;return 1;}return nativeTimeout(fn,delay,...args);};w.Date.now=()=>Date.parse('2026-11-14T16:59:59+05:30');w.SaiVistaMarathon=M;w.SaiVistaAuthSession={token:'session',flat:'B-902',expires:Date.parse('2026-11-15T00:00:00+05:30')};
+ w.fetch=async(_url,options)=>{const payload=JSON.parse(options.body.get('payload'));if(payload.action==='marathon-edit-entry')posts++;return {json:async()=>({ok:true,entries:[{reference:'own',name:'Own Runner',race:'3K',bibName:'Own',shirt:'M',status:'Payment verified',revision:'rev'}]})};};
+ w.eval(fs.readFileSync('marathon-account.js','utf8'));await new Promise(r=>setImmediate(r));d.querySelector('.marathon-my-entry button').click();const stale=d.querySelector('.marathon-my-entry form');assert.ok(stale);w.Date.now=()=>Date.parse('2026-11-14T17:00:00+05:30');timer();assert.equal(d.querySelectorAll('.marathon-my-entry button,.marathon-my-entry input,.marathon-my-entry select').length,0);assert.equal(d.querySelectorAll('.marathon-my-entry').length,1);assert.match(d.getElementById('marathonEditDeadline').textContent,/read-only/);stale.dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(posts,0);
 });
