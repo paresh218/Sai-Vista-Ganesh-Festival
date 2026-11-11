@@ -18,7 +18,7 @@
     for(const [link,option] of [[pay,1],[payBackup,2]]){if(canPay){link.href=SaiVistaMarathon.paymentLink(form.elements.race.value,option);link.removeAttribute('aria-disabled');}else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');}}
     const proof=form.elements.paymentProof.files[0];submit.disabled=!canPay||!proof||!form.elements.paymentDeclared.checked;
     submit.textContent=busy?'Saving your entry…':closed()?'Registration closed':!ready?'Registration setup in progress':saved?'Entry submitted':'Submit for payment verification';
-    if(closed())status.textContent='Registration closed on 10 November 2026.';
+    if(closed())status.textContent='Registration closed on 14 November 2026.';
   }
   async function readiness(){
     if(ready||checking||!config.registrationEnabled||!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(config.endpoint||''))return;
@@ -39,7 +39,7 @@
   function readProof(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve({type:file.type,base64:String(reader.result).split(',')[1]});reader.onerror=()=>reject(Error('Could not read the screenshot. Choose the file again.'));reader.readAsDataURL(file);});}
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(busy||saved)return;
-    if(!ready||closed()){status.textContent=closed()?'Registration closed on 10 November 2026.':'Registration setup is pending. No details have been submitted. Please do not pay yet.';refresh();return;}
+    if(!ready||closed()){status.textContent=closed()?'Registration closed on 14 November 2026.':'Registration setup is pending. No details have been submitted. Please do not pay yet.';refresh();return;}
     if(!form.reportValidity())return;
     const file=form.elements.paymentProof.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>3145728){status.textContent='Attach a JPG, PNG or WebP payment screenshot up to 3 MB.';return;}
     const data=Object.fromEntries(new FormData(form));delete data.paymentProof;data.flat=(typeof ResidentAccess==='undefined'?data.flat:ResidentAccess.parse(data.flat))||data.flat.trim().toUpperCase();data.agreed=form.elements.agreed.checked;data.guardianConsent=form.elements.guardianConsent.checked;data.paymentDeclared=form.elements.paymentDeclared.checked;data.parentAccompanied=form.elements.parentAccompanied.checked;

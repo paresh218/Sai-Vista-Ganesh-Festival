@@ -1,6 +1,6 @@
 /* Shared browser / Apps Script rules. Dates use India time and event-day age. */
 const SaiVistaMarathon = (() => {
-  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-11T00:00:00+05:30', upi:'8149525915@ybl', secondaryUpi:'dashrathkale2261@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
+  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-15T00:00:00+05:30', upi:'8149525915@ybl', secondaryUpi:'dashrathkale2261@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
   const schedule = Object.freeze([
     ['05:45 AM','Reporting time','Arrival & BIB check-in','Arrival & BIB check-in'],
     ['06:00 AM','Zumba & warm-up','Group warm-up session','Group warm-up session'],
@@ -17,7 +17,7 @@ const SaiVistaMarathon = (() => {
     return 2026-date.getUTCFullYear()-((date.getUTCMonth()>10||(date.getUTCMonth()===10&&date.getUTCDate()>29))?1:0);
   }
   function validate(d,now=Date.now()) {
-    if(now>=Date.parse(event.deadline))return 'Registration closed on 10 November 2026.';
+    if(now>=Date.parse(event.deadline))return 'Registration closed on 14 November 2026.';
     if(!Object.prototype.hasOwnProperty.call(event.fees,d.race))return 'Choose 3 km or 5 km.';
     if(typeof d.name!=='string'||d.name.trim().length<2||d.name.length>80||/[\u0000-\u001f]/.test(d.name))return 'Enter your full name (2–80 characters).';
     if(typeof d.bibName!=='string'||!d.bibName.trim()||d.bibName.length>30||/[\u0000-\u001f\u007f]/.test(d.bibName))return 'Enter the name on your BIB (1–30 characters).';

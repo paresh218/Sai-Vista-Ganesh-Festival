@@ -9,8 +9,8 @@ function service(source=fs.readFileSync('marathon-entry-service.gs','utf8')){
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+source,ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
  return {ctx,rows,props,sent,files,sheet,enable:()=>props.set('MARATHON_REGISTRATION_ENABLED','true'),busy:v=>busy=v,mailFails:v=>mailFails=v,quota:v=>quota=v,access:v=>access=v};
 }
-test('10 November inclusive IST deadline, event-day age, gender, medical and guardian validation',()=>{
- assert.equal(M.validate(good,Date.parse('2026-11-10T23:59:59+05:30')),'');assert.match(M.validate(good,Date.parse('2026-11-11T00:00:00+05:30')),/closed on 10 November/);
+test('14 November inclusive IST deadline, event-day age, gender, medical and guardian validation',()=>{
+ assert.equal(M.validate(good,Date.parse('2026-11-11T12:00:00+05:30')),'');assert.equal(M.validate(good,Date.parse('2026-11-14T23:59:59+05:30')),'');assert.match(M.validate(good,Date.parse('2026-11-15T00:00:00+05:30')),/closed on 14 November/);
  assert.equal(M.age('2014-11-29'),12);assert.equal(M.age('2014-11-30'),11);assert.equal(M.age('2014-02-30'),-1);
  for(const [key,value] of [['race','10K'],['dob','2015-01-01'],['email','bad'],['email','=bad@example.org'],['phone','123'],['emergencyPhone',good.phone],['bloodGroup','Z+'],['shirt','XXXL'],['flat','Z-999'],['gender',''],['medical',''],['medicalDetails','a'.repeat(501)],['agreed',false]])assert.ok(M.validate({...good,[key]:value}),key);
  assert.match(M.validate({...good,dob:'2010-01-01'}),/guardian/);assert.equal(M.validate({...good,dob:'2010-01-01',guardian:'Test Parent',guardianConsent:true}),'');
