@@ -13,6 +13,8 @@
     document.querySelectorAll('[data-marathon-open]').forEach(button=>button.disabled=deadlineClosed());
     const coordinator=form.elements.coordinator.checked;
     participantFields.hidden=coordinator;participantFields.disabled=coordinator;coordinatorHelp.hidden=!coordinator;document.getElementById('marathonEntryNotice').hidden=coordinator;
+    const coordinatorFields=document.getElementById('marathonCoordinatorFields');coordinatorFields.hidden=!coordinator;coordinatorFields.disabled=!coordinator;
+    if(coordinator)form.elements.coordinatorEmail.value=window.SaiVistaAuthSession?.email||'';
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
     const size=form.elements.shirt,choices=SaiVistaMarathon.sizesFor(form.elements.dob.value),key=choices.join(',');
     if(size.dataset.choices!==key){const selected=size.value;size.replaceChildren(new Option('Choose size',''));for(const value of choices)size.add(new Option(/^\d+$/.test(value)?'Kids '+value:value,value));size.value=choices.includes(selected)?selected:'';size.dataset.choices=key;}
@@ -87,12 +89,13 @@
     const identity=window.SaiVistaAuthSession;
     if(!identity||identity.expires<=Date.now()){status.textContent='Please sign in before saving your co-ordinator registration.';return;}
     if(!coordinatorReady||deadlineClosed()){status.textContent='Co-ordinator registration is unavailable or closed.';return;}
+    if(!form.reportValidity())return;
     busy=true;close.disabled=true;dialog.setAttribute('aria-busy','true');refresh();
     const help=document.getElementById('marathonSavingHelp'),originalHelp=help.textContent;
     help.textContent='Saving your co-ordinator registration. Please keep this page open.';
     try{
       saving.showModal();
-      const response=await fetch(config.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify({action:'marathon-coordinator',requestId,token:identity.token,flat:identity.flat})}),signal:AbortSignal.timeout(30000)});
+      const response=await fetch(config.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify({action:'marathon-coordinator',requestId,token:identity.token,flat:identity.flat,name:form.elements.coordinatorName.value.trim(),email:form.elements.coordinatorEmail.value.trim(),phone:form.elements.coordinatorPhone.value.trim(),shirt:form.elements.coordinatorShirt.value})}),signal:AbortSignal.timeout(30000)});
       const result=await response.json();if(!result.ok||result.status!=='coordinator-saved')throw Error(result.error||'Could not confirm saving. Retry without changing your details.');
       saved=true;form.hidden=true;success.hidden=false;success.querySelector('p').textContent='Your co-ordinator registration is saved. No payment is required. This is not a participant entry and does not allocate a BIB or count towards the 200 places.';document.getElementById('marathonEntryReference').textContent=result.reference;document.getElementById('marathonUpdatesGroup').hidden=true;status.textContent='Co-ordinator saved.';
     }catch(error){status.textContent=error.name==='TimeoutError'||error.name==='TypeError'?'Connection interrupted. Please retry; your signed-in account will not be added twice.':error.message;}

@@ -78,15 +78,17 @@ function marathonProofBytes(proof){
 function marathonSaveCoordinator(data){
   if(marathonProperties().getProperty('MARATHON_REGISTRATION_ENABLED')!=='true')throw Error('Registration is not open.');
   marathonSender();
-  if(Object.keys(data).some(function(key){return !['action','requestId','token','flat'].includes(key);})||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId||''))throw Error('Invalid co-ordinator request.');
-  const email=marathonAccountIdentity(data),lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Registration is busy. Please retry.');
+  if(Object.keys(data).some(function(key){return !['action','requestId','token','flat','name','email','phone','shirt'].includes(key);})||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId||''))throw Error('Invalid co-ordinator request.');
+  if(typeof data.name!=='string'||data.name.trim().length<2||data.name.length>80||/[\u0000-\u001f]/.test(data.name)||typeof data.phone!=='string'||!/^[6-9]\d{9}$/.test(data.phone)||!SaiVistaMarathon.event.sizes.includes(data.shirt)||typeof data.email!=='string'||data.email.length>254)throw Error('Enter your full name, verified email, 10-digit mobile number and T-shirt size.');
+  const email=marathonAccountIdentity(data);if(data.email.trim().toLowerCase()!==email)throw Error('Use your signed-in email for the co-ordinator registration.');
+  const lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Registration is busy. Please retry.');
   try{
     if(Date.now()>=Date.parse(SaiVistaMarathon.event.deadline))throw Error('Registration closed on 14 November 2026 at 5:00 PM IST.');
     const sheet=marathonSheet(),rows=marathonRows(sheet),existing=rows.find(function(row){return row[2]==='COORDINATOR'&&marathonText(row[6]).trim().toLowerCase()===email;});
-    if(existing)return {ok:true,status:'coordinator-saved',reference:existing[0]};
+    if(existing){const index=rows.indexOf(existing);sheet.getRange(index+2,5).setValue(marathonSafe(data.name.trim()));sheet.getRange(index+2,8).setValue(data.phone);sheet.getRange(index+2,11).setValue(data.shirt);SpreadsheetApp.flush();return {ok:true,status:'coordinator-saved',reference:existing[0]};}
     if(rows.some(function(row){return row[0]===data.requestId;}))throw Error('This reference is already used. Reopen the form and retry.');
     marathonUpgradeBibNameColumn(sheet);
-    const row=Array(MARATHON_COLUMNS.length).fill('');row[0]=data.requestId;row[1]=new Date();row[2]='COORDINATOR';row[3]=0;row[6]=email;row[8]=marathonSafe(data.flat);row[22]='COORDINATOR';
+    const row=Array(MARATHON_COLUMNS.length).fill('');row[0]=data.requestId;row[1]=new Date();row[2]='COORDINATOR';row[3]=0;row[4]=marathonSafe(data.name.trim());row[6]=email;row[7]=data.phone;row[10]=data.shirt;row[8]=marathonSafe(data.flat);row[22]='COORDINATOR';
     sheet.appendRow(row);SpreadsheetApp.flush();return {ok:true,status:'coordinator-saved',reference:data.requestId};
   }finally{lock.releaseLock();}
 }
