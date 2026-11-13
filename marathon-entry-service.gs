@@ -14,7 +14,7 @@ function doGet(){
   let ready=false,counts=null;
   try{if(marathonProperties().getProperty('MARATHON_REGISTRATION_ENABLED')==='true'){marathonSender();const sheet=marathonSheet();ready=DriveApp.getFolderById(marathonProperties().getProperty('MARATHON_PROOF_FOLDER_ID')).getSharingAccess()===DriveApp.Access.PRIVATE;if(ready)counts=marathonCounts(marathonRows(sheet));}}catch(_){ready=false;counts=null;}
   const closedReason=counts&&counts.total>=counts.limit?'capacity':Date.now()>=Date.parse(SaiVistaMarathon.event.deadline)?'deadline':ready?'':'unavailable';
-  return marathonJson({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:ready&&!closedReason,payment:'committee-verification',deadline:SaiVistaMarathon.event.deadline,counts:counts,closedReason:closedReason});
+  return marathonJson({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:ready&&!closedReason,acceptingCoordinators:ready&&Date.now()<Date.parse(SaiVistaMarathon.event.deadline),payment:'committee-verification',deadline:SaiVistaMarathon.event.deadline,counts:counts,closedReason:closedReason});
 }
 function doPost(e){
   try{
@@ -22,6 +22,7 @@ function doPost(e){
     if(!raw||raw.length>4210000)throw Error('Invalid entry request.');
     const data=JSON.parse(raw);
     if(['marathon-my-entries','marathon-edit-entry'].includes(data.action)){if(raw.length>4096)throw Error('Invalid account request.');return marathonJson(marathonAccountRequest(data));}
+    if(data.action==='marathon-coordinator'){if(raw.length>4096)throw Error('Invalid co-ordinator request.');return marathonJson(marathonSaveCoordinator(data));}
     if(data.action!=='marathon-entry')throw Error('Unknown entry action.');
     return marathonJson(marathonSaveEntry(data));
   }catch(error){console.error('Marathon entry rejected.');return marathonJson({ok:false,error:error.message});}
@@ -73,6 +74,21 @@ function marathonProofBytes(proof){
   const bytes=Utilities.base64Decode(proof.base64),b=bytes.map(function(n){return (n+256)%256;});
   const matches=proof.type==='image/jpeg'?b[0]===255&&b[1]===216&&b[2]===255:proof.type==='image/png'?b.slice(0,8).join(',')==='137,80,78,71,13,10,26,10':b.slice(0,4).join(',')==='82,73,70,70'&&b.slice(8,12).join(',')==='87,69,66,80';
   if(!matches||bytes.length>3145728||bytes.length<16)throw Error('The payment screenshot is not a supported image.');return bytes;
+}
+function marathonSaveCoordinator(data){
+  if(marathonProperties().getProperty('MARATHON_REGISTRATION_ENABLED')!=='true')throw Error('Registration is not open.');
+  marathonSender();
+  if(Object.keys(data).some(function(key){return !['action','requestId','token','flat'].includes(key);})||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId||''))throw Error('Invalid co-ordinator request.');
+  const email=marathonAccountIdentity(data),lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Registration is busy. Please retry.');
+  try{
+    if(Date.now()>=Date.parse(SaiVistaMarathon.event.deadline))throw Error('Registration closed on 14 November 2026 at 5:00 PM IST.');
+    const sheet=marathonSheet(),rows=marathonRows(sheet),existing=rows.find(function(row){return row[2]==='COORDINATOR'&&marathonText(row[6]).trim().toLowerCase()===email;});
+    if(existing)return {ok:true,status:'coordinator-saved',reference:existing[0]};
+    if(rows.some(function(row){return row[0]===data.requestId;}))throw Error('This reference is already used. Reopen the form and retry.');
+    marathonUpgradeBibNameColumn(sheet);
+    const row=Array(MARATHON_COLUMNS.length).fill('');row[0]=data.requestId;row[1]=new Date();row[2]='COORDINATOR';row[3]=0;row[6]=email;row[8]=marathonSafe(data.flat);row[22]='COORDINATOR';
+    sheet.appendRow(row);SpreadsheetApp.flush();return {ok:true,status:'coordinator-saved',reference:data.requestId};
+  }finally{lock.releaseLock();}
 }
 function marathonSaveEntry(d){
   const props=marathonProperties();if(props.getProperty('MARATHON_REGISTRATION_ENABLED')!=='true')throw Error('Registration is not open yet. Please do not pay until it opens.');

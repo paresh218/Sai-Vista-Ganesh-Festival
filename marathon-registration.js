@@ -1,13 +1,18 @@
 (() => {
   const dialog=document.getElementById('marathonEntryDialog'),form=document.getElementById('marathonEntryForm');if(!dialog||!form)return;
   const config=window.SaiVistaMarathonConfig||{},status=document.getElementById('marathonEntryStatus'),submit=document.getElementById('marathonEntrySubmit'),close=document.getElementById('marathonEntryClose'),pay=document.getElementById('marathonPayLink'),payBackup=document.getElementById('marathonPayBackupLink'),success=document.getElementById('marathonEntrySuccess');
-  let opener,ready=false,busy=false,requestId='',saved=false,checking=false,capacityClosed=false;
+  let opener,coordinatorReady=false,ready=false,busy=false,requestId='',saved=false,checking=false,capacityClosed=false;
   const saving=document.getElementById('marathonSaving');
   saving.addEventListener('cancel',event=>event.preventDefault());
-  const closed=()=>capacityClosed||Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
-  const closureMessage=()=>capacityClosed?'Registration closed: all 200 participant places are filled.':'Registration closed on 14 November 2026 at 5:00 PM IST.';
+  const deadlineClosed=()=>Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
+  const closed=()=>deadlineClosed()||(!form.elements.coordinator.checked&&capacityClosed);
+  const participantFields=document.getElementById('marathonParticipantFields'),coordinatorHelp=document.getElementById('marathonCoordinatorHelp');
+  const participantSuccess=success.querySelector('p').textContent;
+  const closureMessage=()=>capacityClosed&&!form.elements.coordinator.checked?'Registration closed: all 200 participant places are filled.':'Registration closed on 14 November 2026 at 5:00 PM IST.';
   function refresh(){
-    document.querySelectorAll('[data-marathon-open]').forEach(button=>button.disabled=closed());
+    document.querySelectorAll('[data-marathon-open]').forEach(button=>button.disabled=deadlineClosed());
+    const coordinator=form.elements.coordinator.checked;
+    participantFields.hidden=coordinator;participantFields.disabled=coordinator;coordinatorHelp.hidden=!coordinator;document.getElementById('marathonEntryNotice').hidden=coordinator;
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
     const size=form.elements.shirt,choices=SaiVistaMarathon.sizesFor(form.elements.dob.value),key=choices.join(',');
     if(size.dataset.choices!==key){const selected=size.value;size.replaceChildren(new Option('Choose size',''));for(const value of choices)size.add(new Option(/^\d+$/.test(value)?'Kids '+value:value,value));size.value=choices.includes(selected)?selected:'';size.dataset.choices=key;}
@@ -18,18 +23,19 @@
     document.getElementById('marathonMedicalNote').hidden=!medicalNoteRequired;form.elements.medicalDetails.required=medicalNoteRequired;
     const feeLabel=form.elements.race.value==='5K'?'5 km · ₹199':'3 km · ₹149';
     document.getElementById('marathonEntryFee').textContent=feeLabel;document.getElementById('marathonBackupFee').textContent=feeLabel;
-    const canPay=ready&&!closed()&&!busy&&!saved;
+    const canPay=!coordinator&&ready&&!closed()&&!busy&&!saved;
     document.getElementById('marathonPaymentAvailability').textContent=closed()?'Registration closed. Please do not pay.':ready?'Payment evidence will be checked by the committee.':'Registration is being connected. Please wait to pay.';
     for(const [link,option] of [[pay,1],[payBackup,2]]){if(canPay){link.href=SaiVistaMarathon.paymentLink(form.elements.race.value,option);link.removeAttribute('aria-disabled');}else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');}}
-    const proof=form.elements.paymentProof.files[0];submit.disabled=!canPay||!proof||!form.elements.paymentDeclared.checked;
-    submit.textContent=busy?'Saving your entry…':closed()?'Registration closed':!ready?'Registration setup in progress':saved?'Entry submitted':'Submit for payment verification';
+    const proof=form.elements.paymentProof.files[0];submit.disabled=coordinator?(!coordinatorReady||closed()||busy||saved):(!canPay||!proof||!form.elements.paymentDeclared.checked);
+    submit.textContent=coordinator?(busy?'Saving co-ordinator…':closed()?'Registration closed':saved?'Co-ordinator saved':'Save as co-ordinator'):busy?'Saving your entry…':closed()?'Registration closed':!ready?'Registration setup in progress':saved?'Entry submitted':'Submit for payment verification';
     if(closed()&&!saved)status.textContent=closureMessage();
   }
   async function readiness(preserveStatus=false){
     if(checking||busy||!config.registrationEnabled||!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(config.endpoint||''))return;
-    checking=true;ready=false;refresh();if(dialog.open&&!saved&&!preserveStatus)status.textContent='Checking registration availability…';
+    checking=true;ready=false;coordinatorReady=false;refresh();if(dialog.open&&!saved&&!preserveStatus)status.textContent='Checking registration availability…';
     try{const response=await fetch(config.endpoint,{cache:'no-store',signal:AbortSignal.timeout(30000)}),data=await response.json();
       if(data.ok!==true||data.service!=='sai-vista-marathon-2026-manual-v1')throw Error('Invalid registration response.');
+      coordinatorReady=data.acceptingCoordinators===true;
       const counts=data.counts;
       if(counts&&['3K','5K','total','limit'].every(key=>Number.isInteger(counts[key])&&counts[key]>=0)&&counts.total===counts['3K']+counts['5K']&&counts.limit===200){
         document.querySelectorAll('[data-marathon-count]').forEach(node=>node.textContent=String(counts[node.dataset.marathonCount]));
@@ -44,7 +50,7 @@
     finally{checking=false;refresh();}
   }
   document.querySelectorAll('[data-marathon-open]').forEach(button=>button.addEventListener('click',()=>{
-    opener=button;form.reset();saved=false;success.hidden=true;form.hidden=false;status.textContent='';requestId=crypto.randomUUID();
+    opener=button;form.reset();success.querySelector('p').textContent=participantSuccess;document.getElementById('marathonUpdatesGroup').hidden=false;saved=false;success.hidden=true;form.hidden=false;status.textContent='';requestId=crypto.randomUUID();
     form.elements.race.value=button.dataset.marathonOpen==='5K'?'5K':'3K';
     try{form.elements.flat.value=typeof ResidentAccess==='undefined'?'':ResidentAccess.remembered(localStorage)||'';}catch(_){}
     refresh();dialog.showModal();close.focus();readiness();
@@ -55,6 +61,7 @@
   function readProof(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve({type:file.type,base64:String(reader.result).split(',')[1]});reader.onerror=()=>reject(Error('Could not read the screenshot. Choose the file again.'));reader.readAsDataURL(file);});}
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(busy||saved)return;
+    if(form.elements.coordinator.checked){await saveCoordinator();return;}
     if(!ready||closed()){status.textContent=closed()?closureMessage():'Registration setup is pending. No details have been submitted. Please do not pay yet.';refresh();return;}
     if(!form.reportValidity())return;
     const file=form.elements.paymentProof.files[0];if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>3145728){status.textContent='Attach a JPG, PNG or WebP payment screenshot up to 3 MB.';return;}
@@ -76,6 +83,21 @@
     }catch(error){status.textContent=(error.name==='TimeoutError'||error.name==='TypeError')?'Connection interrupted. Your entry may have been saved. Retry with the same details and screenshot; do not pay again.':error.message;}
     finally{if(saving.open)saving.close();busy=false;close.disabled=false;dialog.removeAttribute('aria-busy');refresh();if(saved)success.focus();readiness(true);}
   });
+  async function saveCoordinator(){
+    const identity=window.SaiVistaAuthSession;
+    if(!identity||identity.expires<=Date.now()){status.textContent='Please sign in before saving your co-ordinator registration.';return;}
+    if(!coordinatorReady||deadlineClosed()){status.textContent='Co-ordinator registration is unavailable or closed.';return;}
+    busy=true;close.disabled=true;dialog.setAttribute('aria-busy','true');refresh();
+    const help=document.getElementById('marathonSavingHelp'),originalHelp=help.textContent;
+    help.textContent='Saving your co-ordinator registration. Please keep this page open.';
+    try{
+      saving.showModal();
+      const response=await fetch(config.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify({action:'marathon-coordinator',requestId,token:identity.token,flat:identity.flat})}),signal:AbortSignal.timeout(30000)});
+      const result=await response.json();if(!result.ok||result.status!=='coordinator-saved')throw Error(result.error||'Could not confirm saving. Retry without changing your details.');
+      saved=true;form.hidden=true;success.hidden=false;success.querySelector('p').textContent='Your co-ordinator registration is saved. No payment is required. This is not a participant entry and does not allocate a BIB or count towards the 200 places.';document.getElementById('marathonEntryReference').textContent=result.reference;document.getElementById('marathonUpdatesGroup').hidden=true;status.textContent='Co-ordinator saved.';
+    }catch(error){status.textContent=error.name==='TimeoutError'||error.name==='TypeError'?'Connection interrupted. Please retry; your signed-in account will not be added twice.':error.message;}
+    finally{if(saving.open)saving.close();help.textContent=originalHelp;busy=false;close.disabled=false;dialog.removeAttribute('aria-busy');refresh();}
+  }
   const rows=document.getElementById('marathonScheduleRows');if(rows)for(const item of SaiVistaMarathon.schedule){const tr=document.createElement('tr');item.forEach((value,index)=>{const cell=document.createElement(index===0?'th':'td');if(index===0)cell.scope='row';cell.textContent=value;tr.append(cell);});rows.append(tr);}
   const banner=document.getElementById('marathonInterest');
   readiness();setInterval(()=>{if(!document.hidden)readiness();},60000);

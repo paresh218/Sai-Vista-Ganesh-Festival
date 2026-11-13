@@ -150,7 +150,7 @@ test('all displayed entry fields are required, labelled with stars, and conditio
  d.querySelector('[data-marathon-open="5K"]').click();const f=d.getElementById('marathonEntryForm');
  assert.match(d.querySelector('.marathon-required-note').textContent,/All shown fields are required/);
  const conditional=new Set(['guardian','guardianConsent','medicalDetails','parentAccompanied']);
- for(const input of f.querySelectorAll('input,select,textarea')){
+ for(const input of d.getElementById('marathonParticipantFields').querySelectorAll('input,select,textarea')){
    assert.equal(input.required,!conditional.has(input.name),input.name);
    assert.ok(input.closest('label').querySelector('.marathon-required'),input.name+' marker');
  }
@@ -328,3 +328,18 @@ test('server saves and edits kids numeric sizes but rejects adult numeric edits 
 });
 
 test('registration switches between numeric kids sizes and adult sizes from DOB',t=>{const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());const f=d.getElementById('marathonEntryForm');f.elements.dob.value='2012-05-01';f.dispatchEvent(new w.Event('change'));assert.ok([...f.elements.shirt.options].some(o=>o.value==='28'));f.elements.shirt.value='28';f.elements.dob.value='1990-05-01';f.dispatchEvent(new w.Event('change'));assert.ok(![...f.elements.shirt.options].some(o=>o.value==='28'));assert.equal(f.elements.shirt.value,'');});
+
+test('co-ordinators save verified identity without payment, BIB, email or participant capacity',()=>{
+ const s=service();s.enable();const auth=accountAuth(s);for(let i=0;i<200;i++){const row=Array(28).fill('');row[0]='existing-'+i;row[2]=i%2?'3K':'5K';s.rows.push(row);}
+ const data={action:'marathon-coordinator',requestId:good.requestId,...auth};assert.equal(s.ctx.doGet().acceptingCoordinators,true);assert.equal(s.ctx.doGet().acceptingEntries,false);
+ const result=s.ctx.marathonSaveCoordinator(data);assert.equal(result.status,'coordinator-saved');assert.equal(s.rows.at(-1)[2],'COORDINATOR');assert.equal(s.rows.at(-1)[6],good.email);assert.equal(s.ctx.doGet().counts.total,200);assert.equal(s.files.length,0);assert.equal(s.sent.length,0);assert.equal(s.rows.at(-1)[21],'');
+ s.ctx.marathonSaveCoordinator({...data,requestId:'22345678-1234-1234-1234-123456789012'});assert.equal(s.rows.length,202);assert.throws(()=>s.ctx.marathonSaveCoordinator({...data,email:'forged@example.org'}),/Invalid/);
+ vm.runInContext('Date.now=()=>Date.parse("2026-11-14T17:00:00+05:30")',s.ctx);assert.throws(()=>s.ctx.marathonSaveCoordinator(data),/closed/);assert.equal(s.ctx.doGet().acceptingCoordinators,false);
+});
+test('co-ordinator checkbox disables all participant validation and sends identity only',async t=>{
+ const dom=page(true),w=dom.window,d=w.document;t.after(()=>w.close());w.SaiVistaAuthSession={token:'session',flat:'B-902',expires:Date.now()+60000};let payload;
+ w.fetch=async(_url,options)=>{if(options?.method==='POST'){payload=JSON.parse(options.body.get('payload'));return {json:async()=>({ok:true,status:'coordinator-saved',reference:payload.requestId})};}return {json:async()=>({ok:true,service:'sai-vista-marathon-2026-manual-v1',acceptingEntries:false,acceptingCoordinators:true,closedReason:'capacity',counts:{'3K':100,'5K':100,total:200,limit:200}})};};
+ d.querySelector('[data-marathon-open]').click();await new Promise(r=>setImmediate(r));const form=d.getElementById('marathonEntryForm');form.elements.coordinator.checked=true;form.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParticipantFields').hidden,true);assert.equal(d.getElementById('marathonParticipantFields').disabled,true);assert.equal(d.getElementById('marathonEntrySubmit').disabled,false);assert.equal(d.getElementById('marathonPayLink').hasAttribute('href'),false);assert.equal(form.checkValidity(),true);
+ form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.deepEqual(Object.keys(payload).sort(),['action','flat','requestId','token']);assert.equal(payload.action,'marathon-coordinator');assert.match(d.getElementById('marathonEntryStatus').textContent,/Co-ordinator saved/);assert.equal(d.getElementById('marathonUpdatesGroup').hidden,true);
+ d.getElementById('marathonEntryClose').click();d.querySelector('[data-marathon-open]').click();form.elements.coordinator.checked=true;form.dispatchEvent(new w.Event('change'));form.elements.coordinator.checked=false;form.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParticipantFields').disabled,false);assert.equal(form.elements.paymentProof.required,true);assert.equal(form.checkValidity(),false);await new Promise(r=>setImmediate(r));
+});
