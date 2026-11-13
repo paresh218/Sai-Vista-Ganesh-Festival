@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {JSDOM}=require('jsdom');
-function setup(reduce=false){
+function setup(reduce=false,loaded=true){
   const html=fs.readFileSync('index.html','utf8');
   const dom=new JSDOM(html,{runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
   let next=0,frames=new Map(),observer,change;
@@ -13,6 +13,8 @@ function setup(reduce=false){
   const path=w.document.querySelector('[data-route-path]');
   path.getTotalLength=()=>100;
   path.getPointAtLength=x=>({x,y:x});
+  Object.defineProperty(w.document.querySelector('.marathon-route-map img'),'naturalWidth',{value:loaded?900:0});
+  Object.defineProperty(w.document.querySelector('.marathon-route-map img'),'complete',{value:loaded});
   w.eval(fs.readFileSync('marathon-route.js','utf8'));
   const click=selector=>w.document.querySelector(selector).click();
   return {w,path,click,frames,show:()=>observer([{isIntersecting:true}]),hide:()=>observer([{isIntersecting:false}]),step:time=>{const callbacks=[...frames.values()];frames.clear();callbacks.forEach(fn=>fn(time));},reduce:()=>change()};
@@ -66,3 +68,5 @@ test('reduced motion shows complete course without autoplay and permits intentio
 });
 
 test('changing distance after completion restarts animation',()=>{const s=setup();s.show();for(let t=0;t<=15000;t+=100)s.step(t);s.click('[data-route-race="5"]');assert.equal(s.frames.size,1);s.step(16000);s.step(16100);assert.ok(Number(s.path.style.strokeDashoffset)<1);s.w.close();});
+
+test('overlay waits for the map and reports failed image loading',()=>{const s=setup(false,false),image=s.w.document.querySelector('.marathon-route-map img'),svg=s.w.document.querySelector('#marathonRoute svg'),status=s.w.document.querySelector('[data-route-status]');assert.equal(svg.hasAttribute('hidden'),true);assert.match(status.textContent,/Loading/);image.dispatchEvent(new s.w.Event('load'));assert.equal(svg.hasAttribute('hidden'),false);assert.ok(s.path.getAttribute('d'));image.dispatchEvent(new s.w.Event('error'));assert.equal(svg.hasAttribute('hidden'),true);assert.match(status.textContent,/could not load/);assert.equal(s.frames.size,0);s.w.close();});

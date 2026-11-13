@@ -55,6 +55,13 @@
   document.addEventListener('visibilitychange', sync);
   if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }).observe(svg);
   else visible = true;
-  select('3');
-  svg.removeAttribute('hidden');
+  const image = root.querySelector('.marathon-route-map img');
+  function ready() { svg.removeAttribute('hidden'); select(race); }
+  image.addEventListener('load', ready);
+  image.addEventListener('error', () => {
+    svg.setAttribute('hidden', ''); playing = false; sync();
+    status.textContent = 'Map could not load. Please reload or use the full-size map link below.';
+  });
+  if (image.complete && image.naturalWidth) ready();
+  else { playing = false; status.textContent = 'Loading the route map…'; }
 })();

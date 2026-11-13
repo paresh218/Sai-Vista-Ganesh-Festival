@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v192";
+const CACHE_NAME = "sai-vista-ganpati-2026-v193";
 const APP_SHELL = [
   "./",
   "advertising-config.js?v=3",
@@ -27,7 +27,7 @@ const APP_SHELL = [
   "marathon-registration.css?v=7",
   "marathon-3d.css?v=2",
   "marathon-route.css?v=2",
-  "marathon-route.js?v=2",
+  "marathon-route.js?v=3",
   "assets/marathon-route-2026.jpeg",
   "marathon-3d.js?v=2",
   "assets/marathon-model-v9.js",
