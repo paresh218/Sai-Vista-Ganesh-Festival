@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /tmp/
+Disallow: /outputs/
+Disallow: /tools/
+Disallow: /docs/
+Disallow: /society-platform/
 
 Sitemap: https://saivistaculturalcommittee.in/sitemap.xml

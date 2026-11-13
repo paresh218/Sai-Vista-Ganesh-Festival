@@ -1,0 +1,183 @@
+{
+  "before": [
+    {
+      "file": "index.html",
+      "title": "Sai Vista Cultural Committee | Events, Marathon & Festivals",
+      "description": "Sai Vista Cultural Committee: community celebrations, Sai Vista Marathon on 29 November 2026, Ganesh Festival and Navratri memories. Guests welcome.",
+      "canonical": "https://saivistaculturalcommittee.in/",
+      "h1": [
+        "Sai VistaMarathon.",
+        "Colours. Devotion.Celebration, together."
+      ],
+      "bytes": 117539,
+      "schemas": [
+        "Organization",
+        "WebSite"
+      ]
+    },
+    {
+      "file": "about.html",
+      "title": "About Sai Vista Cultural Committee | Sai Vista",
+      "description": "Community celebrations at Sai Vista, including the marathon, Ganesh Festival and Navratri.",
+      "canonical": "https://saivistaculturalcommittee.in/about.html",
+      "h1": [
+        "About Sai Vista Cultural Committee"
+      ],
+      "bytes": 2391,
+      "schemas": []
+    },
+    {
+      "file": "privacy.html",
+      "title": "Privacy and advertising | Sai Vista",
+      "description": "How the Sai Vista community website handles resident access, event entries, media and advertising.",
+      "canonical": "https://saivistaculturalcommittee.in/privacy.html",
+      "h1": [
+        "Privacy and advertising"
+      ],
+      "bytes": 4973,
+      "schemas": []
+    },
+    {
+      "file": "terms.html",
+      "title": "Website terms | Sai Vista",
+      "description": "Guest access, respectful use, event registration and advertising on the Sai Vista website.",
+      "canonical": "https://saivistaculturalcommittee.in/terms.html",
+      "h1": [
+        "Website terms"
+      ],
+      "bytes": 2587,
+      "schemas": []
+    }
+  ],
+  "after": {
+    "checkedOn": "2026-11-13",
+    "scope": "Local public-page facts; not a search ranking or Core Web Vitals measurement",
+    "pages": [
+      {
+        "url": "https://saivistaculturalcommittee.in/",
+        "file": "index.html",
+        "title": "Sai Vista Cultural Committee | Rahatani, PCMC Pune",
+        "description": "Community events at Sai Vista Society in Rahatani, PCMC, Pune. Explore the 2026 3K and 5K marathon, festival celebrations and committee information.",
+        "descriptionLength": 148,
+        "canonical": "https://saivistaculturalcommittee.in/",
+        "robots": "index,follow,max-image-preview:large",
+        "h1": [
+          "Sai VistaMarathon.",
+          "Colours. Devotion.Celebration, together."
+        ],
+        "schemas": [
+          "Organization",
+          "WebSite"
+        ],
+        "bytes": 118852,
+        "sha256": "1a6b4afcdbebf00988c45b0933c980c8b4b9224abc20668310527f26f32c9e9a",
+        "scriptRequests": 55,
+        "issues": []
+      },
+      {
+        "url": "https://saivistaculturalcommittee.in/about.html",
+        "file": "about.html",
+        "title": "About Sai Vista Cultural Committee | Rahatani, PCMC",
+        "description": "Meet Sai Vista Cultural Committee in Rahatani, PCMC, Pune. Find community event information, resident access guidance and committee contact details.",
+        "descriptionLength": 148,
+        "canonical": "https://saivistaculturalcommittee.in/about.html",
+        "robots": "index,follow,max-image-preview:large",
+        "h1": [
+          "About Sai Vista Cultural Committee"
+        ],
+        "schemas": [
+          "Organization",
+          "WebSite",
+          "BreadcrumbList",
+          "AboutPage"
+        ],
+        "bytes": 8733,
+        "sha256": "12a2ab738ac0741face41fb58029ac601cd186c49f032bbf364b118609c30078",
+        "scriptRequests": 0,
+        "issues": []
+      },
+      {
+        "url": "https://saivistaculturalcommittee.in/marathon-2026.html",
+        "file": "marathon-2026.html",
+        "title": "Sai Vista Marathon 2026 | 3K & 5K Run in PCMC, Pune",
+        "description": "Sai Vista Marathon 2026: 3K and 5K runs on 29 November in Rahatani, PCMC. View fees, the Aundh–Ravet BRTS route, schedule and registration deadline.",
+        "descriptionLength": 148,
+        "canonical": "https://saivistaculturalcommittee.in/marathon-2026.html",
+        "robots": "index,follow,max-image-preview:large",
+        "h1": [
+          "Sai Vista Marathon 2026"
+        ],
+        "schemas": [
+          "Organization",
+          "WebSite",
+          "BreadcrumbList",
+          "SportsEvent"
+        ],
+        "bytes": 12446,
+        "sha256": "1d200d72c86a3223a98574b01f647799e89838be76a7c0562ac6ae61e9bc0e20",
+        "scriptRequests": 0,
+        "issues": []
+      },
+      {
+        "url": "https://saivistaculturalcommittee.in/sponsorship.html",
+        "file": "sponsorship.html",
+        "title": "Sai Vista Marathon Sponsorship | PCMC, Pune",
+        "description": "Support Sai Vista Marathon 2026 in Rahatani, PCMC, Pune. Explore sponsorship and product contribution opportunities. Contact Paresh on 8149525915.",
+        "descriptionLength": 146,
+        "canonical": "https://saivistaculturalcommittee.in/sponsorship.html",
+        "robots": "index,follow,max-image-preview:large",
+        "h1": [
+          "Sponsor Sai Vista Marathon 2026"
+        ],
+        "schemas": [
+          "Organization",
+          "WebSite",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "bytes": 8498,
+        "sha256": "d7886857eb1cc4f7718315ba3d907c6417a5f5b6ca735894a5d238319e5f8dd3",
+        "scriptRequests": 0,
+        "issues": []
+      },
+      {
+        "url": "https://saivistaculturalcommittee.in/privacy.html",
+        "file": "privacy.html",
+        "title": "Privacy & Advertising | Sai Vista Cultural Committee",
+        "description": "How Sai Vista Cultural Committee handles sign-in, resident verification, event registrations, private media, visit records and advertising choices.",
+        "descriptionLength": 147,
+        "canonical": "https://saivistaculturalcommittee.in/privacy.html",
+        "robots": "index,follow",
+        "h1": [
+          "Privacy and advertising"
+        ],
+        "schemas": [
+          "WebPage"
+        ],
+        "bytes": 6382,
+        "sha256": "01d6f7cd2470f369f1f8c1f0aee5cac69dae4d1605d2224e226890591b573fe2",
+        "scriptRequests": 0,
+        "issues": []
+      },
+      {
+        "url": "https://saivistaculturalcommittee.in/terms.html",
+        "file": "terms.html",
+        "title": "Website Terms | Sai Vista Cultural Committee",
+        "description": "Website terms for Sai Vista Cultural Committee community events, registration, payments, private media, advertising and external services.",
+        "descriptionLength": 138,
+        "canonical": "https://saivistaculturalcommittee.in/terms.html",
+        "robots": "index,follow",
+        "h1": [
+          "Website terms"
+        ],
+        "schemas": [
+          "WebPage"
+        ],
+        "bytes": 3685,
+        "sha256": "013d594b678e1410a795c3e330f82e9e040d39850dfc4b7d20aee9b0ca30cec8",
+        "scriptRequests": 0,
+        "issues": []
+      }
+    ]
+  }
+}
