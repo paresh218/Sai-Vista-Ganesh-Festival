@@ -1,5 +1,5 @@
 if(typeof importScripts==='function')importScripts('private-video-worker.js?v=3');
-const CACHE_NAME = "sai-vista-ganpati-2026-v191";
+const CACHE_NAME = "sai-vista-ganpati-2026-v192";
 const APP_SHELL = [
   "./",
   "advertising-config.js?v=3",
@@ -117,7 +117,7 @@ self.addEventListener("activate", (event) => {
   )).then(() => self.clients.claim()));
 });
 
-// Fresh files online; cached files are only an offline/error fallback.
+// Fresh code online; saved images render immediately while refreshing.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
   if(new URL(event.request.url).pathname.startsWith('/__private-video/')||new URL(event.request.url).pathname.startsWith('/assets/protected-video/'))return;
@@ -127,6 +127,15 @@ self.addEventListener("fetch", (event) => {
   if (event.request.cache === "no-store") return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
+    if (/\.(?:png|jpe?g|webp|gif|svg|avif|ico)$/i.test(new URL(event.request.url).pathname)) {
+      const saved = await cache.match(event.request);
+      if (saved) {
+        event.waitUntil(fetch(event.request, { cache: "no-cache" }).then(response => {
+          if (response.ok) return cache.put(event.request, response);
+        }).catch(() => {}));
+        return saved;
+      }
+    }
     try {
       const url = new URL(event.request.url);
       const isCode = event.request.mode === "navigate" || /\.(?:html|js|css|json)$/.test(url.pathname);
