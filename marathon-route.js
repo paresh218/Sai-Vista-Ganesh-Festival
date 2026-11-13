@@ -43,6 +43,7 @@
     path.setAttribute('d', points.map((p, i) => `${i ? 'L' : 'M'}${p.join(' ')}`).join(' '));
     length = path.getTotalLength();
     progress = reduced.matches ? 1 : 0;
+    playing = !reduced.matches;
     root.querySelectorAll('[data-route-race]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.routeRace === race)));
     status.textContent = `${race} km · Sai Vista → ${race === '3' ? '1.5' : '2.5'} km turnaround → Sai Vista.`;
     draw(); sync();

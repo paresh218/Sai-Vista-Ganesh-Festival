@@ -309,3 +309,22 @@ test('an open edit becomes read-only at 5 PM and a stale save cannot send a requ
  w.fetch=async(_url,options)=>{const payload=JSON.parse(options.body.get('payload'));if(payload.action==='marathon-edit-entry')posts++;return {json:async()=>({ok:true,entries:[{reference:'own',name:'Own Runner',race:'3K',bibName:'Own',shirt:'M',status:'Payment verified',revision:'rev'}]})};};
  w.eval(fs.readFileSync('marathon-account.js','utf8'));await new Promise(r=>setImmediate(r));d.querySelector('.marathon-my-entry button').click();const stale=d.querySelector('.marathon-my-entry form');assert.ok(stale);w.Date.now=()=>Date.parse('2026-11-14T17:00:00+05:30');timer();assert.equal(d.querySelectorAll('.marathon-my-entry button,.marathon-my-entry input,.marathon-my-entry select').length,0);assert.equal(d.querySelectorAll('.marathon-my-entry').length,1);assert.match(d.getElementById('marathonEditDeadline').textContent,/read-only/);stale.dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(posts,0);
 });
+
+
+test('kids numeric shirt sizes use event-day under-16 boundary and reject arbitrary values',()=>{
+ const child={...good,dob:'2012-05-01',guardian:'Parent',guardianConsent:true,shirt:'28'};
+ assert.equal(M.validate(child,Date.parse('2026-11-13T12:00:00+05:30')),'');
+ assert.equal(M.validate({...child,dob:'2010-11-30',shirt:'36'},Date.parse('2026-11-13T12:00:00+05:30')),'');
+ for(const change of [{dob:'2010-11-29'},{shirt:'21'},{shirt:'38'},{shirt:28}])assert.match(M.validate({...child,...change},Date.parse('2026-11-13T12:00:00+05:30')),/T-shirt/);
+ assert.equal(M.validate({...child,shirt:'M'},Date.parse('2026-11-13T12:00:00+05:30')),'');
+});
+test('server saves and edits kids numeric sizes but rejects adult numeric edits without writes',()=>{
+ const s=service();s.enable();s.ctx.marathonSaveEntry({...good,dob:'2012-05-01',guardian:'Parent',guardianConsent:true,shirt:'28'});
+ const auth=accountAuth(s),entry=s.ctx.marathonAccountRequest({action:'marathon-my-entries',...auth}).entries[0];
+ const edited=s.ctx.marathonAccountRequest({action:'marathon-edit-entry',...auth,reference:entry.reference,revision:entry.revision,bibName:entry.bibName,shirt:'30'});
+ assert.equal(edited.entry.shirt,'30');assert.equal(s.rows[1][10],'30');
+ const adult=service();adult.enable();adult.ctx.marathonSaveEntry({...good});const a=accountAuth(adult),e=adult.ctx.marathonAccountRequest({action:'marathon-my-entries',...a}).entries[0],before=JSON.stringify(adult.rows);
+ assert.throws(()=>adult.ctx.marathonAccountRequest({action:'marathon-edit-entry',...a,reference:e.reference,revision:e.revision,bibName:e.bibName,shirt:'30'}),/participant age/);assert.equal(JSON.stringify(adult.rows),before);
+});
+
+test('registration switches between numeric kids sizes and adult sizes from DOB',t=>{const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());const f=d.getElementById('marathonEntryForm');f.elements.dob.value='2012-05-01';f.dispatchEvent(new w.Event('change'));assert.ok([...f.elements.shirt.options].some(o=>o.value==='28'));f.elements.shirt.value='28';f.elements.dob.value='1990-05-01';f.dispatchEvent(new w.Event('change'));assert.ok(![...f.elements.shirt.options].some(o=>o.value==='28'));assert.equal(f.elements.shirt.value,'');});

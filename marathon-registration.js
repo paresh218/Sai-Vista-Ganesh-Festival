@@ -9,6 +9,9 @@
   function refresh(){
     document.querySelectorAll('[data-marathon-open]').forEach(button=>button.disabled=closed());
     const age=SaiVistaMarathon.age(form.elements.dob.value),minor=age>=0&&age<18;
+    const size=form.elements.shirt,choices=SaiVistaMarathon.sizesFor(form.elements.dob.value),key=choices.join(',');
+    if(size.dataset.choices!==key){const selected=size.value;size.replaceChildren(new Option('Choose size',''));for(const value of choices)size.add(new Option(/^\d+$/.test(value)?'Kids '+value:value,value));size.value=choices.includes(selected)?selected:'';size.dataset.choices=key;}
+    document.getElementById('marathonShirtHelp').textContent=age>=0&&age<16?'Under 16: choose a kids numeric size (20–36) using the chart. Letter sizes remain available if needed.':'Choose an adult letter size. Enter date of birth to see kids numeric sizes for participants under 16.';
     document.getElementById('marathonGuardian').hidden=!minor;form.elements.guardian.required=minor;form.elements.guardianConsent.required=minor;
     const accompanied=age>=0&&age<=12;document.getElementById('marathonParentAccompanied').hidden=!accompanied;form.elements.parentAccompanied.required=accompanied;if(!accompanied)form.elements.parentAccompanied.checked=false;
     const medicalNoteRequired=form.elements.medical.value==='Yes';

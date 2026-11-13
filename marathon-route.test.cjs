@@ -64,3 +64,5 @@ test('reduced motion shows complete course without autoplay and permits intentio
   assert.equal(s.path.style.strokeDashoffset,'0');
   s.w.close();
 });
+
+test('changing distance after completion restarts animation',()=>{const s=setup();s.show();for(let t=0;t<=15000;t+=100)s.step(t);s.click('[data-route-race="5"]');assert.equal(s.frames.size,1);s.step(16000);s.step(16100);assert.ok(Number(s.path.style.strokeDashoffset)<1);s.w.close();});

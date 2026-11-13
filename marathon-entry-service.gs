@@ -43,13 +43,14 @@ function marathonAccountRequest(data){
   const email=marathonAccountIdentity(data);
   if(data.action==='marathon-my-entries')return {ok:true,entries:marathonRows(marathonSheet()).filter(function(row){return row[0]&&['3K','5K'].includes(row[2])&&marathonText(row[6]).trim().toLowerCase()===email;}).map(marathonAccountEntry)};
   if(Date.now()>=Date.parse(SaiVistaMarathon.event.deadline))throw Error('Editing closed on 14 November 2026 at 5:00 PM IST. Your entry is read-only.');
-  if(typeof data.reference!=='string'||data.reference.length>100||typeof data.bibName!=='string'||!data.bibName.trim()||data.bibName.length>30||/[\u0000-\u001f\u007f]/.test(data.bibName)||!SaiVistaMarathon.event.sizes.includes(data.shirt)||typeof data.revision!=='string')throw Error('Enter a BIB name (1–30 characters) and choose a valid T-shirt size.');
+  if(typeof data.reference!=='string'||data.reference.length>100||typeof data.bibName!=='string'||!data.bibName.trim()||data.bibName.length>30||/[\u0000-\u001f\u007f]/.test(data.bibName)||!SaiVistaMarathon.event.sizes.concat(SaiVistaMarathon.event.kidsSizes).includes(data.shirt)||typeof data.revision!=='string')throw Error('Enter a BIB name (1–30 characters) and choose a valid T-shirt size.');
   const lock=LockService.getScriptLock();if(!lock.tryLock(15000))throw Error('Entries are busy. Please try again.');
   try{
     if(Date.now()>=Date.parse(SaiVistaMarathon.event.deadline))throw Error('Editing closed on 14 November 2026 at 5:00 PM IST. Your entry is read-only.');
     const sheet=marathonSheet(),rows=marathonRows(sheet),index=rows.findIndex(function(row){return row[0]===data.reference&&marathonText(row[6]).trim().toLowerCase()===email;});
     if(index<0)throw Error('Entry not available for this signed-in account.');
     const row=rows[index];if(marathonAccountEntry(row).revision!==data.revision)throw Error('This entry changed. Refresh your entries before saving again.');
+    if(!SaiVistaMarathon.sizesFor(marathonDob(row[5])).includes(data.shirt))throw Error('Choose a T-shirt size valid for this participant age.');
     marathonUpgradeBibNameColumn(sheet);
     sheet.getRange(index+2,11).setValue(marathonSafe(data.shirt));sheet.getRange(index+2,27).setValue(marathonSafe(data.bibName.trim()));SpreadsheetApp.flush();
     row[10]=data.shirt;row[26]=marathonSafe(data.bibName.trim());return {ok:true,entry:marathonAccountEntry(row)};

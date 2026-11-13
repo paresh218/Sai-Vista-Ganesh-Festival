@@ -1,6 +1,6 @@
 /* Shared browser / Apps Script rules. Dates use India time and event-day age. */
 const SaiVistaMarathon = (() => {
-  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-14T17:00:00+05:30', upi:'8149525915@ybl', secondaryUpi:'dashrathkale2261@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
+  const event = Object.freeze({date:'2026-11-29', start:'2026-11-29T05:45:00+05:30', deadline:'2026-11-14T17:00:00+05:30', upi:'8149525915@ybl', secondaryUpi:'dashrathkale2261@ybl', fees:{'3K':149,'5K':199}, bloodGroups:['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'], sizes:['XS','S','M','L','XL','XXL'], kidsSizes:['20','22','24','26','28','30','32','34','36'], genders:['Female','Male','Non-binary','Prefer not to say'], medical:['No','Yes','Prefer not to say']});
   const schedule = Object.freeze([
     ['05:45 AM','Reporting time','Arrival & BIB check-in','Arrival & BIB check-in'],
     ['06:00 AM','Zumba & warm-up','Group warm-up session','Group warm-up session'],
@@ -16,6 +16,7 @@ const SaiVistaMarathon = (() => {
     if(!Number.isFinite(date.getTime())||date.toISOString().slice(0,10)!==dob)return -1;
     return 2026-date.getUTCFullYear()-((date.getUTCMonth()>10||(date.getUTCMonth()===10&&date.getUTCDate()>29))?1:0);
   }
+  function sizesFor(dob) {const years=age(dob);return years>=0&&years<16?event.kidsSizes.concat(event.sizes):event.sizes;}
   function validate(d,now=Date.now()) {
     if(now>=Date.parse(event.deadline))return 'Registration closed on 14 November 2026 at 5:00 PM IST.';
     if(!Object.prototype.hasOwnProperty.call(event.fees,d.race))return 'Choose 3 km or 5 km.';
@@ -28,7 +29,7 @@ const SaiVistaMarathon = (() => {
     if(!/^[6-9]\d{9}$/.test(d.emergencyPhone||'')||d.phone===d.emergencyPhone)return 'Enter a different emergency contact mobile number.';
     if(typeof d.emergencyName!=='string'||d.emergencyName.trim().length<2||d.emergencyName.length>80)return 'Enter the emergency contact name.';
     if(!event.bloodGroups.includes(d.bloodGroup))return 'Choose a blood group, or Unknown.';
-    if(!event.sizes.includes(d.shirt))return 'Choose your T-shirt size.';
+    if(!sizesFor(d.dob).includes(d.shirt))return 'Choose your T-shirt size.';
     if(!event.genders.includes(d.gender))return 'Choose a gender option.';
     if(!event.medical.includes(d.medical))return 'Choose a medical discomfort option.';
     if(typeof (d.medicalDetails||'')!=='string'||(d.medicalDetails||'').length>500)return 'Keep the medical note within 500 characters.';
@@ -45,6 +46,6 @@ const SaiVistaMarathon = (() => {
     if(!d.proof||!['image/jpeg','image/png','image/webp'].includes(d.proof.type)||typeof d.proof.base64!=='string'||d.proof.base64.length<16||d.proof.base64.length>4194304||!/^[A-Za-z0-9+/]+={0,2}$/.test(d.proof.base64))return 'Attach a JPG, PNG or WebP payment screenshot (up to 3 MB).';
     return '';
   }
-  return {event,schedule,age,validate,paymentLink,proofIssue};
+  return {event,schedule,age,sizesFor,validate,paymentLink,proofIssue};
 })();
 if(typeof module!=='undefined')module.exports=SaiVistaMarathon;
