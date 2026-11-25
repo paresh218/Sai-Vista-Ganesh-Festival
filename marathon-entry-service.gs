@@ -31,21 +31,15 @@ function doPost(e){
     return marathonJson(marathonSaveEntry(data));
   }catch(error){console.error('Marathon entry rejected.');return marathonJson({ok:false,error:error.message});}
 }
-function marathonPublicMobile(value){
-  return marathonText(value).replace(/[\s()-]/g,'').replace(/^(?:\+91|91|0)(?=[6-9]\d{9}$)/,'');
-}
 function marathonPublicLookup(data){
   if(Object.keys(data).some(key=>!['action','query'].includes(key))||typeof data.query!=='string'||data.query.length>24)throw Error('Invalid lookup request.');
-  const query=data.query.trim(),phone=marathonPublicMobile(query);
-  const isBib=/^\d{4}$/.test(query),isPhone=/^[6-9]\d{9}$/.test(phone);
-  if(!isBib&&!isPhone)throw Error('Enter a four-digit BIB or a registered ten-digit mobile number.');
+  const query=data.query.trim();
+  if(!/^\d{4}$/.test(query))throw Error('Enter a four-digit BIB number.');
   const entries=new Map();
   for(const row of marathonRows(marathonSheet())){
     const bib=marathonText(row[21]).trim(),race=row[2];
-    if(!row[0]||!['3K','5K'].includes(race)||!/^\d{4}$/.test(bib)||String(row[20]).trim().toLowerCase()!=='yes')continue;
-    if(isBib?bib===query:marathonPublicMobile(row[7])===phone){
-      entries.set(bib,{bib: bib,race: race,status:'Confirmed'});
-    }
+    if(!row[0]||!['3K','5K'].includes(race)||bib!==query||String(row[20]).trim().toLowerCase()!=='yes')continue;
+    entries.set(bib,{bib: bib,race: race,status:'Confirmed'});
   }
   return {ok:true,entries:Array.from(entries.values())};
 }

@@ -2,12 +2,9 @@
   const grid=document.getElementById('marathonMyEntriesGrid'),status=document.getElementById('marathonMyEntriesStatus'),refresh=document.getElementById('marathonMyEntriesRefresh'),blocker=document.getElementById('marathonAccountSaving');
   if(!grid||!status||!refresh||!blocker)return;
   const blockerTitle=document.getElementById('marathonAccountSavingTitle'),blockerHelp=document.getElementById('marathonAccountSavingHelp'),done=document.getElementById('marathonAccountSavingDone');
-  const search=document.getElementById('marathonEntrySearch'),query=document.getElementById('marathonEntryQuery'),searchStatus=document.getElementById('marathonEntrySearchStatus');
-  const mobile=value=>String(value??'').replace(/[\s()-]/g,'').replace(/^(?:\+91|91|0)(?=[6-9]\d{9}$)/,'');
   let generation=0,entries=[],editing='',busy=false;
   const editClosed=()=>Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
-  function showDeadline(){document.getElementById('marathonEditDeadline').textContent=editClosed()?'Editing closed on 14 November 2026 at 5:00 PM IST. Your entries are read-only.':'Editing closes on 14 November 2026 at 5:00 PM IST. After that, entries are read-only.';}
-  function clear(){query.value='';search.hidden=true;searchStatus.textContent='';generation++;entries=[];editing='';grid.replaceChildren();grid.removeAttribute('aria-busy');status.textContent='Sign in to see your entries.';refresh.disabled=false;if(blocker.open)blocker.close();busy=false;}
+  function clear(){generation++;entries=[];editing='';grid.replaceChildren();grid.removeAttribute('aria-busy');status.textContent='Sign in to see your entries.';refresh.disabled=false;if(blocker.open)blocker.close();busy=false;}
   async function request(action,fields,identity){
     const response=await fetch(window.SaiVistaMarathonConfig.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify({action,...fields,token:identity.token,flat:identity.flat})}),signal:AbortSignal.timeout(30000)});
     const result=await response.json();if(!result.ok)throw Error(result.error||'Could not load your entries. Please try again.');return result;
@@ -20,21 +17,13 @@
     for(const [label,value] of fields){const term=document.createElement('dt'),description=document.createElement('dd');term.textContent=label;description.textContent=value||'—';list.append(term,description);}disclosure.append(list);return disclosure;
   }
   function render(identity,version){
-    showDeadline();if(editClosed())editing='';
+    if(editClosed())editing='';
     grid.replaceChildren();refresh.disabled=!!editing||busy;
-    search.hidden=!entries.length;
-    query.disabled=!!editing||busy;
-    const term=query.value.trim();
-    const visible=term?entries.filter(entry=>
-      String(entry.bib??'').toLowerCase()===term.toLowerCase() ||
-      (/^[6-9]\d{9}$/.test(mobile(term))&&mobile(entry.details?.phone)===mobile(term))
-    ):entries;
-    searchStatus.textContent=term?(visible.length?'Matches found: '+visible.length:'No entries match that BIB or mobile number.'):'';
-    if(!visible.length)return;
-    const table=document.createElement('table');table.className='marathon-entries-table';const caption=document.createElement('caption');caption.textContent=visible.length+' marathon '+(visible.length===1?'entry':'entries')+' registered with your signed-in email';table.append(caption);
+    if(!entries.length)return;
+    const table=document.createElement('table');table.className='marathon-entries-table';const caption=document.createElement('caption');caption.textContent=entries.length+' marathon '+(entries.length===1?'entry':'entries')+' registered with your signed-in email';table.append(caption);
     const head=document.createElement('thead'),headRow=document.createElement('tr'),labels=['Participant','Distance','BIB number','Name on the BIB','T-shirt size','Payment status','Actions'];
     for(const label of labels){const th=document.createElement('th');th.scope='col';th.textContent=label;headRow.append(th);}head.append(headRow);table.append(head);const body=document.createElement('tbody');table.append(body);
-    visible.forEach((entry,index)=>{
+    entries.forEach((entry,index)=>{
       const row=document.createElement('tr');row.className='marathon-my-entry';row.dataset.reference=entry.reference;const cells=labels.map((label,i)=>{const cell=document.createElement(i===0?'th':'td');if(i===0)cell.scope='row';cell.dataset.label=label;row.append(cell);return cell;});
       cells[0].textContent=entry.name;cells[1].textContent=entry.race;cells[2].textContent=entry.bib||'Not assigned';cells[5].textContent=entry.status;
       if(editing===entry.reference){
@@ -48,7 +37,7 @@
     });grid.append(table);
   }
   async function saveEntry(entry,bibName,shirt,identity,version){
-    if(busy||version!==generation)return;if(editClosed()){editing='';render(identity,version);status.textContent='Editing is closed. Your entries are read-only.';return;}busy=true;refresh.disabled=true;grid.setAttribute('aria-busy','true');done.hidden=true;blocker.setAttribute('aria-busy','true');blockerTitle.textContent='Saving your changes…';blockerHelp.textContent='Please wait while we save your T-shirt size and BIB name. Keep this page open.';blocker.showModal();
+    if(busy||version!==generation)return;if(editClosed()){editing='';render(identity,version);return;}busy=true;refresh.disabled=true;grid.setAttribute('aria-busy','true');done.hidden=true;blocker.setAttribute('aria-busy','true');blockerTitle.textContent='Saving your changes…';blockerHelp.textContent='Please wait while we save your T-shirt size and BIB name. Keep this page open.';blocker.showModal();
     let message='';
     try{const result=await request('marathon-edit-entry',{reference:entry.reference,revision:entry.revision,bibName,shirt},identity);if(version!==generation)return;entries=entries.map(item=>item.reference===entry.reference?result.entry:item);blockerTitle.textContent='Changes saved';message='Your updated T-shirt size and BIB name are now shown in the grid.';}
     catch(error){if(version!==generation)return;blockerTitle.textContent='Could not confirm your changes';message=error.name==='TimeoutError'||error.name==='TypeError'?'The connection was interrupted.':error.message;try{const result=await request('marathon-my-entries',{},identity);if(version!==generation)return;entries=result.entries;message+=' The grid has been refreshed with your latest saved data.';}catch(_){if(version!==generation)return;entries=[];message+=' Your saved data could not be refreshed. Use Refresh my entries before trying again.';}}
@@ -56,12 +45,11 @@
   }
   async function load(){
     if(busy)return;clear();const identity=window.SaiVistaAuthSession;if(!identity||identity.expires<=Date.now())return;const version=generation;refresh.disabled=true;status.textContent='Loading your entries securely…';
-    try{const result=await request('marathon-my-entries',{},identity);if(version!==generation)return;if(!Array.isArray(result.entries))throw Error('Could not load your entries.');entries=result.entries;render(identity,version);status.textContent=entries.length?(editClosed()?'Only your registered entries are shown. Editing is closed.':'Only your registered entries are shown. Select Edit to change T-shirt size and BIB name only.'):'No marathon entries were found for your signed-in email.';}
+    try{const result=await request('marathon-my-entries',{},identity);if(version!==generation)return;if(!Array.isArray(result.entries))throw Error('Could not load your entries.');entries=result.entries;render(identity,version);status.textContent=entries.length?(editClosed()?'':'Only your registered entries are shown. Select Edit to change T-shirt size and BIB name only.'):'No marathon entries were found for your signed-in email.';}
     catch(error){if(version===generation){grid.replaceChildren();status.textContent=error.message;}}finally{if(version===generation)refresh.disabled=false;}
   }
   blocker.addEventListener('cancel',event=>{if(busy)event.preventDefault();});done.addEventListener('click',()=>blocker.close());blocker.addEventListener('close',()=>{if(!busy)refresh.focus();});
-  function checkDeadline(){showDeadline();if(editClosed()&&entries.length){editing='';render(window.SaiVistaAuthSession,generation);status.textContent='Only your registered entries are shown. Editing is closed.';}}
-  showDeadline();setTimeout(checkDeadline,Math.max(0,Date.parse(SaiVistaMarathon.event.deadline)-Date.now()));document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeadline();});
-  query.addEventListener('input',()=>render(window.SaiVistaAuthSession,generation));
+  function checkDeadline(){if(editClosed()&&entries.length){editing='';render(window.SaiVistaAuthSession,generation);}}
+  setTimeout(checkDeadline,Math.max(0,Date.parse(SaiVistaMarathon.event.deadline)-Date.now()));document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeadline();});
   refresh.addEventListener('click',load);window.addEventListener('sai-vista-auth-ready',()=>{clear();load();});window.addEventListener('sai-vista-auth-cleared',clear);window.addEventListener('sai-vista-private-signed-out',clear);load();
 })();

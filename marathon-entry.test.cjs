@@ -310,7 +310,7 @@ test('edit deadline is checked again after waiting for the script lock',()=>{
 test('an open edit becomes read-only at 5 PM and a stale save cannot send a request',async t=>{
  const dom=page(),w=dom.window,d=w.document;t.after(()=>w.close());let timer,posts=0;const nativeTimeout=w.setTimeout.bind(w);w.setTimeout=(fn,delay,...args)=>{if(delay===1000){timer=fn;return 1;}return nativeTimeout(fn,delay,...args);};w.Date.now=()=>Date.parse('2026-11-14T16:59:59+05:30');w.SaiVistaMarathon=M;w.SaiVistaAuthSession={token:'session',flat:'B-902',expires:Date.parse('2026-11-15T00:00:00+05:30')};
  w.fetch=async(_url,options)=>{const payload=JSON.parse(options.body.get('payload'));if(payload.action==='marathon-edit-entry')posts++;return {json:async()=>({ok:true,entries:[{reference:'own',name:'Own Runner',race:'3K',bibName:'Own',shirt:'M',status:'Payment verified',revision:'rev'}]})};};
- w.eval(fs.readFileSync('marathon-account.js','utf8'));await new Promise(r=>setImmediate(r));d.querySelector('.marathon-my-entry button').click();const stale=d.querySelector('.marathon-my-entry form');assert.ok(stale);w.Date.now=()=>Date.parse('2026-11-14T17:00:00+05:30');timer();assert.equal(d.querySelectorAll('.marathon-my-entry button,.marathon-my-entry input,.marathon-my-entry select').length,0);assert.equal(d.querySelectorAll('.marathon-my-entry').length,1);assert.match(d.getElementById('marathonEditDeadline').textContent,/read-only/);stale.dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(posts,0);
+ w.eval(fs.readFileSync('marathon-account.js','utf8'));await new Promise(r=>setImmediate(r));d.querySelector('.marathon-my-entry button').click();const stale=d.querySelector('.marathon-my-entry form');assert.ok(stale);w.Date.now=()=>Date.parse('2026-11-14T17:00:00+05:30');timer();assert.equal(d.querySelectorAll('.marathon-my-entry button,.marathon-my-entry input,.marathon-my-entry select').length,0);assert.equal(d.querySelectorAll('.marathon-my-entry').length,1);assert.equal(d.getElementById('marathonEditDeadline'),null);stale.dispatchEvent(new w.Event('submit',{cancelable:true}));assert.equal(posts,0);
 });
 
 
@@ -347,45 +347,30 @@ test('co-ordinator checkbox requires only name email phone and shirt, without pa
  d.getElementById('marathonEntryClose').click();d.querySelector('[data-marathon-open]').click();form.elements.coordinator.checked=true;form.dispatchEvent(new w.Event('change'));form.elements.coordinator.checked=false;form.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParticipantFields').disabled,false);assert.equal(form.elements.paymentProof.required,true);assert.equal(form.checkValidity(),false);await new Promise(r=>setImmediate(r));
 });
 
-test('signed-in marathon entries filter by exact BIB or registered mobile and clear on sign-out', async t => {
-  const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), {url: 'https://site.test', runScripts: 'outside-only'});
+test('marathon exposes one lookup field and allows BIB lookup without sign-in', async t => {
+  const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), {url:'https://site.test',runScripts:'outside-only'});
   const w = dom.window, d = w.document;
   t.after(() => w.close());
-  w.SaiVistaMarathon = M;
-  w.SaiVistaMarathonConfig = {endpoint: 'https://script.google.com/macros/s/test/exec'};
-  w.Date.now = () => Date.parse('2026-11-25T12:00:00+05:30');
-  w.SaiVistaAuthSession = {token: 'session', flat: 'B-902', expires: w.Date.now() + 60000};
-  let requests = 0;
-  w.fetch = async () => {
-    requests++;
-    return {ok: true, json: async () => ({ok: true, entries: [
-      {reference: 'one', name: 'Runner One', bib: '3001', details: {phone: '9876543210'}},
-      {reference: 'two', name: 'Runner Two', bib: '5001', details: {phone: '9876543210'}},
-      {reference: 'three', name: 'Runner Three', bib: '3002', details: {phone: '8765432109'}}
-    ]})};
+  assert.equal(d.querySelectorAll('#marathonMyEntries input[type="search"]').length, 1);
+  w.SaiVistaMarathonConfig = {endpoint:'https://script.google.com/macros/s/test/exec'};
+  let payload;
+  w.fetch = async (_url, request) => {
+    payload = JSON.parse(request.body.get('payload'));
+    return {ok:true,json:async()=>({ok:true,entries:[{bib:'3001',race:'3K'}]})};
   };
-  w.eval(fs.readFileSync('assets/marathon-account-v5.js', 'utf8'));
+  w.eval(fs.readFileSync('assets/marathon-lookup-v2.js','utf8'));
+  const form = d.getElementById('marathonPublicLookup'), input = d.getElementById('marathonPublicQuery');
+  input.value = '9876543210';
+  form.dispatchEvent(new w.Event('submit',{cancelable:true}));
+  assert.equal(payload, undefined);
+  input.value = '3001';
+  form.dispatchEvent(new w.Event('submit',{cancelable:true}));
   await new Promise(resolve => setImmediate(resolve));
-  const input = d.getElementById('marathonEntryQuery');
-  function filter(value) {
-    input.value = value;
-    input.dispatchEvent(new w.Event('input'));
-    return [...d.querySelectorAll('.marathon-my-entry')].map(row => row.dataset.reference);
-  }
-  assert.deepEqual(filter('3001'), ['one']);
-  assert.deepEqual(filter('+91 98765-43210'), ['one', 'two']);
-  assert.deepEqual(filter('98765'), []);
-  assert.match(d.getElementById('marathonEntrySearchStatus').textContent, /No entries match/);
-  assert.deepEqual(filter(''), ['one', 'two', 'three']);
-  assert.equal(requests, 1);
-  filter('3001');
-  w.dispatchEvent(new w.Event('sai-vista-auth-cleared'));
-  assert.equal(input.value, '');
-  assert.equal(d.getElementById('marathonEntrySearch').hidden, true);
-  assert.equal(d.querySelectorAll('.marathon-my-entry').length, 0);
+  assert.deepEqual(payload, {action:'marathon-public-lookup',query:'3001'});
+  assert.match(d.getElementById('marathonPublicResults').textContent, /3001.*3K.*Confirmed/);
 });
 
-test('public lookup accepts exact bib or phone and returns only confirmed race fields', () => {
+test('public lookup accepts only exact bib and returns only confirmed race fields', () => {
   const s = service();
   function add(bib, race, phone, verified) {
     const row = Array(28).fill('');
@@ -400,8 +385,8 @@ test('public lookup accepts exact bib or phone and returns only confirmed race f
   add('3004', '3K', '8876543210', 'Yes');
   const lookup = query => s.ctx.doPost({parameter:{payload:JSON.stringify({action:'marathon-public-lookup',query})}});
   assert.deepEqual(lookup('3001').entries, [{bib:'3001',race:'3K',status:'Confirmed'}]);
-  assert.deepEqual(lookup('+91 98765-43210').entries.map(row => row.bib), ['3001','5001']);
+  assert.equal(lookup('9876543210').ok, false);
   assert.deepEqual(lookup('3003').entries, []);
   assert.equal(lookup('98765').ok, false);
-  assert.doesNotMatch(JSON.stringify(lookup('9876543210')), /Private|email|9876543210/);
+  assert.doesNotMatch(JSON.stringify(lookup('3001')), /Private|email|9876543210/);
 });

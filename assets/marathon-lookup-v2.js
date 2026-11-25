@@ -1,0 +1,57 @@
+(() => {
+  const form = document.getElementById('marathonPublicLookup');
+  const input = document.getElementById('marathonPublicQuery');
+  const status = document.getElementById('marathonPublicStatus');
+  const results = document.getElementById('marathonPublicResults');
+  const button = form.querySelector('button');
+  let request;
+  function clearResults() {
+    results.replaceChildren();
+    results.hidden = true;
+  }
+  input.addEventListener('input', () => {
+    request?.abort();
+    request = undefined;
+    clearResults();
+    status.textContent = '';
+    button.disabled = false;
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    request?.abort();
+    clearResults();
+    const query = input.value.trim();
+    if (!/^\d{4}$/.test(query)) {
+      status.textContent = 'Enter a four-digit BIB number.';
+      return;
+    }
+    const current = request = new AbortController();
+    button.disabled = true;
+    status.textContent = 'Searching confirmed entries…';
+    const timeout = setTimeout(() => current.abort(), 15000);
+    try {
+      const response = await fetch(window.SaiVistaMarathonConfig.endpoint, {
+        method: 'POST',
+        cache: 'no-store',
+        body: new URLSearchParams({payload: JSON.stringify({action: 'marathon-public-lookup', query})}),
+        signal: current.signal
+      });
+      const data = await response.json();
+      if (current.signal.aborted || request !== current) return;
+      if (!response.ok || data.ok !== true || !Array.isArray(data.entries)) throw Error('Lookup unavailable');
+      for (const {bib, race} of data.entries) {
+        const item = document.createElement('li');
+        item.textContent = 'BIB ' + bib + ' · ' + race + ' · Confirmed';
+        results.append(item);
+      }
+      results.hidden = !data.entries.length;
+      status.textContent = data.entries.length ? '' : 'No confirmed entry found for that BIB.';
+    } catch {
+      if (request === current) status.textContent = 'Entry lookup is temporarily unavailable. Please try again.';
+    } finally {
+      clearTimeout(timeout);
+      if (request === current) button.disabled = false;
+    }
+  });
+})();
+
