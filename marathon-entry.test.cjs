@@ -384,3 +384,24 @@ test('signed-in marathon entries filter by exact BIB or registered mobile and cl
   assert.equal(d.getElementById('marathonEntrySearch').hidden, true);
   assert.equal(d.querySelectorAll('.marathon-my-entry').length, 0);
 });
+
+test('public lookup accepts exact bib or phone and returns only confirmed race fields', () => {
+  const s = service();
+  function add(bib, race, phone, verified) {
+    const row = Array(28).fill('');
+    row[0] = 'entry'; row[2] = race; row[4] = 'Private Runner'; row[6] = 'private@example.org';
+    row[7] = phone; row[17] = 'Private medical note'; row[20] = verified; row[21] = bib;
+    s.rows.push(row);
+  }
+  add('3001', '3K', '9876543210', 'Yes');
+  add('5001', '5K', '9876543210', 'Yes');
+  add('5001', '5K', '9876543210', 'Yes');
+  add('3003', '3K', '9876543210', '');
+  add('3004', '3K', '8876543210', 'Yes');
+  const lookup = query => s.ctx.doPost({parameter:{payload:JSON.stringify({action:'marathon-public-lookup',query})}});
+  assert.deepEqual(lookup('3001').entries, [{bib:'3001',race:'3K',status:'Confirmed'}]);
+  assert.deepEqual(lookup('+91 98765-43210').entries.map(row => row.bib), ['3001','5001']);
+  assert.deepEqual(lookup('3003').entries, []);
+  assert.equal(lookup('98765').ok, false);
+  assert.doesNotMatch(JSON.stringify(lookup('9876543210')), /Private|email|9876543210/);
+});

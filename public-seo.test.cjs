@@ -15,8 +15,10 @@ test('public event and committee guides work without sign-in scripts and link to
 test('marathon structured data matches real dates fees venue and participant rules',()=>{
   const dom=new JSDOM(fs.readFileSync('marathon-2026.html','utf8')),d=dom.window.document;try{
     const graph=JSON.parse(d.querySelector('[type="application/ld+json"]').textContent)['@graph'],event=graph.find(x=>x['@type']==='SportsEvent');assert.ok(event);assert.equal(event.startDate,M.event.start);assert.equal(event.location.name,'Sai Vista Multipurpose Court');assert.equal(event.url,base+'marathon-2026.html');assert.equal(event.location.address.addressCountry,'IN');assert.equal(event.location.address.postalCode,undefined);
-    assert.deepEqual(event.offers.map(x=>x.price).sort(),Object.values(M.event.fees).sort());for(const offer of event.offers){assert.equal(offer.priceCurrency,'INR');assert.equal(offer.validThrough,M.event.deadline);assert.equal(offer.availability,undefined);}
-    assert.equal(d.querySelectorAll('tbody tr').length,M.schedule.length+2);assert.match(d.body.textContent,/All ages are welcome/);assert.match(d.body.textContent,/12 and under must be accompanied/);assert.match(d.body.textContent,/200 total participant registrations/);assert.match(d.body.textContent,/14 November 2026 at 5:00 PM IST/);
+    assert.equal(event.offers,undefined);
+    assert.match(d.body.textContent,/12 and under must be accompanied/);
+    assert.equal(d.querySelectorAll('a[href="/#marathonSchedule"]').length,1);
+    assert.equal(d.querySelectorAll('a[href="/#marathonRoute"]').length,1);
     for(const node of graph)assert.ok(!['Review','AggregateRating','Product','LocalBusiness'].includes(node['@type']));
   }finally{dom.window.close();}
 });

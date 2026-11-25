@@ -21,11 +21,33 @@ function doPost(e){
     const raw=e&&e.parameter&&e.parameter.payload;
     if(!raw||raw.length>4210000)throw Error('Invalid entry request.');
     const data=JSON.parse(raw);
+    if(data.action==='marathon-public-lookup'){
+      if(raw.length>512)throw Error('Invalid lookup request.');
+      return marathonJson(marathonPublicLookup(data));
+    }
     if(['marathon-my-entries','marathon-edit-entry'].includes(data.action)){if(raw.length>4096)throw Error('Invalid account request.');return marathonJson(marathonAccountRequest(data));}
     if(data.action==='marathon-coordinator'){if(raw.length>4096)throw Error('Invalid co-ordinator request.');return marathonJson(marathonSaveCoordinator(data));}
     if(data.action!=='marathon-entry')throw Error('Unknown entry action.');
     return marathonJson(marathonSaveEntry(data));
   }catch(error){console.error('Marathon entry rejected.');return marathonJson({ok:false,error:error.message});}
+}
+function marathonPublicMobile(value){
+  return marathonText(value).replace(/[\s()-]/g,'').replace(/^(?:\+91|91|0)(?=[6-9]\d{9}$)/,'');
+}
+function marathonPublicLookup(data){
+  if(Object.keys(data).some(key=>!['action','query'].includes(key))||typeof data.query!=='string'||data.query.length>24)throw Error('Invalid lookup request.');
+  const query=data.query.trim(),phone=marathonPublicMobile(query);
+  const isBib=/^\d{4}$/.test(query),isPhone=/^[6-9]\d{9}$/.test(phone);
+  if(!isBib&&!isPhone)throw Error('Enter a four-digit BIB or a registered ten-digit mobile number.');
+  const entries=new Map();
+  for(const row of marathonRows(marathonSheet())){
+    const bib=marathonText(row[21]).trim(),race=row[2];
+    if(!row[0]||!['3K','5K'].includes(race)||!/^\d{4}$/.test(bib)||String(row[20]).trim().toLowerCase()!=='yes')continue;
+    if(isBib?bib===query:marathonPublicMobile(row[7])===phone){
+      entries.set(bib,{bib: bib,race: race,status:'Confirmed'});
+    }
+  }
+  return {ok:true,entries:Array.from(entries.values())};
 }
 function marathonAccountIdentity(data){
   if(typeof data.token!=='string'||!data.token||data.token.length>100||typeof data.flat!=='string'||data.flat.length>10)throw Error('Please sign in again to view your entries.');

@@ -1,0 +1,283 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> test
+> node --test *.test.cjs
+
+Γ£ö shared gallery makes no anonymous or public-account reads and loads both feeds after resident verification (517.0486ms)
+PASS: Reel validation/canonicalization, duplicate prevention, consent, private pending entries, approval, video signatures, 25 MB boundary, and version discovery.
+Γ£ö community-media.test.cjs (281.8096ms)
+Γ£ö community home and archives preserve sections and reveal deep links (762.5307ms)
+Γ£ö Navratri archive is a separate view and nested links select the right festival (398.7451ms)
+Γ£ö confirmed marathon replaces interest promotion and leads the main content (289.6905ms)
+Γ£ö Home prevents the native thank-you anchor jump and restores the main view (250.7978ms)
+Γ£ö shared theme loads last, fonts are self-hosted, and all private feature anchors remain (639.9742ms)
+Γ£ö More menu closes on outside clicks, navigation and Escape, preserving focus (232.4322ms)
+Γ£ö five mobile destinations have accessible names and decorative icons, without duplicated controls (183.8322ms)
+Γ£ö chosen text / surface pairs meet AA contrast and shared theme honours reduced motion (1.4354ms)
+PASS: one uploader handles both payloads, previews and reset, photo/video size boundaries, unsupported files, and permission validation.
+Γ£ö community-upload.test.cjs (256.7513ms)
+Γ£ö only an explicit, unique unpaid record triggers a reminder (1.6377ms)
+Γ£ö unpaid resident gets an immediate login popup, 10-second reminders and eight-second close (655.1027ms)
+Γ£ö paid, unknown and offline residents never get the popup (579.2709ms)
+Γ£ö payment refresh stops reminders; a changed flat never inherits unpaid status (226.1371ms)
+Γ£ö gallery, forms and hidden tabs are not interrupted; hidden tabs close the popup (245.747ms)
+Γ£ö removed programme is absent from the rendered site and archives (123.0116ms)
+Γ£ö sound waits for interaction, lasts eight seconds and stops on mute, close or hiding (415.1498ms)
+Γ£ö fund reminders wait while the private video glimpse is playing (158.1001ms)
+PASS: Deck B survives failed replacement and competing preload/cache eviction
+Γ£ö deck-b-reliability.test.cjs (267.896ms)
+PASS: old track continues during loading, two-deck overlap, failed switch preservation, pause and late-load cancellation.
+Γ£ö dj-decks.test.cjs (265.1333ms)
+PASS: known-tempo BPM, silence rejection, phase sync, beat loops, normalization limits, staged decks and manual mix cleanup
+Γ£ö dj-studio.test.cjs (265.4244ms)
+PASS: exact approved senders, authenticated replies, owner Sent verification, draft/quoted/expired rejection, single trigger, private review access, two notifications, first-decision wins, publish/reject, and retry idempotence.
+Γ£ö email-approval.test.cjs (326.6065ms)
+PASS: 11 event saves, validation, age limits, performance limits, wing/household duplicates, retries, deadlines, gift deduplication and issued flags, formula escaping.
+PASS: Mahaprasad saves without names/phone, retains household deduplication; other events still require names.
+PASS: cultural fund paid/unpaid/missing/ambiguous checks, server-side enforcement, fresh paid update, outage blocks new entries, saved retry is safe.
+PASS: cooking accepts no age/dish/ingredients; agreement remains required.
+PASS: Rangoli and Pooja Thali save without age or a children gift policy.
+PASS: browser and server use the collection endpoint, not the registration settings endpoint.
+PASS: closed Talent/Drawing, IST cutoff boundaries, server enforcement, obsolete deadline ignored, blood donation validation/history/duplicates and retries after closure.
+Γ£ö event-registration.test.cjs (318.4119ms)
+PASS: filter dates/categories, complete event metadata, clean confirmation/WhatsApp details, expired notices and Hindi/Marathi active-event guideline coverage.
+Γ£ö event-ux.test.cjs (327.2363ms)
+PASS: sample totals, reordered/moved headers, additions/deletions, refunds, paise precision, category reset, empty table, invalid amounts/dates and ambiguous tables.
+PASS: planned items, festival placeholders, summary exclusion, and missing amounts with paid dates.
+Γ£ö expense-model.test.cjs (368.1098ms)
+PASS: India date rollover, next scheduled day, festival year/end, and registration badge boundaries.
+Γ£ö festival-experience.test.cjs (371.8139ms)
+Γ£ö financial requests require a verified resident and carry credentials in the POST body only (136.1788ms)
+Γ£ö private data services reject anonymous GET and POST requests before reading source data (12.987ms)
+Γ£ö Sharp prepares bounded WebP variants, rotates orientation, strips location metadata and preserves originals (667.9998ms)
+Γ£ö Sharp rejects escaped paths, duplicate IDs, corrupt input, and never marks a partial build complete (142.8693ms)
+PASS: shared Garba transport, seeking, volume, supported speed, repeat, cues, timed loops and local-DJ handoff.
+Γ£ö garba-dj-controls.test.cjs (329.7217ms)
+PASS: 88 songs, eight collections, filtering, audio-only controls, automatic next, playback handoff, offline message, file import and DJ navigation.
+Γ£ö garba-special.test.cjs (235.5933ms)
+Γ£ö no 3D download for reduced motion, data saving, slow network, low memory or missing WebGL (246.8241ms)
+Γ£ö lazy scene loads once, toggles keyboard-accessible pause and restores poster on preference change (27.2766ms)
+Γ£ö failed module and page exit keep poster and never claim active 3D (58.8092ms)
+Γ£ö four original adult runners wear jerseys; articulated motion and geometry stay finite (198.3189ms)
+Γ£ö society lawn replaces display shoe; balcony towers and flags form a coherent starting scene (60.3576ms)
+Γ£ö renderer lifecycle caps resolution and stops for hidden/offscreen/dialog/pause/context loss (84.7736ms)
+Γ£ö self-hosted bundle stays within gzip budget and is not in eager service-worker shell (28.3476ms)
+Γ£ö 14 November 5 PM IST deadline, event-day age, gender, medical and guardian validation (13.385ms)
+Γ£ö UPI link has exact payee, currency, race fee and schedule covers both flag-offs (0.5255ms)
+Γ£ö service fails closed until configured; forged paid and missing screenshot do not register (5.7938ms)
+Γ£ö pending entries privately save screenshot; fee is authoritative; exact retry never duplicates (4.8269ms)
+Γ£ö lock, private-folder access and committee sender guards precede any data write (2.7848ms)
+Γ£ö only Yes approval sends a BIB once; schedule included, medical and emergency data excluded (5.6365ms)
+Γ£ö approved confirmation includes styled personalized HTML, poster, full schedule and safe action links (285.033ms)
+Γ£ö quota defers; ambiguous email failure never auto-resends and retains BIB (5.9669ms)
+Γ£ö multiple approved entries allocate unique BIBs, formula cells escaped, public actions cannot approve (9.8593ms)
+Γ£ö unconfigured form never transmits; screenshot and new fields required; no group before save (571.5531ms)
+Γ£ö configured browser saves only valid proof and shows pending status and group after acknowledged save (612.0623ms)
+Γ£ö calendar begins at reporting time and no obsolete deadline appears in active marathon content (3.9497ms)
+Γ£ö network retry preserves request ID and evidence; group stays hidden until acknowledgement (678.2183ms)
+Γ£ö approval edit trigger ignores unrelated columns, sheets and workbooks (3.2857ms)
+Γ£ö BIB print name is required, bounded, safely saved and included in email and retry identity (227.7713ms)
+Γ£ö BIB counters are per distance, survive deleted rows, and never exceed four digits (8.2049ms)
+Γ£ö existing numeric BIBs prevent collisions; already issued legacy BIBs are preserved (3.5835ms)
+Γ£ö sheet upgrade appends BIB and accompaniment columns idempotently without moving approval or overwriting headers (3.2024ms)
+Γ£ö rollout accepts old sheet and cached form without losing a registration or retry (10.4496ms)
+Γ£ö sheet writes preserve leading-zero transaction references and literal dates (3.6236ms)
+Γ£ö all displayed entry fields are required, labelled with stars, and conditional fields track visibility (448.4097ms)
+Γ£ö shared/server validation rejects omitted flat and medical note while supporting visitors and privacy choice (4.6706ms)
+Γ£ö all ages accepted; ages 12 and under require parent accompaniment in browser and server (352.3889ms)
+Γ£ö screenshot-only entries need no transaction reference and preserve duplicate participant protection (3.2308ms)
+Γ£ö saving blocks interaction through upload and response, prevents duplicate submit, then releases on success or failure (1198.7631ms)
+Γ£ö verified screenshot-only entries send confirmation once without a UTR, and historical reference formatting does not block approved entries (7.1693ms)
+Γ£ö backup UPI keeps the race fee, uses the approved ybl address and stays disabled until readiness (344.9022ms)
+Γ£ö combined submitted count closes at exactly 200 and rejects further saves without losing idempotent retries (7.4226ms)
+Γ£ö readiness counts only valid submitted race rows and closes at the IST deadline below capacity (2.3687ms)
+Γ£ö public counters show each distance and a full-capacity response disables both UPI links (455.3264ms)
+Γ£ö private marathon entries use server-verified email, return own registration data and deny another account by reference (3.8148ms)
+Γ£ö private marathon edits change only shirt and BIB name, reject other fields and stale concurrent saves (3.1185ms)
+Γ£ö private marathon account fails closed on forged, revoked, expired or mismatched sessions (3.2513ms)
+Γ£ö private entries grid clears immediately at sign-out and ignores a late response (141.8648ms)
+Γ£ö multiple entries remain read-only until Edit, block duplicate saves, then show updated data or refreshed errors (256.4576ms)
+Γ£ö participant edits close exactly at 5 PM IST while own entries remain viewable (4.7286ms)
+Γ£ö edit deadline is checked again after waiting for the script lock (2.7627ms)
+Γ£ö an open edit becomes read-only at 5 PM and a stale save cannot send a request (152.1283ms)
+Γ£ö kids numeric shirt sizes use event-day under-16 boundary and reject arbitrary values (0.9147ms)
+Γ£ö server saves and edits kids numeric sizes but rejects adult numeric edits without writes (7.4041ms)
+Γ£ö registration switches between numeric kids sizes and adult sizes from DOB (163.9873ms)
+Γ£ö co-ordinators save verified identity without payment, BIB, email or participant capacity (7.1498ms)
+Γ£ö co-ordinator checkbox requires only name email phone and shirt, without payment (328.9819ms)
+Γ£ö signed-in marathon entries filter by exact BIB or registered mobile and clear on sign-out (92.3873ms)
+Γ£ö public lookup accepts exact bib or phone and returns only confirmed race fields (3.0395ms)
+Γ£ö private sheet routing, separate activities, duplicate protection and retry after uncertain save (6.7109ms)
+Γ£ö server rejects invalid payloads and escapes spreadsheet formula input (3.1212ms)
+Γ£ö race day shows separate route maps and one current text schedule (565.7563ms)
+PASS: morning India-time window, festival boundaries, missing image retry, daily deduplication and all 11 posters
+Γ£ö morning-posters.test.cjs (258.3915ms)
+PASS: Tonight selects the correct day; readiness counts exact saved versions, lists missing songs and reports storage failures.
+Γ£ö music-evening.test.cjs (287.1175ms)
+PASS: all nine dates/goddesses/assets, India-midnight boundaries, year/end isolation, readable theme contrast.
+Γ£ö navratri-days.test.cjs (505.1691ms)
+PASS: Garba import, deduplication, offline DJ playback and refresh preservation.
+PASS: search, audio playback, seeking, presets, repeat-one, automatic crossfade-next and playback preserved on folder change.
+Γ£ö navratri-player.test.cjs (343.734ms)
+PASS: MP4 visibility/playback, extra folders, recursive discovery, group boundaries, external-file rejection and size limit.
+Γ£ö navratri-songs.test.cjs (237.4434ms)
+Γ£ö donor/surplus collections stay separate, total receipts reconcile and flat counts deduplicate tenant entries (260.4059ms)
+Γ£ö resident filters and keyboard wing drilldown never include other collections or discard their section (107.6079ms)
+Γ£ö registry boundaries, unknown rows and HTML donor names are handled safely (36.1345ms)
+Γ£ö resident-only source keeps a clear empty donor group and no invented missing-flat payments (48.0598ms)
+PASS: shared photo service rejects missing consent, invalid JPEG and invalid captions; valid upload reaches storage; empty gallery is supported.
+Γ£ö photo-gallery.test.cjs (297.2683ms)
+Γ£ö complete UI: all views, expand/compact, minimisation and reopening retain controls (460.9649ms)
+Γ£ö local controls: play, seek, reorder, EQ, mute, speed, repeat, automatic next and failed refresh (184.6104ms)
+Γ£ö online Garba uses shared controls and cannot be overwritten by the paused local deck (148.593ms)
+Γ£ö offline readiness, storage failures, imported Garba and Tonight planned playback (151.0006ms)
+Γ£ö advanced studio: staged deck, manual mixing, beat loops, effects and local recording (153.7094ms)
+Γ£ö starting a staged DJ deck stops online Garba instead of playing both sources (140.3206ms)
+Γ£ö rapid song selection, empty playlists, search, media controls and missing audio recover safely (104.6337ms)
+Γ£ö live spectrum runs for local audio, pauses in background and leaves audio playing (117.4302ms)
+Γ£ö Tonight stays in Daily songs and offline actions stay inside Offline (132.2638ms)
+Γ£ö seek colours follow local playback, seeking, online playback and stop (128.9657ms)
+Γ£ö saved audio unlocks sound before async loading and recovers interrupted output without pause/play (120.2173ms)
+Γ£ö blocked sound recovery asks for a tap and does not retry in a loop (114.4546ms)
+Γ£ö expanded cue panel contains all eight working controls with Garba loaded first (106.2498ms)
+PASS: full/partial playlist totals, hour formatting and changed-file cache key
+Γ£ö playlist-time.test.cjs (319.3566ms)
+Γ£ö public glimpse stays near the top and needs no email while full downloads still require verification (447.8395ms)
+Γ£ö 500 MB original never falls back to a whole-file memory buffer (235.8611ms)
+Γ£ö an idle native download offers a reauthenticated smaller compatibility copy and clears it on logout (222.2064ms)
+Γ£ö compatibility preparation exposes pause/resume and cancel aborts a paused transfer (212.2103ms)
+Γ£ö visible public glimpse autoplays muted without requesting private access (202.3226ms)
+Γ£ö autoplay respects reduced-motion preference (168.1235ms)
+Γ£ö first-time visitors see autoplay only after the flat welcome screen closes (183.6861ms)
+Γ£ö compact Download next to Refresh opens both sizes and dismisses by Escape (166.2567ms)
+Γ£ö video builder round-trips chunks, separates variant keys and never publishes secrets (376.053ms)
+Γ£ö manifest rejects traversal, cross-origin files, missing chunks and invalid sizes (7.578ms)
+Γ£ö worker binds grants to the requesting client and streams exact bytes with range support (17.2414ms)
+Γ£ö cancelling a native stream stops further chunk reads (11.3015ms)
+Γ£ö paused transfers resume exact bytes and cannot pause another grant (19.654ms)
+Γ£ö cancel wakes a paused transfer without reading remaining chunks (0.9493ms)
+Γ£ö chunk retries transient failures with backoff and stops on permanent errors (4.856ms)
+Γ£ö private cache survives reload, isolates emails/flats, expires and clears on sign-out (31.2453ms)
+Γ£ö blocked browser storage falls back without exposing a public URL (14.4701ms)
+Γ£ö Go to page validates boundaries and resumes the last page without another OTP (871.1767ms)
+Γ£ö favourites survive page changes and reopen the correct photo, then clear on logout (336.8244ms)
+Γ£ö only visible and nearby thumbnails are fetched; old observers stop on page changes (242.8266ms)
+Γ£ö next-photo preload and user navigation share one request; legacy HTML remains usable (430.9966ms)
+Γ£ö opt-in packs retain more than the normal cache limit, isolate owners, expire and clear on sign-out (581.6967ms)
+Γ£ö pack writes stop at the storage budget and do not accept an aborted operation (9.3117ms)
+Γ£ö local saving estimates size, saves the full chosen catalogue and only reports 100% after storage succeeds (476.8833ms)
+Γ£ö Cancel aborts pending transfers, releases the blocker and keeps completed photos without false completion (237.1468ms)
+Γ£ö storage failure and unverified access do not claim a completed local download (397.2804ms)
+Γ£ö provider sessions recheck Clerk before private routes and revoke on logout (62.3679ms)
+Γ£ö correct OTP grants automatic access; unverified, wrong-flat and revoked sessions remain locked (7.0356ms)
+Γ£ö unauthenticated, expired and logged-out tokens cannot read photos or list metadata (9.0762ms)
+Γ£ö OTP is single-use, expires, has attempt limits and is stored only as a hash (11.9245ms)
+Γ£ö invalid profiles, email abuse and cross-folder photo requests fail safely (4.7541ms)
+Γ£ö public code never embeds the original folder or Drive image URLs (2.0206ms)
+Γ£ö gallery automatically opens after OTP, reuses flat, persists verification and clears data on logout (628.4259ms)
+Γ£ö thumbnail batches fetch in parallel, cache private copies and reject unexpected preview hosts (7.308ms)
+Γ£ö prepared Sharp copies work after UrlFetch quota exhaustion, cache by variant ID and fall back safely (5.5943ms)
+Γ£ö prepared copy indexing matches source IDs and never returns private Drive IDs in album metadata (8.2705ms)
+Γ£ö large prepared albums keep their index cached in bounded chunks and rebuild missing chunks (5.1279ms)
+Γ£ö OTP resend is allowed after 30 seconds, while guesses, replay and email quotas remain bounded (4.0749ms)
+Γ£ö sender cannot silently fall back to a personal account and concurrent OTP mail does not hold the write lock (4.9807ms)
+Γ£ö resending invalidates the previous challenge and sessions are isolated for 300 distinct verified users (559.9189ms)
+Γ£ö existing pending profiles auto-approve with the currently verified flat; registration cannot send gallery OTP (5.1132ms)
+Γ£ö gallery bounds concurrent requests and retries temporary server overload without repeating OTP (311.914ms)
+Γ£ö private video keys require a verified flat-bound session and each download is audited (15.2827ms)
+Γ£ö video community exposes only approved text and aggregate likes; verified writes are idempotent and bounded (6.9685ms)
+Γ£ö comment names are published only with explicit consent and remain subject to review (3.9062ms)
+Γ£ö only committee sheet pins are public and old pinned comments survive the latest-comment limit (2.2802ms)
+Γ£ö comment audit captures session email and flat, rejects a forged flat, and never publishes either (4.0517ms)
+Γ£ö activity creates daily IST tabs across midnight and appends without changing the legacy log (3.1356ms)
+Γ£ö legacy activity copies by original IST date and safely reruns without duplicates (6.5079ms)
+Γ£ö daily logging reuses OTP verification lock without nested acquisition (7.4525ms)
+Γ£ö existing retention clears expired daily rows while preserving recent activity (4.5948ms)
+Γ£ö gallery deployment source avoids logical-assignment syntax unsupported by Apps Script (0.5897ms)
+Γ£ö blank public name becomes Anonymous while admin identity remains recorded (11.0402ms)
+Γ£ö resident OTP requires existing email/flat and reference match; remembered session cannot use gallery-only token (17.4183ms)
+Γ£ö partial and spouse surnames work within the existing email/flat; unrelated names require private committee approval (13.9887ms)
+Γ£ö gallery OTP cannot rewrite a resident email to a different flat after reference configuration (3.7354ms)
+Γ£ö directory revocation between sending and verifying prevents resident session creation (3.9508ms)
+Γ£ö verified visits append server-derived email/name and retain one email row with private timestamps (30.8862ms)
+Γ£ö unverified, wrong-flat, revoked and malformed visit events never create verified rows (18.8477ms)
+Γ£ö contact-column setup preserves existing emails, profiles, approvals and notes (2.1288ms)
+Γ£ö canonical public pages have distinct complete metadata and valid structured data (606.1568ms)
+Γ£ö public event and committee guides work without sign-in scripts and link to real destinations (1316.6711ms)
+Γ£ö marathon structured data matches real dates fees venue and participant rules (16.144ms)
+Γ£ö discovery lists public canonical pages and IndexNow uses a matching public ownership file (61.4236ms)
+PASS: form buttons, schedule links, general registration link and open form visibility across all IST deadline boundaries.
+Γ£ö registration-visibility.test.cjs (295.6388ms)
+Γ£ö real RSA signatures, issuer, origin and short token lifetime are mandatory before identity API calls (91.5314ms)
+Γ£ö only registered verified email gets a bounded resident session; caller email is ignored and no duplicate contact is created (35.1657ms)
+Γ£ö Apps Script crypto bundle verifies real RSA without Node or browser globals (758.544ms)
+Γ£ö Google identity finds the saved flat; only a new email needs the one-time flat step (15.129ms)
+Γ£ö visit logs use authenticated endpoint and retry identical event IDs after network failure (546.3873ms)
+Γ£ö server acknowledgements control removal; signing out clears queued activity and observers (292.473ms)
+PASS: remembered flat validation and unavailable storage fallback
+Γ£ö resident-memory.test.cjs (246.7ms)
+Γ£ö resident gate requires OTP, rejects wrong code and shares one verified session with gallery (606.8977ms)
+Γ£ö remembered access is checked server-side without asking for another email or code (199.0104ms)
+Γ£ö revoked, expired and legacy sessions fail closed (292.1025ms)
+Γ£ö reopening sign-in while access is checked cannot be overridden by a late response (154.2378ms)
+Γ£ö blocked storage allows verified access for this visit without claiming persistence (136.7297ms)
+Γ£ö shared gallery sign-out clears remembered resident access immediately (138.4359ms)
+Γ£ö unmatched resident request emails Paresh once, stays public and unlocks only after private sheet approval (6.188ms)
+Γ£ö flat knowledge alone never grants access; denied, wrong-flat and superseded requests fail closed (2.0657ms)
+Γ£ö public sign-in adds one email without sending an approval request; a failed review email can retry safely (1.8199ms)
+Γ£ö Google comes first; a saved email/flat opens resident access without flat entry or OTP (573.016ms)
+Γ£ö new Google email asks for a flat once after authentication, saves it with the provider token and keeps unmatched data private (244.1756ms)
+Γ£ö a new non-resident can choose public access without a flat; failed Google checks never open the site (312.0359ms)
+Γ£ö Clerk loads only when started, uses hash routing and resumes only a recent same-browser continuation (162.98ms)
+Γ£ö another email restores registered-email OTP and blocks repeated interaction while sending and validating (179.5566ms)
+Γ£ö failed or offline login closes the blocker and keeps protected access closed (136.5995ms)
+Γ£ö public landing page includes crawlable brand metadata, valid schema and real sitemap pages (418.8566ms)
+Γ£ö initial popup requires sign-in, offers no guest bypass and blocks private controls before verification (255.4932ms)
+Γ£ö legacy remembered flats never bypass mandatory email verification (294.3419ms)
+Γ£ö guest restrictions cover finances, photo library and full film downloads (1.1258ms)
+Γ£ö finance endpoints are deferred until resident access (125.8577ms)
+Γ£ö ads need valid owner configuration and explicit consent; duplicate consent loads once (88.9987ms)
+Γ£ö publisher ownership metadata and ads.txt identify the committee without enabling ads (191.4211ms)
+Γ£ö English translation preserves the branded SEO title (604.7128ms)
+Γ£ö public site image references exist and decode, with matching declared aspect ratios (730.6931ms)
+PASS: cached images display before slow refresh and update in the background.
+PASS: fresh network response, offline cache, navigation fallback, no HTML for missing scripts, uncached update probes.
+PASS: unchanged release stays stable; stale release reloads once across page loads; edited forms and unavailable storage never auto-reload.
+Γ£ö site-updates.test.cjs (901.8239ms)
+PASS: 40 MB chunked audio decode, invalid download rejection and base64 normalization
+Γ£ö song-download.test.cjs (1600.1784ms)
+PASS: mini-player stopped, playing, paused, mixed, muted and outgoing-deck states
+Γ£ö song-mini.test.cjs (266.1997ms)
+PASS: blocked storage recovery, saved-file lookup, local reads and clearing
+Γ£ö song-offline.test.cjs (240.5189ms)
+PASS: popup minimisation preserves playback; cue jump and loop/reset
+Γ£ö song-popup.test.cjs (270.0113ms)
+Γ£ö public reactions render safe text and sharing never includes private page parameters (272.5655ms)
+Γ£ö likes wait for verification and only confirmed server writes update the public total (111.4967ms)
+Γ£ö comments need only text; optional names stay private until review (107.1501ms)
+Γ£ö comments and form are directly visible; multiple comments show only pins until View comments (96.93ms)
+Γ£ö multiple unpinned comments wait behind View comments; a single comment remains directly visible (149.4712ms)
+Γ£ö every platform prepares a video file and native sharing sends no link or private fields (264.0289ms)
+Γ£ö unsupported browser offers file saving, never silently switches to link sharing (101.3259ms)
+Γ£ö network retries and malformed content fail without enabling sharing (87.9384ms)
+Γ£ö cancel and denied native sharing show honest results and allow retry (93.1847ms)
+Γ£ö a downloaded original file is shared directly without buffering or uploading it (70.1372ms)
+Γ£ö closing during preparation aborts and a late response cannot restore the file (79.912ms)
+Γ£ö preparation timeout aborts and exposes retry without a false ready state (51.6551ms)
+Γ£ö invalid and oversized local files cannot reach native sharing (55.5663ms)
+Γ£ö a transient network error retries successfully and capability exceptions use the save fallback (56.9157ms)
+PASS: India-time cutoff, recipient routing, report window and repeat-send protection
+Γ£ö visitor-logs.test.cjs (296.2784ms)
+Γä╣ tests 228
+Γä╣ suites 0
+Γä╣ pass 228
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 9200.2871
+npm notice
+npm notice New major version of npm available! 11.16.0 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice
