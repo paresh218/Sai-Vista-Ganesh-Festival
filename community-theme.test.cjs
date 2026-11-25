@@ -3,7 +3,7 @@ const html=fs.readFileSync('index.html','utf8'),css=fs.readFileSync('community-t
 function page(){const dom=new JSDOM(html,{url:'https://example.org',runScripts:'outside-only'});dom.window.eval(fs.readFileSync('community-theme.js','utf8'));return dom;}
 test('shared theme loads last, fonts are self-hosted, and all private feature anchors remain',()=>{
  const dom=page(),d=dom.window.document,styles=[...d.querySelectorAll('link[rel=stylesheet]')];assert.equal(styles.at(-1).getAttribute('href'),'community-theme.css?v=5');assert.equal(styles.some(link=>link.href.includes('fonts.googleapis.com')),false);
- for(const id of ['marathonEntryForm','privateGallery','navratriVideoPlayer','videoCommentForm','galleryLocalSave','accounts','navratriSongs','residentGate'])assert.ok(d.getElementById(id),id);
+ for(const id of ['marathonMyEntries','privateGallery','navratriVideoPlayer','videoCommentForm','galleryLocalSave','accounts','navratriSongs','residentGate'])assert.ok(d.getElementById(id),id);
  for(const file of ['outfit-latin.woff2','work-sans-latin.woff2'])assert.equal(fs.readFileSync('assets/fonts/'+file).subarray(0,4).toString(),'wOF2');
  assert.ok(fs.statSync('assets/fonts/outfit-latin.woff2').size+fs.statSync('assets/fonts/work-sans-latin.woff2').size<100000);dom.window.close();
 });
@@ -15,7 +15,7 @@ test('More menu closes on outside clicks, navigation and Escape, preserving focu
  dom.window.close();
 });
 test('five mobile destinations have accessible names and decorative icons, without duplicated controls',()=>{
- const dom=page(),w=dom.window,d=w.document,links=[...d.querySelectorAll('.mobile-nav a')];assert.equal(links.length,5);assert.deepEqual(links.map(a=>a.getAttribute('href')),['#home','#marathonInterest','#navratriVideo','#accounts','#navratriArchive']);
+ const dom=page(),w=dom.window,d=w.document,links=[...d.querySelectorAll('.mobile-nav a')];assert.equal(links.length,5);assert.deepEqual(links.map(a=>a.getAttribute('href')),['#home','#marathonMyEntries','#navratriVideo','#accounts','#navratriArchive']);
  for(const link of links){assert.ok(link.textContent.trim());assert.equal(link.querySelectorAll('svg').length,1);assert.equal(link.querySelector('svg').getAttribute('aria-hidden'),'true');assert.ok(d.getElementById(link.hash.slice(1))||link.hash==='#navratriArchive');}
  w.eval(fs.readFileSync('community-theme.js','utf8'));assert.equal(d.querySelectorAll('.mobile-nav svg').length,5);dom.window.close();
 });

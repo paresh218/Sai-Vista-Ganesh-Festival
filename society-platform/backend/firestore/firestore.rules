@@ -1,0 +1,286 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function verified() {
+      return request.auth != null && request.auth.token.email_verified == true
+        && (!exists(/databases/$(database)/documents/accountStates/$(request.auth.uid))
+          || get(/databases/$(database)/documents/accountStates/$(request.auth.uid)).data.status == 'active');
+    }
+    function superadmin() {
+      return verified()
+        && exists(/databases/$(database)/documents/platformRoles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/platformRoles/$(request.auth.uid)).data.role == 'superadmin'
+        && get(/databases/$(database)/documents/platformRoles/$(request.auth.uid)).data.status == 'active';
+    }
+    match /platformRoles/{uid} {
+      allow get: if verified() && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+    match /platformAudit/{entryId} {
+      allow create: if superadmin()
+        && request.resource.data.keys().hasAll(['actorUid', 'action', 'target', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['actorUid', 'action', 'target', 'createdAt'])
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.action == 'view'
+        && request.resource.data.target is string && request.resource.data.target.size() <= 250
+        && request.resource.data.createdAt == request.time;
+      allow get: if superadmin();
+      allow list: if superadmin() && request.query.limit <= 100;
+      allow update, delete: if false;
+    }
+    function member(societyId) {
+      return verified()
+        && exists(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid))
+        && get(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.status == 'active';
+    }
+    function admin(societyId) {
+      return member(societyId)
+        && get(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.role in ['owner', 'admin'];
+    }
+    function owner(societyId) {
+      return member(societyId)
+        && get(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.role == 'owner';
+    }
+    function invitedMember(societyId, uid, data) {
+      let invite = get(/databases/$(database)/documents/societies/$(societyId)/invitations/$(data.invitationId)).data;
+      let accepted = getAfter(/databases/$(database)/documents/societies/$(societyId)/invitations/$(data.invitationId)).data;
+      return verified() && request.auth.uid == uid
+        && data.keys().hasAll(['schemaVersion', 'email', 'role', 'status', 'invitationId', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['schemaVersion', 'email', 'role', 'status', 'invitationId', 'createdAt', 'updatedAt'])
+        && data.schemaVersion == 1 && data.email == request.auth.token.email
+        && data.role in ['resident', 'admin'] && data.role == invite.role && data.status == 'active'
+        && data.updatedAt == request.time
+        && invite.email == request.auth.token.email && invite.status == 'pending' && invite.expiresAt > request.time
+        && accepted.status == 'accepted' && accepted.acceptedBy == uid && accepted.updatedAt == request.time;
+    }
+    function swappedMember(before, after, role, transferId) {
+      return before.status == 'active' && after.status == 'active' && after.role == role
+        && after.ownershipTransferId == transferId && after.updatedAt == request.time
+        && after.diff(before).affectedKeys().hasOnly(['role', 'ownershipTransferId', 'updatedAt']);
+    }
+    function completedTransfer(societyId, transferId) {
+      let transfer = get(/databases/$(database)/documents/societies/$(societyId)/ownershipTransfers/$(transferId)).data;
+      let accepted = getAfter(/databases/$(database)/documents/societies/$(societyId)/ownershipTransfers/$(transferId)).data;
+      let root = get(/databases/$(database)/documents/societies/$(societyId)).data;
+      let updatedRoot = getAfter(/databases/$(database)/documents/societies/$(societyId)).data;
+      let previous = get(/databases/$(database)/documents/societies/$(societyId)/members/$(transfer.fromUid)).data;
+      let previousAfter = getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(transfer.fromUid)).data;
+      let next = get(/databases/$(database)/documents/societies/$(societyId)/members/$(transfer.toUid)).data;
+      let nextAfter = getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(transfer.toUid)).data;
+      return verified() && request.auth.uid == transfer.toUid && transfer.fromUid != transfer.toUid
+        && transfer.status == 'pending' && transfer.expiresAt > request.time
+        && accepted.status == 'accepted' && accepted.updatedAt == request.time
+        && accepted.diff(transfer).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && root.schemaVersion == 2 && root.ownerUid == transfer.fromUid
+        && updatedRoot.ownerUid == transfer.toUid && updatedRoot.ownershipTransferId == transferId && updatedRoot.updatedAt == request.time
+        && updatedRoot.diff(root).affectedKeys().hasOnly(['ownerUid', 'ownershipTransferId', 'updatedAt'])
+        && previous.role == 'owner' && next.role == 'admin'
+        && swappedMember(previous, previousAfter, 'admin', transferId)
+        && swappedMember(next, nextAfter, 'owner', transferId);
+    }
+    function validEvent(data) {
+      return data.keys().hasAll(['schemaVersion', 'title', 'description', 'startsAt', 'venue', 'category', 'status', 'pinned', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['schemaVersion', 'title', 'description', 'startsAt', 'venue', 'category', 'status', 'pinned', 'audience', 'createdAt', 'updatedAt'])
+        && data.get('audience', 'members') in ['members', 'public']
+        && data.schemaVersion == 1
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 160 && data.title.matches('.*\\S.*')
+        && data.description is string && data.description.size() <= 5000
+        && data.startsAt is timestamp
+        && data.venue is string && data.venue.size() > 0 && data.venue.size() <= 250 && data.venue.matches('.*\\S.*')
+        && data.category is string && data.category.size() > 0 && data.category.size() <= 80 && data.category.matches('.*\\S.*')
+        && data.status in ['draft', 'published', 'archived']
+        && data.pinned is bool
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+    function validCommunity(data) {
+      return data.keys().hasAll(['schemaVersion', 'name', 'nameKey', 'city', 'cityKey', 'location', 'kind', 'timezone', 'directoryVisible', 'registrationStatus', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['schemaVersion', 'name', 'nameKey', 'city', 'cityKey', 'location', 'kind', 'timezone', 'directoryVisible', 'registrationStatus', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.schemaVersion == 2
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 120 && data.name.matches('.*\\S.*')
+        && data.nameKey == data.name.lower()
+        && data.city is string && data.city.size() >= 2 && data.city.size() <= 80 && data.city.matches('.*\\S.*')
+        && data.cityKey == data.city.lower()
+        && data.location is string && data.location.size() >= 2 && data.location.size() <= 200 && data.location.matches('.*\\S.*')
+        && data.kind in ['society', 'ganesh_mandal', 'durga_mandal', 'festival_committee', 'community_group']
+        && data.timezone == 'Asia/Kolkata' && data.directoryVisible == true
+        && data.registrationStatus == 'self_declared' && data.ownerUid == request.auth.uid
+        && data.createdAt == request.time && data.updatedAt == request.time;
+    }
+
+    match /users/{uid} {
+      allow get: if superadmin() || (verified() && request.auth.uid == uid);
+      allow list: if superadmin() && request.query.limit <= 100;
+      allow create, update: if verified() && request.auth.uid == uid
+        && request.resource.data.keys().hasAll(['schemaVersion', 'displayName', 'language', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['schemaVersion', 'displayName', 'language', 'updatedAt'])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 80
+        && request.resource.data.language in ['en', 'hi', 'mr']
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    match /accountCleanupRequests/{requestId} {
+      allow get: if superadmin() || (verified() && resource.data.uid == request.auth.uid);
+      allow list: if request.query.limit <= 100 && (superadmin() || (verified() && resource.data.uid == request.auth.uid));
+      allow create: if verified() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasAll(['uid', 'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time;
+      allow update: if verified() && resource.data.uid == request.auth.uid && resource.data.status == 'pending'
+        && request.resource.data.status == 'cancelled' && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
+      allow delete: if false;
+    }
+    match /accountCleanupAudit/{requestId} {
+      allow get: if superadmin();
+      allow list: if superadmin() && request.query.limit <= 100;
+      allow write: if false;
+    }
+
+    // Public metadata only. New roots need atomic owner creation; existing roots change only through ownership swaps.
+    match /societies/{societyId} {
+      allow get: if superadmin() || resource.data.directoryVisible == true || member(societyId);
+      allow list: if (superadmin() || resource.data.directoryVisible == true) && request.query.limit <= 50;
+      allow create: if verified() && validCommunity(request.resource.data)
+        && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.role == 'owner'
+        && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.status == 'active'
+        && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.createdAt == request.time;
+      allow update: if completedTransfer(societyId, request.resource.data.ownershipTransferId);
+      allow delete: if false;
+
+      match /members/{uid} {
+        allow get: if verified() && (request.auth.uid == uid || admin(societyId));
+        allow list: if admin(societyId) && request.query.limit <= 100;
+        allow create: if (invitedMember(societyId, uid, request.resource.data) && request.resource.data.createdAt == request.time)
+          || (verified() && request.auth.uid == uid
+          && request.resource.data.keys().hasAll(['schemaVersion', 'role', 'status', 'email', 'createdAt', 'updatedAt'])
+          && request.resource.data.keys().hasOnly(['schemaVersion', 'role', 'status', 'email', 'createdAt', 'updatedAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.email == request.auth.token.email
+          && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+          && ((request.resource.data.role == 'resident' && request.resource.data.status == 'pending'
+              && get(/databases/$(database)/documents/societies/$(societyId)).data.directoryVisible == true)
+            || (request.resource.data.role == 'owner' && request.resource.data.status == 'active'
+              && !exists(/databases/$(database)/documents/societies/$(societyId))
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)).data.schemaVersion == 2
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)).data.ownerUid == uid
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)).data.createdAt == request.time)));
+        allow update: if (completedTransfer(societyId, request.resource.data.ownershipTransferId)
+            && uid in [get(/databases/$(database)/documents/societies/$(societyId)/ownershipTransfers/$(request.resource.data.ownershipTransferId)).data.fromUid,
+              get(/databases/$(database)/documents/societies/$(societyId)/ownershipTransfers/$(request.resource.data.ownershipTransferId)).data.toUid])
+          || (resource.data.role == 'resident' && resource.data.status == 'pending'
+            && invitedMember(societyId, uid, request.resource.data)
+            && request.resource.data.createdAt == resource.data.createdAt)
+          || (owner(societyId) && request.auth.uid != uid
+            && resource.data.role == 'admin' && resource.data.status == 'active'
+            && request.resource.data.status == 'revoked'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+            && request.resource.data.updatedAt == request.time)
+          || (admin(societyId) && request.auth.uid != uid
+          && resource.data.role == 'resident'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+          && request.resource.data.updatedAt == request.time
+          && ((resource.data.status == 'pending' && request.resource.data.status in ['active', 'revoked'])
+            || (resource.data.status == 'active' && request.resource.data.status == 'revoked')));
+        // Ownership changes require the complete accepted transfer; reactivation and deletion remain denied.
+        allow delete: if false;
+      }
+
+      match /invitations/{invitationId} {
+        allow get: if superadmin() || owner(societyId) || (verified() && resource.data.email == request.auth.token.email);
+        allow list: if (superadmin() || owner(societyId)) && request.query.limit <= 100;
+        allow create: if owner(societyId)
+          && request.resource.data.keys().hasAll(['schemaVersion', 'email', 'role', 'status', 'createdBy', 'createdAt', 'updatedAt', 'expiresAt'])
+          && request.resource.data.keys().hasOnly(['schemaVersion', 'email', 'role', 'status', 'createdBy', 'createdAt', 'updatedAt', 'expiresAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.email is string && request.resource.data.email.size() <= 254
+          && request.resource.data.email.matches('[^\\s@]+@[^\\s@]+\\.[^\\s@]+')
+          && request.resource.data.role in ['resident', 'admin'] && request.resource.data.status == 'pending'
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+          && request.resource.data.expiresAt is timestamp && request.resource.data.expiresAt > request.time
+          && request.resource.data.expiresAt <= request.time + duration.value(7, 'd');
+        allow update: if resource.data.status == 'pending' && request.resource.data.updatedAt == request.time
+          && ((owner(societyId) && request.resource.data.status == 'cancelled'
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']))
+            || (verified() && resource.data.email == request.auth.token.email && resource.data.expiresAt > request.time
+              && request.resource.data.status == 'accepted' && request.resource.data.acceptedBy == request.auth.uid
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedBy', 'updatedAt'])
+              && get(/databases/$(database)/documents/societies/$(societyId)/members/$(resource.data.createdBy)).data.role == 'owner'
+              && get(/databases/$(database)/documents/societies/$(societyId)/members/$(resource.data.createdBy)).data.status == 'active'
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.invitationId == invitationId
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.role == resource.data.role
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.status == 'active'
+              && getAfter(/databases/$(database)/documents/societies/$(societyId)/members/$(request.auth.uid)).data.updatedAt == request.time));
+        allow delete: if false;
+      }
+
+      match /ownershipTransfers/{transferId} {
+        allow get: if superadmin() || owner(societyId) || (verified() && resource.data.toUid == request.auth.uid);
+        allow list: if (superadmin() || owner(societyId)) && request.query.limit <= 100;
+        allow create: if owner(societyId)
+          && get(/databases/$(database)/documents/societies/$(societyId)).data.schemaVersion == 2
+          && get(/databases/$(database)/documents/societies/$(societyId)).data.ownerUid == request.auth.uid
+          && request.resource.data.keys().hasAll(['schemaVersion', 'fromUid', 'toUid', 'status', 'createdAt', 'updatedAt', 'expiresAt'])
+          && request.resource.data.keys().hasOnly(['schemaVersion', 'fromUid', 'toUid', 'status', 'createdAt', 'updatedAt', 'expiresAt'])
+          && request.resource.data.schemaVersion == 1 && request.resource.data.fromUid == request.auth.uid
+          && request.resource.data.toUid is string && request.resource.data.toUid != request.auth.uid
+          && get(/databases/$(database)/documents/societies/$(societyId)/members/$(request.resource.data.toUid)).data.role == 'admin'
+          && get(/databases/$(database)/documents/societies/$(societyId)/members/$(request.resource.data.toUid)).data.status == 'active'
+          && request.resource.data.status == 'pending'
+          && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+          && request.resource.data.expiresAt is timestamp && request.resource.data.expiresAt > request.time
+          && request.resource.data.expiresAt <= request.time + duration.value(7, 'd');
+        allow update: if completedTransfer(societyId, transferId)
+          || (owner(societyId) && resource.data.status == 'pending' && request.resource.data.status == 'cancelled'
+            && request.resource.data.updatedAt == request.time
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']));
+        allow delete: if false;
+      }
+
+      match /events/{eventId} {
+        function publicEvent() {
+          return resource.data.get('audience', 'members') == 'public' && resource.data.status in ['published', 'archived']
+            && get(/databases/$(database)/documents/societies/$(societyId)).data.directoryVisible == true;
+        }
+        allow get: if publicEvent() || admin(societyId) || (member(societyId) && resource.data.status in ['published', 'archived']);
+        allow list: if request.query.limit <= 100
+          && (publicEvent() || admin(societyId) || (member(societyId) && resource.data.status in ['published', 'archived']));
+        allow create: if admin(societyId) && validEvent(request.resource.data)
+          && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time;
+        allow update: if admin(societyId) && validEvent(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.updatedAt == request.time;
+        // Preserve history: archive instead of allowing hard deletion from clients.
+        allow delete: if false;
+      }
+      match /settings/public {
+        allow get: if admin(societyId) || get(/databases/$(database)/documents/societies/$(societyId)).data.directoryVisible == true;
+        allow create, update: if admin(societyId)
+          && request.resource.data.keys().hasAll(['schemaVersion', 'name', 'tagline', 'announcement', 'updatedAt'])
+          && request.resource.data.keys().hasOnly(['schemaVersion', 'name', 'tagline', 'announcement', 'updatedAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 120 && request.resource.data.name.matches('.*\\S.*')
+          && request.resource.data.tagline is string && request.resource.data.tagline.size() >= 2 && request.resource.data.tagline.size() <= 160 && request.resource.data.tagline.matches('.*\\S.*')
+          && request.resource.data.announcement is string && request.resource.data.announcement.size() <= 500
+          && request.resource.data.updatedAt == request.time;
+        allow delete: if false;
+      }
+    }
+
+    // Platform visibility is read-only and limited to application collections, never arbitrary secret paths.
+    match /societies/{societyId}/{records}/{recordId} {
+      allow get: if superadmin() && records in ['members', 'households', 'seasons', 'events', 'content', 'settings', 'formVersions', 'registrations', 'slotBookings', 'ledgerEntries', 'mediaAssets', 'auditLog'];
+      allow list: if superadmin() && request.query.limit <= 100
+        && records in ['members', 'households', 'seasons', 'events', 'content', 'settings', 'formVersions', 'registrations', 'slotBookings', 'ledgerEntries', 'mediaAssets', 'auditLog'];
+    }
+
+    // Collections without a completed feature contract remain inaccessible, including receipts.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

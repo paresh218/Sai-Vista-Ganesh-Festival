@@ -35,7 +35,7 @@ test('Navratri archive is a separate view and nested links select the right fest
 
 test('confirmed marathon replaces interest promotion and leads the main content',()=>{
  const dom=page(),w=dom.window,d=w.document;
- const banner=d.getElementById('marathonInterest');assert.equal(d.querySelector('main').firstElementChild,banner);assert.match(banner.textContent,/29 NOVEMBER 2026/);assert.match(banner.textContent,/Pay, submit, get confirmed/);assert.equal(d.querySelectorAll('[data-interest-open]').length,0);assert.equal(d.getElementById('marathonInterestDialog'),null);assert.ok(d.querySelector('.mobile-nav a[href="#marathonInterest"]'));assert.ok(d.getElementById('marathonEntryDialog'));
+ const banner=d.getElementById('marathonInterest');assert.equal(d.querySelector('main').firstElementChild.id,'marathonMyEntries');assert.match(banner.textContent,/29 NOVEMBER 2026/);assert.equal(d.querySelector('[data-marathon-open], #marathonSizeCharts'),null);assert.equal(d.querySelectorAll('[data-interest-open]').length,0);assert.equal(d.getElementById('marathonInterestDialog'),null);assert.ok(d.querySelector('.mobile-nav a[href="#marathonMyEntries"]'));assert.equal(d.getElementById('marathonEntryDialog'),null);
  w.close();
 });
 

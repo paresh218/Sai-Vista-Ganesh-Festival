@@ -1,12 +1,14 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto'),{JSDOM}=require('jsdom');
 const M=require('./marathon-model.js');
+const registrationTestTime=Date.parse('2026-11-13T12:00:00+05:30');
+require('node:test').mock.timers.enable({apis:['Date'],now:registrationTestTime});
 const bytes=Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),Buffer.alloc(24)]);
 const good={action:'marathon-entry',requestId:'12345678-1234-1234-1234-123456789012',race:'3K',name:'Test Runner',bibName:'Runner',dob:'2000-05-01',email:'runner@example.org',phone:'9876543210',emergencyName:'Emergency Contact',emergencyPhone:'9876543211',bloodGroup:'O+',shirt:'M',flat:'B-902',gender:'Female',medical:'Yes',medicalDetails:'Private note',agreed:true,paymentDeclared:true,paymentReference:'012345678901',proof:{type:'image/png',base64:bytes.toString('base64')}};
 function service(source=fs.readFileSync('marathon-entry-service.gs','utf8')){
  const props=new Map([['MARATHON_SPREADSHEET_ID','private-test'],['MARATHON_PROOF_FOLDER_ID','proof-test']]),rows=[],sent=[],files=[],cache=new Map();let busy=false,mailFails=false,quota=100,access='PRIVATE';
  const sheet={getMaxColumns:()=>rows[0]?.length||26,insertColumnsAfter:(_,n)=>{for(const row of rows)row.push(...Array(n).fill(''));},getName:()=> 'Marathon registrations 2026',getLastRow:()=>rows.length,appendRow:r=>rows.push(r),getRange:(r,c,n=1,m=1)=>({getValues:()=>Array.from({length:n},(_,i)=>Array.from({length:m},(_,j)=>rows[r-1+i]?.[c-1+j]??'')),setValue:v=>{rows[r-1][c-1]=v;},setValues:values=>values.forEach((row,i)=>row.forEach((v,j)=>{rows[r-1+i][c-1+j]=v;}))})};
  const ctx={console:{error:()=>{}},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props.get(k),setProperty:(k,v)=>props.set(k,v)})},Session:{getEffectiveUser:()=>({getEmail:()=> 'saivistaculturalcommittee@gmail.com'})},LockService:{getScriptLock:()=>({tryLock:()=>!busy,releaseLock:()=>{}})},CacheService:{getScriptCache:()=>({get:k=>cache.get(k),put:(k,v)=>cache.set(k,v)})},SpreadsheetApp:{openById:()=>({getSheetByName:()=>sheet}),flush:()=>{}},DriveApp:{Access:{PRIVATE:'PRIVATE'},getFolderById:()=>({getSharingAccess:()=>access,createFile:blob=>{const f={blob,getUrl:()=> 'https://drive.google.com/private/test-'+files.length,setTrashed:v=>f.trashed=v};files.push(f);return f;}})},Utilities:{DigestAlgorithm:{SHA_256:'sha256'},Charset:{UTF_8:'utf8'},computeDigest:(_,s)=>[...crypto.createHash('sha256').update(s).digest()],base64Decode:s=>[...Buffer.from(s,'base64')],newBlob:(b,t,n)=>({bytes:b,type:t,name:n})},ContentService:{MimeType:{JSON:'json'},createTextOutput:s=>({setMimeType:()=>JSON.parse(s)})},MailApp:{getRemainingDailyQuota:()=>quota,sendEmail:mail=>{if(mailFails)throw Error('mail interrupted');sent.push(mail);}}};
- vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+source,ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
+ vm.createContext(ctx);vm.runInContext(fs.readFileSync('marathon-model.js','utf8')+'\n'+source,ctx);vm.runInContext('Date.now=()=>'+registrationTestTime,ctx);rows.push(Array.from(vm.runInContext('MARATHON_COLUMNS',ctx)));
  return {ctx,rows,props,sent,files,sheet,enable:()=>props.set('MARATHON_REGISTRATION_ENABLED','true'),busy:v=>busy=v,mailFails:v=>mailFails=v,quota:v=>quota=v,access:v=>access=v};
 }
 test('14 November 5 PM IST deadline, event-day age, gender, medical and guardian validation',()=>{
@@ -56,7 +58,8 @@ test('multiple approved entries allocate unique BIBs, formula cells escaped, pub
  const s=service();s.enable();s.ctx.marathonSaveEntry({...good,name:'=Test Runner'});s.ctx.marathonSaveEntry({...good,requestId:'22345678-1234-1234-1234-123456789012',name:'Other Runner',email:'other@example.org',race:'5K',paymentReference:'123456789012'});assert.equal(s.rows[1][4],"'=Test Runner");s.rows[1][20]='Yes';s.rows[2][20]='Yes';s.ctx.sendMarathonConfirmationEmails();assert.equal(s.rows[1][21],'3001');assert.equal(s.rows[2][21],'5001');assert.equal(s.sent.length,2);assert.equal(s.ctx.doPost({parameter:{payload:JSON.stringify({action:'approve',requestId:good.requestId})}}).ok,false);
 });
 function page(enabled=false){
- const dom=new JSDOM(fs.readFileSync('index.html','utf8'),{url:'https://example.org/',runScripts:'outside-only'}),w=dom.window;
+ const dom=new JSDOM(fs.readFileSync('index.html','utf8').replace('</body>',fs.readFileSync('tests/fixtures/marathon-registration.html','utf8')+'</body>'),{url:'https://example.org/',runScripts:'outside-only'}),w=dom.window;
+ w.Date.now=()=>registrationTestTime;
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};w.matchMedia=()=>({matches:true});w.ResidentAccess=require('./resident-access.js');w.SaiVistaMarathonConfig={endpoint:'https://script.google.com/macros/s/test/exec',registrationEnabled:enabled};
  w.eval(fs.readFileSync('marathon-model.js','utf8')+'\n'+fs.readFileSync('marathon-registration.js','utf8'));return dom;
 }
@@ -342,4 +345,42 @@ test('co-ordinator checkbox requires only name email phone and shirt, without pa
  d.querySelector('[data-marathon-open]').click();await new Promise(r=>setImmediate(r));const form=d.getElementById('marathonEntryForm');form.elements.coordinator.checked=true;form.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParticipantFields').hidden,true);assert.equal(d.getElementById('marathonParticipantFields').disabled,true);assert.equal(d.getElementById('marathonEntrySubmit').disabled,false);assert.equal(d.getElementById('marathonPayLink').hasAttribute('href'),false);assert.equal(form.checkValidity(),false);assert.equal(form.elements.coordinatorEmail.value,'coordinator@example.org');assert.equal(form.elements.coordinatorEmail.readOnly,true);for(const [key,value] of Object.entries({coordinatorName:'Test Coordinator',coordinatorPhone:'9876543210',coordinatorShirt:'L'}))form.elements[key].value=value;assert.equal(form.checkValidity(),true);
  form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setImmediate(r));assert.deepEqual(Object.keys(payload).sort(),['action','email','flat','name','phone','requestId','shirt','token']);assert.equal(payload.name,'Test Coordinator');assert.equal(payload.shirt,'L');assert.equal(payload.email,'coordinator@example.org');assert.equal(payload.action,'marathon-coordinator');assert.match(d.getElementById('marathonEntryStatus').textContent,/Co-ordinator saved/);assert.equal(d.getElementById('marathonUpdatesGroup').hidden,true);
  d.getElementById('marathonEntryClose').click();d.querySelector('[data-marathon-open]').click();form.elements.coordinator.checked=true;form.dispatchEvent(new w.Event('change'));form.elements.coordinator.checked=false;form.dispatchEvent(new w.Event('change'));assert.equal(d.getElementById('marathonParticipantFields').disabled,false);assert.equal(form.elements.paymentProof.required,true);assert.equal(form.checkValidity(),false);await new Promise(r=>setImmediate(r));
+});
+
+test('signed-in marathon entries filter by exact BIB or registered mobile and clear on sign-out', async t => {
+  const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), {url: 'https://site.test', runScripts: 'outside-only'});
+  const w = dom.window, d = w.document;
+  t.after(() => w.close());
+  w.SaiVistaMarathon = M;
+  w.SaiVistaMarathonConfig = {endpoint: 'https://script.google.com/macros/s/test/exec'};
+  w.Date.now = () => Date.parse('2026-11-25T12:00:00+05:30');
+  w.SaiVistaAuthSession = {token: 'session', flat: 'B-902', expires: w.Date.now() + 60000};
+  let requests = 0;
+  w.fetch = async () => {
+    requests++;
+    return {ok: true, json: async () => ({ok: true, entries: [
+      {reference: 'one', name: 'Runner One', bib: '3001', details: {phone: '9876543210'}},
+      {reference: 'two', name: 'Runner Two', bib: '5001', details: {phone: '9876543210'}},
+      {reference: 'three', name: 'Runner Three', bib: '3002', details: {phone: '8765432109'}}
+    ]})};
+  };
+  w.eval(fs.readFileSync('assets/marathon-account-v5.js', 'utf8'));
+  await new Promise(resolve => setImmediate(resolve));
+  const input = d.getElementById('marathonEntryQuery');
+  function filter(value) {
+    input.value = value;
+    input.dispatchEvent(new w.Event('input'));
+    return [...d.querySelectorAll('.marathon-my-entry')].map(row => row.dataset.reference);
+  }
+  assert.deepEqual(filter('3001'), ['one']);
+  assert.deepEqual(filter('+91 98765-43210'), ['one', 'two']);
+  assert.deepEqual(filter('98765'), []);
+  assert.match(d.getElementById('marathonEntrySearchStatus').textContent, /No entries match/);
+  assert.deepEqual(filter(''), ['one', 'two', 'three']);
+  assert.equal(requests, 1);
+  filter('3001');
+  w.dispatchEvent(new w.Event('sai-vista-auth-cleared'));
+  assert.equal(input.value, '');
+  assert.equal(d.getElementById('marathonEntrySearch').hidden, true);
+  assert.equal(d.querySelectorAll('.marathon-my-entry').length, 0);
 });

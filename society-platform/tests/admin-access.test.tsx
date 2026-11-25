@@ -1,0 +1,22 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { expect, it, vi } from 'vitest';
+import type { Firestore } from 'firebase/firestore';
+import { AdminAccess } from '../web/src/features/members/AdminAccess';
+const mock = vi.hoisted(() => ({ update: vi.fn() }));
+vi.mock('firebase/firestore', () => ({ doc: (_db: unknown, ...parts: string[]) => parts.join('/'), serverTimestamp: () => 'server-time', updateDoc: (...args: unknown[]) => mock.update(...args) }));
+vi.mock('../web/src/features/platform/RecordBrowser', () => ({ RecordBrowser: ({ onSelect }: { onSelect: (id: string, name: string) => void }) => <button onClick={() => onSelect('admin', 'Test admin')}>Open Test admin</button> }));
+it('requires selection and explicit confirmation, preserves failed selections and writes only scoped revocation', async () => {
+  mock.update.mockRejectedValueOnce(new Error('denied')).mockResolvedValueOnce(undefined);
+  render(<AdminAccess database={{} as Firestore} societyId="alpha" />);
+  expect(screen.queryByRole('button', { name: 'Revoke admin access' })).toBeNull();
+  fireEvent.click(screen.getByText('Open Test admin'));
+  expect((screen.getByText('Revoke admin access') as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('checkbox'));
+  fireEvent.click(screen.getByText('Revoke admin access'));
+  await screen.findByText('Access was not changed. Select an active admin and check your owner permissions.');
+  expect(screen.getByText('Selected: Test admin')).toBeTruthy();
+  fireEvent.click(screen.getByText('Revoke admin access'));
+  await screen.findByText('Admin access revoked for this community.');
+  expect(mock.update).toHaveBeenLastCalledWith('societies/alpha/members/admin', { status: 'revoked', updatedAt: 'server-time' });
+  expect(screen.queryByText('Selected: Test admin')).toBeNull();
+});

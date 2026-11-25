@@ -1,0 +1,123 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "societies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "directoryVisible",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nameKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "societies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "directoryVisible",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "kind",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nameKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "societies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "directoryVisible",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cityKey",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nameKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "societies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "directoryVisible",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "kind",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cityKey",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nameKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "pinned",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "startsAt",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "fields": [
+        {
+          "order": "ASCENDING",
+          "fieldPath": "audience"
+        },
+        {
+          "order": "ASCENDING",
+          "fieldPath": "status"
+        },
+        {
+          "order": "DESCENDING",
+          "fieldPath": "pinned"
+        },
+        {
+          "order": "ASCENDING",
+          "fieldPath": "startsAt"
+        }
+      ],
+      "queryScope": "COLLECTION",
+      "collectionGroup": "events"
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "events",
+      "fieldPath": "description",
+      "indexes": []
+    }
+  ]
+}

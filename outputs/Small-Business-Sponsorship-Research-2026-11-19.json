@@ -1,0 +1,249 @@
+{
+  "date": "2026-11-19",
+  "scope": "Rahatani, Wakad, Pimple Saudagar, Pimpri, Chinchwad and nearby PCMC",
+  "coverage": "Publicly discoverable businesses with published business emails. Not an exhaustive census.",
+  "contacts": [
+    {
+      "name": "Wonder Smile Dental Clinic",
+      "email": "wondersmileclinic@yahoo.in",
+      "area": "Wakad / Chinchwad",
+      "category": "Clinic",
+      "source": "https://wondersmile.in/contact-us/",
+      "status": "SENT",
+      "message_id": "1a1f38ef488f1ede"
+    },
+    {
+      "name": "Om Dental Care",
+      "email": "odcwakad@gmail.com",
+      "area": "Wakad",
+      "category": "Clinic",
+      "source": "https://omdentalcare.in/about-us/",
+      "status": "SENT",
+      "message_id": "1a1f38f0714b4bc8"
+    },
+    {
+      "name": "Dentique",
+      "email": "dentique.smiles@gmail.com",
+      "area": "Wakad",
+      "category": "Clinic",
+      "source": "https://dentique.co.in/",
+      "status": "SENT",
+      "message_id": "1a1f38f1765ce3d5"
+    },
+    {
+      "name": "Rupal’s Diet Clinic",
+      "email": "rupalsdietclinic@gmail.com",
+      "area": "Pimple Saudagar",
+      "category": "Nutrition clinic",
+      "source": "https://rupalsdietclinic.com/contactus",
+      "status": "SENT",
+      "message_id": "1a1f38f26e57e34d"
+    },
+    {
+      "name": "Pune Aesthetic",
+      "email": "puneaesthetics@gmail.com",
+      "area": "Pimple Saudagar",
+      "category": "Clinic",
+      "source": "https://www.puneaesthetic.in/contact",
+      "status": "SENT",
+      "message_id": "1a1f38f3af644626"
+    },
+    {
+      "name": "Cura Physiotherapy Clinic",
+      "email": "wellness@curaphysiotherapyclinic.com",
+      "area": "Wakad",
+      "category": "Physiotherapy",
+      "source": "https://www.curaphysiotherapyclinic.com/contact-us",
+      "status": "SENT",
+      "message_id": "1a1f38f4d56a9371"
+    },
+    {
+      "name": "Bodynetic Physiotherapy",
+      "email": "info@bodyneticphysio.com",
+      "area": "Wakad / Hinjawadi / Baner",
+      "category": "Physiotherapy",
+      "source": "https://bodyneticphysio.com/",
+      "status": "SENT",
+      "message_id": "1a1f38f72a2d6b89"
+    },
+    {
+      "name": "Dr. Soumya’s Physiotherapy & Rehab",
+      "email": "contact@drsoumyaphysio.in",
+      "area": "Wakad / Rahatani / Chinchwad / Pimple Saudagar",
+      "category": "Physiotherapy",
+      "source": "https://www.drsoumyaphysio.in/contact/",
+      "status": "SENT",
+      "message_id": "1a1f38f85f013891"
+    },
+    {
+      "name": "The Kashid’s Unisex Salon",
+      "email": "info@thekashidsunisexsalon.com",
+      "area": "Pimple Saudagar",
+      "category": "Salon",
+      "source": "https://www.thekashidsunisexsalon.com/",
+      "status": "SENT",
+      "message_id": "1a1f38f9ac1c19a5"
+    },
+    {
+      "name": "Iceberg Unisex Salon",
+      "email": "Icebergsalonpimplesaudagar@gmail.com",
+      "area": "Pimple Saudagar / Rahatani",
+      "category": "Salon",
+      "source": "https://icebergunisexsalon.in/contact",
+      "status": "SENT",
+      "message_id": "1a1f38fac32bce93"
+    },
+    {
+      "name": "J Salon",
+      "email": "jsalonmail@gmail.com",
+      "area": "Pimple Saudagar",
+      "category": "Salon",
+      "source": "https://jsalons.co/salon-in-pimple/",
+      "status": "SENT",
+      "message_id": "1a1f38fbf3fa439b"
+    },
+    {
+      "name": "Shanvi Designer Studio",
+      "email": "shanvidesignerstudio19@gmail.com",
+      "area": "Wakad",
+      "category": "Clothing boutique",
+      "source": "https://www.shanvidesignerstudio.com/contact",
+      "status": "SENT",
+      "message_id": "1a1f38fd508e9a95"
+    },
+    {
+      "name": "Amrita Stationery",
+      "email": "amritadinesh111@gmail.com",
+      "area": "Pimpri",
+      "category": "Stationery",
+      "source": "https://amritastationery.com/",
+      "status": "SENT",
+      "message_id": "1a1f39002659c576"
+    },
+    {
+      "name": "Eyecon Optical",
+      "email": "officialeyeconoptical@gmail.com",
+      "area": "Pimple Saudagar / Wakad / Bhosari",
+      "category": "Optical retailer",
+      "source": "https://eyeconoptical.in/",
+      "status": "SENT",
+      "message_id": "1a1f390122edef89"
+    },
+    {
+      "name": "Gangar Eyenation",
+      "email": "info@gangar.in",
+      "area": "Pimple Saudagar outlet; central business inbox",
+      "category": "Optical retailer",
+      "source": "https://www.gangareyenation.com/store-locator/",
+      "status": "SENT",
+      "message_id": "1a1f39024d141fd8"
+    },
+    {
+      "name": "Ivvati Art Jewellery",
+      "email": "care.ivvatiartjewellery@gmail.com",
+      "area": "Pimpri Main Bazaar 411017",
+      "category": "Jewellery",
+      "source": "https://ivvatiartjewellery.com/pages/contact-us",
+      "status": "SENT",
+      "message_id": "1a1f39038e666bfc"
+    },
+    {
+      "name": "Rekha’s IndiSnacks",
+      "email": "info@rekhasindisnacks.com",
+      "area": "Rahatani 411017",
+      "category": "Homemade snacks",
+      "source": "https://rekhasindisnacks.com/contact",
+      "status": "SENT",
+      "message_id": "1a1f3904a6aae8da"
+    },
+    {
+      "name": "Fulora",
+      "email": "flowers@fulora.store",
+      "area": "Chinchwad",
+      "category": "Florist",
+      "source": "https://www.fulora.store/contact-us",
+      "status": "SENT",
+      "message_id": "1a1f3905c539e56d"
+    },
+    {
+      "name": "Rajnandani’s Cakes",
+      "email": "rajnandanicakes@gmail.com",
+      "area": "Tanaji Nagar, Chinchwad",
+      "category": "Home bakery",
+      "source": "https://www.rajnandanicakes.com/post/buy-fresh-eggless-homemade-cakes-near-pcmc-pune-rajnandani-cakes",
+      "status": "SENT",
+      "message_id": "1a1f39089c68c3ea"
+    },
+    {
+      "name": "PrintItNice",
+      "email": "printitnice@gmail.com",
+      "area": "Aundh–Ravet Road, Pimple Saudagar",
+      "category": "Printing / gifts",
+      "source": "https://printitnice.com/contact/",
+      "status": "SENT",
+      "message_id": "1a1f3909ab8b4715"
+    },
+    {
+      "name": "ncgifts",
+      "email": "hello@ncgifts.in",
+      "area": "Vantage 21, Pimple Saudagar",
+      "category": "Printing / corporate gifts",
+      "source": "https://ncgifts.in/about",
+      "status": "SENT",
+      "message_id": "1a1f390ad6ae55d0"
+    },
+    {
+      "name": "LaundryTO",
+      "email": "info@laundryto.in",
+      "area": "Wakad outlet; central inbox",
+      "category": "Laundry",
+      "source": "https://www.laundryto.in/stores/6",
+      "status": "SENT",
+      "message_id": "1a1f390c334c16cc"
+    },
+    {
+      "name": "Zippy Laundromat",
+      "email": "zippylaundromatservices@gmail.com",
+      "area": "Wakad / Pimple Saudagar",
+      "category": "Laundry",
+      "source": "https://zippylaundromat.com/contact.php",
+      "status": "SENT",
+      "message_id": "1a1f390d5a613dcb"
+    },
+    {
+      "name": "BubbleIQ",
+      "email": "support@bubbleiq.in",
+      "area": "Wakad / Punawale",
+      "category": "Laundry",
+      "source": "https://bubbleiq.in/contact",
+      "status": "SENT",
+      "message_id": "1a1f390e9bb58c3c"
+    },
+    {
+      "name": "Rareism — Phoenix Mall of the Millennium",
+      "email": "rmmompune@rareism.com",
+      "area": "Wakad",
+      "category": "Clothing retailer",
+      "source": "https://stores.rareism.com/rareism-wakad-rsm-mom-pune-clothing-shop-wakad-pune-327725/Contact-Us",
+      "status": "SENT",
+      "message_id": "1a1f3914a59484e4"
+    },
+    {
+      "name": "Malabar Gold & Diamonds — Pimpri",
+      "email": "mgd.pcmcpune@malabargroup.com",
+      "area": "Geras Imperium Oasis, Pimpri",
+      "category": "Jewellery",
+      "source": "https://www.malabargoldanddiamonds.com/us/stores/india/maharashtra/pune/pimpri",
+      "status": "SENT",
+      "message_id": "1a1f3915c964e67d"
+    }
+  ],
+  "exclusions": [
+    "Businesses already contacted in earlier batches excluded by Sent checks.",
+    "Appointment-only, emergency, grievance and private patient addresses excluded.",
+    "Phone-only vendors retained for follow-up rather than guessing email addresses.",
+    "Pioneerinterio page has placeholder phone and mismatched email domain; excluded pending independent verification.",
+    "Directory-only contacts without adequate current business confirmation not emailed."
+  ],
+  "status": "26 emails confirmed SENT"
+}

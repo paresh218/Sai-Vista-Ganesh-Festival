@@ -1,0 +1,324 @@
+[
+  {
+    "draft_id": "r-2228282805394380613",
+    "to": [
+      "hello@milkbasket.com"
+    ],
+    "subject": "Milkbasket: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f385e0447cc8b",
+        "threadId": "1a1f383b4a783391",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-2306764048133048809",
+    "to": [
+      "reception.pune@spreehotels.com"
+    ],
+    "subject": "Spree Shivai Hotel: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f385f1d2d68b4",
+        "threadId": "1a1f383b107a4bd8",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r4994572357664264083",
+    "to": [
+      "dos.pune@essentiahotels.in"
+    ],
+    "subject": "Essentia Premier Pune: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38607e40dce8",
+        "threadId": "1a1f383ade0696ab",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-3487596395371464500",
+    "to": [
+      "sales1@hotelkalasagar.com"
+    ],
+    "subject": "Hotel Kala Sagar: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38617b014d45",
+        "threadId": "1a1f383a8295e255",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r9110086728158067697",
+    "to": [
+      "support@pradeepsweets.com"
+    ],
+    "subject": "Pradeep Sweets: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38627aae35b7",
+        "threadId": "1a1f38387dee9e9f",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r5626871177967304957",
+    "to": [
+      "indiasports.office@gmail.com"
+    ],
+    "subject": "India Sports: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38638b19017d",
+        "threadId": "1a1f383814682efc",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-5978306276620092570",
+    "to": [
+      "sales.sksports@gmail.com"
+    ],
+    "subject": "SK Sports & Sales: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3864859ef7f2",
+        "threadId": "1a1f3837cf92414c",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r4409728164728147664",
+    "to": [
+      "gaikwad.punam@gmail.com"
+    ],
+    "subject": "Patanjali Arogya Kendra — Vision Galleria: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386713e424f4",
+        "threadId": "1a1f383788a18dca",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r5796005182784920954",
+    "to": [
+      "feedback@newpoonabakery.com"
+    ],
+    "subject": "New Poona Bakery: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3868411808e5",
+        "threadId": "1a1f38374d888719",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r529630206796008858",
+    "to": [
+      "info@kakahalwai.co.in"
+    ],
+    "subject": "Kaka Halwai: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386921dd196e",
+        "threadId": "1a1f3835ddc182ef",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-6777585573183201877",
+    "to": [
+      "varad@yolkshire.com"
+    ],
+    "subject": "Yolkshire: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386a3ce0c7af",
+        "threadId": "1a1f38359a324cb5",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r2378285379826987526",
+    "to": [
+      "care@arcari.in"
+    ],
+    "subject": "Mr & Mrs Idly / Arcari Food Ventures: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386b5f4a57f6",
+        "threadId": "1a1f383554be04e0",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-4580331931843306631",
+    "to": [
+      "operationstressa@gmail.com"
+    ],
+    "subject": "TRESSA Restaurant & Suites: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386c4a960f32",
+        "threadId": "1a1f383501f9883a",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  },
+  {
+    "draft_id": "r-813099320050067313",
+    "to": [
+      "marketingmanager@malakaspice.com"
+    ],
+    "subject": "One China / House of Malaka Spice: Sai Vista Marathon sponsorship | 305+ flats, 600+ residents",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f386d54a1782d",
+        "threadId": "1a1f3834dc29af8b",
+        "labelIds": [
+          "SENT"
+        ]
+      },
+      "isError": false
+    }
+  }
+]

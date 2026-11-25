@@ -1,0 +1,44 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, expect, it, vi } from 'vitest';
+import type { Firestore } from 'firebase/firestore';
+import { BrandSettings, brandContent } from '../web/src/features/branding/BrandSettings';
+import LiveBrand from '../web/src/features/branding/LiveBrand';
+const mock = vi.hoisted(() => ({ save: vi.fn(), next: null as null | ((snapshot: unknown) => void), fail: null as null | (() => void), stop: vi.fn() }));
+vi.mock('../web/src/services/firebase', () => ({ localDatabase: {} }));
+vi.mock('firebase/firestore', () => ({ doc: (_db: unknown, ...parts: string[]) => parts.join('/'), serverTimestamp: () => 'server-time', setDoc: (...args: unknown[]) => mock.save(...args), onSnapshot: (_ref: unknown, _options: unknown, next: (snapshot: unknown) => void, fail: () => void) => { mock.next = next; mock.fail = fail; return mock.stop; } }));
+const database = {} as Firestore;
+const settings = { name: 'Celebrations', tagline: 'Come together.', announcement: 'Public message' };
+const snapshot = (cached = false, data: unknown = settings) => ({ data: () => data, metadata: { fromCache: cached } });
+beforeEach(() => { vi.clearAllMocks(); mock.save.mockResolvedValue(undefined); });
+it('validates trimmed text and rejects empty or oversized branding', () => {
+  expect(brandContent({ ...settings, name: '  New name  ' }).name).toBe('New name');
+  for (const changes of [{ name: ' ' }, { tagline: '' }, { announcement: 'x'.repeat(501) }]) expect(() => brandContent({ ...settings, ...changes })).toThrow();
+});
+it('saves only public fields, retains rejected edits and disables unconfirmed cached settings', async () => {
+  render(<BrandSettings database={database} societyId="alpha" />);
+  act(() => mock.next?.(snapshot()));
+  fireEvent.change(screen.getByLabelText('Public name'), { target: { value: ' New name ' } });
+  mock.save.mockRejectedValueOnce(new Error('offline'));
+  fireEvent.click(screen.getByText('Save community appearance'));
+  await screen.findByText('Branding was not saved. Keep your changes and retry when connected.');
+  act(() => mock.next?.(snapshot()));
+  expect((screen.getByLabelText('Public name') as HTMLInputElement).value).toBe(' New name ');
+  fireEvent.click(screen.getByText('Save community appearance'));
+  await screen.findByText('Community branding saved. Public screens refresh automatically.');
+  expect(mock.save).toHaveBeenLastCalledWith('societies/alpha/settings/public', { ...settings, name: 'New name', schemaVersion: 1, updatedAt: 'server-time' });
+  act(() => mock.next?.(snapshot(true)));
+  expect((screen.getByText('Save community appearance') as HTMLButtonElement).disabled).toBe(true);
+});
+it('publishes only fresh branding and ignores callbacks from a previous selected community', () => {
+  const change = vi.fn();
+  const view = render(<LiveBrand societyId="alpha" onChange={change} />);
+  const old = mock.next;
+  act(() => mock.next?.(snapshot())); expect(change).toHaveBeenLastCalledWith({ ...settings, societyId: 'alpha' });
+  act(() => mock.next?.(snapshot(true))); expect(change).toHaveBeenLastCalledWith(null);
+  view.rerender(<LiveBrand societyId="beta" onChange={change} />);
+  const count = change.mock.calls.length;
+  act(() => old?.(snapshot())); expect(change.mock.calls.length).toBe(count);
+  act(() => mock.next?.(snapshot())); expect(change).toHaveBeenLastCalledWith({ ...settings, societyId: 'beta' });
+  act(() => mock.fail?.()); expect(change).toHaveBeenLastCalledWith(null);
+  view.unmount(); expect(mock.stop).toHaveBeenCalledTimes(2);
+});

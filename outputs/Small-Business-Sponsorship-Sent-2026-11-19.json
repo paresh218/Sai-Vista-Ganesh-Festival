@@ -1,0 +1,678 @@
+[
+  {
+    "name": "Wonder Smile Dental Clinic",
+    "email": "wondersmileclinic@yahoo.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38ef488f1ede",
+        "thread_id": "1a1f38ef488f1ede",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Om Dental Care",
+    "email": "odcwakad@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f0714b4bc8",
+        "thread_id": "1a1f38f0714b4bc8",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Dentique",
+    "email": "dentique.smiles@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f1765ce3d5",
+        "thread_id": "1a1f38f1765ce3d5",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Rupal’s Diet Clinic",
+    "email": "rupalsdietclinic@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f26e57e34d",
+        "thread_id": "1a1f38f26e57e34d",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Pune Aesthetic",
+    "email": "puneaesthetics@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f3af644626",
+        "thread_id": "1a1f38f3af644626",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Cura Physiotherapy Clinic",
+    "email": "wellness@curaphysiotherapyclinic.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f4d56a9371",
+        "thread_id": "1a1f38f4d56a9371",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Bodynetic Physiotherapy",
+    "email": "info@bodyneticphysio.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f72a2d6b89",
+        "thread_id": "1a1f38f72a2d6b89",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Dr. Soumya’s Physiotherapy & Rehab",
+    "email": "contact@drsoumyaphysio.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f85f013891",
+        "thread_id": "1a1f38f85f013891",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "The Kashid’s Unisex Salon",
+    "email": "info@thekashidsunisexsalon.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38f9ac1c19a5",
+        "thread_id": "1a1f38f9ac1c19a5",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Iceberg Unisex Salon",
+    "email": "Icebergsalonpimplesaudagar@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38fac32bce93",
+        "thread_id": "1a1f38fac32bce93",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "J Salon",
+    "email": "jsalonmail@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38fbf3fa439b",
+        "thread_id": "1a1f38fbf3fa439b",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Shanvi Designer Studio",
+    "email": "shanvidesignerstudio19@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f38fd508e9a95",
+        "thread_id": "1a1f38fd508e9a95",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Amrita Stationery",
+    "email": "amritadinesh111@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f39002659c576",
+        "thread_id": "1a1f39002659c576",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Eyecon Optical",
+    "email": "officialeyeconoptical@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f390122edef89",
+        "thread_id": "1a1f390122edef89",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Gangar Eyenation",
+    "email": "info@gangar.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f39024d141fd8",
+        "thread_id": "1a1f39024d141fd8",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Ivvati Art Jewellery",
+    "email": "care.ivvatiartjewellery@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f39038e666bfc",
+        "thread_id": "1a1f39038e666bfc",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Rekha’s IndiSnacks",
+    "email": "info@rekhasindisnacks.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3904a6aae8da",
+        "thread_id": "1a1f3904a6aae8da",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Fulora",
+    "email": "flowers@fulora.store",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3905c539e56d",
+        "thread_id": "1a1f3905c539e56d",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Rajnandani’s Cakes",
+    "email": "rajnandanicakes@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f39089c68c3ea",
+        "thread_id": "1a1f39089c68c3ea",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "PrintItNice",
+    "email": "printitnice@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3909ab8b4715",
+        "thread_id": "1a1f3909ab8b4715",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "ncgifts",
+    "email": "hello@ncgifts.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f390ad6ae55d0",
+        "thread_id": "1a1f390ad6ae55d0",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "LaundryTO",
+    "email": "info@laundryto.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f390c334c16cc",
+        "thread_id": "1a1f390c334c16cc",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Zippy Laundromat",
+    "email": "zippylaundromatservices@gmail.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f390d5a613dcb",
+        "thread_id": "1a1f390d5a613dcb",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "BubbleIQ",
+    "email": "support@bubbleiq.in",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f390e9bb58c3c",
+        "thread_id": "1a1f390e9bb58c3c",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Rareism — Phoenix Mall of the Millennium",
+    "email": "rmmompune@rareism.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3914a59484e4",
+        "thread_id": "1a1f3914a59484e4",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  },
+  {
+    "name": "Malabar Gold & Diamonds — Pimpri",
+    "email": "mgd.pcmcpune@malabargroup.com",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Action completed."
+        }
+      ],
+      "structuredContent": {
+        "id": "1a1f3915c964e67d",
+        "thread_id": "1a1f3915c964e67d",
+        "label_ids": [
+          "SENT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      },
+      "isError": false
+    }
+  }
+]

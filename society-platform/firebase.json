@@ -1,0 +1,12 @@
+{
+  "firestore": {
+    "rules": "backend/firestore/firestore.rules",
+    "indexes": "backend/firestore/firestore.indexes.json"
+  },
+  "emulators": {
+    "firestore": { "host": "127.0.0.1", "port": 8085 },
+    "auth": { "host": "127.0.0.1", "port": 9099 },
+    "ui": { "enabled": false },
+    "singleProjectMode": true
+  }
+}

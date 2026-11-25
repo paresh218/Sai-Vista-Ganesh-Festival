@@ -2,10 +2,12 @@
   const grid=document.getElementById('marathonMyEntriesGrid'),status=document.getElementById('marathonMyEntriesStatus'),refresh=document.getElementById('marathonMyEntriesRefresh'),blocker=document.getElementById('marathonAccountSaving');
   if(!grid||!status||!refresh||!blocker)return;
   const blockerTitle=document.getElementById('marathonAccountSavingTitle'),blockerHelp=document.getElementById('marathonAccountSavingHelp'),done=document.getElementById('marathonAccountSavingDone');
+  const search=document.getElementById('marathonEntrySearch'),query=document.getElementById('marathonEntryQuery'),searchStatus=document.getElementById('marathonEntrySearchStatus');
+  const mobile=value=>String(value??'').replace(/[\s()-]/g,'').replace(/^(?:\+91|91|0)(?=[6-9]\d{9}$)/,'');
   let generation=0,entries=[],editing='',busy=false;
   const editClosed=()=>Date.now()>=Date.parse(SaiVistaMarathon.event.deadline);
   function showDeadline(){document.getElementById('marathonEditDeadline').textContent=editClosed()?'Editing closed on 14 November 2026 at 5:00 PM IST. Your entries are read-only.':'Editing closes on 14 November 2026 at 5:00 PM IST. After that, entries are read-only.';}
-  function clear(){generation++;entries=[];editing='';grid.replaceChildren();grid.removeAttribute('aria-busy');status.textContent='Sign in to see your entries.';refresh.disabled=false;if(blocker.open)blocker.close();busy=false;}
+  function clear(){query.value='';search.hidden=true;searchStatus.textContent='';generation++;entries=[];editing='';grid.replaceChildren();grid.removeAttribute('aria-busy');status.textContent='Sign in to see your entries.';refresh.disabled=false;if(blocker.open)blocker.close();busy=false;}
   async function request(action,fields,identity){
     const response=await fetch(window.SaiVistaMarathonConfig.endpoint,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({payload:JSON.stringify({action,...fields,token:identity.token,flat:identity.flat})}),signal:AbortSignal.timeout(30000)});
     const result=await response.json();if(!result.ok)throw Error(result.error||'Could not load your entries. Please try again.');return result;
@@ -19,11 +21,20 @@
   }
   function render(identity,version){
     showDeadline();if(editClosed())editing='';
-    grid.replaceChildren();refresh.disabled=!!editing||busy;if(!entries.length)return;
-    const table=document.createElement('table');table.className='marathon-entries-table';const caption=document.createElement('caption');caption.textContent=entries.length+' marathon '+(entries.length===1?'entry':'entries')+' registered with your signed-in email';table.append(caption);
+    grid.replaceChildren();refresh.disabled=!!editing||busy;
+    search.hidden=!entries.length;
+    query.disabled=!!editing||busy;
+    const term=query.value.trim();
+    const visible=term?entries.filter(entry=>
+      String(entry.bib??'').toLowerCase()===term.toLowerCase() ||
+      (/^[6-9]\d{9}$/.test(mobile(term))&&mobile(entry.details?.phone)===mobile(term))
+    ):entries;
+    searchStatus.textContent=term?(visible.length?'Matches found: '+visible.length:'No entries match that BIB or mobile number.'):'';
+    if(!visible.length)return;
+    const table=document.createElement('table');table.className='marathon-entries-table';const caption=document.createElement('caption');caption.textContent=visible.length+' marathon '+(visible.length===1?'entry':'entries')+' registered with your signed-in email';table.append(caption);
     const head=document.createElement('thead'),headRow=document.createElement('tr'),labels=['Participant','Distance','BIB number','Name on the BIB','T-shirt size','Payment status','Actions'];
     for(const label of labels){const th=document.createElement('th');th.scope='col';th.textContent=label;headRow.append(th);}head.append(headRow);table.append(head);const body=document.createElement('tbody');table.append(body);
-    entries.forEach((entry,index)=>{
+    visible.forEach((entry,index)=>{
       const row=document.createElement('tr');row.className='marathon-my-entry';row.dataset.reference=entry.reference;const cells=labels.map((label,i)=>{const cell=document.createElement(i===0?'th':'td');if(i===0)cell.scope='row';cell.dataset.label=label;row.append(cell);return cell;});
       cells[0].textContent=entry.name;cells[1].textContent=entry.race;cells[2].textContent=entry.bib||'Not assigned';cells[5].textContent=entry.status;
       if(editing===entry.reference){
@@ -51,5 +62,6 @@
   blocker.addEventListener('cancel',event=>{if(busy)event.preventDefault();});done.addEventListener('click',()=>blocker.close());blocker.addEventListener('close',()=>{if(!busy)refresh.focus();});
   function checkDeadline(){showDeadline();if(editClosed()&&entries.length){editing='';render(window.SaiVistaAuthSession,generation);status.textContent='Only your registered entries are shown. Editing is closed.';}}
   showDeadline();setTimeout(checkDeadline,Math.max(0,Date.parse(SaiVistaMarathon.event.deadline)-Date.now()));document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDeadline();});
+  query.addEventListener('input',()=>render(window.SaiVistaAuthSession,generation));
   refresh.addEventListener('click',load);window.addEventListener('sai-vista-auth-ready',()=>{clear();load();});window.addEventListener('sai-vista-auth-cleared',clear);window.addEventListener('sai-vista-private-signed-out',clear);load();
 })();

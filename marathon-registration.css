@@ -23,3 +23,22 @@ main>.marathon-event{--run-ink:#142c55;--run-orange:#ff6b16;display:grid;grid-te
 
 /* Supplier references stay available to everyone, including after registration closes. */
 .marathon-size-guide{grid-column:1/-1;min-width:0;scroll-margin-top:100px}.marathon-size-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:20px 0}.marathon-size-cards article{min-width:0;border:1px solid var(--line,#d7c5b3);border-radius:14px;padding:20px;background:var(--surface-soft,#f8f5f1)}.marathon-size-cards h3{display:flex;align-items:center;gap:10px;font-size:18px;margin:0 0 18px}.marathon-size-people svg{width:44px;height:44px;fill:currentColor;display:block}.marathon-size-cards img{display:block;width:100%;max-width:520px;height:auto;margin:auto;border-radius:4px}.marathon-size-cards article:first-child img{max-width:329px}.marathon-size-guide summary{min-height:44px;align-content:center;cursor:pointer;font-weight:600;padding:10px 0}.marathon-size-guide :focus-visible{outline:3px solid #b64b0a;outline-offset:4px}.marathon-size-guide table{width:100%;border-collapse:collapse;font-size:14px}.marathon-size-guide th,.marathon-size-guide td{padding:9px;text-align:left;border-bottom:1px solid var(--line,#d7c5b3)}.marathon-size-guide p{font-size:13px;line-height:1.7}.marathon-size-note a{display:inline-block;min-height:44px;align-content:center;font-weight:600}.marathon-size-inline{border:1px solid #d7c5b3;border-radius:12px;padding:8px 16px}.marathon-size-inline .marathon-size-cards{grid-template-columns:1fr}.marathon-size-inline h3{font-size:17px}@media(max-width:700px){.marathon-size-cards{grid-template-columns:1fr;gap:16px}.marathon-size-cards article{padding:16px}}
+
+.marathon-entry-search {
+  display: grid;
+  gap: .5rem;
+  max-width: 28rem;
+  margin-block: 1rem;
+}
+
+.marathon-entry-search[hidden] { display: none; }
+.marathon-entry-search label { font-weight: 700; }
+.marathon-entry-search input {
+  width: 100%;
+  padding: .65rem .75rem;
+  border: 1px solid currentColor;
+  border-radius: .5rem;
+  font: inherit;
+}
+.marathon-entry-search p { margin: 0; }
+.marathon-entry-search p:empty { display: none; }

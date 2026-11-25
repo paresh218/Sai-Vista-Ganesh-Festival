@@ -1,0 +1,282 @@
+[
+  {
+    "name": "One China / House of Malaka Spice",
+    "email": "marketingmanager@malakaspice.com",
+    "result": {
+      "id": "r-813099320050067313",
+      "message": {
+        "id": "1a1f3834dc29af8b",
+        "thread_id": "1a1f3834dc29af8b",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "TRESSA Restaurant & Suites",
+    "email": "operationstressa@gmail.com",
+    "result": {
+      "id": "r-4580331931843306631",
+      "message": {
+        "id": "1a1f383501f9883a",
+        "thread_id": "1a1f383501f9883a",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Mr & Mrs Idly / Arcari Food Ventures",
+    "email": "care@arcari.in",
+    "result": {
+      "id": "r2378285379826987526",
+      "message": {
+        "id": "1a1f383554be04e0",
+        "thread_id": "1a1f383554be04e0",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Yolkshire",
+    "email": "varad@yolkshire.com",
+    "result": {
+      "id": "r-6777585573183201877",
+      "message": {
+        "id": "1a1f38359a324cb5",
+        "thread_id": "1a1f38359a324cb5",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Kaka Halwai",
+    "email": "info@kakahalwai.co.in",
+    "result": {
+      "id": "r529630206796008858",
+      "message": {
+        "id": "1a1f3835ddc182ef",
+        "thread_id": "1a1f3835ddc182ef",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "New Poona Bakery",
+    "email": "feedback@newpoonabakery.com",
+    "result": {
+      "id": "r5796005182784920954",
+      "message": {
+        "id": "1a1f38374d888719",
+        "thread_id": "1a1f38374d888719",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Patanjali Arogya Kendra — Vision Galleria",
+    "email": "gaikwad.punam@gmail.com",
+    "result": {
+      "id": "r4409728164728147664",
+      "message": {
+        "id": "1a1f383788a18dca",
+        "thread_id": "1a1f383788a18dca",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "SK Sports & Sales",
+    "email": "sales.sksports@gmail.com",
+    "result": {
+      "id": "r-5978306276620092570",
+      "message": {
+        "id": "1a1f3837cf92414c",
+        "thread_id": "1a1f3837cf92414c",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "India Sports",
+    "email": "indiasports.office@gmail.com",
+    "result": {
+      "id": "r5626871177967304957",
+      "message": {
+        "id": "1a1f383814682efc",
+        "thread_id": "1a1f383814682efc",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Pradeep Sweets",
+    "email": "support@pradeepsweets.com",
+    "result": {
+      "id": "r9110086728158067697",
+      "message": {
+        "id": "1a1f38387dee9e9f",
+        "thread_id": "1a1f38387dee9e9f",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Hotel Kala Sagar",
+    "email": "sales1@hotelkalasagar.com",
+    "result": {
+      "id": "r-3487596395371464500",
+      "message": {
+        "id": "1a1f383a8295e255",
+        "thread_id": "1a1f383a8295e255",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Essentia Premier Pune",
+    "email": "dos.pune@essentiahotels.in",
+    "result": {
+      "id": "r4994572357664264083",
+      "message": {
+        "id": "1a1f383ade0696ab",
+        "thread_id": "1a1f383ade0696ab",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Spree Shivai Hotel",
+    "email": "reception.pune@spreehotels.com",
+    "result": {
+      "id": "r-2306764048133048809",
+      "message": {
+        "id": "1a1f383b107a4bd8",
+        "thread_id": "1a1f383b107a4bd8",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  },
+  {
+    "name": "Milkbasket",
+    "email": "hello@milkbasket.com",
+    "result": {
+      "id": "r-2228282805394380613",
+      "message": {
+        "id": "1a1f383b4a783391",
+        "thread_id": "1a1f383b4a783391",
+        "label_ids": [
+          "DRAFT"
+        ],
+        "snippet": null,
+        "history_id": null,
+        "internal_date": null,
+        "payload": null,
+        "size_estimate": null,
+        "classification_label_values": null
+      }
+    }
+  }
+]

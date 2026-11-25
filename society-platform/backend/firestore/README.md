@@ -1,0 +1,26 @@
+# Firestore foundation (S03)
+
+This folder implements public society directory, protected memberships, society events and minimal private profiles. All unspecified paths deny access. Future feature collections are planned, not implemented. No rules have been deployed. See backend/accounts/README.md for cleanup request and trusted-worker prototype limits.
+
+## Documents
+
+Owner-issued community invitations are implemented locally. See [INVITATIONS.md](INVITATIONS.md) for the document contract, privacy, atomic acceptance and remaining identity work.
+
+- `societies/{societyId}`: public metadata only. Schema 2 adds `nameKey`, `city`, `cityKey`, `kind`, `registrationStatus`, `ownerUid`, `createdAt` and `updatedAt` to name/location/timezone/visibility. Five community kinds share the same paths. Verified users can atomically create a new root and their active owner membership; orphan creation and claiming an existing root are denied. Existing directory edits/deletes remain denied; an accepted atomic ownership transfer may change only owner metadata. Listings are self-declared; no private contact data belongs here. Older roots need trusted metadata backfill before name-ordered discovery includes them; fresh local seed fixtures include it.
+- `societies/{societyId}/members/{uid}`: schemaVersion 1, protected `role` (`owner`, `admin`, `resident`, later coordinator/treasurer), `status` (`active`, `pending`, `revoked`), verified email, createdAt/updatedAt. Users may read their own record; active admins may read their society's members. Verified users may create only their own pending resident request in publicly listed societies. Owner/admin members may approve/decline pending residents and revoke active residents; no self-approval, arbitrary role change, reactivation or deletion is allowed. Owner-issued invitations can grant member/admin access to a new or pending member. Owners cannot be removed by clients. Initial owner bootstrap is allowed only with a new schema-2 community in the same atomic write. Owner transfer and existing-admin revocation remain pending.
+- `users/{uid}`: schemaVersion 1, displayName (1–80 characters), language (`en`, `hi`, `mr`), updatedAt (server timestamp). Verified users can read/update their own document; active platform superadmins can also read profiles through bounded queries. Extra fields, role metadata and client deletion are denied.
+- `societies/{societyId}/events/{eventId}`: schemaVersion 1, optional audience (members/public; missing means members), title (1–160 characters), description (up to 5,000), startsAt (Firestore Timestamp), venue (1–250), category (1–80), status (draft/published/archived), pinned (boolean), createdAt/updatedAt (server timestamps). Extra fields are rejected. No private registration/contact data belongs in an event document.
+
+Society path is authoritative. Do not add a client-writable societyId field or cross-society event references. Verified-email active members can read published/archived events; society owner/admin members can read drafts and write permitted events. Active platform superadmins have separate read-only cross-society access. Archived events stay readable to members; they are not a privacy state. Anonymous visitors can read explicitly listed directory entries only. S05 now permits explicitly public published/archived events in listed communities; missing audience stays member-only. Public queries require audience and status constraints. See ../platform/README.md for protected platformRoles, the application read allowlist and audit limitations.
+
+## Queries and costs
+
+Directory lists require `where('directoryVisible', '==', true)` and a limit at most 50. Resident event lists require a status constraint (published or archived) and limit at most 100. Admin lists require a limit at most 100. Security Rules are not filters: an unscoped resident list fails instead of silently hiding drafts. Prefer limit 20 plus cursors in application code. Composite indexes support status + featured ordering + date. The emulator does not prove production index readiness or performance; verify both before release.
+
+## Local verification
+
+From society-platform, run `npm run test:rules`. It uses a `demo-` project ID and refuses external emulator hosts. Java 21+ must be on PATH; on this workspace a checksum-verified portable Temurin JRE is available under ignored `.tools/`. To use it in PowerShell for this session, prepend its `bin` directory to PATH, then run the command. No Firebase login or cloud project is needed. Do not use production credentials for tests.
+
+Tests create two synthetic societies with owner, admin, resident, revoked and dual-society memberships. They check direct document reads/writes, constrained queries, malformed documents, draft access, role escalation, cross-society access and hard deletion. Fixtures are loaded with rules disabled only inside the test helper. They are not real identity verification or production testing.
+
+Cloud Storage is not configured or enabled. Ordinary society members/admins cannot access financial, media, form and registration paths until their own tested contracts exist; platform superadmins can inspect existing records in the explicit application allowlist. Native device validation and hosted rules/index deployment remain later work.

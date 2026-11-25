@@ -8,7 +8,7 @@
   // Reuse the existing navigation links; SVGs are decorative and do not replace their accessible names.
   const icons={
     '#home':'M3 10 12 3l9 7v10H6V10M9 20v-7h6v7',
-    '#marathonInterest':'m6 19 3-6 4 2 3 6M9 13l3-6 4 4 4-1M12 7 7 8l-3 4M15 3h.01',
+    '#marathonMyEntries':'m6 19 3-6 4 2 3 6M9 13l3-6 4 4 4-1M12 7 7 8l-3 4M15 3h.01',
     '#navratriVideo':'M4 5h16v14H4zM10 9l5 3-5 3z',
     '#accounts':'M4 20h16M6 16v-5M12 16V7M18 16V4',
     '#navratriArchive':'M4 7h16v13H4zM3 3h18v4H3zM9 11h6'

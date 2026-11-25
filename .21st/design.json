@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "project": {
+    "name": "sai-vista-festival",
+    "productType": null,
+    "stack": []
+  },
+  "sources": {
+    "tokens": [],
+    "components": [],
+    "assets": [
+      "assets"
+    ],
+    "instructions": [
+      "AGENTS.md"
+    ]
+  },
+  "design": {
+    "colorMode": "unknown",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [],
+    "avoid": []
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "project.instructions",
+      "source": "AGENTS.md"
+    }
+  ],
+  "generatedAt": "2026-11-13T11:23:35.572Z"
+}

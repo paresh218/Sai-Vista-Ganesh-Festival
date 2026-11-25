@@ -1,0 +1,34 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, expect, it, vi } from 'vitest';
+import type { Firestore } from 'firebase/firestore';
+import { AccountCleanupPanel } from '../web/src/features/auth/AccountCleanupPanel';
+const mock = vi.hoisted(() => ({ next: null as null | ((value: unknown) => void), fail: null as null | (() => void), add: vi.fn(), update: vi.fn(), query: vi.fn(), stop: vi.fn() }));
+vi.mock('firebase/firestore', () => ({ collection: (_db: unknown, path: string) => path, doc: (_db: unknown, ...parts: string[]) => parts.join('/'), where: (...args: unknown[]) => args, limit: (count: number) => count, query: (...args: unknown[]) => { mock.query(...args); return args; }, serverTimestamp: () => 'server-time', addDoc: (...args: unknown[]) => mock.add(...args), updateDoc: (...args: unknown[]) => mock.update(...args), onSnapshot: (_query: unknown, _options: unknown, next: (value: unknown) => void, fail: () => void) => { mock.next = next; mock.fail = fail; return mock.stop; } }));
+const database = {} as Firestore;
+const snapshot = (ids: string[] = [], cached = false) => ({ docs: ids.map(id => ({ id })), metadata: { fromCache: cached } });
+beforeEach(() => { vi.clearAllMocks(); mock.add.mockResolvedValue({ id: 'job' }); mock.update.mockResolvedValue(undefined); });
+it('requires current connection and consent, submits minimal own request and never claims data deletion', async () => {
+  render(<AccountCleanupPanel database={database} uid="resident" />);
+  expect((screen.getByText('Request account cleanup') as HTMLButtonElement).disabled).toBe(true);
+  act(() => mock.next?.(snapshot()));
+  fireEvent.click(screen.getByRole('checkbox')); fireEvent.click(screen.getByText('Request account cleanup'));
+  await screen.findByText('Cleanup requested for review. No data has been deleted.');
+  expect(mock.add).toHaveBeenCalledWith('accountCleanupRequests', { uid: 'resident', status: 'pending', createdAt: 'server-time', updatedAt: 'server-time' });
+  expect(mock.query).toHaveBeenCalledWith('accountCleanupRequests', ['uid', '==', 'resident'], ['status', '==', 'pending'], 20);
+});
+it('cancels only selected pending request, hides cached/private records and handles connection failures', async () => {
+  const view = render(<AccountCleanupPanel database={database} uid="resident" />);
+  act(() => mock.next?.(snapshot(['job'])));
+  expect(screen.queryByText('Request account cleanup')).toBeNull();
+  mock.update.mockRejectedValueOnce(new Error('offline'));
+  fireEvent.click(screen.getByText('Cancel cleanup request job'));
+  await screen.findByText('Your request was not confirmed. Please retry when connected.');
+  fireEvent.click(screen.getByText('Cancel cleanup request job'));
+  await screen.findByText('Cleanup request cancelled. No data was deleted.');
+  expect(mock.update).toHaveBeenCalledWith('accountCleanupRequests/job', { status: 'cancelled', updatedAt: 'server-time' });
+  act(() => mock.next?.(snapshot(['private-job'], true)));
+  expect(screen.queryByText(/private-job/)).toBeNull();
+  act(() => mock.fail?.());
+  await screen.findByText('Cleanup requests are unavailable. Check your connection.');
+  view.unmount(); expect(mock.stop).toHaveBeenCalledOnce();
+});
