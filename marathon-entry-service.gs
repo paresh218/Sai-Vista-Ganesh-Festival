@@ -39,7 +39,7 @@ function marathonPublicLookup(data){
   for(const row of marathonRows(marathonSheet())){
     const bib=marathonText(row[21]).trim(),race=row[2];
     if(!row[0]||!['3K','5K'].includes(race)||bib!==query||String(row[20]).trim().toLowerCase()!=='yes')continue;
-    entries.set(bib,{bib: bib,race: race,status:'Confirmed'});
+    entries.set(bib,{name:marathonText(row[4]),race,bib,bibName:marathonText(row[26]||row[4]),shirt:marathonText(row[10])});
   }
   return {ok:true,entries:Array.from(entries.values())};
 }

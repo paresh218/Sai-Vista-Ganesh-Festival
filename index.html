@@ -2,7 +2,7 @@
 <html lang="en" class="guest-mode">
 <head>
   <meta charset="UTF-8">
-  <meta name="site-release" content="2026-11-25-marathon-bib-lookup-3">
+  <meta name="site-release" content="2026-11-25-marathon-bib-details-4">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Community events at Sai Vista Society in Rahatani, PCMC, Pune. Explore the 2026 3K and 5K marathon, festival celebrations and committee information.">
   <meta name="theme-color" content="#302635">
@@ -123,7 +123,7 @@
             <input id="marathonPublicQuery" type="search" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]{4}" required>
             <button type="submit" class="btn btn-dark">Find entries</button>
           </form>
-          <p id="marathonPublicStatus" role="status"></p><ul id="marathonPublicResults" hidden></ul>
+          <p id="marathonPublicStatus" role="status"></p><div id="marathonPublicResults" class="marathon-my-entries-grid" hidden></div>
           <details><summary>My private registration details</summary>
           <button id="marathonMyEntriesRefresh" class="btn btn-outline" type="button">Refresh my entries</button><p id="marathonMyEntriesStatus" role="status">Sign in to see your entries.</p><div id="marathonMyEntriesGrid" class="marathon-my-entries-grid"></div></details></div>
         <section id="marathonInterest" class="section marathon-event" aria-labelledby="marathonTitle">
@@ -780,7 +780,7 @@ https://saivistaculturalcommittee.in
     <script src="assets/vendor/motion-14.7.1.js" defer></script>
     <script src="assets/marathon-model-v9.js" defer></script>
     <script src="marathon-registration-config.js?v=2" defer></script>
-    <script src="assets/marathon-lookup-v2.js" defer></script>
+    <script src="assets/marathon-lookup-v3.js" defer></script>
     <script src="assets/marathon-account-v6.js" defer></script>
     <script src="marathon-3d.js?v=2" defer></script>
     <script src="event-registration-model.js"></script>

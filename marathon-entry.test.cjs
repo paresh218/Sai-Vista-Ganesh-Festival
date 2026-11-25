@@ -356,9 +356,9 @@ test('marathon exposes one lookup field and allows BIB lookup without sign-in', 
   let payload;
   w.fetch = async (_url, request) => {
     payload = JSON.parse(request.body.get('payload'));
-    return {ok:true,json:async()=>({ok:true,entries:[{bib:'3001',race:'3K'}]})};
+    return {ok:true,json:async()=>({ok:true,entries:[{bib:'3001',race:'3K',name:'Test Runner',bibName:'Runner',shirt:'M',email:'runner@example.test',phone:'9876543210'}]})};
   };
-  w.eval(fs.readFileSync('assets/marathon-lookup-v2.js','utf8'));
+  w.eval(fs.readFileSync('assets/marathon-lookup-v3.js','utf8'));
   const form = d.getElementById('marathonPublicLookup'), input = d.getElementById('marathonPublicQuery');
   input.value = '9876543210';
   form.dispatchEvent(new w.Event('submit',{cancelable:true}));
@@ -367,7 +367,12 @@ test('marathon exposes one lookup field and allows BIB lookup without sign-in', 
   form.dispatchEvent(new w.Event('submit',{cancelable:true}));
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(payload, {action:'marathon-public-lookup',query:'3001'});
-  assert.match(d.getElementById('marathonPublicResults').textContent, /3001.*3K.*Confirmed/);
+  const results = d.getElementById('marathonPublicResults');
+  assert.deepEqual([...results.querySelectorAll('thead th')].map(node => node.textContent),
+    ['Participant','Distance','BIB number','Name on the BIB','T-shirt size']);
+  assert.deepEqual([...results.querySelectorAll('tbody td')].map(node => node.textContent),
+    ['Test Runner','3K','3001','Runner','M']);
+  assert.doesNotMatch(results.textContent, /runner@example|9876543210/);
 });
 
 test('public lookup accepts only exact bib and returns only confirmed race fields', () => {
@@ -375,7 +380,7 @@ test('public lookup accepts only exact bib and returns only confirmed race field
   function add(bib, race, phone, verified) {
     const row = Array(28).fill('');
     row[0] = 'entry'; row[2] = race; row[4] = 'Private Runner'; row[6] = 'private@example.org';
-    row[7] = phone; row[17] = 'Private medical note'; row[20] = verified; row[21] = bib;
+    row[7] = phone; row[10] = 'M'; row[26] = 'Runner'; row[17] = 'Private medical note'; row[20] = verified; row[21] = bib;
     s.rows.push(row);
   }
   add('3001', '3K', '9876543210', 'Yes');
@@ -384,9 +389,9 @@ test('public lookup accepts only exact bib and returns only confirmed race field
   add('3003', '3K', '9876543210', '');
   add('3004', '3K', '8876543210', 'Yes');
   const lookup = query => s.ctx.doPost({parameter:{payload:JSON.stringify({action:'marathon-public-lookup',query})}});
-  assert.deepEqual(lookup('3001').entries, [{bib:'3001',race:'3K',status:'Confirmed'}]);
+  assert.deepEqual(lookup('3001').entries, [{name:'Private Runner',race:'3K',bib:'3001',bibName:'Runner',shirt:'M'}]);
   assert.equal(lookup('9876543210').ok, false);
   assert.deepEqual(lookup('3003').entries, []);
   assert.equal(lookup('98765').ok, false);
-  assert.doesNotMatch(JSON.stringify(lookup('3001')), /Private|email|9876543210/);
+  assert.doesNotMatch(JSON.stringify(lookup('3001')), /medical note|email|9876543210/);
 });
